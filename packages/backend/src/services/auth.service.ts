@@ -1,0 +1,216 @@
+import bcrypt from 'bcrypt';
+import { prisma } from '../index';
+import { generateTokenPair, verifyRefreshToken } from '../utils/jwt.utils';
+import { AppError } from '../middleware/error.middleware';
+import { logger } from '../utils/logger';
+
+interface RegisterData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+export class AuthService {
+  /**
+   * Register a new user
+   */
+  async register(data: RegisterData) {
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email.toLowerCase() },
+    });
+
+    if (existingUser) {
+      throw new AppError(409, 'El email ya está registrado', 'EMAIL_EXISTS');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 12);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email: data.email.toLowerCase(),
+        password: hashedPassword,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        role: 'CLIENT',
+      },
+    });
+
+    // Generate tokens
+    const tokens = generateTokenPair(user);
+
+    // Log registration
+    logger.info(`New user registered: ${user.email}`);
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+
+    return {
+      user: userWithoutPassword,
+      ...tokens,
+    };
+  }
+
+  /**
+   * Login user
+   */
+  async login(data: LoginData) {
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email: data.email.toLowerCase() },
+    });
+
+    if (!user) {
+      throw new AppError(401, 'Credenciales inválidas', 'INVALID_CREDENTIALS');
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      throw new AppError(403, 'Tu cuenta está desactivada', 'ACCOUNT_DISABLED');
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new AppError(401, 'Credenciales inválidas', 'INVALID_CREDENTIALS');
+    }
+
+    // Update last login
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    // Generate tokens
+    const tokens = generateTokenPair(user);
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+
+    logger.info(`User logged in: ${user.email}`);
+
+    return {
+      user: userWithoutPassword,
+      ...tokens,
+    };
+  }
+
+  /**
+   * Refresh access token
+   */
+  async refreshToken(refreshToken: string) {
+    try {
+      // Verify refresh token
+      const payload = verifyRefreshToken(refreshToken);
+
+      // Get user
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+      });
+
+      if (!user || !user.isActive) {
+        throw new AppError(401, 'Usuario no encontrado o inactivo', 'USER_NOT_FOUND');
+      }
+
+      // Generate new token pair
+      const tokens = generateTokenPair(user);
+
+      return tokens;
+    } catch (error) {
+      throw new AppError(401, 'Token de actualización inválido', 'INVALID_REFRESH_TOKEN');
+    }
+  }
+
+  /**
+   * Get current user
+   */
+  async getCurrentUser(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        emailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+    }
+
+    return user;
+  }
+
+  /**
+   * Change password
+   */
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      throw new AppError(401, 'Contraseña actual incorrecta', 'INVALID_PASSWORD');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    logger.info(`Password changed for user: ${user.email}`);
+
+    return { message: 'Contraseña actualizada correctamente' };
+  }
+
+  /**
+   * Request password reset
+   */
+  async requestPasswordReset(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      // Don't reveal if user exists
+      return { message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña' };
+    }
+
+    // TODO: Generate reset token and send email
+    // For now, just log
+    logger.info(`Password reset requested for: ${user.email}`);
+
+    return { message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña' };
+  }
+}
+
+export const authService = new AuthService();

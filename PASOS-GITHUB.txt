@@ -1,0 +1,170 @@
+=====================================
+  PASOS PARA SUBIR A GITHUB
+=====================================
+
+📍 Estás aquí:
+   c:\Users\Administrator\CascadeProjects\windsurf-project-3
+
+🎯 Objetivo:
+   Subir el código a GitHub y conectar con Netlify
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PASO 1: CONFIGURAR GIT (PRIMERA VEZ)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ejecuta:
+
+   .\setup-github.bat
+
+Te pedirá:
+   - Tu nombre
+   - Tu email
+
+✅ Esto configura Git en tu máquina
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PASO 2: SUBIR A GITHUB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ejecuta:
+
+   .\deploy-github.bat
+
+O manualmente:
+
+   git push -u origin main
+
+✅ Esto sube todo el código a GitHub
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PASO 3: VERIFICAR EN GITHUB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Abre en navegador:
+
+   https://github.com/Daniel-Navarro-Campos/mywed360
+
+Verifica que ves:
+   ✅ packages/frontend
+   ✅ packages/backend
+   ✅ README.md
+   ✅ Todos los archivos
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PASO 4: CONECTAR NETLIFY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Ve a: https://app.netlify.com
+
+2. Click: "Add new site"
+
+3. Click: "Import an existing project"
+
+4. Click: "Deploy with GitHub"
+
+5. Autoriza Netlify (si es necesario)
+
+6. Selecciona: "mywed360"
+
+7. Configura:
+   ┌─────────────────────────────────────┐
+   │ Base directory:                     │
+   │   packages/frontend                 │
+   │                                     │
+   │ Build command:                      │
+   │   npm run build                     │
+   │                                     │
+   │ Publish directory:                  │
+   │   packages/frontend/dist            │
+   └─────────────────────────────────────┘
+
+8. Variables de entorno:
+   ┌─────────────────────────────────────┐
+   │ VITE_API_URL                        │
+   │ http://localhost:3001/api/v1        │
+   │                                     │
+   │ (Cambiar cuando tengas backend)     │
+   └─────────────────────────────────────┘
+
+9. Click: "Deploy site"
+
+10. Espera 2-3 minutos ⏳
+
+✅ Tu sitio estará en:
+   https://random-name-12345.netlify.app
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PASO 5: CAMBIAR NOMBRE (OPCIONAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+En Netlify:
+
+1. Site settings
+
+2. Site details > Site name
+
+3. Click "Change site name"
+
+4. Escribe: resona-events
+
+✅ Nueva URL:
+   https://resona-events.netlify.app
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ AUTODEPLOY ACTIVADO ✨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ahora cada vez que hagas:
+
+   git push origin main
+
+Netlify automáticamente:
+   ✅ Detecta el cambio
+   ✅ Hace el build
+   ✅ Despliega
+   ✅ Te notifica
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ RESUMEN DE COMANDOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Primera vez:
+   .\setup-github.bat
+   .\deploy-github.bat
+
+Actualizaciones futuras:
+   git add .
+   git commit -m "Descripcion del cambio"
+   git push origin main
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ ¿NECESITAS AYUDA?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ver guía completa:
+   GITHUB-NETLIFY.md
+
+Ver documentación:
+   README.md (en packages/frontend)
+
+Troubleshooting:
+   DESPLIEGUE.md
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SIGUIENTE PASO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ejecuta ahora:
+
+   .\setup-github.bat
+
+Presiona ENTER para continuar...

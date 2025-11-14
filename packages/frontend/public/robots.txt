@@ -1,0 +1,26 @@
+# robots.txt para Resona Events
+
+User-agent: *
+Allow: /
+
+# Páginas importantes para crawlear
+Allow: /productos
+Allow: /calculadora-evento
+Allow: /sobre-nosotros
+Allow: /contacto
+
+# No indexar páginas privadas
+Disallow: /admin
+Disallow: /cuenta
+Disallow: /mis-pedidos
+Disallow: /checkout
+Disallow: /carrito
+
+# No indexar APIs
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://resona.com/sitemap.xml
+
+# Crawl-delay para proteger el servidor
+Crawl-delay: 1

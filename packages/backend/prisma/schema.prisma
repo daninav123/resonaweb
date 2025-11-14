@@ -1,0 +1,955 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============= ENUMS =============
+
+enum UserRole {
+  CLIENT
+  ADMIN
+  SUPERADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  COMPLETED
+  CANCELLED
+}
+
+enum DeliveryType {
+  PICKUP
+  DELIVERY
+  SHIPPING
+}
+
+enum PaymentTerm {
+  FULL_UPFRONT
+  PARTIAL_UPFRONT
+  ON_PICKUP
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  CANCELLED
+}
+
+enum DepositStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  RELEASED
+  PARTIALLY_RETAINED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CARD
+  STRIPE
+  BANK_TRANSFER
+  CASH
+  FINANCING
+  OTHER
+}
+
+enum ProductStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  DISCONTINUED
+  COMING_SOON
+}
+
+enum StockStatus {
+  IN_STOCK
+  ON_DEMAND
+  DISCONTINUED
+  SEASONAL
+}
+
+enum InteractionType {
+  VIEW
+  ADD_TO_CART
+  REMOVE_FROM_CART
+  QUOTE_REQUEST
+  AVAILABILITY_CHECK
+  ORDER_PLACED
+  WISHLIST_ADD
+}
+
+enum NotificationType {
+  ORDER_CONFIRMATION
+  ORDER_PAYMENT_RECEIVED
+  ORDER_PAYMENT_PENDING
+  ORDER_PAYMENT_FAILED
+  ORDER_STATUS_UPDATE
+  ORDER_CANCELLED
+  REMINDER_PAYMENT_DUE
+  REMINDER_3_DAYS_BEFORE
+  REMINDER_1_DAY_BEFORE
+  REMINDER_DAY_OF_EVENT
+  REMINDER_RETURN_DUE
+  RETURN_CONFIRMATION
+  REVIEW_REQUEST
+  DEPOSIT_RELEASED
+  DEPOSIT_RETAINED
+  WELCOME_EMAIL
+  ABANDONED_CART
+  SPECIAL_OFFER
+  NEW_ORDER_ADMIN
+  HIGH_DEMAND_ALERT
+  LOW_STOCK_ALERT
+}
+
+enum EmailStatus {
+  PENDING
+  QUEUED
+  SENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  FAILED
+  BOUNCED
+}
+
+enum PriceType {
+  FIXED
+  PER_HOUR
+  PER_ITEM
+  PERCENTAGE
+}
+
+// ============= MODELS =============
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  firstName         String
+  lastName          String
+  phone             String?
+  role              UserRole  @default(CLIENT)
+  
+  // Dirección
+  address           Json?
+  
+  // Estado
+  isActive          Boolean   @default(true)
+  emailVerified     Boolean   @default(false)
+  
+  // Legal
+  acceptedTermsAt   DateTime?
+  acceptedPrivacyAt DateTime?
+  termsVersion      String?
+  
+  // Fechas
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastLoginAt       DateTime?
+  
+  // Relaciones
+  orders            Order[]
+  reviews           Review[]
+  favorites         Favorite[]
+  emailNotifications EmailNotification[]
+  notifications     Notification[]
+  apiKeys           ApiKey[]
+  customerNotes     CustomerNote[] @relation("CustomerNotes")
+  notesCreated      CustomerNote[] @relation("NotesCreatedBy")
+  blogPosts         BlogPost[]
+  
+  // Stripe
+  stripeCustomerId  String?
+  taxId             String?
+  
+  // Metadata
+  metadata          Json?
+  
+  @@index([email])
+  @@index([role])
+  @@index([stripeCustomerId])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  
+  isActive    Boolean   @default(true)
+  featured    Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relaciones
+  products    Product[]
+  
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Product {
+  id                      String    @id @default(uuid())
+  sku                     String    @unique
+  name                    String
+  slug                    String    @unique
+  description             String    @db.Text
+  
+  // Categoría
+  categoryId              String
+  category                Category  @relation(fields: [categoryId], references: [id])
+  
+  // Precios
+  pricePerDay             Decimal   @db.Decimal(10, 2)
+  pricePerWeekend         Decimal   @db.Decimal(10, 2)
+  pricePerWeek            Decimal   @db.Decimal(10, 2)
+  weekendMultiplier       Decimal   @default(1.5) @db.Decimal(3, 2)
+  weekMultiplier          Decimal   @default(5.0) @db.Decimal(3, 2)
+  
+  // Stock
+  stock                   Int       @default(0)
+  realStock               Int       @default(0)
+  availableStock          Int       @default(0)
+  status                  ProductStatus @default(AVAILABLE)
+  stockStatus             StockStatus @default(ON_DEMAND)
+  leadTimeDays            Int       @default(30)
+  canBuyOnDemand          Boolean   @default(true)
+  
+  // Dimensiones y peso
+  weight                  Decimal?  @db.Decimal(8, 2)
+  length                  Decimal?  @db.Decimal(8, 2)
+  width                   Decimal?  @db.Decimal(8, 2)
+  height                  Decimal?  @db.Decimal(8, 2)
+  volume                  Decimal?  @db.Decimal(10, 2)
+  dimensions              Json?
+  requiresSpecialTransport Boolean  @default(false)
+  
+  // Fianza
+  purchaseValue           Decimal?  @db.Decimal(10, 2)
+  replacementCost         Decimal?  @db.Decimal(10, 2)
+  customDeposit           Decimal?  @db.Decimal(10, 2)
+  
+  // Imágenes
+  mainImageUrl            String?
+  images                  String[]
+  
+  // Especificaciones
+  specifications          Json?
+  
+  // Tracking
+  viewCount               Int       @default(0)
+  cartAddCount            Int       @default(0)
+  quoteRequestCount       Int       @default(0)
+  orderCount              Int       @default(0)
+  purchasePriority        Int?
+  markedForPurchase       Boolean   @default(false)
+  purchaseNotes           String?
+  
+  // Proveedor
+  supplier                String?
+  supplierPrice           Decimal?  @db.Decimal(10, 2)
+  supplierUrl             String?
+  
+  // Estado
+  isActive                Boolean   @default(true)
+  featured                Boolean   @default(false)
+  maintenanceRequired     Boolean   @default(false)
+  
+  // Metadatos
+  tags                    String[]
+  
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  
+  // Relaciones
+  orderItems              OrderItem[]
+  packItems               PackItem[]
+  reviews                 Review[]
+  favorites               Favorite[]
+  interactions            ProductInteraction[]
+  analytics               ProductDemandAnalytics?
+  
+  @@index([categoryId])
+  @@index([slug])
+  @@index([stockStatus])
+  @@index([isActive, featured])
+}
+
+model Pack {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String    @db.Text
+  imageUrl    String?
+  
+  pricePerDay Decimal   @db.Decimal(10, 2)
+  discount    Decimal   @db.Decimal(5, 2)
+  
+  isActive    Boolean   @default(true)
+  featured    Boolean   @default(false)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relaciones
+  items       PackItem[]
+  
+  @@index([slug])
+}
+
+model PackItem {
+  id        String  @id @default(uuid())
+  packId    String
+  pack      Pack    @relation(fields: [packId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int     @default(1)
+  
+  @@unique([packId, productId])
+}
+
+model Order {
+  id                      String        @id @default(uuid())
+  orderNumber             String        @unique
+  
+  // Cliente
+  userId                  String
+  user                    User          @relation(fields: [userId], references: [id])
+  
+  // Fechas del evento
+  startDate               DateTime
+  endDate                 DateTime
+  
+  // Información del evento
+  eventType               String?
+  eventLocation           Json          // Dirección completa
+  attendees               Int?
+  contactPerson           String
+  contactPhone            String
+  notes                   String?       @db.Text
+  
+  // Entrega
+  deliveryType            DeliveryType
+  deliveryAddress         Json?
+  deliveryTime            String?
+  deliveryNotes           String?
+  
+  // Modalidad de pago
+  paymentTerm             PaymentTerm   @default(PARTIAL_UPFRONT)
+  paymentTermAdjustment   Decimal       @db.Decimal(10, 2) @default(0)
+  paymentTermPercent      Decimal       @db.Decimal(5, 2) @default(0)
+  
+  // Totales
+  subtotal                Decimal       @db.Decimal(10, 2)
+  totalBeforeAdjustment   Decimal       @db.Decimal(10, 2)
+  paymentTermDiscount     Decimal?      @db.Decimal(10, 2)
+  paymentTermSurcharge    Decimal?      @db.Decimal(10, 2)
+  taxAmount               Decimal       @db.Decimal(10, 2)
+  total                   Decimal       @db.Decimal(10, 2)
+  
+  // Pagos
+  upfrontPaymentAmount    Decimal?      @db.Decimal(10, 2)
+  upfrontPaymentDate      DateTime?
+  upfrontPaymentStatus    PaymentStatus?
+  remainingPaymentAmount  Decimal?      @db.Decimal(10, 2)
+  remainingPaymentDue     DateTime?
+  remainingPaymentDate    DateTime?
+  remainingPaymentStatus  PaymentStatus?
+  
+  // Envío
+  shippingCost            Decimal       @db.Decimal(10, 2)
+  shippingSuggested       Decimal?      @db.Decimal(10, 2)
+  shippingManuallySet     Boolean       @default(false)
+  shippingNotes           String?
+  shippingDistance        Decimal?      @db.Decimal(10, 2)
+  shippingWeight          Decimal?      @db.Decimal(10, 2)
+  shippingVolume          Decimal?      @db.Decimal(10, 2)
+  
+  // Fianza
+  depositAmount           Decimal       @db.Decimal(10, 2)
+  depositStatus           DepositStatus @default(PENDING)
+  depositPaidAt           DateTime?
+  depositReleasedAt       DateTime?
+  depositRetainedAmount   Decimal?      @db.Decimal(10, 2)
+  depositNotes            String?
+  
+  // Estado
+  status                  OrderStatus   @default(PENDING)
+  reviewRequested         Boolean       @default(false)
+  
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  confirmedAt             DateTime?
+  cancelledAt             DateTime?
+  completedAt             DateTime?
+  
+  // Relaciones
+  items                   OrderItem[]
+  services                OrderService[]
+  invoice                 Invoice?
+  emailNotifications      EmailNotification[]
+  delivery                Delivery?
+  payment                 Payment?
+  
+  // Campos adicionales para compatibilidad
+  totalAmount             Decimal       @db.Decimal(10, 2) @default(0)
+  deliveryFee             Decimal       @db.Decimal(10, 2) @default(0)
+  tax                     Decimal       @db.Decimal(10, 2) @default(0)
+  deliveryDate            DateTime?
+  deliveredAt             DateTime?
+  paymentStatus           PaymentStatus @default(PENDING)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([orderNumber])
+  @@index([paymentStatus])
+}
+
+model OrderItem {
+  id                String   @id @default(uuid())
+  orderId           String
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId         String
+  product           Product  @relation(fields: [productId], references: [id])
+  
+  quantity          Int
+  pricePerDay       Decimal  @db.Decimal(10, 2)
+  subtotal          Decimal  @db.Decimal(10, 2)
+  
+  // Fechas del item (heredadas del pedido normalmente)
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Aliases para compatibilidad
+  pricePerUnit      Decimal  @db.Decimal(10, 2) @default(0)
+  totalPrice        Decimal  @db.Decimal(10, 2) @default(0)
+  
+  notes             String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([orderId])
+  @@index([productId])
+  @@index([startDate, endDate])
+}
+
+model ShippingRate {
+  id                      String    @id @default(uuid())
+  name                    String
+  
+  basePrice               Decimal   @db.Decimal(10, 2)
+  pricePerKm              Decimal   @db.Decimal(10, 2)
+  pricePerKg              Decimal   @db.Decimal(10, 2)
+  pricePerM3              Decimal   @db.Decimal(10, 2)
+  
+  minPrice                Decimal   @db.Decimal(10, 2)
+  maxPrice                Decimal?  @db.Decimal(10, 2)
+  freeAbove               Decimal?  @db.Decimal(10, 2)
+  
+  isActive                Boolean   @default(true)
+  isDefault               Boolean   @default(false)
+  
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model Service {
+  id                String        @id @default(uuid())
+  name              String
+  description       String?
+  
+  priceType         PriceType
+  price             Decimal       @db.Decimal(10, 2)
+  estimatedHours    Decimal?      @db.Decimal(5, 2)
+  pricePerItem      Decimal?      @db.Decimal(10, 2)
+  
+  isActive          Boolean       @default(true)
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relaciones
+  orderServices     OrderService[]
+}
+
+model OrderService {
+  id                String    @id @default(uuid())
+  orderId           String
+  order             Order     @relation(fields: [orderId], references: [id])
+  serviceId         String
+  service           Service   @relation(fields: [serviceId], references: [id])
+  
+  quantity          Int       @default(1)
+  price             Decimal   @db.Decimal(10, 2)
+  suggestedPrice    Decimal?  @db.Decimal(10, 2)
+  manuallySet       Boolean   @default(false)
+  notes             String?
+  
+  createdAt         DateTime  @default(now())
+  
+  @@index([orderId])
+}
+
+model CustomInvoice {
+  id                String        @id @default(uuid())
+  invoiceNumber     String        @unique
+  
+  clientName        String
+  clientEmail       String
+  clientPhone       String?
+  clientNIF         String?
+  clientAddress     Json
+  
+  serviceDate       DateTime
+  items             Json[]
+  
+  subtotal          Decimal       @db.Decimal(10, 2)
+  taxRate           Decimal       @db.Decimal(5, 2) @default(21)
+  taxAmount         Decimal       @db.Decimal(10, 2)
+  total             Decimal       @db.Decimal(10, 2)
+  
+  status            InvoiceStatus @default(DRAFT)
+  notes             String?
+  pdfUrl            String?
+  
+  issueDate         DateTime      @default(now())
+  dueDate           DateTime?
+  paidDate          DateTime?
+  sentDate          DateTime?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Invoice {
+  id                String        @id @default(uuid())
+  invoiceNumber     String        @unique
+  orderId           String        @unique
+  order             Order         @relation(fields: [orderId], references: [id])
+  
+  issueDate         DateTime      @default(now())
+  dueDate           DateTime
+  
+  subtotal          Decimal       @db.Decimal(10, 2)
+  taxAmount         Decimal       @db.Decimal(10, 2)
+  total             Decimal       @db.Decimal(10, 2)
+  
+  status            InvoiceStatus @default(DRAFT)
+  
+  pdfUrl            String?
+  sentAt            DateTime?
+  paidAt            DateTime?
+  
+  // Additional fields for compatibility
+  metadata          Json?
+  tax               Decimal       @db.Decimal(10, 2) @default(0)
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relaciones
+  payments          Payment[]
+}
+
+model Payment {
+  id                      String        @id @default(uuid())
+  invoiceId               String?
+  invoice                 Invoice?      @relation(fields: [invoiceId], references: [id])
+  orderId                 String?       @unique
+  order                   Order?        @relation(fields: [orderId], references: [id])
+  
+  amount                  Decimal       @db.Decimal(10, 2)
+  currency                String        @default("EUR")
+  
+  // Stripe Integration
+  stripePaymentIntentId   String?       @unique
+  stripeChargeId          String?
+  stripeCustomerId        String?
+  stripePaymentMethodId   String?
+  
+  method                  PaymentMethod
+  status                  PaymentStatus @default(PENDING)
+  
+  // Detalles de tarjeta
+  cardBrand               String?
+  cardLast4               String?
+  cardExpMonth            Int?
+  cardExpYear             Int?
+  
+  // Referencia para otros métodos
+  reference               String?
+  
+  // Metadata
+  metadata                Json?
+  errorMessage            String?
+  notes                   String?
+  
+  // Refunds
+  refundedAmount          Decimal?      @db.Decimal(10, 2)
+  refundedAt              DateTime?
+  failedAt                DateTime?
+  
+  paidAt                  DateTime?
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  
+  @@index([orderId])
+  @@index([invoiceId])
+}
+
+model Review {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  
+  rating      Int       // 1-5
+  title       String?
+  comment     String?   @db.Text
+  
+  isApproved  Boolean   @default(false)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@unique([userId, productId])
+  @@index([productId])
+}
+
+model Favorite {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([userId, productId])
+}
+
+model ApiKey {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  key           String    @unique
+  secret        String    // Hash bcrypt
+  
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+  
+  permissions   String[]
+  rateLimit     Int       @default(100)
+  
+  isActive      Boolean   @default(true)
+  lastUsedAt    DateTime?
+  expiresAt     DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([key])
+  @@index([isActive])
+}
+
+model ProductInteraction {
+  id          String          @id @default(uuid())
+  productId   String
+  product     Product         @relation(fields: [productId], references: [id])
+  
+  userId      String?
+  sessionId   String
+  
+  type        InteractionType
+  source      String?
+  referrer    String?
+  metadata    Json?
+  
+  createdAt   DateTime        @default(now())
+  
+  @@index([productId, type])
+  @@index([createdAt])
+}
+
+model ProductDemandAnalytics {
+  id                      String    @id @default(uuid())
+  productId               String    @unique
+  product                 Product   @relation(fields: [productId], references: [id])
+  
+  views30d                Int       @default(0)
+  cartAdds30d             Int       @default(0)
+  quoteRequests30d        Int       @default(0)
+  orders30d               Int       @default(0)
+  
+  views90d                Int       @default(0)
+  cartAdds90d             Int       @default(0)
+  quoteRequests90d        Int       @default(0)
+  orders90d               Int       @default(0)
+  
+  viewToCartRate          Decimal   @db.Decimal(5, 2)
+  cartToOrderRate         Decimal   @db.Decimal(5, 2)
+  
+  demandScore             Decimal   @db.Decimal(10, 2)
+  purchaseRecommendation  Boolean   @default(false)
+  
+  lastCalculated          DateTime  @updatedAt
+}
+
+model EmailNotification {
+  id              String            @id @default(uuid())
+  
+  userId          String?
+  user            User?             @relation(fields: [userId], references: [id])
+  email           String
+  
+  type            NotificationType
+  template        String
+  
+  orderId         String?
+  order           Order?            @relation(fields: [orderId], references: [id])
+  
+  subject         String
+  body            String            @db.Text
+  metadata        Json?
+  
+  status          EmailStatus       @default(PENDING)
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  failedAt        DateTime?
+  errorMessage    String?
+  
+  sendgridId      String?           @unique
+  attempts        Int               @default(0)
+  maxAttempts     Int               @default(3)
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@index([userId])
+  @@index([orderId])
+  @@index([type])
+  @@index([status])
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  userId      String?
+  action      String    // "CREATE_ORDER", "UPDATE_PRODUCT"
+  entity      String    // "Order", "Product"
+  entityId    String
+  changes     Json?     // Before/After
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model SystemConfig {
+  id        String    @id @default(uuid())
+  key       String    @unique
+  value     Json
+  
+  updatedAt DateTime  @updatedAt
+}
+
+// ============= NUEVOS MODELOS PARA COMPLETAR FUNCIONALIDAD =============
+
+enum DeliveryStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+model Delivery {
+  id              String          @id @default(uuid())
+  orderId         String          @unique
+  order           Order           @relation(fields: [orderId], references: [id])
+  
+  vehicleId       String?
+  driverId        String?
+  
+  plannedDate     DateTime
+  actualDate      DateTime?
+  
+  status          DeliveryStatus  @default(SCHEDULED)
+  signature       String?
+  notes           String?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([orderId])
+  @@index([plannedDate])
+  @@index([status])
+}
+
+model CustomerNote {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation("CustomerNotes", fields: [userId], references: [id])
+  
+  note            String    @db.Text
+  createdBy       String
+  createdByUser   User      @relation("NotesCreatedBy", fields: [createdBy], references: [id])
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([createdBy])
+}
+
+model Notification {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  
+  type            String
+  title           String
+  message         String    @db.Text
+  data            Json?
+  
+  read            Boolean   @default(false)
+  readAt          DateTime?
+  emailSent       Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+// ============= BLOG MODELS =============
+
+enum BlogPostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+model BlogPost {
+  id              String          @id @default(cuid())
+  
+  title           String
+  slug            String          @unique
+  excerpt         String          @db.Text
+  content         String          @db.Text
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  
+  // Media
+  featuredImage   String?
+  images          String[]
+  
+  // Organization
+  categoryId      String?
+  category        BlogCategory?   @relation(fields: [categoryId], references: [id])
+  tags            BlogTag[]
+  
+  // Publishing
+  status          BlogPostStatus  @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  
+  // Author
+  authorId        String
+  author          User            @relation(fields: [authorId], references: [id])
+  
+  // Engagement
+  views           Int             @default(0)
+  likes           Int             @default(0)
+  
+  // AI Generation
+  aiGenerated     Boolean         @default(false)
+  aiPrompt        String?         @db.Text
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+}
+
+model BlogCategory {
+  id              String          @id @default(cuid())
+  
+  name            String          @unique
+  slug            String          @unique
+  description     String?         @db.Text
+  color           String?         // Color hex para UI
+  
+  posts           BlogPost[]
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([slug])
+}
+
+model BlogTag {
+  id              String          @id @default(cuid())
+  
+  name            String          @unique
+  slug            String          @unique
+  
+  posts           BlogPost[]
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([slug])
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test API Categorías</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .category {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test API de Categorías</h1>
+    <p>Esta página llama directamente a la API para verificar cuántas categorías devuelve.</p>
+    
+    <button onclick="testAPI()">Probar API</button>
+    
+    <div class="result" id="result">
+        <p>Presiona el botón para probar...</p>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>⏳ Cargando...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/products/categories');
+                const data = await response.json();
+                
+                console.log('📦 Respuesta completa:', data);
+                
+                const categories = data.data || [];
+                
+                resultDiv.innerHTML = `
+                    <h2>✅ API Responde Correctamente</h2>
+                    <p class="count">Total: ${categories.length} categorías</p>
+                    <hr>
+                    <h3>Categorías encontradas:</h3>
+                    ${categories.map((cat, i) => `
+                        <div class="category">
+                            <strong>${i + 1}. ${cat.name}</strong>
+                            <br>
+                            <small>Slug: ${cat.slug} | ID: ${cat.id}</small>
+                        </div>
+                    `).join('')}
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h2>❌ Error</h2>
+                    <p>${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+import { useState, useEffect } from 'react';
+import { X, ShoppingCart, Trash2, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { guestCart, GuestCartItem } from '../utils/guestCart';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { api } from '../services/api';
+import toast from 'react-hot-toast';
+
+interface CartSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const [guestCartItems, setGuestCartItems] = useState<GuestCartItem[]>([]);
+
+  // Cargar guest cart (SIEMPRE, backend no persiste aún)
+  useEffect(() => {
+    setGuestCartItems(guestCart.getCart());
+    
+    const handleUpdate = () => {
+      setGuestCartItems(guestCart.getCart());
+    };
+    
+    window.addEventListener('cartUpdated', handleUpdate);
+    return () => window.removeEventListener('cartUpdated', handleUpdate);
+  }, [isOpen]);
+
+  // Cart de usuario no usado (backend no persiste)
+  const { data: cart, refetch } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async () => ({ items: guestCartItems }),
+    enabled: false,
+  });
+
+  const removeItem = useMutation({
+    mutationFn: async (productId: string) => {
+      await api.delete(`/cart/items/${productId}`);
+    },
+    onSuccess: () => {
+      refetch();
+      toast.success('Producto eliminado');
+    },
+  });
+
+  const handleGuestRemoveItem = (itemId: string) => {
+    guestCart.removeItem(itemId);
+    setGuestCartItems(guestCart.getCart());
+    toast.success('Producto eliminado');
+  };
+
+  const cartItems = guestCartItems;
+
+  const calculateItemPrice = (item: any) => {
+    if (!item.startDate || !item.endDate) return 0;
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+    return item.product.pricePerDay * days * item.quantity;
+  };
+
+  const subtotal = cartItems.reduce((sum, item) => sum + calculateItemPrice(item), 0);
+
+  const handleViewCart = () => {
+    onClose();
+    navigate('/carrito');
+  };
+
+  const handleCheckout = () => {
+    onClose();
+    
+    if (!user) {
+      toast('Inicia sesión o regístrate para continuar', { icon: 'ℹ️' });
+      navigate('/login', { state: { from: '/carrito' } });
+      return;
+    }
+    
+    navigate('/checkout');
+  };
+
+  return (
+    <>
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <ShoppingCart className="w-6 h-6" />
+            Mi Carrito ({cartItems.length})
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Items */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {cartItems.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <ShoppingCart className="w-16 h-16 mb-4" />
+              <p className="text-lg font-medium">Tu carrito está vacío</p>
+              <p className="text-sm mt-2">¡Añade productos para empezar!</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {cartItems.map((item: any) => (
+                <div key={item.id} className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex gap-3">
+                    <img
+                      src={item.product.mainImageUrl || '/placeholder.png'}
+                      alt={item.product.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm truncate">
+                        {item.product.name}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {item.product.category?.name}
+                      </p>
+                      <p className="text-sm text-blue-600 font-semibold mt-1">
+                        €{item.product.pricePerDay}/día × {item.quantity}
+                      </p>
+                      
+                      {item.startDate && item.endDate && (
+                        <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>
+                            {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleGuestRemoveItem(item.id)}
+                      className="text-red-500 hover:text-red-700 h-fit"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {cartItems.length > 0 && (
+          <div className="border-t p-4 space-y-3">
+            <div className="flex justify-between text-lg font-bold">
+              <span>Subtotal:</span>
+              <span className="text-blue-600">
+                {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
+              </span>
+            </div>
+
+            <button
+              onClick={handleViewCart}
+              className="w-full text-center py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+            >
+              Ver carrito completo
+            </button>
+
+            <button
+              onClick={handleCheckout}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              {user ? 'Proceder al checkout' : 'Iniciar sesión'}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default CartSidebar;
