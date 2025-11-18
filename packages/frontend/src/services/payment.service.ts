@@ -1,27 +1,46 @@
 import { api } from './api';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 
-const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
-
 class PaymentService {
-  private stripePromise: Promise<Stripe | null>;
+  private stripePromise: Promise<Stripe | null> | null = null;
+  private publishableKey: string | null = null;
 
-  constructor() {
-    this.stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+  /**
+   * Initialize Stripe with config from backend
+   */
+  async initialize() {
+    if (!this.stripePromise) {
+      try {
+        const config = await api.get('/payment/config');
+        this.publishableKey = config.publishableKey;
+        
+        if (this.publishableKey) {
+          this.stripePromise = loadStripe(this.publishableKey);
+        } else {
+          console.warn('Stripe publishable key not configured');
+        }
+      } catch (error) {
+        console.error('Failed to initialize Stripe:', error);
+      }
+    }
+    return this.stripePromise;
   }
 
   /**
    * Get Stripe instance
    */
   async getStripe(): Promise<Stripe | null> {
-    return this.stripePromise;
+    if (!this.stripePromise) {
+      await this.initialize();
+    }
+    return this.stripePromise || null;
   }
 
   /**
-   * Create payment intent
+   * Create payment intent for order
    */
-  async createPaymentIntent(orderId: string, amount: number) {
-    return api.post('/payment/create-intent', { orderId, amount });
+  async createPaymentIntent(orderId: string) {
+    return api.post('/payment/create-intent', { orderId });
   }
 
   /**
@@ -32,31 +51,24 @@ class PaymentService {
   }
 
   /**
-   * Request refund
+   * Cancel payment intent
    */
-  async requestRefund(paymentId: string, amount?: number, reason?: string) {
-    return api.post('/payment/refund', { paymentId, amount, reason });
+  async cancelPaymentIntent(paymentIntentId: string) {
+    return api.post('/payment/cancel', { paymentIntentId });
   }
 
   /**
-   * Get payment history
+   * Get payment details
    */
-  async getPaymentHistory(page: number = 1, limit: number = 10) {
-    return api.get(`/payment/history?page=${page}&limit=${limit}`);
+  async getPaymentDetails(paymentIntentId: string) {
+    return api.get(`/payment/details/${paymentIntentId}`);
   }
 
   /**
-   * Get payment methods
+   * Request refund (admin only)
    */
-  async getPaymentMethods() {
-    return api.get('/payment/methods');
-  }
-
-  /**
-   * Get payment status
-   */
-  async getPaymentStatus(paymentId: string) {
-    return api.get(`/payment/${paymentId}/status`);
+  async requestRefund(orderId: string, amount?: number, reason?: string) {
+    return api.post('/payment/refund', { orderId, amount, reason });
   }
 
   /**

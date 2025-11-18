@@ -23,11 +23,18 @@ export class OrderController {
       };
 
       const order = await orderService.createOrder(orderData);
-
-      res.status(201).json({
+      
+      console.log('📦 createOrder result:', order);
+      console.log('📦 createOrder type:', typeof order);
+      
+      const response = {
         message: 'Pedido creado exitosamente',
         order,
-      });
+      };
+      
+      console.log('📦 Response to send:', JSON.stringify(response, null, 2));
+
+      res.status(201).json(response);
     } catch (error) {
       next(error);
     }
@@ -83,12 +90,23 @@ export class OrderController {
       const { id } = req.params;
       const { status } = req.body;
 
-      if (!status || !Object.values(OrderStatus).includes(status)) {
-        throw new AppError(400, 'Estado inválido', 'INVALID_STATUS');
+      // Validar que el estado existe
+      const validStatuses = Object.values(OrderStatus);
+      
+      if (!status) {
+        throw new AppError(400, 'Estado requerido', 'STATUS_REQUIRED');
+      }
+
+      if (!validStatuses.includes(status as OrderStatus)) {
+        throw new AppError(
+          400, 
+          `Estado inválido. Estados válidos: ${validStatuses.join(', ')}`, 
+          'INVALID_STATUS'
+        );
       }
 
       // Only admin can update any order
-      const userId = req.user.role === 'ADMIN' ? undefined : req.user.id;
+      const userId = req.user.role === 'ADMIN' || req.user.role === 'SUPERADMIN' ? undefined : req.user.id;
 
       const order = await orderService.updateOrderStatus(id, status, userId);
       
@@ -113,7 +131,12 @@ export class OrderController {
       const { id } = req.params;
       const { reason } = req.body;
 
-      const order = await orderService.cancelOrder(id, req.user.id, reason);
+      // Si es admin o superadmin, puede cancelar cualquier pedido (no pasar userId)
+      // Si es usuario normal, solo puede cancelar sus propios pedidos (pasar userId)
+      const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPERADMIN';
+      const userId = isAdmin ? undefined : req.user.id;
+
+      const order = await orderService.cancelOrder(id, userId, reason);
       
       res.json({
         message: 'Pedido cancelado exitosamente',
@@ -148,6 +171,9 @@ export class OrderController {
       if (req.query.search) filters.search = req.query.search as string;
 
       const result = await orderService.getAllOrders(filters, page, limit);
+      console.log('📦 getAllOrders result:', result);
+      console.log('📦 getAllOrders type:', typeof result);
+      console.log('📦 getAllOrders JSON:', JSON.stringify(result, null, 2));
       res.json(result);
     } catch (error) {
       next(error);

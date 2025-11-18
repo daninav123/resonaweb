@@ -205,11 +205,83 @@ export class AuthService {
       return { message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña' };
     }
 
-    // TODO: Generate reset token and send email
-    // For now, just log
-    logger.info(`Password reset requested for: ${user.email}`);
+    // Generate reset token
+    const resetToken = jwt.sign(
+      { userId: user.id, type: 'password-reset' },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '1h' }
+    );
+
+    // Store token in database
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken,
+        resetTokenExpiry: new Date(Date.now() + 3600000), // 1 hour
+      },
+    });
+
+    // Send email
+    const emailService = (await import('./email.service')).emailService;
+    await emailService.sendPasswordResetEmail(user.email, resetToken);
+    
+    logger.info(`Password reset email sent to: ${user.email}`);
 
     return { message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña' };
+  }
+
+  /**
+   * Reset password with token
+   */
+  async resetPasswordWithToken(token: string, newPassword: string) {
+    try {
+      // Verify token
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'your-secret-key'
+      ) as any;
+
+      if (decoded.type !== 'password-reset') {
+        throw new AppError(400, 'Token inválido', 'INVALID_TOKEN');
+      }
+
+      // Find user and check token
+      const user = await prisma.user.findFirst({
+        where: {
+          id: decoded.userId,
+          resetToken: token,
+          resetTokenExpiry: {
+            gt: new Date(),
+          },
+        },
+      });
+
+      if (!user) {
+        throw new AppError(400, 'Token inválido o expirado', 'INVALID_TOKEN');
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+      // Update password and clear reset token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
+      });
+
+      logger.info(`Password reset successful for: ${user.email}`);
+
+      return { message: 'Contraseña actualizada correctamente' };
+    } catch (error) {
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new AppError(400, 'Token inválido', 'INVALID_TOKEN');
+      }
+      throw error;
+    }
   }
 }
 

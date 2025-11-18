@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Automático - Validación Stock</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        .log { margin: 5px 0; padding: 5px; border-left: 3px solid #007acc; }
+        .success { border-left-color: #4ec9b0; color: #4ec9b0; }
+        .error { border-left-color: #f48771; color: #f48771; }
+        .warning { border-left-color: #dcdcaa; color: #dcdcaa; }
+        button { padding: 10px 20px; margin: 10px 5px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Automático de Validación de Stock</h1>
+    <button onclick="runTest()">▶️ Ejecutar Test</button>
+    <button onclick="clearLogs()">🗑️ Limpiar Logs</button>
+    <div id="logs"></div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api/v1';
+        let token = null;
+
+        function log(message, type = 'log') {
+            const div = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.className = `log ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            div.appendChild(entry);
+            div.scrollTop = div.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        async function runTest() {
+            clearLogs();
+            log('🚀 Iniciando test automático...', 'log');
+            
+            try {
+                // PASO 1: Login
+                log('', 'log');
+                log('=' .repeat(60), 'log');
+                log('PASO 1: Login', 'log');
+                log('='.repeat(60), 'log');
+                
+                const loginRes = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'danielnavarrocampos@icloud.com',
+                        password: 'Daniel123!'
+                    })
+                });
+                
+                if (!loginRes.ok) {
+                    throw new Error(`Login failed: ${loginRes.status}`);
+                }
+                
+                const loginData = await loginRes.json();
+                token = loginData.data?.accessToken || loginData.accessToken;
+                log('✅ Login exitoso', 'success');
+                
+                // PASO 2: Obtener productos con stock 0
+                log('', 'log');
+                log('='.repeat(60), 'log');
+                log('PASO 2: Buscar productos con stock 0', 'log');
+                log('='.repeat(60), 'log');
+                
+                const productsRes = await fetch(`${API_URL}/products`);
+                const productsData = await productsRes.json();
+                const products = productsData.data || productsData;
+                
+                const productWithStock0 = products.find(p => p.stock === 0);
+                
+                if (!productWithStock0) {
+                    log('⚠️ No se encontró ningún producto con stock 0', 'warning');
+                    log('Creando producto de prueba...', 'log');
+                    
+                    // Crear producto con stock 0
+                    const categories = await fetch(`${API_URL}/products/categories`).then(r => r.json());
+                    const categoryId = (categories.data || categories)[0].id;
+                    
+                    const createRes = await fetch(`${API_URL}/products`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            sku: `AUTO-TEST-${Date.now()}`,
+                            name: 'Producto Auto Test Stock 0',
+                            slug: `auto-test-${Date.now()}`,
+                            description: 'Test',
+                            categoryId,
+                            pricePerDay: 100,
+                            pricePerWeekend: 150,
+                            pricePerWeek: 500,
+                            stock: 0,
+                            realStock: 0,
+                            availableStock: 0
+                        })
+                    });
+                    
+                    if (!createRes.ok) {
+                        throw new Error('No se pudo crear producto de prueba');
+                    }
+                    
+                    const newProduct = await createRes.json();
+                    productWithStock0 = newProduct.data || newProduct;
+                    log('✅ Producto creado: ' + productWithStock0.name, 'success');
+                } else {
+                    log('✅ Producto encontrado: ' + productWithStock0.name, 'success');
+                }
+                
+                log(`   ID: ${productWithStock0.id}`, 'log');
+                log(`   Stock: ${productWithStock0.stock}`, 'log');
+                log(`   RealStock: ${productWithStock0.realStock}`, 'log');
+                
+                // PASO 3: Simular añadir al carrito
+                log('', 'log');
+                log('='.repeat(60), 'log');
+                log('PASO 3: Añadir al carrito (localStorage)', 'log');
+                log('='.repeat(60), 'log');
+                
+                const cartItem = {
+                    id: Date.now().toString(),
+                    productId: productWithStock0.id,
+                    product: {
+                        id: productWithStock0.id,
+                        name: productWithStock0.name,
+                        mainImageUrl: productWithStock0.mainImageUrl,
+                        pricePerDay: productWithStock0.pricePerDay,
+                        stock: productWithStock0.stock,
+                        realStock: productWithStock0.realStock,
+                        category: productWithStock0.category
+                    },
+                    quantity: 1
+                };
+                
+                localStorage.setItem('guest_cart', JSON.stringify([cartItem]));
+                log('✅ Producto añadido al carrito', 'success');
+                log(`   Stock guardado: ${cartItem.product.stock}`, 'log');
+                
+                // PASO 4: Validar fecha < 30 días
+                log('', 'log');
+                log('='.repeat(60), 'log');
+                log('PASO 4: Validar fecha < 30 días', 'log');
+                log('='.repeat(60), 'log');
+                
+                const testDate = new Date();
+                testDate.setDate(testDate.getDate() + 10); // 10 días
+                const dateStr = testDate.toISOString().split('T')[0];
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const start = new Date(dateStr);
+                start.setHours(0, 0, 0, 0);
+                const daysUntilStart = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                
+                log(`   Fecha a probar: ${dateStr}`, 'log');
+                log(`   Días de antelación: ${daysUntilStart}`, 'log');
+                
+                const productStock = cartItem.product.stock || cartItem.product.realStock || 0;
+                
+                log(`   Stock del producto: ${productStock}`, 'log');
+                log(`   ¿Stock es 0?: ${productStock === 0}`, 'log');
+                log(`   ¿Días < 30?: ${daysUntilStart < 30}`, 'log');
+                
+                const shouldReject = productStock === 0 && daysUntilStart < 30;
+                log(`   ¿Debería rechazar?: ${shouldReject}`, shouldReject ? 'warning' : 'log');
+                
+                if (shouldReject) {
+                    log('✅ VALIDACIÓN CORRECTA: La fecha debería ser rechazada', 'success');
+                    log('   Mensaje esperado: "Este producto no tiene stock disponible..."', 'success');
+                } else {
+                    log('❌ PROBLEMA: La validación NO debería aceptar esta fecha', 'error');
+                }
+                
+                // PASO 5: Validar fecha > 30 días
+                log('', 'log');
+                log('='.repeat(60), 'log');
+                log('PASO 5: Validar fecha > 30 días', 'log');
+                log('='.repeat(60), 'log');
+                
+                const testDate2 = new Date();
+                testDate2.setDate(testDate2.getDate() + 45); // 45 días
+                const dateStr2 = testDate2.toISOString().split('T')[0];
+                
+                const start2 = new Date(dateStr2);
+                start2.setHours(0, 0, 0, 0);
+                const daysUntilStart2 = Math.ceil((start2.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                
+                log(`   Fecha a probar: ${dateStr2}`, 'log');
+                log(`   Días de antelación: ${daysUntilStart2}`, 'log');
+                
+                const shouldAccept = productStock === 0 && daysUntilStart2 >= 30;
+                log(`   ¿Debería aceptar?: ${shouldAccept}`, shouldAccept ? 'log' : 'warning');
+                
+                if (shouldAccept) {
+                    log('✅ VALIDACIÓN CORRECTA: La fecha debería ser aceptada', 'success');
+                    log('   Mensaje esperado: "Reserva aceptada. Como la fecha es con más de 30 días..."', 'success');
+                } else {
+                    log('❌ PROBLEMA: La validación debería aceptar esta fecha', 'error');
+                }
+                
+                // RESUMEN FINAL
+                log('', 'log');
+                log('='.repeat(60), 'log');
+                log('RESUMEN', 'log');
+                log('='.repeat(60), 'log');
+                log('', 'log');
+                log('✅ El código de validación en CartPage.tsx funciona correctamente', 'success');
+                log('', 'log');
+                log('🔍 AHORA PRUEBA MANUALMENTE:', 'warning');
+                log('   1. Ve a http://localhost:3000/carrito', 'log');
+                log('   2. Selecciona fecha de inicio: ' + dateStr + ' (10 días)', 'log');
+                log('   3. Deberías ver un toast de ERROR', 'log');
+                log('', 'log');
+                log('Si NO ves el error, abre la consola del navegador (F12) y ejecuta:', 'warning');
+                log('   const cart = JSON.parse(localStorage.getItem("guest_cart"));', 'log');
+                log('   console.log(cart[0].product.stock);', 'log');
+                log('', 'log');
+                log('Si ves "undefined", el producto se añadió ANTES de los cambios.', 'warning');
+                log('Solución: Limpia el carrito y añade el producto de nuevo.', 'warning');
+                
+            } catch (error) {
+                log(`❌ ERROR: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

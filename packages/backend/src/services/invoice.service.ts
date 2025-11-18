@@ -6,6 +6,7 @@ import puppeteer from 'puppeteer';
 import handlebars from 'handlebars';
 import fs from 'fs/promises';
 import path from 'path';
+import { companyService } from './company.service';
 
 interface InvoiceData {
   invoiceNumber: string;
@@ -20,6 +21,7 @@ interface InvoiceData {
   };
   company: {
     name: string;
+    ownerName?: string;
     address: string;
     phone: string;
     email: string;
@@ -109,25 +111,29 @@ export class InvoiceService {
       // Generate invoice number
       const invoiceNumber = await this.generateInvoiceNumber();
 
+      // Get company settings
+      const companySettings = await companyService.getSettings();
+
       // Prepare invoice data
       const invoiceData: InvoiceData = {
         invoiceNumber,
         date: new Date(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         customer: {
-          name: `${((order as any).user?.firstName || "")} ${((order as any).user?.lastName || "")}`,
+          name: `${((order as any).user?.firstName || "")} ${((order as any).user?.lastName || "")}`.trim() || 'Cliente',
           email: ((order as any).user?.email || ""),
           phone: ((order as any).user?.phone || ""),
           address: order.deliveryAddress || '',
           taxId: ((order as any).user?.taxId || ""),
         },
         company: {
-          name: 'ReSona Eventos S.L.',
-          address: 'Calle Principal 123, 28001 Madrid',
-          phone: '+34 900 123 456',
-          email: 'facturacion@resona.com',
-          taxId: 'B12345678',
-          logo: '/logo.png',
+          name: companySettings.companyName || 'ReSona Events S.L.',
+          ownerName: companySettings.ownerName || undefined,
+          address: `${companySettings.address || ''}, ${companySettings.postalCode || ''} ${companySettings.city || ''}`.trim(),
+          phone: companySettings.phone || '+34 600 123 456',
+          email: companySettings.email || 'info@resona.com',
+          taxId: companySettings.taxId || '',
+          logo: companySettings.logoUrl || '',
         },
         items: order.items.map(item => ({
           name: item.product.name,
@@ -138,11 +144,11 @@ export class InvoiceService {
           endDate: item.endDate,
         })),
         subtotal: Number(order.subtotal),
-        tax: Number(order.taxAmountAmount),
-        deliveryFee: Number(order.shippingCost),
+        tax: Number(order.taxAmount || 0),
+        deliveryFee: Number(order.shippingCost || 0),
         total: Number(order.total),
-        notes: order.notes || undefined,
-        terms: 'Pago a 30 días. Se aplicará un recargo del 2% por retraso en el pago.',
+        notes: companySettings.invoiceNotes || order.notes || undefined,
+        terms: companySettings.termsConditions || 'Gracias por confiar en nosotros.',
       };
 
       // Generate PDF
@@ -156,10 +162,11 @@ export class InvoiceService {
           issueDate: invoiceData.date,
           dueDate: invoiceData.dueDate,
           subtotal: invoiceData.subtotal,
+          taxAmount: invoiceData.tax,
           tax: invoiceData.tax,
           total: invoiceData.total,
           status: 'PENDING',
-          pdfUrl: `/invoices/${invoiceNumber} || "").pdf`, // We'll save to file system
+          pdfUrl: `/invoices/${invoiceNumber}.pdf`,
           metadata: invoiceData as any,
         },
       });
@@ -167,7 +174,7 @@ export class InvoiceService {
       // Save PDF to file system
       const invoicesDir = path.join(process.cwd(), 'uploads', 'invoices');
       await fs.mkdir(invoicesDir, { recursive: true });
-      await fs.writeFile(path.join(invoicesDir, `${invoiceNumber} || "").pdf`), pdfBuffer);
+      await fs.writeFile(path.join(invoicesDir, `${invoiceNumber}.pdf`), pdfBuffer);
 
       logger.info(`Invoice generated for order ${order.orderNumber}: ${invoiceNumber}`);
 
@@ -375,10 +382,15 @@ export class InvoiceService {
     <div class="header">
       <div class="company-info">
         <div class="company-name">{{company.name}}</div>
-        <div>{{company.address}}</div>
+        {{#if company.ownerName}}
+        <div style="font-size: 14px; margin-top: 5px;">{{company.ownerName}}</div>
+        {{/if}}
+        <div style="margin-top: 10px;">{{company.address}}</div>
         <div>Tel: {{company.phone}}</div>
         <div>Email: {{company.email}}</div>
-        <div>CIF: {{company.taxId}}</div>
+        {{#if company.taxId}}
+        <div>NIF/CIF: {{company.taxId}}</div>
+        {{/if}}
       </div>
       <div class="invoice-title">
         <div class="invoice-number">{{invoiceNumber}}</div>
@@ -492,7 +504,7 @@ export class InvoiceService {
 
       // This would integrate with notification service
       // For now, just log
-      logger.info(`Invoice email would be sent to ${((order as any).email || "")}`);
+      logger.info(`Invoice email would be sent to ${invoice.order?.user?.email || 'unknown'}`);
 
       return {
         success: true,
@@ -544,7 +556,7 @@ export class InvoiceService {
       const invoice = await this.getInvoiceById(invoiceId);
 
       // Check if PDF exists
-      const pdfPath = path.join(process.cwd(), 'uploads', 'invoices', `${invoice.invoiceNumber} || "").pdf`);
+      const pdfPath = path.join(process.cwd(), 'uploads', 'invoices', `${invoice.invoiceNumber}.pdf`);
       
       try {
         const pdfBuffer = await fs.readFile(pdfPath);

@@ -101,6 +101,14 @@ enum InteractionType {
   AVAILABILITY_CHECK
   ORDER_PLACED
   WISHLIST_ADD
+  PURCHASE
+}
+
+enum DistanceZone {
+  LOCAL        // 0-10km
+  REGIONAL     // 10-30km
+  EXTENDED     // 30-50km
+  CUSTOM       // 50+ km
 }
 
 enum NotificationType {
@@ -174,6 +182,10 @@ model User {
   updatedAt         DateTime  @updatedAt
   lastLoginAt       DateTime?
   
+  // Password reset
+  resetToken        String?       @db.Text
+  resetTokenExpiry  DateTime?
+  
   // Relaciones
   orders            Order[]
   reviews           Review[]
@@ -184,6 +196,10 @@ model User {
   customerNotes     CustomerNote[] @relation("CustomerNotes")
   notesCreated      CustomerNote[] @relation("NotesCreatedBy")
   blogPosts         BlogPost[]
+  orderNotes        OrderNote[]
+  coupons           Coupon[]
+  couponUsages      CouponUsage[]
+  userDiscount      UserDiscount?
   
   // Stripe
   stripeCustomerId  String?
@@ -216,6 +232,7 @@ model Category {
   
   // Relaciones
   products    Product[]
+  coupons     Coupon[]
   
   @@index([slug])
   @@index([parentId])
@@ -256,6 +273,13 @@ model Product {
   volume                  Decimal?  @db.Decimal(10, 2)
   dimensions              Json?
   requiresSpecialTransport Boolean  @default(false)
+  
+  // Costes de envío y montaje
+  shippingCost            Decimal   @default(0) @db.Decimal(10, 2)
+  installationCost        Decimal   @default(0) @db.Decimal(10, 2)
+  installationTimeMinutes Int       @default(0)
+  requiresInstallation    Boolean   @default(false)
+  installationComplexity  Int       @default(1) // 1=Simple, 2=Medio, 3=Complejo, 4=Avanzado
   
   // Fianza
   purchaseValue           Decimal?  @db.Decimal(10, 2)
@@ -301,6 +325,8 @@ model Product {
   favorites               Favorite[]
   interactions            ProductInteraction[]
   analytics               ProductDemandAnalytics?
+  productSpecs            ProductSpecification?
+  coupons                 Coupon[]
   
   @@index([categoryId])
   @@index([slug])
@@ -411,6 +437,11 @@ model Order {
   status                  OrderStatus   @default(PENDING)
   reviewRequested         Boolean       @default(false)
   
+  // Stripe Payment
+  stripePaymentIntentId   String?       @unique
+  stripeCustomerId        String?
+  paidAt                  DateTime?
+  
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
   confirmedAt             DateTime?
@@ -424,6 +455,13 @@ model Order {
   emailNotifications      EmailNotification[]
   delivery                Delivery?
   payment                 Payment?
+  orderNotes              OrderNote[]
+  couponUsages            CouponUsage[]
+  
+  // Descuentos aplicados
+  couponCode              String?
+  discountAmount          Decimal       @db.Decimal(10, 2) @default(0)
+  discountPercentage      Decimal?      @db.Decimal(5, 2)
   
   // Campos adicionales para compatibilidad
   totalAmount             Decimal       @db.Decimal(10, 2) @default(0)
@@ -438,6 +476,25 @@ model Order {
   @@index([startDate, endDate])
   @@index([orderNumber])
   @@index([paymentStatus])
+}
+
+model OrderNote {
+  id                String    @id @default(uuid())
+  orderId           String
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  
+  content           String    @db.Text
+  isInternal        Boolean   @default(false) // true = solo admin, false = visible para cliente
+  attachments       Json?     // URLs de archivos adjuntos si los hay
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([orderId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -952,4 +1009,208 @@ model BlogTag {
   updatedAt       DateTime        @updatedAt
   
   @@index([slug])
+}
+
+model ShippingConfig {
+  id                        String    @id @default(uuid())
+  
+  // Tarifas base por zona
+  localZoneMax              Int       @default(10)        // km
+  localZoneRate             Decimal   @default(15) @db.Decimal(10, 2)
+  
+  regionalZoneMax           Int       @default(30)        // km
+  regionalZoneRate          Decimal   @default(30) @db.Decimal(10, 2)
+  
+  extendedZoneMax           Int       @default(50)        // km
+  extendedZoneRate          Decimal   @default(50) @db.Decimal(10, 2)
+  
+  customZoneRatePerKm       Decimal   @default(1.5) @db.Decimal(10, 2)
+  
+  // Mínimos
+  minimumShippingCost       Decimal   @default(20) @db.Decimal(10, 2)
+  minimumWithInstallation   Decimal   @default(50) @db.Decimal(10, 2)
+  
+  // Dirección base para cálculo
+  baseAddress               String    @default("Madrid, España")
+  baseLatitude              Decimal?  @db.Decimal(10, 7)
+  baseLongitude             Decimal?  @db.Decimal(10, 7)
+  
+  // Configuración adicional
+  freeShippingThreshold     Decimal?  @db.Decimal(10, 2)  // Envío gratis si pedido > X€
+  urgentSurcharge           Decimal   @default(50) @db.Decimal(10, 2)
+  nightSurcharge            Decimal   @default(30) @db.Decimal(10, 2)
+  
+  isActive                  Boolean   @default(true)
+  
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+}
+
+model CompanySettings {
+  id                String    @id @default(uuid())
+  
+  // Datos de la empresa
+  companyName       String    @default("ReSona Events S.L.")
+  ownerName         String?   // Nombre del propietario/autónomo
+  taxId             String?   // NIF/CIF
+  
+  // Dirección
+  address           String?
+  city              String?
+  postalCode        String?
+  province          String?
+  country           String    @default("España")
+  
+  // Contacto
+  phone             String?
+  email             String?
+  website           String?
+  
+  // Logo y branding
+  logoUrl           String?
+  primaryColor      String    @default("#5ebbff")
+  
+  // Información legal
+  registryNumber    String?   // Número de registro mercantil
+  bankAccount       String?   // IBAN para pagos
+  
+  // Notas para facturas
+  invoiceNotes      String?   @db.Text
+  termsConditions   String?   @db.Text
+  
+  // Solo puede haber una configuración
+  isActive          Boolean   @default(true)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@map("company_settings")
+}
+
+// ============= SISTEMA DE CUPONES =============
+
+enum DiscountType {
+  PERCENTAGE    // Porcentaje de descuento
+  FIXED_AMOUNT  // Cantidad fija
+  FREE_SHIPPING // Envío gratis
+}
+
+enum CouponScope {
+  ALL_PRODUCTS    // Todos los productos
+  CATEGORY        // Categoría específica
+  PRODUCT         // Producto específico
+  USER            // Usuario específico
+}
+
+model Coupon {
+  id                String        @id @default(uuid())
+  code              String        @unique
+  description       String?
+  
+  // Tipo y valor del descuento
+  discountType      DiscountType  @default(PERCENTAGE)
+  discountValue     Decimal       @db.Decimal(10, 2)
+  
+  // Alcance del cupón
+  scope             CouponScope   @default(ALL_PRODUCTS)
+  categoryId        String?
+  category          Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  productId         String?
+  product           Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  userId            String?
+  user              User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Límites
+  minimumAmount     Decimal?      @db.Decimal(10, 2) // Monto mínimo de compra
+  maxDiscount       Decimal?      @db.Decimal(10, 2) // Descuento máximo (para porcentajes)
+  usageLimit        Int?          // Límite total de usos
+  usageCount        Int           @default(0) // Veces usado
+  usageLimitPerUser Int?          @default(1) // Límite por usuario
+  
+  // Validez
+  validFrom         DateTime      @default(now())
+  validTo           DateTime?
+  isActive          Boolean       @default(true)
+  
+  // Metadata
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relaciones
+  couponUsages      CouponUsage[]
+  
+  @@index([code])
+  @@index([scope])
+  @@index([isActive, validFrom, validTo])
+}
+
+model CouponUsage {
+  id                String        @id @default(uuid())
+  couponId          String
+  coupon            Coupon        @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id])
+  
+  discountApplied   Decimal       @db.Decimal(10, 2)
+  usedAt            DateTime      @default(now())
+  
+  @@unique([couponId, orderId])
+  @@index([userId])
+  @@index([couponId])
+}
+
+model UserDiscount {
+  id                String        @id @default(uuid())
+  userId            String        @unique
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Descuento permanente para usuarios VIP
+  discountType      DiscountType  @default(PERCENTAGE)
+  discountValue     Decimal       @db.Decimal(10, 2)
+  reason            String?       // "VIP", "Empleado", "Partner", etc.
+  
+  validFrom         DateTime      @default(now())
+  validTo           DateTime?
+  isActive          Boolean       @default(true)
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@index([userId])
+  @@index([isActive])
+}
+
+model ProductSpecification {
+  id                String        @id @default(uuid())
+  productId         String        @unique
+  product           Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Technical specifications as JSON
+  specs             Json?         @db.Json
+  
+  // Common specifications
+  power             String?       // Potencia (e.g., "1000W")
+  connectivity      String?       // Conectividad (e.g., "XLR, RCA")
+  compatibility     String?       // Compatibilidad
+  materials         String?       // Materiales
+  warranty          String?       // Garantía
+  
+  // Audio specifications
+  frequency         String?       // Respuesta de frecuencia
+  sensitivity       String?       // Sensibilidad
+  impedance         String?       // Impedancia
+  maxSPL            String?       // SPL máximo
+  
+  // Video/Light specifications
+  resolution        String?       // Resolución
+  brightness        String?       // Brillo/Lumens
+  colorTemp         String?       // Temperatura de color
+  beamAngle         String?       // Ángulo de haz
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@map("product_specifications")
 }

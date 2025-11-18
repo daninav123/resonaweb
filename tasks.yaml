@@ -1,0 +1,331 @@
+# TASKS TO COMPLETE PROJECT TO 100%
+# Current: 65% | Target: 100%
+
+project:
+  name: "ReSona Events"
+  current_progress: 65
+  target_progress: 100
+  estimated_hours: 20
+
+phases:
+  # ==================================================
+  # PHASE 1: COMPLETE COUPONS SYSTEM (15%)
+  # ==================================================
+  - id: phase_1
+    name: "Complete Coupons System"
+    progress_value: 15
+    tasks:
+      # Task 1.1: Admin UI for Coupons
+      - id: task_1_1
+        name: "Create CouponsManager Admin UI"
+        type: "frontend"
+        priority: "high"
+        estimated_hours: 4
+        files_to_create:
+          - "packages/frontend/src/pages/admin/CouponsManager.tsx"
+        files_to_modify:
+          - "packages/frontend/src/App.tsx"
+        subtasks:
+          - "Create CouponsManager component with table"
+          - "Add create/edit modal"
+          - "Implement CRUD operations"
+          - "Add VIP users management"
+          - "Add usage statistics"
+          - "Add route in App.tsx"
+        test_e2e:
+          name: "Test Admin Coupons CRUD"
+          steps:
+            - "Login as admin"
+            - "Navigate to /admin/coupons"
+            - "Create new coupon"
+            - "Edit existing coupon"
+            - "Delete coupon"
+            - "Verify changes in database"
+
+      # Task 1.2: Checkout Integration
+      - id: task_1_2
+        name: "Integrate Coupons in Checkout"
+        type: "frontend"
+        priority: "high"
+        estimated_hours: 3
+        files_to_modify:
+          - "packages/frontend/src/pages/CheckoutPage.tsx"
+          - "packages/frontend/src/pages/CheckoutPageStripe.tsx"
+          - "packages/backend/src/services/order.service.ts"
+        subtasks:
+          - "Add CouponInput to CheckoutPage"
+          - "Calculate totals with discount"
+          - "Display applied discount"
+          - "Save coupon in order"
+          - "Update CouponUsage on completion"
+        test_e2e:
+          name: "Test Checkout with Coupon"
+          steps:
+            - "Add products to cart"
+            - "Go to checkout"
+            - "Apply valid coupon"
+            - "Verify discount applied"
+            - "Complete order"
+            - "Verify coupon usage recorded"
+
+  # ==================================================
+  # PHASE 2: STOCK MANAGEMENT UI (5%)
+  # ==================================================
+  - id: phase_2
+    name: "Stock Management UI"
+    progress_value: 5
+    tasks:
+      - id: task_2_1
+        name: "Create StockManager Page"
+        type: "frontend"
+        priority: "high"
+        estimated_hours: 3
+        files_to_create:
+          - "packages/frontend/src/pages/admin/StockManager.tsx"
+          - "packages/frontend/src/services/stock.service.ts"
+        files_to_modify:
+          - "packages/frontend/src/App.tsx"
+          - "packages/backend/src/controllers/product.controller.ts"
+        subtasks:
+          - "Create StockManager component"
+          - "Products table with stock info"
+          - "Manual stock adjustment"
+          - "Movement history"
+          - "Low stock alerts"
+          - "Add backend endpoints if needed"
+        test_e2e:
+          name: "Test Stock Management"
+          steps:
+            - "Login as admin"
+            - "Navigate to /admin/stock"
+            - "Adjust product stock"
+            - "Verify stock updated"
+            - "Check movement history"
+            - "Test low stock alert"
+
+  # ==================================================
+  # PHASE 3: NOTIFICATIONS UI (5%)
+  # ==================================================
+  - id: phase_3
+    name: "Notifications UI System"
+    progress_value: 5
+    tasks:
+      - id: task_3_1
+        name: "Create Notifications UI"
+        type: "frontend"
+        priority: "medium"
+        estimated_hours: 3
+        files_to_create:
+          - "packages/frontend/src/components/notifications/NotificationBell.tsx"
+          - "packages/frontend/src/components/notifications/NotificationList.tsx"
+          - "packages/frontend/src/services/notification.service.ts"
+        files_to_modify:
+          - "packages/frontend/src/components/Layout/Header.tsx"
+        subtasks:
+          - "Create NotificationBell component"
+          - "Create NotificationList dropdown"
+          - "Integrate in Header"
+          - "Mark as read functionality"
+          - "Badge with unread count"
+          - "Connect to backend API"
+        test_e2e:
+          name: "Test Notifications"
+          steps:
+            - "Login as user"
+            - "Check notification bell"
+            - "Open notifications dropdown"
+            - "Mark notification as read"
+            - "Verify badge count updates"
+
+  # ==================================================
+  # PHASE 4: BUG FIXES (3%)
+  # ==================================================
+  - id: phase_4
+    name: "Fix Known Bugs"
+    progress_value: 3
+    tasks:
+      - id: task_4_1
+        name: "Fix All Known Bugs"
+        type: "bugfix"
+        priority: "high"
+        estimated_hours: 2
+        files_to_modify:
+          - "packages/frontend/src/pages/ProductsPage.tsx"
+          - "packages/frontend/src/pages/admin/OrderDetailPage.tsx"
+          - "packages/frontend/src/components/search/FilterPanel.tsx"
+          - "packages/backend/.env.example"
+        subtasks:
+          - "Remove console.logs in ProductsPage"
+          - "Fix order status enum mismatch"
+          - "Fix TypeScript types in FilterPanel"
+          - "Fix useEffect dependencies"
+          - "Add Stripe webhook secret to env"
+        test_e2e:
+          name: "Test Bug Fixes"
+          steps:
+            - "Open browser console"
+            - "Navigate all pages"
+            - "Verify no console errors"
+            - "Check TypeScript compilation"
+            - "Test order status change"
+
+  # ==================================================
+  # PHASE 5: EXTERNAL SERVICES CONFIG (2%)
+  # ==================================================
+  - id: phase_5
+    name: "External Services Configuration"
+    progress_value: 2
+    tasks:
+      - id: task_5_1
+        name: "Document External Services"
+        type: "documentation"
+        priority: "medium"
+        estimated_hours: 1
+        files_to_create:
+          - "packages/backend/.env.example"
+          - "EXTERNAL_SERVICES_SETUP.md"
+        subtasks:
+          - "Create complete .env.example"
+          - "Document SendGrid setup"
+          - "Document Cloudinary setup"
+          - "Add configuration guide"
+          - "Add troubleshooting section"
+        test_e2e:
+          name: "Test Services Health"
+          steps:
+            - "Check /api/health endpoint"
+            - "Verify email service status"
+            - "Verify image service status"
+
+  # ==================================================
+  # PHASE 6: SEO OPTIMIZATION (2%)
+  # ==================================================
+  - id: phase_6
+    name: "Complete SEO"
+    progress_value: 2
+    tasks:
+      - id: task_6_1
+        name: "Implement SEO Features"
+        type: "seo"
+        priority: "low"
+        estimated_hours: 2
+        files_to_create:
+          - "packages/frontend/public/robots.txt"
+          - "packages/frontend/src/utils/sitemap.generator.ts"
+          - "packages/backend/src/routes/sitemap.routes.ts"
+        files_to_modify:
+          - "packages/frontend/src/pages/*.tsx"
+        subtasks:
+          - "Generate sitemap.xml automatically"
+          - "Create robots.txt"
+          - "Add dynamic meta tags"
+          - "Add Open Graph tags"
+          - "Implement Schema.org for products"
+        test_e2e:
+          name: "Test SEO Implementation"
+          steps:
+            - "Access /sitemap.xml"
+            - "Check robots.txt"
+            - "Verify meta tags on pages"
+            - "Test Open Graph preview"
+            - "Validate Schema.org markup"
+
+  # ==================================================
+  # PHASE 7: SEARCH INTEGRATION (2%)
+  # ==================================================
+  - id: phase_7
+    name: "Complete Search Integration"
+    progress_value: 2
+    tasks:
+      - id: task_7_1
+        name: "Integrate Search in ProductsPage"
+        type: "frontend"
+        priority: "medium"
+        estimated_hours: 2
+        files_to_modify:
+          - "packages/frontend/src/pages/ProductsPage.tsx"
+        subtasks:
+          - "Integrate SearchBar component"
+          - "Connect FilterPanel"
+          - "Update URL with query params"
+          - "Maintain filter state"
+          - "Handle search results"
+        test_e2e:
+          name: "Test Search and Filters"
+          steps:
+            - "Navigate to /productos"
+            - "Search for 'camara'"
+            - "Apply price filter"
+            - "Apply category filter"
+            - "Sort by price"
+            - "Verify results update"
+
+  # ==================================================
+  # PHASE 8: AUTOMATED TESTING (1%)
+  # ==================================================
+  - id: phase_8
+    name: "Setup Automated Testing"
+    progress_value: 1
+    tasks:
+      - id: task_8_1
+        name: "Configure E2E Test Suite"
+        type: "testing"
+        priority: "low"
+        estimated_hours: 2
+        files_to_create:
+          - "e2e/playwright.config.ts"
+          - "e2e/tests/coupons.spec.ts"
+          - "e2e/tests/checkout.spec.ts"
+          - "e2e/tests/admin.spec.ts"
+          - ".github/workflows/e2e.yml"
+        subtasks:
+          - "Install Playwright/Cypress"
+          - "Write core E2E tests"
+          - "Setup test data"
+          - "Configure CI/CD"
+          - "Add test documentation"
+        test_e2e:
+          name: "Run Full Test Suite"
+          steps:
+            - "Run npm test"
+            - "Run E2E tests"
+            - "Generate test report"
+            - "Verify 100% pass rate"
+
+# ==================================================
+# EXECUTION ORDER
+# ==================================================
+execution_order:
+  - phase_1  # Coupons (Critical)
+  - phase_4  # Bug Fixes (Critical)
+  - phase_2  # Stock Management (High)
+  - phase_3  # Notifications (Medium)
+  - phase_7  # Search Integration (Medium)
+  - phase_5  # External Services (Medium)
+  - phase_6  # SEO (Low)
+  - phase_8  # Testing (Low)
+
+# ==================================================
+# SUCCESS METRICS
+# ==================================================
+success_metrics:
+  - metric: "All features implemented"
+    target: "100%"
+  - metric: "Zero console errors"
+    target: "0"
+  - metric: "TypeScript errors"
+    target: "0"
+  - metric: "E2E tests passing"
+    target: "100%"
+  - metric: "Documentation complete"
+    target: "100%"
+
+# ==================================================
+# COMPLETION CRITERIA
+# ==================================================
+completion_criteria:
+  - "All 8 phases completed"
+  - "All E2E tests passing"
+  - "No errors or warnings"
+  - "Documentation updated"
+  - "Ready for production deployment"

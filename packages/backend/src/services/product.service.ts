@@ -3,6 +3,53 @@ import { prisma } from '../index';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import slugify from 'slugify';
+import { cacheService, cacheKeys } from './cache.service';
+
+// Lock para serializar eliminaciones y evitar race conditions
+class DeletionLock {
+  private queue: Array<() => Promise<any>> = [];
+  private processing: boolean = false;
+
+  async acquire<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          const result = await fn();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+      
+      this.processQueue();
+    });
+  }
+
+  private async processQueue() {
+    if (this.processing || this.queue.length === 0) {
+      return;
+    }
+
+    this.processing = true;
+    const task = this.queue.shift();
+    
+    if (task) {
+      try {
+        await task();
+      } catch (error) {
+        logger.error('Error processing deletion task', error);
+      }
+    }
+
+    this.processing = false;
+    
+    if (this.queue.length > 0) {
+      this.processQueue();
+    }
+  }
+}
+
+const deletionLock = new DeletionLock();
 
 export class ProductService {
   /**
@@ -343,15 +390,14 @@ export class ProductService {
     });
 
     // Create product specifications if provided
-    // TODO: productSpecification model not implemented
-    // if (data.specifications && Object.keys(data.specifications).length > 0) {
-    //   await prisma.productSpecification.create({
-    //     data: {
-    //       productId: product.id,
-    //       specs: data.specifications,
-    //     },
-    //   });
-    // }
+    if (data.specifications && Object.keys(data.specifications).length > 0) {
+      await prisma.productSpecification.create({
+        data: {
+          productId: product.id,
+          specs: data.specifications,
+        },
+      });
+    }
 
     logger.info(`Product created: ${product.name} (${product.id})`);
 
@@ -427,22 +473,19 @@ export class ProductService {
       data.slug = slugify(data.name, { lower: true, strict: true });
     }
 
-    // Update available stock if stock changes
-    if (data.stock) {
-      // TODO: availableStock and status properties not in schema
-      // data.availableStock = data.stock;
-      
-      // Update status based on stock
-      // if (data.stock === 0) {
-      //   data.status = 'OUT_OF_STOCK';
-      // } else if (data.stock > 0 && existingProduct.status === 'OUT_OF_STOCK') {
-      //   data.status = 'AVAILABLE';
-      // }
-    }
-
     // Handle specifications update separately
-    // let specifications = data.specifications;
+    let specifications = data.specifications;
     delete data.specifications;
+    
+    // Update stock status if stock changes
+    if (data.stock !== undefined) {
+      const updateData: any = data;
+      if (data.stock === 0) {
+        updateData.stockStatus = 'OUT_OF_STOCK';
+      } else if (data.stock > 0 && existingProduct.stockStatus === 'OUT_OF_STOCK') {
+        updateData.stockStatus = 'IN_STOCK';
+      }
+    }
 
     // Update product
     const product = await prisma.product.update({
@@ -451,17 +494,16 @@ export class ProductService {
     });
 
     // Update specifications if provided
-    // TODO: productSpecification model not implemented
-    // if (specifications !== undefined) {
-    //   await prisma.productSpecification.upsert({
-    //     where: { productId: id },
-    //     update: { specs: specifications },
-    //     create: {
-    //       productId: id,
-    //       specs: specifications,
-    //     },
-    //   });
-    // }
+    if (specifications !== undefined) {
+      await prisma.productSpecification.upsert({
+        where: { productId: id },
+        update: { specs: specifications },
+        create: {
+          productId: id,
+          specs: specifications,
+        },
+      });
+    }
 
     logger.info(`Product updated: ${product.name} (${product.id})`);
 
@@ -470,16 +512,28 @@ export class ProductService {
 
   /**
    * Delete product (soft delete)
+   * Usa un lock para serializar las eliminaciones y evitar race conditions
    */
   async deleteProduct(id: string, force: boolean = false) {
+    return deletionLock.acquire(async () => {
+      return this._deleteProductInternal(id, force);
+    });
+  }
+
+  private async _deleteProductInternal(id: string, force: boolean = false) {
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
         _count: {
           select: {
             orderItems: true,
+            packItems: true,
+            reviews: true,
+            favorites: true,
+            interactions: true,
           },
         },
+        analytics: true,
       },
     });
 
@@ -487,8 +541,10 @@ export class ProductService {
       throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
     }
 
-    // Check if product has orders
-    if (product._count.orderItems > 0 && !force) {
+    // Check if product has orders or is in packs
+    const hasRelations = product._count.orderItems > 0 || product._count.packItems > 0;
+    
+    if (hasRelations && !force) {
       // Soft delete
       await prisma.product.update({
         where: { id },
@@ -500,17 +556,67 @@ export class ProductService {
 
       logger.info(`Product soft deleted: ${product.name} (${product.id})`);
 
-      return { message: 'Producto desactivado correctamente' };
+      return { message: 'Producto desactivado correctamente (tiene pedidos o está en packs)' };
     }
 
-    // Hard delete if no orders or force
-    await prisma.product.delete({
-      where: { id },
-    });
+    // Hard delete if no critical relations or force
+    try {
+      // Delete in transaction to handle all relationships
+      await prisma.$transaction(async (tx) => {
+        // Delete related data first
+        if (product.analytics) {
+          try {
+            await tx.productDemandAnalytics.delete({
+              where: { productId: id },
+            });
+          } catch (e) {
+            logger.warn(`No analytics to delete for product ${id}`);
+          }
+        }
 
-    logger.info(`Product deleted: ${product.name} (${product.id})`);
+        await tx.productInteraction.deleteMany({
+          where: { productId: id },
+        });
 
-    return { message: 'Producto eliminado correctamente' };
+        await tx.favorite.deleteMany({
+          where: { productId: id },
+        });
+
+        await tx.review.deleteMany({
+          where: { productId: id },
+        });
+
+        // Delete the product
+        await tx.product.delete({
+          where: { id },
+        });
+      }, {
+        maxWait: 5000, // Espera máxima para obtener la transacción
+        timeout: 10000, // Timeout total de la transacción
+      });
+
+      logger.info(`Product deleted: ${product.name} (${product.id})`);
+
+      return { message: 'Producto eliminado correctamente' };
+    } catch (error: any) {
+      logger.error('Error deleting product:', {
+        error: error.message,
+        stack: error.stack,
+        productId: id,
+        productName: product.name,
+      });
+      
+      // Proporcionar mensaje más específico
+      if (error.code === 'P2003') {
+        throw new AppError(500, 'No se puede eliminar el producto porque tiene relaciones pendientes. Contacta con soporte.', 'DELETE_CONSTRAINT_ERROR');
+      }
+      
+      if (error.code === 'P2025') {
+        throw new AppError(404, 'El producto ya no existe', 'PRODUCT_NOT_FOUND');
+      }
+      
+      throw new AppError(500, `Error al eliminar el producto: ${error.message}`, 'DELETE_ERROR');
+    }
   }
 
   /**

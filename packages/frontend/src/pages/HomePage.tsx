@@ -151,7 +151,7 @@ const HomePage = () => {
               {categories?.slice(0, 12).map((category: Category) => (
                 <Link
                   key={category.id}
-                  to={`/productos?categoria=${category.id}`}
+                  to={`/productos?category=${category.slug}`}
                   className="group"
                 >
                   <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">

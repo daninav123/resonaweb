@@ -23,14 +23,9 @@ const ProductDetailPage = () => {
   });
 
   const handleAddToCart = async () => {
-    // Validar disponibilidad real
-    if (product.stock === 0) {
-      toast.error('Lo sentimos, este producto no está disponible en este momento. Contacta con nosotros para más información.');
-      return;
-    }
-
     try {
-      // Usar siempre localStorage (backend no persiste aún)
+      // Permitir añadir incluso con stock 0
+      // La validación de disponibilidad se hará al asignar fechas
       guestCart.addItem(product, quantity);
       toast.success('Producto añadido al carrito. Selecciona las fechas en el carrito.');
     } catch (error: any) {
@@ -151,12 +146,25 @@ const ProductDetailPage = () => {
                 </button>
                 <span className="text-xl font-medium w-12 text-center">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() => {
+                    // Si no hay stock (stock = 0), permitir aumentar sin límite
+                    // Si hay stock, limitar a la cantidad disponible
+                    if (product.stock === 0) {
+                      setQuantity(quantity + 1);
+                    } else {
+                      setQuantity(Math.min(product.stock, quantity + 1));
+                    }
+                  }}
                   className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                 >
                   +
                 </button>
               </div>
+              {product.stock === 0 && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Producto bajo pedido - sin límite de cantidad
+                </p>
+              )}
             </div>
 
             {/* Actions */}

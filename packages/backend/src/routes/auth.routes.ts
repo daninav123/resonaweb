@@ -1,15 +1,17 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../utils/validation';
+import { validateRequest } from '../middleware/validation.middleware';
+import { body } from 'express-validator';
+import { authRateLimiter } from '../middleware/rateLimit.middleware';
 import {
+  validate,
   registerSchema,
   loginSchema,
   changePasswordSchema,
   refreshTokenSchema,
   resetPasswordRequestSchema,
 } from '../utils/validation';
-import { authRateLimiter } from '../middleware/rateLimit.middleware';
 
 const router = Router();
 

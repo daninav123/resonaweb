@@ -44,8 +44,11 @@ class ApiClient {
 
         // Handle 401 Unauthorized
         if (error.response?.status === 401 && !originalRequest._retry) {
-          // Si es el endpoint /auth/me, no intentar refresh
-          if (originalRequest.url?.includes('/auth/me')) {
+          // No intentar refresh para endpoints de auth
+          if (originalRequest.url?.includes('/auth/me') || 
+              originalRequest.url?.includes('/auth/login') || 
+              originalRequest.url?.includes('/auth/register') ||
+              originalRequest.url?.includes('/auth/refresh')) {
             return Promise.reject(error);
           }
           
@@ -75,11 +78,15 @@ class ApiClient {
           }
         }
 
-        // Handle other errors (no mostrar toast para auth/me 401)
-        if (error.response?.status === 401 && error.config?.url?.includes('/auth/me')) {
+        // Handle other errors (no mostrar toast para auth endpoints 401)
+        if (error.response?.status === 401 && 
+            (error.config?.url?.includes('/auth/me') || 
+             error.config?.url?.includes('/auth/refresh'))) {
           // Silencioso para auth checks
         } else if (error.response?.data?.error?.message) {
           toast.error(error.response.data.error.message);
+        } else if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
         } else if (error.message && error.response?.status !== 401) {
           toast.error(error.message);
         }

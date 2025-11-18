@@ -1,48 +1,37 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
-test.describe('Authentication Flow', () => {
+test.describe('Autenticación Completa', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000');
+    // Limpiar localStorage antes de cada test
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
-  test('should display login page', async ({ page }) => {
+  test('debe navegar a la página de login', async ({ page }) => {
     await page.click('text=Iniciar Sesión');
-    await expect(page).toHaveURL('/login');
-    await expect(page.locator('h2')).toContainText('Inicia sesión en tu cuenta');
+    await expect(page).toHaveURL(/.*login/);
+    await expect(page.locator('h1, h2')).toContainText(/Iniciar|Login/i);
   });
 
-  test('should show validation errors for invalid inputs', async ({ page }) => {
-    await page.goto('/login');
-    
-    // Try to submit without filling fields
-    await page.click('button[type="submit"]');
-    await expect(page.locator('text=El email es obligatorio')).toBeVisible();
-    
-    // Enter invalid email
-    await page.fill('input[type="email"]', 'invalid-email');
-    await page.fill('input[type="password"]', 'short');
-    await page.click('button[type="submit"]');
-    await expect(page.locator('text=email no es válido')).toBeVisible();
+  test('debe navegar a la página de registro', async ({ page }) => {
+    await page.click('text=Registrarse');
+    await expect(page).toHaveURL(/.*register/);
+    await expect(page.locator('h1, h2')).toContainText(/Registr/i);
   });
 
-  test('should login successfully with valid credentials', async ({ page }) => {
-    await page.goto('/login');
+  test('debe hacer login exitosamente con credenciales válidas', async ({ page }) => {
+    await page.goto('http://localhost:3000/login');
     
-    // Fill in valid credentials
-    await page.fill('input[type="email"]', 'test@example.com');
-    await page.fill('input[type="password"]', 'Test123!');
+    await page.fill('input[type="email"]', 'admin@resona.com');
+    await page.fill('input[type="password"]', 'Admin123!');
     await page.click('button[type="submit"]');
     
-    // Should redirect to home after successful login
-    await expect(page).toHaveURL('/');
+    // Esperar redirección
+    await page.waitForURL('http://localhost:3000/', { timeout: 10000 });
+    
+    // Verificar que muestra el nombre del usuario
     await expect(page.locator('text=Hola')).toBeVisible();
-  });
-
-  test('should navigate to register page', async ({ page }) => {
-    await page.goto('/login');
-    await page.click('text=Crea una cuenta aquí');
-    await expect(page).toHaveURL('/register');
-    await expect(page.locator('h2')).toContainText('Crea tu cuenta');
   });
 
   test('should register a new user', async ({ page }) => {

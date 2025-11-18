@@ -22,7 +22,7 @@ const BlogManager = () => {
     metaKeywords: '',
     categoryId: '',
     tags: [] as string[],
-    status: 'DRAFT' as 'DRAFT' | 'SCHEDULED' | 'PUBLISHED',
+    status: 'DRAFT' as 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED',
     scheduledFor: '',
   });
 
@@ -43,8 +43,9 @@ const BlogManager = () => {
       console.log('Categories data:', categoriesData);
       console.log('Stats data:', statsData);
       
-      setPosts(postsData?.posts || []);
-      setCategories(categoriesData || []);
+      const posts = (postsData as any).data || [];
+      setPosts(posts);
+      setCategories((categoriesData as any) || []);
       setStats(statsData || null);
     } catch (error: any) {
       console.error('Error cargando datos del blog:', error);
@@ -79,11 +80,17 @@ const BlogManager = () => {
     e.preventDefault();
     
     try {
+      // Filtrar ARCHIVED si existe, ya que no es válido para crear/actualizar
+      const dataToSend = {
+        ...formData,
+        status: formData.status === 'ARCHIVED' ? 'DRAFT' : formData.status as 'DRAFT' | 'SCHEDULED' | 'PUBLISHED'
+      };
+      
       if (editingPost) {
-        await blogService.updatePost(editingPost.id, formData);
+        await blogService.updatePost(editingPost.id, dataToSend);
         toast.success('Artículo actualizado');
       } else {
-        await blogService.createPost(formData);
+        await blogService.createPost(dataToSend);
         toast.success('Artículo creado');
       }
       
@@ -141,7 +148,7 @@ const BlogManager = () => {
     const loadingToast = toast.loading('IA generando artículo profesional... (30-60 seg)');
     
     try {
-      const result = await blogService.generateWithAI();
+      const result = await blogService.generateWithAI() as any;
       toast.dismiss(loadingToast);
       
       if (result && result.post) {

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt.utils';
 import { prisma } from '../index';
 import { AppError } from './error.middleware';
+import { tokenBlacklistService } from '../services/tokenBlacklist.service';
 
 /**
  * Middleware to authenticate JWT tokens
@@ -22,6 +23,12 @@ export const authenticate = async (
     // Extract token
     const token = authHeader.substring(7);
 
+    // Check if token is blacklisted
+    const isBlacklisted = await tokenBlacklistService.isBlacklisted(token);
+    if (isBlacklisted) {
+      throw new AppError(401, 'Token inválido', 'TOKEN_BLACKLISTED');
+    }
+
     // Verify token
     const payload = verifyAccessToken(token);
 
@@ -36,6 +43,7 @@ export const authenticate = async (
 
     // Attach user to request
     req.user = user;
+    req.token = token; // Store token for logout
 
     next();
   } catch (error: any) {

@@ -6,8 +6,8 @@ import { logger } from '../utils/logger';
 interface CartItem {
   productId: string;
   quantity: number;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: Date | string | null;
+  endDate: Date | string | null;
 }
 
 interface CartData {
@@ -247,8 +247,10 @@ export class CartService {
 
         if (!product) continue;
 
-        const startDate = new Date(item.startDate);
-        const endDate = new Date(item.endDate);
+        if (!item.startDate || !item.endDate) continue;
+        
+        const startDate = new Date(item.startDate!);
+        const endDate = new Date(item.endDate!);
         const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
         let pricePerUnit = 0;
@@ -314,14 +316,34 @@ export class CartService {
           errors.push(`Producto ${product.name} no está disponible`);
         }
 
-        if (product.stock < item.quantity) {
-          errors.push(`Stock insuficiente para ${product.name}. Disponible: ${product.stock}`);
+        // Validate dates first (needed for stock validation)
+        if (!item.startDate || !item.endDate) {
+          errors.push(`Fechas requeridas para ${product.name}`);
+          continue;
         }
-
-        // Validate dates
-        const startDate = new Date(item.startDate);
-        const endDate = new Date(item.endDate);
+        
+        const startDate = new Date(item.startDate!);
+        const endDate = new Date(item.endDate!);
         const now = new Date();
+        
+        // Calcular días de antelación
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const daysUntilStart = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+        // Stock validation con lógica de "producto bajo pedido"
+        if (product.stock <= 0) {
+          // Producto sin stock o con stock negativo (reservado): requiere 30 días de antelación
+          if (daysUntilStart < 30) {
+            errors.push(`"${product.name}" no está disponible para las fechas seleccionadas. Este producto está bajo pedido y requiere al menos 30 días de antelación (seleccionaste ${daysUntilStart} días).`);
+          }
+          // Si >= 30 días, se permite el pedido (bajo pedido)
+        } else if (product.stock < item.quantity) {
+          // Producto con stock positivo pero insuficiente: validación normal
+          errors.push(`Stock insuficiente para ${product.name}. Disponible: ${product.stock}, solicitado: ${item.quantity}`);
+        }
 
         if (startDate < now) {
           errors.push(`La fecha de inicio para ${product.name} debe ser futura`);

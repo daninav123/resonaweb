@@ -17,7 +17,14 @@ import { lazy, Suspense } from 'react';
 
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
+const TestStockPage = lazy(() => import('./pages/TestStockPage'));
+const TestStockE2EPage = lazy(() => import('./pages/TestStockE2EPage'));
+const TestCheckoutE2EPage = lazy(() => import('./pages/TestCheckoutE2EPage'));
+const TestFullOrderFlowPage = lazy(() => import('./pages/TestFullOrderFlowPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const CheckoutPageStripe = lazy(() => import('./pages/CheckoutPageStripe'));
+const PaymentSuccessPage = lazy(() => import('./pages/checkout/PaymentSuccessPage'));
+const PaymentErrorPage = lazy(() => import('./pages/checkout/PaymentErrorPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
@@ -30,13 +37,23 @@ const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
 const OrdersManager = lazy(() => import('./pages/admin/OrdersManager'));
+const OrderDetailPage = lazy(() => import('./pages/admin/OrderDetailPage'));
+const ShippingConfigPage = lazy(() => import('./pages/admin/ShippingConfigPage'));
 const UsersManager = lazy(() => import('./pages/admin/UsersManager'));
 const CalendarManager = lazy(() => import('./pages/admin/CalendarManager'));
 const SettingsManager = lazy(() => import('./pages/admin/SettingsManager'));
 const CategoriesManager = lazy(() => import('./pages/admin/CategoriesManager'));
 const OnDemandDashboard = lazy(() => import('./pages/admin/OnDemandDashboard'));
+const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManagerNew'));
+const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
+const StockManager = lazy(() => import('./pages/admin/StockManager'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
+const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
+const TermsPage = lazy(() => import('./pages/legal/TermsPage'));
+const PrivacyPage = lazy(() => import('./pages/legal/PrivacyPage'));
+const CookiesPage = lazy(() => import('./pages/legal/CookiesPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 
 // Loading component
@@ -79,6 +96,10 @@ function App() {
             <Route path="/productos" element={<Layout><ProductsPage /></Layout>} />
             <Route path="/productos/:slug" element={<Layout><ProductDetailPage /></Layout>} />
             <Route path="/carrito" element={<Layout><CartPage /></Layout>} />
+            <Route path="/test-stock" element={<Layout><TestStockPage /></Layout>} />
+            <Route path="/test-stock-e2e" element={<Layout><TestStockE2EPage /></Layout>} />
+            <Route path="/test-checkout-e2e" element={<Layout><TestCheckoutE2EPage /></Layout>} />
+            <Route path="/test-full-order" element={<Layout><TestFullOrderFlowPage /></Layout>} />
             <Route path="/calculadora-evento" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/servicios" element={<Layout><ServicesPage /></Layout>} />
             <Route path="/contacto" element={<Layout><ContactPage /></Layout>} />
@@ -88,6 +109,11 @@ function App() {
             <Route path="/blog" element={<Layout><BlogListPage /></Layout>} />
             <Route path="/blog/:slug" element={<Layout><BlogPostPage /></Layout>} />
             
+            {/* Legal Pages */}
+            <Route path="/legal/terminos" element={<Layout><TermsPage /></Layout>} />
+            <Route path="/legal/privacidad" element={<Layout><PrivacyPage /></Layout>} />
+            <Route path="/legal/cookies" element={<Layout><CookiesPage /></Layout>} />
+            
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -95,6 +121,9 @@ function App() {
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
+              <Route path="/checkout/stripe" element={<Layout><CheckoutPageStripe /></Layout>} />
+              <Route path="/checkout/success" element={<Layout><PaymentSuccessPage /></Layout>} />
+              <Route path="/checkout/error" element={<Layout><PaymentErrorPage /></Layout>} />
               <Route path="/cuenta" element={<Layout><AccountPage /></Layout>} />
               <Route path="/mis-pedidos" element={<Layout><OrdersPage /></Layout>} />
               <Route path="/favoritos" element={<Layout><FavoritesPage /></Layout>} />
@@ -107,15 +136,21 @@ function App() {
               <Route path="/admin/categories" element={<Layout><CategoriesManager /></Layout>} />
               <Route path="/admin/on-demand" element={<Layout><OnDemandDashboard /></Layout>} />
               <Route path="/admin/orders" element={<Layout><OrdersManager /></Layout>} />
+              <Route path="/admin/orders/:id" element={<Layout><OrderDetailPage /></Layout>} />
               <Route path="/admin/users" element={<Layout><UsersManager /></Layout>} />
+              <Route path="/admin/company-settings" element={<Layout><CompanySettingsPage /></Layout>} />
               <Route path="/admin/calendar" element={<Layout><CalendarManager /></Layout>} />
               <Route path="/admin/blog" element={<Layout><BlogManager /></Layout>} />
+              <Route path="/admin/calculator" element={<Layout><CalculatorManager /></Layout>} />
+              <Route path="/admin/coupons" element={<Layout><CouponsManager /></Layout>} />
+              <Route path="/admin/stock" element={<Layout><StockManager /></Layout>} />
               <Route path="/admin/settings" element={<Layout><SettingsManager /></Layout>} />
+              <Route path="/admin/shipping-config" element={<Layout><ShippingConfigPage /></Layout>} />
               <Route path="/admin/*" element={<Layout><AdminDashboard /></Layout>} />
             </Route>
             
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* 404 - Not Found */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
         

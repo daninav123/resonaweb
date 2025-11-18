@@ -108,14 +108,31 @@ export class AuthController {
   }
 
   /**
-   * Logout (client-side, but we can use it to blacklist tokens in the future)
+   * Logout (blacklists token)
    */
-  async logout(req: Request, res: Response, next: NextFunction) {
+  async logout(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      // TODO: Implement token blacklist if needed
-      res.json({
-        message: 'Sesión cerrada exitosamente',
-      });
+      // Get token from request (added by auth middleware)
+      const token = req.token || req.headers.authorization?.substring(7);
+      
+      if (token) {
+        // Calculate token expiration (default 24h)
+        const tokenExpiry = 24 * 60 * 60; // 24 hours in seconds
+        
+        // Import the service
+        const { tokenBlacklistService } = await import('../services/tokenBlacklist.service');
+        
+        // Add token to blacklist
+        await tokenBlacklistService.addToken(token, tokenExpiry);
+        
+        res.json({
+          message: 'Sesión cerrada exitosamente',
+        });
+      } else {
+        res.json({
+          message: 'No hay sesión activa',
+        });
+      }
     } catch (error) {
       next(error);
     }

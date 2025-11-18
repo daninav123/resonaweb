@@ -9,6 +9,8 @@ export interface GuestCartItem {
     name: string;
     mainImageUrl?: string;
     pricePerDay: number;
+    stock?: number;
+    realStock?: number;
     category?: {
       name: string;
     };
@@ -52,6 +54,8 @@ export const guestCart = {
         name: product.name,
         mainImageUrl: product.mainImageUrl,
         pricePerDay: product.pricePerDay,
+        stock: product.stock,
+        realStock: product.realStock,
         category: product.category,
       },
       quantity,

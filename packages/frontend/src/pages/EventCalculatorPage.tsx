@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calculator, Users, Calendar, Clock, Package, ChevronRight, ChevronLeft, Mail } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronLeft, ChevronRight, Calculator, Users, Clock, Calendar, Package, Mail, Plus, Minus } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { serviceSchema } from '../utils/schemas';
+import { DEFAULT_CALCULATOR_CONFIG, SERVICE_LEVEL_LABELS } from '../types/calculator.types';
+import { productService } from '../services/product.service';
+
+type ServiceLevel = 'none' | 'basic' | 'intermediate' | 'professional' | 'premium';
 
 interface EventData {
   eventType: string;
@@ -10,11 +15,12 @@ interface EventData {
   duration: number;
   durationType: 'hours' | 'days';
   eventDate: string;
-  needsSound: boolean;
-  needsLighting: boolean;
-  needsPhoto: boolean;
-  needsFurniture: boolean;
-  needsDecor: boolean;
+  // Partes seleccionadas (IDs de las partes que el cliente quiere)
+  selectedParts: string[];
+  // Productos del catálogo seleccionados { productId: quantity }
+  selectedProducts: Record<string, number>;
+  soundLevel: ServiceLevel;
+  lightingLevel: ServiceLevel;
   email?: string;
 }
 
@@ -24,33 +30,89 @@ const EventCalculatorPage = () => {
   const [eventData, setEventData] = useState<EventData>({
     eventType: '',
     attendees: 50,
-    duration: 1,
-    durationType: 'days',
+    duration: 4,
+    durationType: 'hours',
     eventDate: '',
-    needsSound: false,
-    needsLighting: false,
-    needsPhoto: false,
-    needsFurniture: false,
-    needsDecor: false,
+    selectedParts: [],
+    selectedProducts: {},
+    soundLevel: 'none',
+    lightingLevel: 'none',
   });
 
-  const eventTypes = [
-    { id: 'boda', name: 'Boda', icon: '💒', multiplier: 1.5 },
-    { id: 'conferencia', name: 'Conferencia', icon: '🎤', multiplier: 1.2 },
-    { id: 'concierto', name: 'Concierto', icon: '🎵', multiplier: 1.8 },
-    { id: 'fiesta', name: 'Fiesta Privada', icon: '🎉', multiplier: 1.0 },
-    { id: 'corporativo', name: 'Evento Corporativo', icon: '💼', multiplier: 1.3 },
-    { id: 'otro', name: 'Otro', icon: '📅', multiplier: 1.0 },
+  // Cargar configuración desde el gestor de admin
+  const [calculatorConfig, setCalculatorConfig] = useState(() => {
+    const saved = localStorage.getItem('advancedCalculatorConfig');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return DEFAULT_CALCULATOR_CONFIG;
+      }
+    }
+    return DEFAULT_CALCULATOR_CONFIG;
+  });
+
+  const eventTypes = calculatorConfig.eventTypes.map((et: any) => ({
+    id: et.id,
+    name: et.name,
+    icon: et.icon,
+    multiplier: et.multiplier,
+    parts: et.parts || [],
+  }));
+
+  // Precios base por categoría y nivel (por día)
+  const basePrices = calculatorConfig.servicePrices;
+
+  // Cargar productos del catálogo
+  const { data: catalogProducts = [] } = useQuery({
+    queryKey: ['catalog-products'],
+    queryFn: async () => {
+      const result = await productService.getProducts({ limit: 100 });
+      return result || [];
+    },
+  });
+
+  // Cargar categorías
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const result = await productService.getCategories();
+      return result || [];
+    },
+  });
+
+  const serviceLevels = [
+    { value: 'none', label: 'No necesito', multiplier: 0 },
+    { value: 'basic', label: 'Básico', multiplier: 1 },
+    { value: 'intermediate', label: 'Intermedio', multiplier: 1 },
+    { value: 'professional', label: 'Profesional', multiplier: 1 },
+    { value: 'premium', label: 'Premium', multiplier: 1 },
   ];
 
-  // Precios base por categoría (por día)
-  const basePrices = {
-    sound: 150,      // Sonido
-    lighting: 120,   // Iluminación
-    photo: 200,      // Fotografía/Video
-    furniture: 80,   // Mobiliario
-    decor: 100,      // Decoración
+  // Función para recomendar nivel de servicio basado en asistentes
+  const getRecommendedLevel = (attendees: number, serviceType: 'sound' | 'lighting'): ServiceLevel => {
+    // Rangos de asistentes para recomendaciones
+    if (attendees <= 50) return 'basic';
+    if (attendees <= 100) return 'intermediate';
+    if (attendees <= 200) return 'professional';
+    return 'premium';
   };
+
+  // Aplicar recomendaciones automáticamente cuando cambian los asistentes o se llega al paso 5
+  useEffect(() => {
+    if (step === 5 && eventData.attendees > 0) {
+      // Solo aplicar si aún no se ha seleccionado nada
+      if (eventData.soundLevel === 'none' && eventData.lightingLevel === 'none') {
+        const recommendedSound = getRecommendedLevel(eventData.attendees, 'sound');
+        const recommendedLighting = getRecommendedLevel(eventData.attendees, 'lighting');
+        setEventData({
+          ...eventData,
+          soundLevel: recommendedSound,
+          lightingLevel: recommendedLighting,
+        });
+      }
+    }
+  }, [step]);
 
   const calculateEstimate = () => {
     const selectedType = eventTypes.find(t => t.id === eventData.eventType);
@@ -65,43 +127,68 @@ const EventCalculatorPage = () => {
       : eventData.duration;
 
     let total = 0;
-    const breakdown: { category: string; amount: number }[] = [];
+    const breakdown: { category: string; level: string; amount: number }[] = [];
 
-    if (eventData.needsSound) {
-      const amount = Math.round(basePrices.sound * multiplier * attendeeFactor * durationInDays);
-      breakdown.push({ category: '🎵 Sonido', amount });
+    // Productos del catálogo
+    Object.entries(eventData.selectedProducts).forEach(([productId, quantity]) => {
+      const product = catalogProducts.find((p: any) => p._id === productId);
+      if (product && quantity > 0) {
+        const amount = Math.round(product.price * quantity * durationInDays);
+        breakdown.push({
+          category: product.name,
+          level: `${quantity} unidad${quantity > 1 ? 'es' : ''}`,
+          amount
+        });
+        total += amount;
+      }
+    });
+
+    // Sonido (nivel general)
+    if (eventData.soundLevel !== 'none') {
+      const basePrice = basePrices.sound[eventData.soundLevel as keyof typeof basePrices.sound];
+      const amount = Math.round(basePrice * multiplier * attendeeFactor * durationInDays);
+      breakdown.push({ 
+        category: '🎵 Sonido (Servicios adicionales)', 
+        level: serviceLevels.find(l => l.value === eventData.soundLevel)?.label || '',
+        amount 
+      });
       total += amount;
     }
-    if (eventData.needsLighting) {
-      const amount = Math.round(basePrices.lighting * multiplier * attendeeFactor * durationInDays);
-      breakdown.push({ category: '💡 Iluminación', amount });
-      total += amount;
-    }
-    if (eventData.needsPhoto) {
-      const amount = Math.round(basePrices.photo * multiplier * durationInDays);
-      breakdown.push({ category: '📷 Fotografía/Video', amount });
-      total += amount;
-    }
-    if (eventData.needsFurniture) {
-      const amount = Math.round(basePrices.furniture * attendeeFactor * durationInDays);
-      breakdown.push({ category: '🪑 Mobiliario', amount });
-      total += amount;
-    }
-    if (eventData.needsDecor) {
-      const amount = Math.round(basePrices.decor * multiplier * durationInDays);
-      breakdown.push({ category: '✨ Decoración', amount });
+
+    // Iluminación (nivel general)
+    if (eventData.lightingLevel !== 'none') {
+      const basePrice = basePrices.lighting[eventData.lightingLevel as keyof typeof basePrices.lighting];
+      const amount = Math.round(basePrice * multiplier * attendeeFactor * durationInDays);
+      breakdown.push({ 
+        category: '💡 Iluminación (Servicios adicionales)', 
+        level: serviceLevels.find(l => l.value === eventData.lightingLevel)?.label || '',
+        amount 
+      });
       total += amount;
     }
 
     return { total, breakdown };
   };
 
+  const selectedEventType = eventTypes.find(et => et.id === eventData.eventType);
+  const hasParts = selectedEventType?.parts && selectedEventType.parts.length > 0;
+
   const handleNext = () => {
-    if (step < 4) setStep(step + 1);
+    // Si estamos en paso 2 (Detalles) y el evento NO tiene partes, saltar al paso 4 (Equipos)
+    if (step === 2 && !hasParts) {
+      setStep(4);
+    } else if (step < 6) {
+      setStep(step + 1);
+    }
   };
 
   const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+    // Si estamos en paso 4 (Equipos) y el evento NO tiene partes, volver al paso 2
+    if (step === 4 && !hasParts) {
+      setStep(2);
+    } else if (step > 1) {
+      setStep(step - 1);
+    }
   };
 
   const handleRequestQuote = () => {
@@ -114,7 +201,13 @@ const EventCalculatorPage = () => {
     });
   };
 
-  const estimate = step === 4 ? calculateEstimate() : null;
+  const estimate = step === 6 ? calculateEstimate() : null;
+
+  // Determinar el total de pasos según si el evento tiene partes
+  const totalSteps = hasParts ? 6 : 5;
+  const stepLabels = hasParts
+    ? ['Tipo', 'Detalles', 'Partes', 'Equipos', 'Resumen', 'Presupuesto']
+    : ['Tipo', 'Detalles', 'Equipos', 'Resumen', 'Presupuesto'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12">
@@ -142,20 +235,33 @@ const EventCalculatorPage = () => {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            {[1, 2, 3, 4].map((s) => (
-              <div
-                key={s}
-                className={`flex-1 h-2 mx-1 rounded-full transition-all ${
-                  s <= step ? 'bg-resona' : 'bg-gray-200'
-                }`}
-              />
-            ))}
+            {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => {
+              // Si NO tiene partes y el paso es > 2, ajustar el número de paso actual
+              const adjustedCurrentStep = !hasParts && step > 2 ? step + 1 : step;
+              const isActive = s <= adjustedCurrentStep;
+              
+              return (
+                <div
+                  key={s}
+                  className={`flex-1 h-2 mx-1 rounded-full transition-all ${
+                    isActive ? 'bg-resona' : 'bg-gray-200'
+                  }`}
+                />
+              );
+            })}
           </div>
           <div className="flex justify-between text-sm text-gray-600">
-            <span className={step >= 1 ? 'text-resona font-medium' : ''}>Tipo de Evento</span>
-            <span className={step >= 2 ? 'text-resona font-medium' : ''}>Detalles</span>
-            <span className={step >= 3 ? 'text-resona font-medium' : ''}>Necesidades</span>
-            <span className={step >= 4 ? 'text-resona font-medium' : ''}>Presupuesto</span>
+            {stepLabels.map((label, index) => {
+              const stepNum = index + 1;
+              const adjustedCurrentStep = !hasParts && step > 2 ? step + 1 : step;
+              const isActive = stepNum <= adjustedCurrentStep;
+              
+              return (
+                <span key={label} className={isActive ? 'text-resona font-medium' : ''}>
+                  {label}
+                </span>
+              );
+            })}
           </div>
         </div>
 
@@ -255,55 +361,262 @@ const EventCalculatorPage = () => {
             </div>
           )}
 
-          {/* Step 3: Needs */}
-          {step === 3 && (
+          {/* Step 3: Event Parts (para eventos con partes definidas) */}
+          {step === 3 && hasParts && selectedEventType && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6 text-center">
-                ¿Qué necesitas para tu evento?
+                ¿Qué partes tendrá tu {selectedEventType.name.toLowerCase()}?
               </h2>
+              <p className="text-center text-gray-600 mb-8">
+                Selecciona las diferentes fases de tu evento
+              </p>
               <div className="space-y-4">
-                {[
-                  { key: 'needsSound', icon: '🎵', label: 'Sonido', desc: 'Micrófonos, altavoces, mesas de mezcla' },
-                  { key: 'needsLighting', icon: '💡', label: 'Iluminación', desc: 'Focos, proyectores, luces LED' },
-                  { key: 'needsPhoto', icon: '📷', label: 'Fotografía/Video', desc: 'Cámaras, objetivos, equipos de grabación' },
-                  { key: 'needsFurniture', icon: '🪑', label: 'Mobiliario', desc: 'Mesas, sillas, carpas' },
-                  { key: 'needsDecor', icon: '✨', label: 'Decoración', desc: 'Elementos decorativos para tu evento' },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => setEventData({ ...eventData, [item.key]: !eventData[item.key as keyof EventData] })}
-                    className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                      eventData[item.key as keyof EventData]
-                        ? 'border-resona bg-resona/5'
-                        : 'border-gray-200 hover:border-resona/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="text-3xl">{item.icon}</div>
-                      <div className="flex-1">
-                        <div className="font-semibold text-gray-900">{item.label}</div>
-                        <div className="text-sm text-gray-600">{item.desc}</div>
+                {selectedEventType.parts.map((part: any) => {
+                  const isSelected = eventData.selectedParts.includes(part.id);
+                  return (
+                    <button
+                      key={part.id}
+                      onClick={() => {
+                        const newSelectedParts = isSelected
+                          ? eventData.selectedParts.filter(id => id !== part.id)
+                          : [...eventData.selectedParts, part.id];
+                        setEventData({ ...eventData, selectedParts: newSelectedParts });
+                      }}
+                      className={`w-full p-5 rounded-lg border-2 transition-all text-left hover:shadow-md ${
+                        isSelected
+                          ? 'border-resona bg-resona/10 shadow-lg'
+                          : 'border-gray-200 hover:border-resona/50 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="text-4xl">{part.icon}</div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-gray-900 text-lg">{part.name}</div>
+                          <div className="text-sm text-gray-600">{part.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Duración: {part.defaultDuration}h • Sonido: {part.soundLevel} • Iluminación: {part.lightingLevel}
+                          </div>
+                        </div>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                          isSelected
+                            ? 'border-resona bg-resona scale-110'
+                            : 'border-gray-300'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
                       </div>
-                      <div className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
-                        eventData[item.key as keyof EventData]
-                          ? 'border-resona bg-resona'
-                          : 'border-gray-300'
-                      }`}>
-                        {eventData[item.key as keyof EventData] && (
-                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Consejo:</strong> Cada parte del evento puede requerir equipamiento diferente. 
+                  Esto nos ayudará a calcular mejor tu presupuesto.
+                </p>
               </div>
             </div>
           )}
 
-          {/* Step 4: Estimate */}
-          {step === 4 && estimate && (
+          {/* Step 4: Equipment Selection */}
+          {step === 4 && (
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-bold mb-6 text-center">
+                Selecciona los equipos que necesitas
+              </h2>
+              <p className="text-center text-gray-600 mb-8">
+                Elige del catálogo profesional los componentes para tu {selectedEventType?.name.toLowerCase()}
+              </p>
+              
+              {categories.map((category: any) => {
+                const categoryProducts = catalogProducts.filter((p: any) => p.category === category.slug);
+                if (categoryProducts.length === 0) return null;
+                
+                return (
+                  <div key={category.slug} className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span>{category.icon}</span>
+                      <span>{category.name}</span>
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {categoryProducts.map((product: any) => {
+                        const quantity = eventData.selectedProducts[product._id] || 0;
+                        
+                        return (
+                          <div key={product._id} className="bg-white rounded-lg border-2 border-gray-200 p-4 hover:border-resona/50 transition-all">
+                            <div className="flex gap-4">
+                              {product.images && product.images.length > 0 && (
+                                <img 
+                                  src={product.images[0]} 
+                                  alt={product.name}
+                                  className="w-20 h-20 object-cover rounded-lg"
+                                />
+                              )}
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{product.name}</h4>
+                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
+                                <div className="mt-2 flex items-center justify-between">
+                                  <span className="text-lg font-bold text-resona">
+                                    €{product.price}/día
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => {
+                                        if (quantity > 0) {
+                                          const newProducts = { ...eventData.selectedProducts };
+                                          if (quantity === 1) {
+                                            delete newProducts[product._id];
+                                          } else {
+                                            newProducts[product._id] = quantity - 1;
+                                          }
+                                          setEventData({ ...eventData, selectedProducts: newProducts });
+                                        }
+                                      }}
+                                      disabled={quantity === 0}
+                                      className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-30 flex items-center justify-center transition-colors"
+                                    >
+                                      <Minus className="w-4 h-4" />
+                                    </button>
+                                    <span className="w-8 text-center font-medium">{quantity}</span>
+                                    <button
+                                      onClick={() => {
+                                        const newProducts = { ...eventData.selectedProducts };
+                                        newProducts[product._id] = quantity + 1;
+                                        setEventData({ ...eventData, selectedProducts: newProducts });
+                                      }}
+                                      className="w-8 h-8 rounded-full bg-resona hover:bg-resona-dark text-white flex items-center justify-center transition-colors"
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+                                {quantity > 0 && (
+                                  <div className="mt-2 text-sm font-medium text-resona">
+                                    Subtotal: €{(product.price * quantity).toFixed(2)}/día
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Tip:</strong> Selecciona solo lo que necesites. Puedes ajustar las cantidades en cualquier momento.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Service Levels */}
+          {step === 5 && (
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-bold mb-6 text-center">
+                ¿Qué nivel de servicio necesitas?
+              </h2>
+              <p className="text-center text-gray-600 mb-2">
+                Para {eventData.attendees} personas
+              </p>
+              <div className="text-center mb-6">
+                <span className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+                  ✨ Recomendado: {SERVICE_LEVEL_LABELS[getRecommendedLevel(eventData.attendees, 'sound')]}
+                </span>
+              </div>
+              <div className="space-y-6">
+                {[
+                  { key: 'soundLevel', icon: '🎵', label: 'Sonido', desc: 'Micrófonos, altavoces, mesas de mezcla', type: 'sound' as const },
+                  { key: 'lightingLevel', icon: '💡', label: 'Iluminación', desc: 'Focos, proyectores, luces LED', type: 'lighting' as const },
+                ].map((item) => {
+                  const recommended = getRecommendedLevel(eventData.attendees, item.type);
+                  const currentValue = eventData[item.key as keyof EventData] as string;
+                  
+                  return (
+                    <div key={item.key} className="p-6 rounded-lg border-2 border-gray-200 bg-white">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="text-3xl">{item.icon}</div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-gray-900 text-lg">{item.label}</div>
+                          <div className="text-sm text-gray-600">{item.desc}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-3">
+                        {serviceLevels.map((level) => {
+                          const isRecommended = level.value === recommended;
+                          const isSelected = currentValue === level.value;
+                          const price = level.value !== 'none' 
+                            ? basePrices[item.type][level.value as keyof typeof basePrices.sound]
+                            : 0;
+                          
+                          return (
+                            <button
+                              key={level.value}
+                              onClick={() => setEventData({ ...eventData, [item.key]: level.value })}
+                              className={`p-4 rounded-lg border-2 transition-all text-left ${
+                                isSelected
+                                  ? 'border-resona bg-resona/10 shadow-md'
+                                  : isRecommended
+                                  ? 'border-green-400 bg-green-50 hover:border-green-500'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-900">{level.label}</span>
+                                    {isRecommended && (
+                                      <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                        Recomendado
+                                      </span>
+                                    )}
+                                  </div>
+                                  {price > 0 && (
+                                    <div className="text-sm text-gray-600 mt-1">
+                                      Desde €{price}/día
+                                    </div>
+                                  )}
+                                </div>
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                  isSelected
+                                    ? 'border-resona bg-resona'
+                                    : 'border-gray-300'
+                                }`}>
+                                  {isSelected && (
+                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Nota:</strong> Estas son nuestras recomendaciones para {eventData.attendees} personas, 
+                  pero puedes seleccionar cualquier nivel según tus necesidades y presupuesto.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Estimate */}
+          {step === 6 && estimate && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6 text-center">
                 Tu Presupuesto Estimado
@@ -327,7 +640,10 @@ const EventCalculatorPage = () => {
                   <div className="space-y-3">
                     {estimate.breakdown.map((item, index) => (
                       <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="font-medium">{item.category}</span>
+                        <div>
+                          <span className="font-medium">{item.category}</span>
+                          <span className="text-sm text-gray-600 ml-2">({item.level})</span>
+                        </div>
                         <span className="text-resona font-bold">€{item.amount}</span>
                       </div>
                     ))}
@@ -364,7 +680,7 @@ const EventCalculatorPage = () => {
           )}
 
           {/* Navigation Buttons */}
-          {step < 4 && (
+          {step < 5 && (
             <div className="flex justify-between mt-8 pt-6 border-t">
               <button
                 onClick={handleBack}
@@ -382,8 +698,7 @@ const EventCalculatorPage = () => {
                 onClick={handleNext}
                 disabled={
                   (step === 1 && !eventData.eventType) ||
-                  (step === 3 && !eventData.needsSound && !eventData.needsLighting && 
-                   !eventData.needsPhoto && !eventData.needsFurniture && !eventData.needsDecor)
+                  (step === 5 && eventData.soundLevel === 'none' && eventData.lightingLevel === 'none')
                 }
                 className="flex items-center gap-2 px-6 py-3 bg-resona hover:bg-resona-dark text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
               >
@@ -393,7 +708,7 @@ const EventCalculatorPage = () => {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 6 && (
             <div className="flex justify-center mt-8 pt-6 border-t">
               <button
                 onClick={() => {
@@ -401,14 +716,13 @@ const EventCalculatorPage = () => {
                   setEventData({
                     eventType: '',
                     attendees: 50,
-                    duration: 1,
-                    durationType: 'days',
+                    duration: 4,
+                    durationType: 'hours',
                     eventDate: '',
-                    needsSound: false,
-                    needsLighting: false,
-                    needsPhoto: false,
-                    needsFurniture: false,
-                    needsDecor: false,
+                    selectedParts: [],
+                    selectedProducts: {},
+                    soundLevel: 'none',
+                    lightingLevel: 'none',
                   });
                 }}
                 className="text-gray-600 hover:text-resona font-medium transition-colors"

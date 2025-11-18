@@ -5,7 +5,13 @@ import express from 'express';
 
 const router = Router();
 
-// Stripe webhook - no auth, raw body
+// Public routes
+router.get(
+  '/config',
+  paymentController.getConfig
+);
+
+// Stripe webhook - no auth, raw body required
 router.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
@@ -26,28 +32,23 @@ router.post(
 );
 
 router.post(
+  '/cancel',
+  authenticate,
+  paymentController.cancelPaymentIntent
+);
+
+router.get(
+  '/details/:paymentIntentId',
+  authenticate,
+  paymentController.getPaymentDetails
+);
+
+// Admin only routes
+router.post(
   '/refund',
   authenticate,
   authorize('ADMIN', 'SUPERADMIN'),
   paymentController.createRefund
-);
-
-router.get(
-  '/methods',
-  authenticate,
-  paymentController.getPaymentMethods
-);
-
-router.get(
-  '/history',
-  authenticate,
-  paymentController.getPaymentHistory
-);
-
-router.get(
-  '/:id/status',
-  authenticate,
-  paymentController.getPaymentStatus
 );
 
 export { router as paymentRouter };

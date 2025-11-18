@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Package, Plus, Edit, Trash2, Search, X, Save } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, Search, X, Save, Image as ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
+import { ProductImageManager } from '../../components/admin/ProductImageManager';
 
 interface Product {
   id: string;
@@ -17,16 +18,25 @@ interface Product {
   category?: {
     name: string;
   };
+  images?: string[];
+  shippingCost?: number;
+  installationCost?: number;
+  installationTimeMinutes?: number;
+  requiresInstallation?: boolean;
+  installationComplexity?: number;
 }
 
 const ProductsManager = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null); // ID del producto que se está eliminando
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showImageManager, setShowImageManager] = useState(false);
+  const [imageProduct, setImageProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     sku: '',
@@ -37,6 +47,11 @@ const ProductsManager = () => {
     realStock: 1,
     stockStatus: 'IN_STOCK',
     leadTimeDays: 0,
+    shippingCost: 0,
+    installationCost: 0,
+    installationTimeMinutes: 0,
+    requiresInstallation: false,
+    installationComplexity: 1,
   });
 
   useEffect(() => {
@@ -47,7 +62,7 @@ const ProductsManager = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/products');
+      const response: any = await api.get('/products');
       setProducts(response.data || []);
     } catch (error: any) {
       console.error('Error cargando productos:', error);
@@ -60,7 +75,7 @@ const ProductsManager = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get('/products/categories');
+      const response: any = await api.get('/products/categories');
       setCategories(response.data || []);
     } catch (error: any) {
       console.error('Error cargando categorías:', error);
@@ -126,15 +141,28 @@ const ProductsManager = () => {
   };
 
   const handleDelete = async (id: string, name: string) => {
+    // Prevenir eliminaciones múltiples simultáneas
+    if (deleting) {
+      toast.error('Ya hay una eliminación en progreso. Por favor, espera.');
+      return;
+    }
+    
     if (!window.confirm(`¿Estás seguro de eliminar "${name}"?`)) return;
 
+    setDeleting(id);
     try {
-      await api.delete(`/products/${id}`);
-      toast.success('Producto eliminado exitosamente');
-      loadProducts();
+      const response: any = await api.delete(`/products/${id}`);
+      toast.success(response.data?.message || 'Producto eliminado exitosamente');
+      
+      // Esperar un momento antes de recargar para asegurar que la DB se actualizó
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await loadProducts();
     } catch (error: any) {
       console.error('Error eliminando producto:', error);
-      toast.error(error.response?.data?.message || 'Error al eliminar producto');
+      const errorMsg = error.response?.data?.message || error.message || 'Error al eliminar producto';
+      toast.error(errorMsg);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -155,6 +183,11 @@ const ProductsManager = () => {
       realStock: product.realStock || 1,
       stockStatus: product.stockStatus || 'IN_STOCK',
       leadTimeDays: product.leadTimeDays || 0,
+      shippingCost: product.shippingCost || 0,
+      installationCost: product.installationCost || 0,
+      installationTimeMinutes: product.installationTimeMinutes || 0,
+      requiresInstallation: product.requiresInstallation || false,
+      installationComplexity: product.installationComplexity || 1,
     });
     setShowEditModal(true);
   };
@@ -170,6 +203,11 @@ const ProductsManager = () => {
       realStock: 1,
       stockStatus: 'IN_STOCK',
       leadTimeDays: 0,
+      shippingCost: 0,
+      installationCost: 0,
+      installationTimeMinutes: 0,
+      requiresInstallation: false,
+      installationComplexity: 1,
     });
   };
 
@@ -325,6 +363,16 @@ const ProductsManager = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button 
+                        onClick={() => {
+                          setImageProduct(product);
+                          setShowImageManager(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                        title="Editar Imágenes"
+                      >
+                        <ImageIcon className="w-5 h-5" />
+                      </button>
+                      <button 
                         onClick={() => openEditModal(product)}
                         className="text-resona hover:text-resona-dark mr-3"
                         title="Editar"
@@ -333,10 +381,17 @@ const ProductsManager = () => {
                       </button>
                       <button 
                         onClick={() => handleDelete(product.id, product.name)}
-                        className="text-red-600 hover:text-red-900"
-                        title="Eliminar"
+                        disabled={deleting === product.id || !!deleting}
+                        className={`${
+                          deleting === product.id 
+                            ? 'text-gray-400 cursor-not-allowed' 
+                            : deleting 
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-red-600 hover:text-red-900'
+                        }`}
+                        title={deleting === product.id ? 'Eliminando...' : deleting ? 'Espera a que termine la eliminación actual' : 'Eliminar'}
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className={`w-5 h-5 ${deleting === product.id ? 'animate-pulse' : ''}`} />
                       </button>
                     </td>
                   </tr>
@@ -448,6 +503,86 @@ const ProductsManager = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
                       min="0"
                     />
+                  </div>
+                </div>
+
+                {/* Sección de Envío e Instalación */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900">🚚 Envío e Instalación</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Coste de Envío (€)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.shippingCost}
+                        onChange={(e) => setFormData({...formData, shippingCost: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Coste adicional por unidad</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Coste de Instalación (€)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.installationCost}
+                        onChange={(e) => setFormData({...formData, installationCost: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Coste por montaje/unidad</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Tiempo de Instalación (min)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.installationTimeMinutes}
+                        onChange={(e) => setFormData({...formData, installationTimeMinutes: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Complejidad (1-4)
+                      </label>
+                      <select
+                        value={formData.installationComplexity}
+                        onChange={(e) => setFormData({...formData, installationComplexity: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                      >
+                        <option value={1}>1 - Simple</option>
+                        <option value={2}>2 - Medio</option>
+                        <option value={3}>3 - Complejo</option>
+                        <option value={4}>4 - Avanzado</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.requiresInstallation}
+                        onChange={(e) => setFormData({...formData, requiresInstallation: e.target.checked})}
+                        className="w-4 h-4 text-resona rounded focus:ring-resona"
+                      />
+                      <span className="text-sm text-gray-700">Requiere instalación obligatoria</span>
+                    </label>
                   </div>
                 </div>
 
@@ -572,6 +707,86 @@ const ProductsManager = () => {
                   </div>
                 </div>
 
+                {/* Sección de Envío e Instalación */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900">🚚 Envío e Instalación</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Coste de Envío (€)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.shippingCost}
+                        onChange={(e) => setFormData({...formData, shippingCost: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Coste adicional por unidad</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Coste de Instalación (€)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.installationCost}
+                        onChange={(e) => setFormData({...formData, installationCost: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Coste por montaje/unidad</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Tiempo de Instalación (min)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.installationTimeMinutes}
+                        onChange={(e) => setFormData({...formData, installationTimeMinutes: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Complejidad (1-4)
+                      </label>
+                      <select
+                        value={formData.installationComplexity}
+                        onChange={(e) => setFormData({...formData, installationComplexity: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                      >
+                        <option value={1}>1 - Simple</option>
+                        <option value={2}>2 - Medio</option>
+                        <option value={3}>3 - Complejo</option>
+                        <option value={4}>4 - Avanzado</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.requiresInstallation}
+                        onChange={(e) => setFormData({...formData, requiresInstallation: e.target.checked})}
+                        className="w-4 h-4 text-resona rounded focus:ring-resona"
+                      />
+                      <span className="text-sm text-gray-700">Requiere instalación obligatoria</span>
+                    </label>
+                  </div>
+                </div>
+
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
@@ -592,6 +807,21 @@ const ProductsManager = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Image Manager Modal */}
+      {imageProduct && (
+        <ProductImageManager
+          product={imageProduct}
+          isOpen={showImageManager}
+          onClose={() => {
+            setShowImageManager(false);
+            setImageProduct(null);
+          }}
+          onSuccess={() => {
+            fetchProducts();
+          }}
+        />
       )}
     </div>
   );

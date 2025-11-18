@@ -9,7 +9,7 @@ router.use(authenticate);
 
 // Generate invoice for order
 router.post(
-  '/generate',
+  '/generate/:orderId',
   invoiceController.generateInvoice
 );
 
@@ -21,7 +21,7 @@ router.get(
 
 // Download invoice PDF
 router.get(
-  '/:id/download',
+  '/download/:id',
   invoiceController.downloadInvoice
 );
 

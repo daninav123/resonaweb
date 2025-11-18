@@ -14,16 +14,26 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const from = location.state?.from?.pathname || '/';
+  // Aceptar tanto { from: '/path' } como { from: { pathname: '/path' } }
+  const from = typeof location.state?.from === 'string' 
+    ? location.state.from 
+    : location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // console.log('🔐 Intentando login...', { 
+    //   email: formData.email,
+    //   redirectTo: from 
+    // });
+    
     const success = await login(formData.email, formData.password);
     
     if (success) {
+      // console.log('✅ Login exitoso - redirigiendo a:', from);
       navigate(from, { replace: true });
     }
+    // Login fallido se maneja en el store con toast
   };
 
   return (

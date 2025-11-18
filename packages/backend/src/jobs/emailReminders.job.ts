@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { logger } from '../utils/logger';
 import { prisma } from '../index';
+import { emailService } from '../services/email.service';
 import { addDays, startOfDay, endOfDay, subDays } from 'date-fns';
 
 export function setupEmailReminders() {
@@ -41,8 +42,12 @@ async function sendPaymentReminders() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`Payment reminder for order ${order.orderNumber}`);
+    try {
+      await emailService.sendPaymentReminderEmail(order);
+      logger.info(`Payment reminder sent for order ${order.orderNumber}`);
+    } catch (error) {
+      logger.error(`Failed to send payment reminder for order ${order.orderNumber}:`, error);
+    }
   }
 }
 
@@ -64,8 +69,12 @@ async function send3DayReminders() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`3-day reminder for order ${order.orderNumber}`);
+    try {
+      await emailService.sendEventReminderEmail(order, 3);
+      logger.info(`3-day reminder sent for order ${order.orderNumber}`);
+    } catch (error) {
+      logger.error(`Failed to send 3-day reminder for order ${order.orderNumber}:`, error);
+    }
   }
 }
 
@@ -87,8 +96,12 @@ async function send1DayReminders() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`1-day reminder for order ${order.orderNumber}`);
+    try {
+      await emailService.sendEventReminderEmail(order, 1);
+      logger.info(`1-day reminder sent for order ${order.orderNumber}`);
+    } catch (error) {
+      logger.error(`Failed to send 1-day reminder for order ${order.orderNumber}:`, error);
+    }
   }
 }
 
@@ -110,8 +123,12 @@ async function sendDayOfEventReminders() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`Day-of-event reminder for order ${order.orderNumber}`);
+    try {
+      await emailService.sendEventReminderEmail(order, 0);
+      logger.info(`Day-of-event reminder sent for order ${order.orderNumber}`);
+    } catch (error) {
+      logger.error(`Failed to send day-of-event reminder for order ${order.orderNumber}:`, error);
+    }
   }
 }
 
@@ -133,8 +150,12 @@ async function sendReturnReminders() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`Return reminder for order ${order.orderNumber}`);
+    try {
+      await emailService.sendReturnReminderEmail(order);
+      logger.info(`Return reminder sent for order ${order.orderNumber}`);
+    } catch (error) {
+      logger.error(`Failed to send return reminder for order ${order.orderNumber}:`, error);
+    }
   }
 }
 
@@ -157,13 +178,17 @@ async function sendReviewRequests() {
   });
 
   for (const order of orders) {
-    // TODO: Send email notification
-    logger.info(`Review request for order ${order.orderNumber}`);
-    
-    // Mark as requested
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { reviewRequested: true },
-    });
+    try {
+      await emailService.sendReviewRequestEmail(order);
+      logger.info(`Review request sent for order ${order.orderNumber}`);
+      
+      // Mark as requested
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { reviewRequested: true },
+      });
+    } catch (error) {
+      logger.error(`Failed to send review request for order ${order.orderNumber}:`, error);
+    }
   }
 }

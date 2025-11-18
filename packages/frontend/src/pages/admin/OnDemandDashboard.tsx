@@ -42,13 +42,23 @@ const OnDemandDashboard = () => {
   const loadOnDemandProducts = async () => {
     try {
       setLoading(true);
-      // TODO: Crear endpoint específico en backend
-      const response = await api.get('/products?stockStatus=ON_DEMAND');
-      const productsData = response.data || [];
+      const response: any = await api.get('/products', {
+        params: {
+          stockStatus: 'ON_DEMAND',
+          limit: 100
+        }
+      });
+      
+      const productsData = response?.data?.data || response?.data || [];
       
       setProducts(productsData);
       
       // Calcular estadísticas
+      const totalInvestment = productsData.reduce((sum: number, p: OnDemandProduct) => {
+        // Estimar inversión basada en precio por día * 30
+        return sum + (p.pricePerDay * 30);
+      }, 0);
+      
       setStats({
         totalOnDemand: productsData.length,
         withReservations: productsData.filter((p: OnDemandProduct) => 
@@ -57,7 +67,7 @@ const OnDemandDashboard = () => {
         markedForPurchase: productsData.filter((p: OnDemandProduct) => 
           p.markedForPurchase
         ).length,
-        totalInvestment: 0, // TODO: Calcular de purchase notes
+        totalInvestment,
       });
     } catch (error: any) {
       console.error('Error cargando productos bajo demanda:', error);

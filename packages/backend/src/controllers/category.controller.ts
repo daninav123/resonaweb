@@ -10,13 +10,16 @@ export class CategoryController {
       const includeInactive = req.query.includeInactive === 'true';
       const parentId = req.query.parentId as string | undefined;
 
+      console.log('📦 Fetching todas las categorías...');
       const categories = await categoryService.getAllCategories({
         includeInactive,
         parentId: parentId === 'null' ? null : parentId,
       });
 
+      console.log(`✅ Categorías encontradas: ${categories?.length || 0}`);
       res.json({ data: categories });
     } catch (error) {
+      console.error('❌ Error al obtener categorías:', error);
       next(error);
     }
   }

@@ -16,7 +16,7 @@ export class InvoiceController {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { orderId } = req.body;
+      const { orderId } = req.params;
 
       if (!orderId) {
         throw new AppError(400, 'Order ID requerido', 'MISSING_DATA');

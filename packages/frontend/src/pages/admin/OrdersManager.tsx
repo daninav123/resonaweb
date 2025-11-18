@@ -1,17 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, Eye, Download, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../services/api';
 
 const OrdersManager = () => {
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const orders = [
-    { id: '#ORD-12345', customer: 'Juan Pérez', email: 'juan@example.com', date: '13/11/2024', total: 234.50, status: 'completed', items: 3 },
-    { id: '#ORD-12344', customer: 'María García', email: 'maria@example.com', date: '12/11/2024', total: 456.80, status: 'processing', items: 5 },
-    { id: '#ORD-12343', customer: 'Pedro López', email: 'pedro@example.com', date: '11/11/2024', total: 789.00, status: 'pending', items: 2 },
-    { id: '#ORD-12342', customer: 'Ana Martínez', email: 'ana@example.com', date: '10/11/2024', total: 345.60, status: 'completed', items: 4 },
-    { id: '#ORD-12341', customer: 'Carlos Ruiz', email: 'carlos@example.com', date: '09/11/2024', total: 567.90, status: 'cancelled', items: 1 },
-  ];
+  // Obtener órdenes reales de la API
+  const { data: orders = [], isLoading, error } = useQuery({
+    queryKey: ['admin-orders'],
+    queryFn: async () => {
+      const response: any = await api.get('/orders');
+      return response.data;
+    },
+    refetchInterval: 30000, // Refrescar cada 30 segundos
+  });
+
+  // Mapear las órdenes del backend al formato esperado
+  const ordersData = (orders?.data || orders || []).map((order: any) => ({
+    id: order.id, // UUID real para navegación
+    orderNumber: order.orderNumber, // Número de orden para mostrar
+    customer: order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() : 'Cliente',
+    email: order.user?.email || 'N/A',
+    date: new Date(order.createdAt).toLocaleDateString('es-ES'),
+    total: Number(order.totalAmount || order.total || 0),
+    status: order.status?.toLowerCase() || 'pending',
+    items: order.items?.length || 0,
+  }));
 
   const getStatusBadge = (status: string) => {
     const badges = {
@@ -30,8 +47,32 @@ const OrdersManager = () => {
   };
 
   const filteredOrders = statusFilter === 'all'
-    ? orders
-    : orders.filter(o => o.status === statusFilter);
+    ? ordersData
+    : ordersData.filter(o => o.status === statusFilter);
+
+  // Mostrar estado de carga
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando órdenes...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error si hay
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
+          <h3 className="text-red-800 font-semibold mb-2">Error al cargar órdenes</h3>
+          <p className="text-red-600">{(error as Error).message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -41,7 +82,12 @@ const OrdersManager = () => {
           <Link to="/admin" className="text-resona hover:text-resona-dark mb-4 inline-block">
             ← Volver al Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Pedidos</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900">Gestión de Pedidos</h1>
+            <span className="text-sm text-gray-500">
+              {ordersData.length} pedido{ordersData.length !== 1 ? 's' : ''} total{ordersData.length !== 1 ? 'es' : ''}
+            </span>
+          </div>
         </div>
 
         {/* Stats */}
@@ -50,7 +96,7 @@ const OrdersManager = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Pedidos</p>
-                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{ordersData.length}</p>
               </div>
               <ShoppingCart className="w-10 h-10 text-resona" />
             </div>
@@ -59,7 +105,7 @@ const OrdersManager = () => {
             <div>
               <p className="text-sm text-gray-600">Ingresos Totales</p>
               <p className="text-2xl font-bold text-gray-900">
-                €{orders.reduce((acc, o) => acc + o.total, 0).toFixed(2)}
+                €{ordersData.reduce((acc, o) => acc + Number(o.total || 0), 0).toFixed(2)}
               </p>
             </div>
           </div>
@@ -67,7 +113,10 @@ const OrdersManager = () => {
             <div>
               <p className="text-sm text-gray-600">Promedio/Pedido</p>
               <p className="text-2xl font-bold text-gray-900">
-                €{(orders.reduce((acc, o) => acc + o.total, 0) / orders.length).toFixed(2)}
+                €{ordersData.length > 0 
+                  ? (ordersData.reduce((acc, o) => acc + Number(o.total || 0), 0) / ordersData.length).toFixed(2)
+                  : '0.00'
+                }
               </p>
             </div>
           </div>
@@ -75,7 +124,7 @@ const OrdersManager = () => {
             <div>
               <p className="text-sm text-gray-600">Completados</p>
               <p className="text-2xl font-bold text-gray-900">
-                {orders.filter(o => o.status === 'completed').length}
+                {ordersData.filter(o => o.status === 'completed').length}
               </p>
             </div>
           </div>
@@ -138,7 +187,7 @@ const OrdersManager = () => {
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {order.id}
+                      {order.orderNumber}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{order.customer}</div>
@@ -159,10 +208,46 @@ const OrdersManager = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-resona hover:text-resona-dark mr-3" title="Ver detalles">
+                      <button 
+                        onClick={() => navigate(`/admin/orders/${order.id}`)}
+                        className="text-resona hover:text-resona-dark mr-3" 
+                        title="Ver detalles"
+                      >
                         <Eye className="w-5 h-5" />
                       </button>
-                      <button className="text-gray-600 hover:text-gray-900" title="Descargar factura">
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const { invoiceService } = await import('../../services/invoice.service');
+                            toast.loading('Generando factura...');
+                            
+                            const response: any = await invoiceService.generateInvoice(order.id);
+                            const invoice = response?.invoice || response;
+                            
+                            if (invoice?.id) {
+                              const blob = await invoiceService.downloadInvoice(invoice.id);
+                              const url = window.URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `factura-${invoice.invoiceNumber || order.orderNumber}.pdf`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              window.URL.revokeObjectURL(url);
+                              
+                              toast.dismiss();
+                              toast.success('Factura descargada');
+                            } else {
+                              throw new Error('No se pudo generar la factura');
+                            }
+                          } catch (error: any) {
+                            toast.dismiss();
+                            toast.error(error?.message || 'Error al descargar factura');
+                          }
+                        }}
+                        className="text-gray-600 hover:text-gray-900" 
+                        title="Descargar factura"
+                      >
                         <Download className="w-5 h-5" />
                       </button>
                     </td>

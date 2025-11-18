@@ -23,6 +23,12 @@ interface CreateOrderData {
   eventType?: string;
   eventLocation?: string;
   attendees?: number;
+  // Campos opcionales de contacto
+  contactPerson?: string;
+  contactPhone?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
 }
 
 export class OrderService {
@@ -86,27 +92,55 @@ export class OrderService {
           status: OrderStatus.PENDING,
           paymentStatus: PaymentStatus.PENDING,
           deliveryType: data.deliveryType as any,
-          deliveryAddress: data.deliveryAddress,
+          deliveryAddress: data.deliveryAddress ? JSON.stringify({ address: data.deliveryAddress }) : undefined,
           deliveryDate: data.deliveryDate || new Date(),
           startDate: data.items[0].startDate,
           endDate: data.items[data.items.length - 1].endDate,
+          
+          // Campos de contacto requeridos
+          contactPerson: (data as any).contactPerson || `${(data as any).firstName || ''} ${(data as any).lastName || ''}`.trim() || 'Cliente',
+          contactPhone: (data as any).contactPhone || (data as any).phone || 'N/A',
+          
+          // Totales
           subtotal: totals.subtotal,
+          totalBeforeAdjustment: totals.subtotal,
+          taxAmount: totals.tax,
+          total: totals.total,
           deliveryFee: totals.deliveryCost,
           tax: totals.tax,
           totalAmount: totals.total,
+          
+          // Costes adicionales requeridos
+          shippingCost: totals.deliveryCost,
+          depositAmount: 0, // Por ahora sin fianza
+          
+          // Información adicional
           notes: data.notes,
           eventType: data.eventType,
-          eventLocation: data.eventLocation || undefined,
+          eventLocation: JSON.stringify({ address: data.deliveryAddress || 'PICKUP' }),
           attendees: data.attendees,
           items: {
-            create: data.items.map(item => ({
-              productId: item.productId,
-              quantity: item.quantity,
-              pricePerUnit: item.pricePerUnit,
-              totalPrice: item.totalPrice,
-              startDate: item.startDate,
-              endDate: item.endDate,
-            })),
+            create: data.items.map(item => {
+              // Calcular días de alquiler
+              const start = new Date(item.startDate);
+              const end = new Date(item.endDate);
+              const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+              
+              // pricePerUnit ya incluye días * pricePerDay, así que dividimos
+              const pricePerDay = Number(item.pricePerUnit) / days;
+              const subtotal = Number(item.totalPrice);
+              
+              return {
+                productId: item.productId,
+                quantity: item.quantity,
+                pricePerDay: pricePerDay,
+                subtotal: subtotal,
+                pricePerUnit: item.pricePerUnit,
+                totalPrice: item.totalPrice,
+                startDate: item.startDate,
+                endDate: item.endDate,
+              };
+            }),
           },
         },
         include: {
@@ -173,7 +207,7 @@ export class OrderService {
       ]);
 
       return {
-        orders,
+        data: orders,
         pagination: {
           total,
           page,
@@ -193,35 +227,65 @@ export class OrderService {
   async getOrderById(orderId: string, userId?: string) {
     try {
       const where: any = { id: orderId };
+      
+      // Si se pasa userId, agregar al filtro
       if (userId) {
         where.userId = userId;
       }
 
-      const order = await prisma.order.findUnique({
-        where,
-        include: {
-          items: {
+      // Si userId está presente, usar findFirst (permite múltiples condiciones)
+      // Si no, usar findUnique (más eficiente para búsqueda por id solo)
+      const order = userId 
+        ? await prisma.order.findFirst({
+            where,
             include: {
-              product: {
+              items: {
                 include: {
-                  category: true,
+                  product: {
+                    include: {
+                      category: true,
+                    },
+                  },
                 },
               },
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  phone: true,
+                },
+              },
+              payment: true,
+              invoice: true,
             },
-          },
-          user: {
-            select: {
-              id: true,
-              email: true,
-              firstName: true,
-              lastName: true,
-              phone: true,
+          })
+        : await prisma.order.findUnique({
+            where: { id: orderId },
+            include: {
+              items: {
+                include: {
+                  product: {
+                    include: {
+                      category: true,
+                    },
+                  },
+                },
+              },
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  phone: true,
+                },
+              },
+              payment: true,
+              invoice: true,
             },
-          },
-          payment: true,
-          invoice: true,
-        },
-      });
+          });
 
       if (!order) {
         throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
@@ -246,7 +310,8 @@ export class OrderService {
         [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
         [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
         [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.CANCELLED],
-        [OrderStatus.READY]: [OrderStatus.DELIVERED, OrderStatus.CANCELLED],
+        [OrderStatus.READY]: [OrderStatus.IN_TRANSIT, OrderStatus.DELIVERED, OrderStatus.CANCELLED],
+        [OrderStatus.IN_TRANSIT]: [OrderStatus.DELIVERED, OrderStatus.CANCELLED],
         [OrderStatus.DELIVERED]: [OrderStatus.COMPLETED, OrderStatus.RETURNED],
         [OrderStatus.COMPLETED]: [OrderStatus.RETURNED],
         [OrderStatus.CANCELLED]: [],
@@ -395,7 +460,7 @@ export class OrderService {
       ]);
 
       return {
-        orders,
+        data: orders,
         pagination: {
           total,
           page,

@@ -37,7 +37,7 @@ const CategoriesManager = () => {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/products/categories?includeInactive=true');
+      const response: any = await api.get('/products/categories?includeInactive=true');
       setCategories(response.data || []);
     } catch (error: any) {
       console.error('Error cargando categorías:', error);

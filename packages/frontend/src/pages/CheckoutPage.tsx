@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { CreditCard, Lock, Calendar, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle } from 'lucide-react';
+import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { guestCart, GuestCartItem } from '../utils/guestCart';
+import { calculatePaymentBreakdown } from '../utils/depositCalculator';
+import { CouponInput } from '../components/coupons/CouponInput';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -24,10 +27,6 @@ const CheckoutPage = () => {
     zipCode: '',
     country: 'España',
     
-    // Fechas de alquiler
-    startDate: '',
-    endDate: '',
-    
     // Datos de pago
     cardNumber: '',
     cardExpiry: '',
@@ -40,14 +39,118 @@ const CheckoutPage = () => {
     acceptTerms: false,
   });
 
-  // Obtener carrito actual
-  const { data: cart, isLoading: cartLoading } = useQuery({
-    queryKey: ['cart'],
-    queryFn: async () => {
-      const response: any = await api.get('/cart');
-      return response.data;
-    },
-  });
+  // Obtener carrito actual desde localStorage
+  const [cartItems, setCartItems] = useState<GuestCartItem[]>([]);
+  const [cartLoading, setCartLoading] = useState(false);
+  
+  // Estado para cupón de descuento
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountAmount: number;
+    discountType: string;
+    freeShipping?: boolean;
+  } | null>(null);
+  
+  // Estados para envío e instalación
+  const [distance, setDistance] = useState<number>(15);
+  const [deliveryAddress, setDeliveryAddress] = useState<string>('');
+  const [includeInstallation, setIncludeInstallation] = useState(false);
+  const [calculatedShipping, setCalculatedShipping] = useState<any>(null);
+  const [shippingConfig, setShippingConfig] = useState<any>(null);
+
+  // Cargar configuración de envío al montar
+  useEffect(() => {
+    const loadShippingConfig = async () => {
+      try {
+        const config: any = await api.get('/shipping-config');
+        setShippingConfig(config);
+      } catch (error) {
+        console.error('Error cargando configuración de envío:', error);
+      }
+    };
+
+    loadShippingConfig();
+  }, []);
+
+  // Calcular costes de envío cuando cambia algo
+  useEffect(() => {
+    const calculateShipping = async () => {
+      if (distance > 0 && cartItems.length > 0 && formData.deliveryOption === 'delivery') {
+        try {
+          const productsData = cartItems.map((item: any) => ({
+            shippingCost: Number(item.product.shippingCost || 0),
+            installationCost: Number(item.product.installationCost || 0),
+            quantity: item.quantity
+          }));
+
+          const response: any = await api.post('/shipping-config/calculate', {
+            distance,
+            includeInstallation,
+            products: productsData
+          });
+          setCalculatedShipping(response);
+        } catch (error) {
+          console.error('Error calculando envío:', error);
+        }
+      } else {
+        setCalculatedShipping(null);
+      }
+    };
+
+    calculateShipping();
+  }, [distance, includeInstallation, cartItems, formData.deliveryOption]);
+
+  useEffect(() => {
+    // Cargar items del carrito desde localStorage
+    const items = guestCart.getCart();
+    console.log('📦 Carrito en checkout:', items);
+    setCartItems(items);
+    
+    // Cargar datos de envío desde localStorage si existen
+    const savedDistance = localStorage.getItem('checkoutDistance');
+    const savedAddress = localStorage.getItem('checkoutAddress');
+    const savedInstallation = localStorage.getItem('checkoutInstallation');
+    
+    if (savedDistance) setDistance(Number(savedDistance));
+    if (savedAddress) setDeliveryAddress(savedAddress);
+    if (savedInstallation) setIncludeInstallation(savedInstallation === 'true');
+    
+    // Verificar que hay items y tienen fechas
+    if (items.length === 0) {
+      toast.error('Tu carrito está vacío');
+      navigate('/carrito');
+      return;
+    }
+    
+    // Verificar que todos los items tienen fechas
+    const itemsWithoutDates = items.filter(item => !item.startDate || !item.endDate);
+    if (itemsWithoutDates.length > 0) {
+      toast.error('Debes asignar fechas a todos los productos en el carrito');
+      navigate('/carrito');
+      return;
+    }
+    
+    // Verificar que no hay productos con fechas inválidas
+    const invalidItems = items.filter(item => {
+      const productStock = item.product?.stock ?? 0;
+      if (productStock === 0 && item.startDate) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const start = new Date(item.startDate);
+        start.setHours(0, 0, 0, 0);
+        const daysUntilStart = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        return daysUntilStart < 30;
+      }
+      return false;
+    });
+    
+    if (invalidItems.length > 0) {
+      const productNames = invalidItems.map(i => i.product.name).join(', ');
+      toast.error(`Los siguientes productos no están disponibles para las fechas seleccionadas: ${productNames}. Por favor, vuelve al carrito y ajusta las fechas.`);
+      navigate('/carrito');
+      return;
+    }
+  }, [navigate]);
 
   // Crear orden
   const createOrderMutation = useMutation({
@@ -56,22 +159,94 @@ const CheckoutPage = () => {
       return response.data;
     },
     onSuccess: (data) => {
+      console.log('✅ ORDEN CREADA EXITOSAMENTE:', data);
+      console.log('✅ Estructura completa:', JSON.stringify(data, null, 2));
+      
       toast.success('¡Pedido realizado con éxito!');
-      navigate(`/mis-pedidos/${data.id}`);
+      
+      // Limpiar carrito después del éxito
+      guestCart.clear();
+      
+      // El backend devuelve { message: '...', order: { id, ... } }
+      const orderId = data?.order?.id || data?.id || data?.data?.id;
+      
+      if (orderId) {
+        console.log('✅ Navegando a pedido:', orderId);
+        navigate(`/mis-pedidos/${orderId}`);
+      } else {
+        console.log('⚠️ No se encontró ID de orden, navegando a lista de pedidos');
+        navigate('/mis-pedidos');
+      }
+      
+      setIsProcessing(false);
     },
-    onError: () => {
-      toast.error('Error al procesar el pedido');
+    onError: (error: any) => {
+      console.error('❌ Error completo del backend:', error);
+      console.error('❌ Response data:', error.response?.data);
+      console.error('❌ Response data COMPLETO:', JSON.stringify(error.response?.data, null, 2));
+      console.error('❌ Response status:', error.response?.status);
+      
+      // Intentar extraer el mensaje de error
+      const errorData = error.response?.data?.error;
+      const errorMessage = typeof errorData === 'string' 
+        ? errorData 
+        : errorData?.message || error.response?.data?.message || error.message || 'Error al procesar el pedido';
+      
+      console.error('❌ Mensaje final:', errorMessage);
+      
+      toast.error(`Error: ${errorMessage}`);
       setIsProcessing(false);
     },
   });
 
-  const calculateTotal = () => {
-    if (!cart?.items) return 0;
-    const subtotal = cart.items.reduce((total: number, item: any) => {
-      return total + (item.product.pricePerDay * item.quantity);
-    }, 0);
-    return subtotal * 1.21; // Con IVA
+  const calculateDays = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays || 1;
   };
+
+  const calculateSubtotal = () => {
+    if (!cartItems || cartItems.length === 0) return 0;
+    return cartItems.reduce((total: number, item: GuestCartItem) => {
+      const days = calculateDays(item.startDate || '', item.endDate || '');
+      return total + (item.product.pricePerDay * days * item.quantity);
+    }, 0);
+  };
+
+  const calculateShippingCost = () => {
+    if (formData.deliveryOption !== 'delivery') return 0;
+    
+    if (calculatedShipping) {
+      return includeInstallation 
+        ? Number(calculatedShipping.totalInstallationCost || 0)
+        : Number(calculatedShipping.totalShippingCost || 0);
+    }
+    
+    return 20; // Mínimo por defecto
+  };
+
+  const calculateDiscount = () => {
+    if (!appliedCoupon) return 0;
+    return appliedCoupon.discountAmount;
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const shipping = appliedCoupon?.freeShipping ? 0 : calculateShippingCost();
+    const discount = calculateDiscount();
+    const beforeTax = subtotal + shipping - discount;
+    return Math.max(0, beforeTax * 1.21); // Con IVA (nunca negativo)
+  };
+
+  // Calcular desglose de pago (señal, fianza, etc.)
+  const paymentBreakdown = calculatePaymentBreakdown(
+    calculateSubtotal(),
+    calculateShippingCost(),
+    formData.deliveryOption as 'pickup' | 'delivery'
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,14 +258,51 @@ const CheckoutPage = () => {
 
     setIsProcessing(true);
 
-    // Simular proceso de pago
+    // Crear orden con los items del carrito
     setTimeout(() => {
-      createOrderMutation.mutate({
-        ...formData,
-        items: cart?.items || [],
-        total: calculateTotal(),
-        paymentMethod: 'CARD',
+      const orderItems = cartItems.map(item => {
+        const days = calculateDays(item.startDate || '', item.endDate || '');
+        const pricePerUnit = item.product.pricePerDay * days;
+        const totalPrice = pricePerUnit * item.quantity;
+        
+        // Convertir fechas de string "YYYY-MM-DD" a Date ISO string
+        const startDate = item.startDate ? new Date(item.startDate + 'T00:00:00.000Z').toISOString() : new Date().toISOString();
+        const endDate = item.endDate ? new Date(item.endDate + 'T23:59:59.999Z').toISOString() : new Date().toISOString();
+        
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          pricePerUnit: pricePerUnit,
+          totalPrice: totalPrice,
+          startDate: startDate,  // ISO Date string
+          endDate: endDate,      // ISO Date string
+        };
       });
+      
+      const orderPayload = {
+        // Items
+        items: orderItems,
+        
+        // Tipo de entrega (PICKUP o DELIVERY en mayúsculas)
+        deliveryType: formData.deliveryOption.toUpperCase(),
+        
+        // Dirección de entrega (solo si es delivery)
+        deliveryAddress: formData.deliveryOption === 'delivery' 
+          ? `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}`
+          : undefined,
+        
+        // Notas
+        notes: formData.notes || undefined,
+        
+        // Cupón de descuento
+        couponCode: appliedCoupon?.code || undefined,
+        discountAmount: appliedCoupon?.discountAmount || undefined,
+      };
+      
+      console.log('📦 Enviando orden al backend:', orderPayload);
+      console.log('📦 Items detalle:', JSON.stringify(orderPayload.items, null, 2));
+      
+      createOrderMutation.mutate(orderPayload);
     }, 2000);
   };
 
@@ -106,7 +318,7 @@ const CheckoutPage = () => {
     );
   }
 
-  const cartItems = cart?.items || [];
+  // cartItems ya está definido en el state
   const total = calculateTotal();
 
   if (cartItems.length === 0) {
@@ -305,37 +517,59 @@ const CheckoutPage = () => {
                           />
                         </div>
                       </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">📍 Distancia aproximada (km)</label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={distance}
+                          onChange={(e) => {
+                            setDistance(Number(e.target.value));
+                            localStorage.setItem('checkoutDistance', e.target.value);
+                          }}
+                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="15"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Distancia desde nuestra ubicación ({shippingConfig?.baseAddress || 'Madrid, España'})
+                        </p>
+                      </div>
+                      
+                      <div className="border-t pt-4">
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={includeInstallation}
+                            onChange={(e) => {
+                              setIncludeInstallation(e.target.checked);
+                              localStorage.setItem('checkoutInstallation', e.target.checked.toString());
+                            }}
+                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-gray-900">🔧 ¿Necesitas montaje/instalación?</span>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Nuestro equipo montará todo el equipo en tu evento
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                      
+                      {calculatedShipping && (
+                        <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                          <p className="text-xs text-blue-900 font-semibold">
+                            Zona: {calculatedShipping.zone === 'LOCAL' ? '🟢 Local' : 
+                                  calculatedShipping.zone === 'REGIONAL' ? '🔵 Regional' :
+                                  calculatedShipping.zone === 'EXTENDED' ? '🟡 Ampliada' : '🔴 Personalizada'}
+                          </p>
+                          <p className="text-xs text-blue-800 mt-1">
+                            Coste: €{calculateShippingCost().toFixed(2)}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
-
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      <Calendar className="inline w-4 h-4 mr-1" />
-                      Fechas de alquiler
-                    </label>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Fecha inicio</label>
-                        <input
-                          type="date"
-                          required
-                          value={formData.startDate}
-                          onChange={(e) => updateFormData('startDate', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Fecha fin</label>
-                        <input
-                          type="date"
-                          required
-                          value={formData.endDate}
-                          onChange={(e) => updateFormData('endDate', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
 
                   <div className="flex justify-between">
                     <button
@@ -347,7 +581,7 @@ const CheckoutPage = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStep(3)}
+                      onClick={() => setStep(2)}
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
                     >
                       Siguiente
@@ -356,8 +590,8 @@ const CheckoutPage = () => {
                 </div>
               )}
 
-              {/* Step 3: Pago */}
-              {step === 3 && (
+              {/* Step 2: Pago */}
+              {step === 2 && (
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <CreditCard className="w-5 h-5" />
@@ -449,7 +683,7 @@ const CheckoutPage = () => {
                   <div className="flex justify-between mt-6">
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
+                      onClick={() => setStep(1)}
                       className="text-gray-600 hover:text-gray-800"
                     >
                       Anterior
@@ -491,17 +725,67 @@ const CheckoutPage = () => {
                 ))}
               </div>
 
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between text-sm">
+              <div className="border-t pt-4 my-4">
+                <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>€{(total / 1.21).toFixed(2)}</span>
+                  <span>€{calculateSubtotal().toFixed(2)}</span>
                 </div>
-                {formData.deliveryOption === 'delivery' && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Envío</span>
-                    <span>€50.00</span>
+                
+                {/* Coupon Input */}
+                <div className="my-4">
+                  <CouponInput
+                    orderAmount={calculateSubtotal()}
+                    onCouponApplied={(discount) => setAppliedCoupon(discount)}
+                    onCouponRemoved={() => setAppliedCoupon(null)}
+                    appliedCoupon={appliedCoupon?.code}
+                  />
+                </div>
+                
+                {appliedCoupon && (
+                  <div className="flex justify-between text-sm text-green-600 mb-2">
+                    <span className="font-medium flex items-center gap-1">
+                      <Tag className="w-4 h-4" />
+                      Descuento ({appliedCoupon.code})
+                    </span>
+                    <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
+              </div>
+
+              <div className="border-t border-b py-4 my-4 space-y-2">
+                
+                {formData.deliveryOption === 'delivery' && calculatedShipping && (
+                  <div className="bg-blue-50 p-3 rounded-lg space-y-2 my-2">
+                    <div className="font-semibold text-xs text-blue-900">
+                      {includeInstallation ? '🚚 + 🔧 Envío e Instalación:' : '🚚 Coste de Envío:'}
+                    </div>
+                    
+                    <div className="flex justify-between text-xs text-gray-600 pl-3">
+                      <span>• Precio base (distancia)</span>
+                      <span>€{Number(calculatedShipping.baseWithMinimum || 0).toFixed(2)}</span>
+                    </div>
+                    
+                    {calculatedShipping.breakdown?.products > 0 && (
+                      <div className="flex justify-between text-xs text-gray-600 pl-3">
+                        <span>• Costes por productos</span>
+                        <span>€{Number(calculatedShipping.breakdown.products || 0).toFixed(2)}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-between font-bold text-xs text-blue-900 pt-2 border-t border-blue-200">
+                      <span>Total {includeInstallation ? 'envío + instalación' : 'envío'}</span>
+                      <span>€{calculateShippingCost().toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {formData.deliveryOption === 'delivery' && !calculatedShipping && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">🚚 Envío</span>
+                    <span>€{calculateShippingCost().toFixed(2)}</span>
+                  </div>
+                )}
+                
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">IVA (21%)</span>
                   <span>€{(total - (total / 1.21)).toFixed(2)}</span>
@@ -509,13 +793,92 @@ const CheckoutPage = () => {
               </div>
 
               <div className="border-t pt-4 mt-4">
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-blue-600">
-                    €{(formData.deliveryOption === 'delivery' ? total + 50 : total).toFixed(2)}
+                <div className="flex justify-between text-lg font-bold mb-2">
+                  <span>Total Pedido</span>
+                  <span className="text-gray-900">
+                    €{paymentBreakdown.total.toFixed(2)}
                   </span>
                 </div>
               </div>
+
+              {/* Desglose de Pago según método de entrega */}
+              {formData.deliveryOption === 'pickup' ? (
+                <>
+                  {/* RECOGIDA EN TIENDA */}
+                  <div className="mt-4 p-4 bg-orange-50 border-2 border-orange-200 rounded-lg">
+                    <div className="flex items-start gap-2 mb-3">
+                      <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-bold text-orange-900 text-sm mb-1">Pago en Tienda</h3>
+                        <p className="text-xs text-orange-800">
+                          Para recogidas en tienda, pagas el 50% ahora como señal.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">💳 A pagar ahora (50%):</span>
+                        <span className="font-bold text-green-600">
+                          €{paymentBreakdown.payNow.toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      <div className="border-t border-orange-200 pt-2 mt-2">
+                        <p className="text-xs text-orange-800 font-semibold mb-2">
+                          En tienda pagarás:
+                        </p>
+                        <div className="flex justify-between text-xs pl-3">
+                          <span>• Resto del alquiler (50%):</span>
+                          <span>€{paymentBreakdown.payLater.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-xs pl-3 mt-1">
+                          <span>• Fianza (reembolsable):</span>
+                          <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between font-bold text-xs mt-2 pt-2 border-t border-orange-200">
+                          <span>Total en tienda:</span>
+                          <span>€{(paymentBreakdown.payLater + paymentBreakdown.deposit).toFixed(2)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-2 rounded mt-2">
+                        <p className="text-xs text-gray-600">
+                          ℹ️ La fianza se devolverá al finalizar el alquiler si el material se devuelve en perfectas condiciones.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* ENVÍO A DOMICILIO */}
+                  <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                    <div className="flex items-start gap-2 mb-3">
+                      <Info className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-bold text-green-900 text-sm mb-1">Pago Total Online</h3>
+                        <p className="text-xs text-green-800">
+                          Para envíos a domicilio, pagas el 100% ahora. Sin fianza.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between text-lg font-bold">
+                      <span className="text-gray-700">💳 A pagar ahora:</span>
+                      <span className="text-green-600">
+                        €{paymentBreakdown.payNow.toFixed(2)}
+                      </span>
+                    </div>
+                    
+                    <div className="bg-white p-2 rounded mt-3">
+                      <p className="text-xs text-gray-600">
+                        ✅ Sin fianza • Todo incluido • Pago único
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">

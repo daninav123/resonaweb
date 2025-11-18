@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { paymentService } from '../services/payment.service';
+import { stripeService } from '../services/stripe.service';
 import { AppError } from '../middleware/error.middleware';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  apiVersion: '2024-11-20.acacia',
-});
 
 interface AuthRequest extends Request {
   user?: any;
@@ -13,7 +8,19 @@ interface AuthRequest extends Request {
 
 export class PaymentController {
   /**
-   * Create payment intent
+   * Get Stripe public config
+   */
+  async getConfig(req: Request, res: Response, next: NextFunction) {
+    try {
+      const config = stripeService.getPublicConfig();
+      res.json(config);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Create payment intent for an order
    */
   async createPaymentIntent(req: AuthRequest, res: Response, next: NextFunction) {
     try {
@@ -21,19 +28,13 @@ export class PaymentController {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { orderId, amount, currency, paymentMethod, metadata } = req.body;
+      const { orderId } = req.body;
 
-      if (!orderId || !amount) {
-        throw new AppError(400, 'Datos incompletos', 'MISSING_DATA');
+      if (!orderId) {
+        throw new AppError(400, 'Order ID requerido', 'MISSING_DATA');
       }
 
-      const result = await paymentService.createPaymentIntent({
-        orderId,
-        amount,
-        currency,
-        paymentMethod,
-        metadata,
-      });
+      const result = await stripeService.createPaymentIntent(orderId, req.user.id);
 
       res.json({
         message: 'Payment intent creado',
@@ -59,11 +60,11 @@ export class PaymentController {
         throw new AppError(400, 'Payment intent ID requerido', 'MISSING_DATA');
       }
 
-      const payment = await paymentService.confirmPayment(paymentIntentId);
+      const order = await stripeService.confirmPayment(paymentIntentId);
 
       res.json({
         message: 'Pago confirmado',
-        payment,
+        order,
       });
     } catch (error) {
       next(error);
@@ -79,21 +80,22 @@ export class PaymentController {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { paymentId, amount, reason } = req.body;
-
-      if (!paymentId) {
-        throw new AppError(400, 'Payment ID requerido', 'MISSING_DATA');
+      // Solo admins pueden hacer reembolsos
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'No autorizado', 'FORBIDDEN');
       }
 
-      const result = await paymentService.createRefund({
-        paymentId,
-        amount,
-        reason,
-      });
+      const { orderId, amount, reason } = req.body;
+
+      if (!orderId) {
+        throw new AppError(400, 'Order ID requerido', 'MISSING_DATA');
+      }
+
+      const refund = await stripeService.createRefund(orderId, amount, reason);
 
       res.json({
         message: 'Reembolso procesado',
-        ...result,
+        refund,
       });
     } catch (error) {
       next(error);
@@ -101,16 +103,16 @@ export class PaymentController {
   }
 
   /**
-   * Get payment status
+   * Get payment details
    */
-  async getPaymentStatus(req: AuthRequest, res: Response, next: NextFunction) {
+  async getPaymentDetails(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { id } = req.params;
-      const payment = await paymentService.getPaymentStatus(id);
+      const { paymentIntentId } = req.params;
+      const payment = await stripeService.getPaymentDetails(paymentIntentId);
 
       res.json(payment);
     } catch (error) {
@@ -124,25 +126,15 @@ export class PaymentController {
   async handleWebhook(req: Request, res: Response, next: NextFunction) {
     try {
       const sig = req.headers['stripe-signature'] as string;
-      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-      if (!sig || !webhookSecret) {
+      if (!sig) {
         throw new AppError(400, 'Webhook signature missing', 'MISSING_SIGNATURE');
       }
 
-      let event: Stripe.Event;
+      // El body debe ser raw para la verificación de firma
+      const rawBody = req.body;
 
-      try {
-        event = stripe.webhooks.constructEvent(
-          req.body,
-          sig,
-          webhookSecret
-        );
-      } catch (err: any) {
-        throw new AppError(400, `Webhook Error: ${err.message}`, 'WEBHOOK_ERROR');
-      }
-
-      await paymentService.handleWebhook(event);
+      await stripeService.handleWebhook(rawBody, sig);
 
       res.json({ received: true });
     } catch (error) {
@@ -151,35 +143,26 @@ export class PaymentController {
   }
 
   /**
-   * Get payment methods
+   * Cancel payment intent
    */
-  async getPaymentMethods(req: AuthRequest, res: Response, next: NextFunction) {
+  async cancelPaymentIntent(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const methods = await paymentService.getPaymentMethods(req.user.id);
-      res.json(methods);
-    } catch (error) {
-      next(error);
-    }
-  }
+      const { paymentIntentId } = req.body;
 
-  /**
-   * Get payment history
-   */
-  async getPaymentHistory(req: AuthRequest, res: Response, next: NextFunction) {
-    try {
-      if (!req.user) {
-        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      if (!paymentIntentId) {
+        throw new AppError(400, 'Payment Intent ID requerido', 'MISSING_DATA');
       }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const result = await stripeService.cancelPaymentIntent(paymentIntentId);
 
-      const history = await paymentService.getPaymentHistory(req.user.id, page, limit);
-      res.json(history);
+      res.json({
+        message: 'Payment Intent cancelado',
+        result,
+      });
     } catch (error) {
       next(error);
     }

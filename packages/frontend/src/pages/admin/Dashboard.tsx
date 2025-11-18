@@ -1,4 +1,4 @@
-import { Package, ShoppingCart, Users, TrendingUp, Calendar, Settings, LogOut, FileText } from 'lucide-react';
+import { Package, ShoppingCart, Users, TrendingUp, Calendar, Settings, LogOut, FileText, Calculator, Truck, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { analyticsService } from '../../services/analytics.service';
@@ -16,7 +16,7 @@ const Dashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const data = await analyticsService.getDashboardStats();
+      const data: any = await analyticsService.getDashboardStats();
       setStats(data);
       setRecentOrders(data?.recentOrders || []);
     } catch (error: any) {
@@ -94,6 +94,18 @@ const Dashboard = () => {
                 <FileText className="w-5 h-5" />
                 Blog
               </Link>
+              <Link to="/admin/calculator" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
+                <Calculator className="w-5 h-5" />
+                Calculadora
+              </Link>
+              <Link to="/admin/shipping-config" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
+                <Truck className="w-5 h-5" />
+                Envío y Montaje
+              </Link>
+              <Link to="/admin/company-settings" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
+                <Building2 className="w-5 h-5" />
+                Datos de Facturación
+              </Link>
               <Link to="/admin/settings" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
                 <Settings className="w-5 h-5" />
                 Configuración
@@ -166,6 +178,45 @@ const Dashboard = () => {
                 <Users className="w-12 h-12 text-orange-500" />
               </div>
             </div>
+          </div>
+
+          {/* Quick Access */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Link to="/admin/shipping-config" className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <Truck className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Configurar Envío</h3>
+                  <p className="text-blue-100 text-sm">Tarifas, zonas y mínimos</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/admin/products" className="bg-gradient-to-r from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <Package className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Gestionar Productos</h3>
+                  <p className="text-purple-100 text-sm">Stock y catálogo</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/admin/orders" className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <ShoppingCart className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Ver Pedidos</h3>
+                  <p className="text-green-100 text-sm">Estado y gestión</p>
+                </div>
+              </div>
+            </Link>
           </div>
 
           {/* Recent Orders Table */}

@@ -26,10 +26,17 @@ export class CategoryService {
         where.parentId = parentId;
       }
 
+      console.log('🔍 Where clause para categorías:', where);
       const categories = await prisma.category.findMany({
         where,
         orderBy: { sortOrder: 'asc' },
       });
+
+      console.log(`📊 Categorías en BD (con filtro): ${categories.length}`);
+      
+      // Debug: Contar todas las categorías sin filtro
+      const totalCategories = await prisma.category.count();
+      console.log(`📊 Total categorías en BD (sin filtro): ${totalCategories}`);
 
       return categories;
     } catch (error) {

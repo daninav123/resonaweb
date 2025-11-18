@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { ShoppingCart, Menu, X, User, LogOut, Package, Heart, Search, Calendar } from 'lucide-react';
 import { useCartCount } from '../../hooks/useCartCount';
 import CartSidebar from '../CartSidebar';
+import NotificationBell from '../notifications/NotificationBell';
 import { productService } from '../../services/product.service';
 import { getCategoryIcon } from '../../utils/categoryIcons';
 
@@ -22,11 +23,10 @@ const Header = () => {
     queryKey: ['menu-categories'],
     queryFn: async () => {
       const result = await productService.getCategories();
-      console.log('📦 Categorías cargadas en Header:', result);
       return result || [];
     },
-    staleTime: 0,
-    refetchOnMount: 'always',
+    staleTime: 5 * 60 * 1000, // 5 minutos de cachÃ©
+    refetchOnMount: false,
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -49,14 +49,13 @@ const Header = () => {
       <div className="bg-gradient-to-r from-resona to-resona-dark text-white py-2">
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
-            <span>📞 +34 600 123 456</span>
-            <span className="hidden sm:inline">📧 info@resona.com</span>
+            <span>Tel: +34 600 123 456</span>
+            <span className="hidden sm:inline">Email: info@resona.com</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/ayuda" className="hover:underline">Ayuda</Link>
             {!isAuthenticated ? (
               <>
-                <Link to="/login" className="hover:underline">Iniciar Sesión</Link>
+                <Link to="/login" className="hover:underline">Iniciar Sesion</Link>
                 <Link to="/register" className="hover:underline">Registrarse</Link>
               </>
             ) : (
@@ -78,9 +77,14 @@ const Header = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.svg" alt="Resona Events" className="h-12 w-auto" />
+            <img src="/logo-resona.svg" alt="ReSona Events" className="h-12 w-auto" />
             <div className="flex flex-col">
-              <span className="text-2xl font-bold" style={{ fontFamily: 'Brush Script MT, cursive', color: '#5ebbff' }}>Resona</span>
+              <span
+                className="text-2xl font-bold"
+                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#5ebbff' }}
+              >
+                ReSona
+              </span>
               <span className="text-xs tracking-widest text-gray-600">EVENTS</span>
             </div>
           </Link>
@@ -126,6 +130,11 @@ const Header = () => {
                   <Package className="w-6 h-6 text-gray-700" />
                 </Link>
               </>
+            )}
+
+            {/* Notifications */}
+            {isAuthenticated && (
+              <NotificationBell />
             )}
 
             {/* Cart */}
@@ -186,12 +195,12 @@ const Header = () => {
               <ul className="lg:absolute lg:left-0 lg:top-full lg:bg-white lg:shadow-lg lg:rounded-lg lg:w-56 lg:hidden lg:group-hover:block lg:z-50">
                 <li>
                   <Link to="/productos" className="block px-4 py-3 hover:bg-resona/10 hover:text-resona transition-colors font-medium border-b border-gray-100">
-                    📦 Ver Todo el Catálogo
+                    ðŸ“¦ Ver Todo el Catálogo
                   </Link>
                 </li>
                 <li className="pt-2">
                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-                    Por Categoría ({categories.length})
+                    Por categoría ({categories.length})
                   </div>
                 </li>
                 {categories.map((cat: any) => (
@@ -268,3 +277,8 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
+
+

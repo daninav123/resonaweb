@@ -48,9 +48,17 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         set({ loading: true, error: null });
+        
+        // Limpiar tokens viejos ANTES del login
+        if (api.removeAuthToken) {
+          api.removeAuthToken();
+        }
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
         try {
           const response: any = await api.post('/auth/login', { email, password });
-          const { user, accessToken, refreshToken } = response.data;
+          const { user, accessToken, refreshToken } = response.data.data || response.data;
           
           // Store token in axios defaults
           if (api.setAuthToken) {
@@ -79,9 +87,17 @@ export const useAuthStore = create<AuthState>()(
 
       register: async (data: RegisterData) => {
         set({ loading: true, error: null });
+        
+        // Limpiar tokens viejos ANTES del registro
+        if (api.removeAuthToken) {
+          api.removeAuthToken();
+        }
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
         try {
           const response: any = await api.post('/auth/register', data);
-          const { user, accessToken, refreshToken } = response.data;
+          const { user, accessToken, refreshToken } = response.data.data || response.data;
           
           // Store token in axios defaults
           if (api.setAuthToken) {
@@ -151,7 +167,18 @@ export const useAuthStore = create<AuthState>()(
         const token = get().accessToken || localStorage.getItem('accessToken');
         
         if (!token) {
-          set({ loading: false, isAuthenticated: false });
+          set({ 
+            loading: false, 
+            isAuthenticated: false,
+            user: null,
+            accessToken: null,
+            refreshToken: null,
+            token: null
+          });
+          // Limpiar headers
+          if (api.removeAuthToken) {
+            api.removeAuthToken();
+          }
           return;
         }
 
@@ -170,16 +197,23 @@ export const useAuthStore = create<AuthState>()(
             loading: false,
           });
         } catch (error: any) {
-          // Si es 401, simplemente no está autenticado, no hacer logout
+          // Si es 401, limpiar todo y resetear estado
           if (error?.response?.status === 401) {
             set({ 
               isAuthenticated: false, 
               loading: false,
-              user: null 
+              user: null,
+              accessToken: null,
+              refreshToken: null,
+              token: null
             });
-            // Limpiar tokens sin hacer logout completo
+            // Limpiar localStorage y headers
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
+            localStorage.removeItem('auth-storage');
+            if (api.removeAuthToken) {
+              api.removeAuthToken();
+            }
           } else {
             set({ loading: false });
           }

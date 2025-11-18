@@ -46,16 +46,21 @@ export class ProductController {
       
       // Filter by category slug if provided
       if (categorySlug) {
+        console.log('🔍 Buscando categoría con slug:', categorySlug);
         // First, find the category by slug
         const category = await prisma.category.findUnique({
           where: { slug: categorySlug }
         });
         
         if (category) {
+          console.log('✅ Categoría encontrada:', category.name, 'ID:', category.id);
           where.categoryId = category.id;
+        } else {
+          console.log('❌ No se encontró categoría con slug:', categorySlug);
         }
       }
 
+      console.log('📦 Where clause para productos:', where);
       const result = await productService.getAllProducts({
         skip,
         take: limit,
@@ -63,6 +68,7 @@ export class ProductController {
         where,
       });
 
+      console.log('✅ Productos retornados:', result.data?.length || 0);
       res.json(result);
     } catch (error) {
       next(error);
@@ -226,14 +232,22 @@ export class ProductController {
    * Delete product (admin only)
    */
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
     try {
-      const { id } = req.params;
       const force = req.query.force === 'true';
+      
+      console.log(`🗑️  DELETE REQUEST: Product ${id}, force: ${force}`);
       
       const result = await productService.deleteProduct(id, force);
       
+      console.log(`✅ DELETE SUCCESS: Product ${id}`);
       res.json(result);
-    } catch (error) {
+    } catch (error: any) {
+      console.error(`❌ DELETE ERROR: Product ${id}`, {
+        message: error.message,
+        code: error.code,
+        stack: error.stack?.substring(0, 500),
+      });
       next(error);
     }
   }
