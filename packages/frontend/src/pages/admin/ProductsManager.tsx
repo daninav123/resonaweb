@@ -819,7 +819,7 @@ const ProductsManager = () => {
             setImageProduct(null);
           }}
           onSuccess={() => {
-            fetchProducts();
+            loadProducts();
           }}
         />
       )}

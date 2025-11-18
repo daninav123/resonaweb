@@ -31,7 +31,7 @@ export const FilterPanel = ({
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await api.get('/categories');
+      const response: any = await api.get('/categories');
       return response.categories || [];
     }
   });

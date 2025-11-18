@@ -3,6 +3,7 @@ import { ShoppingCart, Eye, Download, Filter } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const OrdersManager = () => {
   const navigate = useNavigate();

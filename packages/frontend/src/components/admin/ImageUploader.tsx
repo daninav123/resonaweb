@@ -48,7 +48,7 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
         formData.append('image', file);
 
         // Subir al servidor
-        const response = await api.post('/upload/image', formData, {
+        const response: any = await api.post('/upload/image', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

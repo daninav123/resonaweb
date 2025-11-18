@@ -36,7 +36,7 @@ export const SearchBar = ({
     queryKey: ['search', query],
     queryFn: async () => {
       if (query.length < 2) return [];
-      const response = await api.get(`/products/search?q=${encodeURIComponent(query)}&limit=5`);
+      const response: any = await api.get(`/products/search?q=${encodeURIComponent(query)}&limit=5`);
       return response.products || [];
     },
     enabled: query.length >= 2,

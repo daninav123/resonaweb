@@ -1,4 +1,4 @@
-import { Package, ShoppingCart, Users, TrendingUp, Calendar, Settings, LogOut, FileText, Calculator, Truck, Building2 } from 'lucide-react';
+import { Package, ShoppingCart, Users, TrendingUp, Calendar, Settings, LogOut, FileText, Calculator, Truck, Building2, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { analyticsService } from '../../services/analytics.service';
@@ -71,10 +71,10 @@ const Dashboard = () => {
                 <Package className="w-5 h-5" />
                 Productos
               </Link>
-              <Link to="/admin/on-demand" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800 bg-yellow-900">
-                <Package className="w-5 h-5" />
+              <Link to="/admin/stock-alerts" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800 bg-red-900">
+                <AlertTriangle className="w-5 h-5" />
                 <span className="flex items-center gap-2">
-                  Catálogo Virtual
+                  Alertas de Stock
                   <span className="text-xs bg-yellow-500 text-yellow-900 px-1.5 py-0.5 rounded">Beta</span>
                 </span>
               </Link>

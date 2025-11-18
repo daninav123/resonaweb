@@ -27,6 +27,7 @@ import { couponRouter } from './routes/coupon.routes';
 import { searchRouter } from './routes/search.routes';
 import { notificationRouter } from './routes/notification.routes';
 import { uploadRouter } from './routes/upload.routes';
+import { stockAlertsRouter } from './routes/stock-alerts.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -131,6 +132,7 @@ app.use('/api/v1/notifications', notificationRouter);
 app.use('/api/v1/search', searchRouter);
 app.use('/api/v1/products/search', searchRouter); // Alias para búsqueda de productos
 app.use('/api/v1/upload', uploadRouter);
+app.use('/api/v1', stockAlertsRouter);
 
 // Error handling
 app.use(notFoundHandler);

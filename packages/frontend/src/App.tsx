@@ -43,7 +43,7 @@ const UsersManager = lazy(() => import('./pages/admin/UsersManager'));
 const CalendarManager = lazy(() => import('./pages/admin/CalendarManager'));
 const SettingsManager = lazy(() => import('./pages/admin/SettingsManager'));
 const CategoriesManager = lazy(() => import('./pages/admin/CategoriesManager'));
-const OnDemandDashboard = lazy(() => import('./pages/admin/OnDemandDashboard'));
+const StockAlerts = lazy(() => import('./pages/admin/StockAlerts'));
 const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManagerNew'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
@@ -134,7 +134,7 @@ function App() {
               <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
               <Route path="/admin/products" element={<Layout><ProductsManager /></Layout>} />
               <Route path="/admin/categories" element={<Layout><CategoriesManager /></Layout>} />
-              <Route path="/admin/on-demand" element={<Layout><OnDemandDashboard /></Layout>} />
+              <Route path="/admin/stock-alerts" element={<Layout><StockAlerts /></Layout>} />
               <Route path="/admin/orders" element={<Layout><OrdersManager /></Layout>} />
               <Route path="/admin/orders/:id" element={<Layout><OrderDetailPage /></Layout>} />
               <Route path="/admin/users" element={<Layout><UsersManager /></Layout>} />

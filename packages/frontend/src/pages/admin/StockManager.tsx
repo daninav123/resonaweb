@@ -56,7 +56,7 @@ const StockManager = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/products');
+      const response: any = await api.get('/products');
       setProducts(response.products || []);
     } catch (error) {
       toast.error('Error al cargar productos');

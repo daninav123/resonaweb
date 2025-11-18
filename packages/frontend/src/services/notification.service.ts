@@ -20,7 +20,7 @@ class NotificationService {
   async getNotifications(unreadOnly: boolean = false): Promise<Notification[]> {
     try {
       const params = unreadOnly ? '?unread=true' : '';
-      const response = await api.get(`/notifications${params}`);
+      const response: any = await api.get(`/notifications${params}`);
       return response.notifications || [];
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -66,7 +66,7 @@ class NotificationService {
    */
   async getUnreadCount(): Promise<number> {
     try {
-      const response = await api.get('/notifications/unread-count');
+      const response: any = await api.get('/notifications/unread-count');
       return response.count || 0;
     } catch (error) {
       console.error('Error fetching unread count:', error);

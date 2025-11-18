@@ -11,7 +11,7 @@ class PaymentService {
   async initialize() {
     if (!this.stripePromise) {
       try {
-        const config = await api.get('/payment/config');
+        const config: any = await api.get('/payment/config');
         this.publishableKey = config.publishableKey;
         
         if (this.publishableKey) {
