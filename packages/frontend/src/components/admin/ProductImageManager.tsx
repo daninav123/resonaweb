@@ -3,6 +3,7 @@ import { X, Save } from 'lucide-react';
 import { ImageUploader } from './ImageUploader';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
+import { getRelativePath } from '../../utils/imageUrl';
 
 interface ProductImageManagerProps {
   product: {
@@ -24,8 +25,16 @@ export const ProductImageManager = ({ product, isOpen, onClose, onSuccess }: Pro
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Convertir URL completa a ruta relativa
+      const mainImagePath = images[0] ? getRelativePath(images[0]) : null;
+      
+      console.log('💾 Guardando imagen:', { 
+        original: images[0], 
+        converted: mainImagePath 
+      });
+      
       await api.put(`/products/${product.id}`, {
-        mainImageUrl: images[0] || null
+        mainImageUrl: mainImagePath
       });
 
       toast.success('Imágenes actualizadas');

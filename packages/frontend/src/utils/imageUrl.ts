@@ -24,6 +24,32 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
 };
 
 /**
+ * Convierte una URL completa a ruta relativa
+ * @param imageUrl - URL completa (ej: http://localhost:3001/uploads/products/imagen.webp)
+ * @returns Ruta relativa (ej: /uploads/products/imagen.webp)
+ */
+export const getRelativePath = (imageUrl: string | null | undefined): string => {
+  if (!imageUrl) {
+    return '';
+  }
+
+  // Si ya es una ruta relativa, devolverla
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+
+  // Extraer la parte después del dominio
+  try {
+    const url = new URL(imageUrl);
+    return url.pathname;
+  } catch {
+    // Si falla el parsing, intentar extraer manualmente
+    const match = imageUrl.match(/https?:\/\/[^/]+(\/.*)/);
+    return match ? match[1] : imageUrl;
+  }
+};
+
+/**
  * Placeholder SVG para imágenes que fallan al cargar
  */
 export const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="24" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ESin imagen%3C/text%3E%3C/svg%3E';
