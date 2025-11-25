@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subir Imagen DAS 515A</title>
+</head>
+<body>
+    <h2>Subir imagen para Altavoz DAS 515A</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageFile" accept="image/*" required>
+        <button type="submit">Subir Imagen</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('image', document.getElementById('imageFile').files[0]);
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/products/72c03810-0dc2-40a1-8290-3cabc02d5b5c/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <p style="color: green;">✅ Imagen subida correctamente</p>
+                    <img src="http://localhost:3001${result.imageUrl}" style="max-width: 400px;">
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <p style="color: red;">❌ Error: ${error.message}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -56,8 +56,10 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
 
         console.log('📤 Respuesta de upload:', response);
 
-        // Validar respuesta
-        if (!response || !response.data || !response.data.imageUrl) {
+        // Validar respuesta (puede venir en response.data o directamente en response)
+        const responseData = response.data || response;
+        
+        if (!responseData || !responseData.imageUrl) {
           console.error('❌ Respuesta inválida del servidor:', response);
           toast.error(`Error al subir ${file.name}: respuesta inválida del servidor`);
           continue;
@@ -65,7 +67,7 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
 
         // Construir URL completa
         const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const imagePath = response.data.imageUrl;
+        const imagePath = responseData.imageUrl;
         
         // Si la imagen ya tiene URL completa, usarla directamente
         const imageUrl = imagePath.startsWith('http') 

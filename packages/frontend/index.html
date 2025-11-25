@@ -1,13 +1,22 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z"></script>
+    <!-- Google tag (gtag.js) - Solo en producción -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-4F522M345Z');
+      // Solo cargar GA si NO estamos en localhost
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-4F522M345Z');
+      } else {
+        console.log('📊 Google Analytics desactivado en desarrollo');
+      }
     </script>
 
     <meta charset="UTF-8" />
