@@ -7,7 +7,9 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone?: string;
   role: string;
+  userLevel: 'STANDARD' | 'VIP' | 'VIP_PLUS';
 }
 
 interface AuthState {
@@ -164,7 +166,39 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkAuth: async () => {
-        const token = get().accessToken || localStorage.getItem('accessToken');
+        // Intentar obtener todo el estado persistido
+        let token = get().accessToken;
+        let user = get().user;
+        let refreshToken = get().refreshToken;
+        
+        // Si no está en el estado, intentar obtenerlo del storage de zustand persist
+        if (!token || !user) {
+          try {
+            const storedAuth = localStorage.getItem('auth-storage');
+            
+            if (storedAuth) {
+              const parsed = JSON.parse(storedAuth);
+              
+              token = parsed.state?.accessToken || parsed.state?.token;
+              user = parsed.state?.user;
+              refreshToken = parsed.state?.refreshToken;
+              
+              // Restaurar el estado completo desde el storage
+              if (token && user) {
+                set({
+                  accessToken: token,
+                  token: token,
+                  refreshToken: refreshToken,
+                  user: user,
+                  isAuthenticated: true,
+                  loading: false,
+                });
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing auth storage:', e);
+          }
+        }
         
         if (!token) {
           set({ 
@@ -181,8 +215,6 @@ export const useAuthStore = create<AuthState>()(
           }
           return;
         }
-
-        set({ loading: true });
         
         try {
           // Set token in axios defaults
@@ -191,14 +223,23 @@ export const useAuthStore = create<AuthState>()(
           }
           const response: any = await api.get('/auth/me');
           
+          // El backend devuelve { data: user }, no { data: { user } }
+          const userData = response.data || response;
+          
+          // Actualizar con datos frescos del servidor
           set({
-            user: response.data.user,
+            user: userData,
             isAuthenticated: true,
             loading: false,
+            accessToken: token,
+            token: token,
           });
         } catch (error: any) {
+          const status = error?.response?.status;
+          
           // Si es 401, limpiar todo y resetear estado
-          if (error?.response?.status === 401) {
+          if (status === 401) {
+            console.log('❌ Token inválido o expirado (401), limpiando sesión');
             set({ 
               isAuthenticated: false, 
               loading: false,
@@ -208,13 +249,17 @@ export const useAuthStore = create<AuthState>()(
               token: null
             });
             // Limpiar localStorage y headers
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             localStorage.removeItem('auth-storage');
             if (api.removeAuthToken) {
               api.removeAuthToken();
             }
+          } else if (status === 429) {
+            // Rate limiting - no reintentar automáticamente
+            console.log('⚠️ Rate limiting (429), esperando antes de reintentar...');
+            set({ loading: false });
+            // No hacer nada más, dejar que se recupere naturalmente
           } else {
+            console.log('⚠️ Error inesperado en checkAuth:', status, error?.message);
             set({ loading: false });
           }
         }

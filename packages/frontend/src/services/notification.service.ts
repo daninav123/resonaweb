@@ -22,8 +22,11 @@ class NotificationService {
       const params = unreadOnly ? '?unread=true' : '';
       const response: any = await api.get(`/notifications${params}`);
       return response.notifications || [];
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
+    } catch (error: any) {
+      // Silenciar error 401 (no autenticado) - es esperado
+      if (error?.response?.status !== 401) {
+        console.error('Error fetching notifications:', error);
+      }
       return [];
     }
   }
@@ -68,8 +71,11 @@ class NotificationService {
     try {
       const response: any = await api.get('/notifications/unread-count');
       return response.count || 0;
-    } catch (error) {
-      console.error('Error fetching unread count:', error);
+    } catch (error: any) {
+      // Silenciar error 401 (no autenticado) - es esperado
+      if (error?.response?.status !== 401) {
+        console.error('Error fetching unread count:', error);
+      }
       return 0;
     }
   }

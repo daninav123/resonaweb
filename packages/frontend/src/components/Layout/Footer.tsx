@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, CreditCard } from 'lucide-react';
+import { Mail, Phone, MapPin, CreditCard } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <footer className="bg-gray-900 text-white">
       {/* Wave Decoration */}
       <div className="relative">
         <svg className="w-full h-12 text-gray-50" viewBox="0 0 1440 48" preserveAspectRatio="none">
@@ -32,29 +32,15 @@ const Footer = () => {
               Tu partner de confianza para el alquiler de material de eventos.
               Más de 10 años haciendo realidad tus celebraciones.
             </p>
-            <div className="flex gap-3">
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-resona transition group">
-                <Facebook className="w-5 h-5 group-hover:scale-110 transition" />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-resona transition group">
-                <Instagram className="w-5 h-5 group-hover:scale-110 transition" />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-resona transition group">
-                <Twitter className="w-5 h-5 group-hover:scale-110 transition" />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-resona transition group">
-                <Youtube className="w-5 h-5 group-hover:scale-110 transition" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Enlaces Rapidos</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona">Enlaces Rápidos</h4>
             <ul className="space-y-2">
               <li><Link to="/productos" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Catalogo
+                Catálogo
               </Link></li>
               <li><Link to="/servicios" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
@@ -81,7 +67,7 @@ const Footer = () => {
 
           {/* Categories */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Categorias</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona">Categorías</h4>
             <ul className="space-y-2">
               <li><Link to="/productos?category=sonido" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
@@ -89,11 +75,11 @@ const Footer = () => {
               </Link></li>
               <li><Link to="/productos?category=iluminacion" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Iluminacion
+                Iluminación
               </Link></li>
               <li><Link to="/productos?category=fotografia-y-video" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Fotografia y Video
+                Fotografía y Video
               </Link></li>
               <li><Link to="/productos?category=mobiliario" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
@@ -101,7 +87,7 @@ const Footer = () => {
               </Link></li>
               <li><Link to="/productos?category=elementos-decorativos" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Decoracion
+                Decoración
               </Link></li>
               <li><Link to="/productos" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
@@ -124,21 +110,21 @@ const Footer = () => {
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
                   <Phone className="w-5 h-5 text-resona" />
                 </div>
-                <a href="tel:+34600123456" className="text-gray-300 hover:text-resona transition text-sm">
-                  +34 600 123 456
+                <a href="tel:+34613881414" className="text-gray-300 hover:text-resona transition text-sm">
+                  +34 613 881 414
                 </a>
               </div>
               <div className="flex items-center gap-3 group">
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
                   <Mail className="w-5 h-5 text-resona" />
                 </div>
-                <a href="mailto:info@resona.com" className="text-gray-300 hover:text-resona transition text-sm">
-                  info@resona.com
+                <a href="mailto:info@resonaevents.com" className="text-gray-300 hover:text-resona transition text-sm">
+                  info@resonaevents.com
                 </a>
               </div>
             </div>
             
-            <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Metodos de Pago</h4>
+            <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Métodos de Pago</h4>
             <div className="flex gap-2 items-center">
               <div className="bg-white p-2 rounded">
                 <CreditCard className="w-6 h-6 text-gray-700" />
@@ -173,7 +159,7 @@ const Footer = () => {
           </div>
           
           {/* Decorative Bottom Line */}
-          <div className="mt-6 h-1 bg-gradient-to-r from-transparent via-resona to-transparent rounded-full"></div>
+          <div className="mt-6 h-1 bg-resona/30 rounded-full mx-auto max-w-md"></div>
         </div>
       </div>
     </footer>

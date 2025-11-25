@@ -63,3 +63,25 @@ docker-compose.override.yml
 
 # Misc
 .windsurf/
+
+# Test results
+test-results/
+playwright-report/
+**/test-results/
+**/playwright-report/
+
+# Documentation files (pueden ser muchos)
+*.md
+!README.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+
+# Scripts de desarrollo
+*.bat
+*.ps1
+*.sh
+!scripts/**/*.sh
+
+# Debug files
+debug-*.png
+debug-*.js

@@ -38,4 +38,39 @@ router.patch(
   invoiceController.markAsPaid
 );
 
+// Get all invoices (admin only)
+router.get(
+  '/',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.getAllInvoices
+);
+
+// Generate Facturae XML (admin only)
+router.post(
+  '/:id/facturae',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.generateFacturae
+);
+
+// Download Facturae XML (admin only)
+router.get(
+  '/:id/facturae/download',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.downloadFacturae
+);
+
+// Create manual invoice (admin only - for non-web events)
+router.post(
+  '/manual',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.createManualInvoice
+);
+
+// Download all invoices as ZIP (admin only)
+router.get(
+  '/download-all',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.downloadAllInvoices
+);
+
 export { router as invoiceRouter };

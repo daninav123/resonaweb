@@ -306,6 +306,30 @@ export class EmailService {
     });
   }
 
+  async sendOrderExpirationEmail(data: {
+    to: string;
+    userName: string;
+    orderNumber: string;
+    orderTotal: string;
+    expirationMinutes: number;
+    items: Array<{ name: string; quantity: number; price: string }>;
+  }) {
+    await this.send({
+      to: data.to,
+      subject: `Pedido #${data.orderNumber} expirado - ReSona Events`,
+      template: 'order-expiration',
+      data: {
+        userName: data.userName,
+        orderNumber: data.orderNumber,
+        orderTotal: data.orderTotal,
+        expirationMinutes: data.expirationMinutes,
+        items: data.items,
+        shopUrl: `${process.env.FRONTEND_URL}/products`,
+        contactUrl: `${process.env.FRONTEND_URL}/contact`,
+      },
+    });
+  }
+
   private getDefaultTemplate(templateName: string): string {
     // Default templates if files don't exist
     const templates: Record<string, string> = {
@@ -363,6 +387,23 @@ export class EmailService {
         <p>Tu factura está lista.</p>
         <p>Total: €{{total}}</p>
         <p><a href="{{downloadUrl}}">Descargar factura</a></p>
+      `,
+      'order-expiration': `
+        <h1>Pedido Expirado</h1>
+        <p>Hola {{userName}},</p>
+        <p>Lamentamos informarte que tu pedido <strong>#{{orderNumber}}</strong> ha expirado.</p>
+        <p>El pedido no fue completado en el tiempo límite de {{expirationMinutes}} minutos y ha sido cancelado automáticamente.</p>
+        <h3>Detalles del pedido cancelado:</h3>
+        <ul>
+          {{#each items}}
+          <li>{{this.name}} - Cantidad: {{this.quantity}} - Precio: €{{this.price}}</li>
+          {{/each}}
+        </ul>
+        <p><strong>Total:</strong> €{{orderTotal}}</p>
+        <p>Si todavía estás interesado en estos productos, puedes crear un nuevo pedido.</p>
+        <p><a href="{{shopUrl}}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0;">Ver productos</a></p>
+        <p>Si necesitas ayuda, no dudes en <a href="{{contactUrl}}">contactarnos</a>.</p>
+        <p>Gracias por tu interés en ReSona Events.</p>
       `,
     };
     

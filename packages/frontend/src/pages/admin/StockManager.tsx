@@ -336,7 +336,7 @@ const StockManager = () => {
                       </td>
                       <td className="px-6 py-4">
                         {product.markedForPurchase ? (
-                          <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
+                          <span className="px-2 py-1 text-xs rounded-full bg-resona/10 text-resona">
                             Prioridad {product.purchasePriority}
                           </span>
                         ) : (
@@ -363,8 +363,8 @@ const StockManager = () => {
                             onClick={() => togglePurchasePriority(product)}
                             className={`${
                               product.markedForPurchase 
-                                ? 'text-purple-600' 
-                                : 'text-gray-400 hover:text-purple-600'
+                                ? 'text-resona' 
+                                : 'text-gray-400 hover:text-resona'
                             }`}
                             title="Marcar para Compra"
                           >

@@ -95,7 +95,7 @@ export class NotificationService {
 
       const html = `
         <h2>Confirmación de Pedido #${order.orderNumber}</h2>
-        <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
+        <p>Hola ${((order as any).user?.firstName || '')},</p>
         <p>Tu pedido ha sido confirmado exitosamente.</p>
         <h3>Detalles:</h3>
         <ul>
@@ -105,7 +105,7 @@ export class NotificationService {
         </ul>
         <h3>Productos:</h3>
         <ul>
-          ${((invoice.order as any).items || []).map(item => 
+          ${((order as any).items || []).map(item => 
             `<li>${item.product.name} (x${item.quantity}) - €${item.totalPrice}</li>`
           ).join('')}
         </ul>
@@ -114,7 +114,7 @@ export class NotificationService {
       `;
 
       await this.sendEmail({
-        to: ((invoice.order as any).user?.email || ''),
+        to: ((order as any).user?.email || ''),
         subject: `Confirmación de Pedido #${order.orderNumber}`,
         html,
       });
@@ -158,16 +158,16 @@ export class NotificationService {
 
       const html = `
         <h2>Pago Recibido - Pedido #${payment.order.orderNumber}</h2>
-        <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
+        <p>Hola ${((payment.order as any).user?.firstName || '')},</p>
         <p>Hemos recibido tu pago de <strong>€${payment.amount}</strong> para el pedido #${payment.order.orderNumber}.</p>
         <p>Fecha del pago: ${new Date(payment.paidAt || payment.createdAt).toLocaleDateString('es-ES')}</p>
-        <p>Método de pago: ${payment.paymentMethod}</p>
+        <p>Método de pago: ${(payment as any).method || 'No especificado'}</p>
         <p>Tu factura estará disponible próximamente en tu cuenta.</p>
         <p>Gracias por tu pago.</p>
       `;
 
       await this.sendEmail({
-        to: ((invoice.order as any).user?.email || ''),
+        to: ((payment.order as any).user?.email || ''),
         subject: `Pago Recibido - Pedido #${payment.order.orderNumber}`,
         html,
       });
@@ -206,7 +206,7 @@ export class NotificationService {
 
       const html = `
         <h2>Tu Pedido #${order.orderNumber} está Listo</h2>
-        <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
+        <p>Hola ${((order as any).user?.firstName || '')},</p>
         <p>Tu pedido está listo para ${order.deliveryType === 'DELIVERY' ? 'entrega' : 'recogida'}.</p>
         <p>Fecha programada: ${new Date(order.deliveryDate || order.startDate).toLocaleDateString('es-ES')}</p>
         ${order.deliveryAddress ? `<p>Dirección de entrega: ${order.deliveryAddress}</p>` : ''}
@@ -214,7 +214,7 @@ export class NotificationService {
       `;
 
       await this.sendEmail({
-        to: ((invoice.order as any).user?.email || ''),
+        to: ((order as any).user?.email || ''),
         subject: `Tu Pedido #${order.orderNumber} está Listo`,
         html,
       });
@@ -253,7 +253,7 @@ export class NotificationService {
 
       const html = `
         <h2>Pedido #${order.orderNumber} Entregado</h2>
-        <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
+        <p>Hola ${((order as any).user?.firstName || '')},</p>
         <p>Tu pedido ha sido entregado exitosamente.</p>
         <p>Fecha de entrega: ${new Date().toLocaleDateString('es-ES')}</p>
         <p>Fecha de devolución prevista: ${new Date(order.endDate).toLocaleDateString('es-ES')}</p>
@@ -261,7 +261,7 @@ export class NotificationService {
       `;
 
       await this.sendEmail({
-        to: ((invoice.order as any).user?.email || ''),
+        to: ((order as any).user?.email || ''),
         subject: `Pedido #${order.orderNumber} Entregado`,
         html,
       });

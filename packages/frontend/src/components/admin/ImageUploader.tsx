@@ -54,8 +54,25 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
           },
         });
 
+        console.log('📤 Respuesta de upload:', response);
+
+        // Validar respuesta
+        if (!response || !response.data || !response.data.imageUrl) {
+          console.error('❌ Respuesta inválida del servidor:', response);
+          toast.error(`Error al subir ${file.name}: respuesta inválida del servidor`);
+          continue;
+        }
+
         // Construir URL completa
-        const imageUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${response.data.imageUrl}`;
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const imagePath = response.data.imageUrl;
+        
+        // Si la imagen ya tiene URL completa, usarla directamente
+        const imageUrl = imagePath.startsWith('http') 
+          ? imagePath 
+          : `${baseUrl}${imagePath}`;
+        
+        console.log('✅ URL de imagen generada:', imageUrl);
         uploadedUrls.push(imageUrl);
       }
 

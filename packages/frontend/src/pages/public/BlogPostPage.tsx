@@ -215,7 +215,9 @@ const BlogPostPage = () => {
             )}
 
             {/* CTA */}
-            <div className="mt-12 p-8 bg-gradient-to-br from-resona to-resona-dark rounded-xl text-white text-center">
+            <div className="relative mt-12 p-8 bg-resona rounded-xl text-white text-center overflow-hidden">
+              <div className="absolute inset-0 bg-black/15"></div>
+              <div className="relative">
               <h3 className="text-2xl font-bold mb-4">
                 ¿Necesitas equipo para tu evento?
               </h3>
@@ -235,6 +237,7 @@ const BlogPostPage = () => {
                 >
                   Calcular Presupuesto
                 </Link>
+              </div>
               </div>
             </div>
           </div>

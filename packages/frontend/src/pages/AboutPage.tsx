@@ -12,11 +12,14 @@ const AboutPage = () => {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-resona to-resona-dark text-white py-20">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-resona text-white py-20 overflow-hidden">
+        {/* Overlay para mejor legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        
+        <div className="relative container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Sobre Resona Events</h1>
-            <p className="text-xl text-blue-100">
+            <p className="text-xl text-white/90">
               Transformando eventos en experiencias inolvidables desde hace más de 10 años
             </p>
           </div>
@@ -82,8 +85,8 @@ const AboutPage = () => {
             </div>
 
             <div className="text-center">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-purple-600" />
+              <div className="bg-gradient-to-r from-resona to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-resona" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Confianza</h3>
               <p className="text-gray-600">

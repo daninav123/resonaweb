@@ -5,16 +5,22 @@ import { api } from '../../services/api';
 import { invoiceService } from '../../services/invoice.service';
 import { useAuthStore } from '../../stores/authStore';
 import { OrderNotes } from '../../components/orders/OrderNotes';
-import { Package, User, Calendar, MapPin, CreditCard, Truck, ArrowLeft, Download, Loader2 } from 'lucide-react';
+import { Package, User, Calendar, MapPin, CreditCard, Truck, ArrowLeft, Download, Loader2, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { canDownloadInvoice, getDocumentAction } from '../../utils/invoiceHelper';
 
 const OrderDetailPage = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const [loadingInvoice, setLoadingInvoice] = useState(false);
+  const [loadingFacturae, setLoadingFacturae] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
+  const [editData, setEditData] = useState<any>({});
 
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['admin-order-detail', id],
@@ -42,7 +48,7 @@ const OrderDetailPage = () => {
   // Mutation para cancelar pedido
   const cancelOrderMutation = useMutation({
     mutationFn: async () => {
-      return await api.post(`/orders/${id}/cancel`);
+      return await api.post(`/orders/${id}/cancel`, { reason: cancelReason });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
@@ -54,22 +60,27 @@ const OrderDetailPage = () => {
   });
 
   const handleDownloadInvoice = async () => {
+    if (!order) return;
+    
+    const docType = order.startDate && new Date(order.startDate) <= new Date() ? 'Factura' : 'Presupuesto';
+    const docTypeLower = docType.toLowerCase();
+    
     try {
       setLoadingInvoice(true);
-      toast.loading('Generando factura...');
+      toast.loading(`Generando ${docTypeLower}...`);
       
       // Generate invoice
       const response: any = await invoiceService.generateInvoice(id!);
-      console.log('📄 Respuesta de generar factura:', response);
+      console.log(`📄 Respuesta de generar ${docTypeLower}:`, response);
       
       // Extraer el invoice de la respuesta
       const invoice = response?.invoice || response;
       
       if (!invoice || !invoice.id) {
-        throw new Error('No se pudo generar la factura');
+        throw new Error(`No se pudo generar el ${docTypeLower}`);
       }
       
-      console.log('📄 Invoice ID:', invoice.id);
+      console.log(`📄 ${docType} ID:`, invoice.id);
       
       // Download PDF
       const blob = await invoiceService.downloadInvoice(invoice.id);
@@ -78,26 +89,110 @@ const OrderDetailPage = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `factura-${invoice.invoiceNumber || 'factura'}.pdf`;
+      link.download = `${docTypeLower}-${invoice.invoiceNumber || docTypeLower}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
       toast.dismiss();
-      toast.success('Factura descargada correctamente');
+      toast.success(`${docType} descargado correctamente`);
     } catch (error: any) {
       toast.dismiss();
-      toast.error(error?.message || 'Error al descargar la factura');
+      toast.error(error?.message || `Error al descargar el ${docTypeLower}`);
       console.error('Error completo:', error);
     } finally {
       setLoadingInvoice(false);
     }
   };
 
+  const handleGenerateFacturae = async () => {
+    try {
+      setLoadingFacturae(true);
+      toast.loading('Generando Facturae XML...');
+      
+      // Primero generar factura si no existe
+      const invoiceResponse: any = await invoiceService.generateInvoice(id!);
+      const invoice = invoiceResponse.invoice || invoiceResponse.data?.invoice || invoiceResponse;
+      
+      if (!invoice || !invoice.id) {
+        throw new Error('No se pudo generar la factura');
+      }
+      
+      // Generar Facturae XML
+      const response: any = await api.post(`/invoices/${invoice.id}/facturae`);
+      
+      toast.dismiss();
+      toast.success('Facturae XML generado correctamente');
+      queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error?.response?.data?.error || 'Error al generar Facturae XML');
+      console.error('Error:', error);
+    } finally {
+      setLoadingFacturae(false);
+    }
+  };
+
+  const handleDownloadFacturae = async () => {
+    try {
+      setLoadingFacturae(true);
+      toast.loading('Descargando Facturae XML...');
+      
+      // Obtener factura
+      const invoiceResponse: any = await invoiceService.generateInvoice(id!);
+      const invoice = invoiceResponse.invoice || invoiceResponse.data?.invoice || invoiceResponse;
+      
+      if (!invoice || !invoice.id) {
+        throw new Error('No se pudo obtener la factura');
+      }
+      
+      // Descargar XML
+      const response = await api.get(`/invoices/${invoice.id}/facturae/download`, {
+        responseType: 'blob'
+      });
+      
+      // Create download link
+      const blob = new Blob([response as BlobPart], { type: 'application/xml' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `factura_${invoice.invoiceNumber}.xml`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.dismiss();
+      toast.success('Facturae XML descargado correctamente');
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error?.response?.data?.error || 'Error al descargar Facturae XML');
+      console.error('Error:', error);
+    } finally {
+      setLoadingFacturae(false);
+    }
+  };
+
   const handleCancelOrder = () => {
-    if (window.confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
-      cancelOrderMutation.mutate();
+    if (!cancelReason.trim()) {
+      toast.error('Por favor indica el motivo de la cancelación');
+      return;
+    }
+    cancelOrderMutation.mutate();
+    setShowCancelModal(false);
+    setCancelReason('');
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await api.put(`/orders/${id}`, editData);
+      toast.success('Pedido actualizado correctamente');
+      queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
+      setShowEditModal(false);
+      setEditData({});
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || 'Error al actualizar el pedido');
     }
   };
 
@@ -111,7 +206,7 @@ const OrderDetailPage = () => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
       PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
       CONFIRMED: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Confirmado' },
-      IN_PREPARATION: { bg: 'bg-purple-100', text: 'text-purple-800', label: 'En Preparación' },
+      IN_PREPARATION: { bg: 'bg-resona/10', text: 'text-resona', label: 'En Preparación' },
       READY: { bg: 'bg-teal-100', text: 'text-teal-800', label: 'Listo' },
       IN_TRANSIT: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'En Tránsito' },
       DELIVERED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Entregado' },
@@ -268,7 +363,11 @@ const OrderDetailPage = () => {
                 {order.deliveryAddress && (
                   <div>
                     <p className="text-sm text-gray-600">Dirección</p>
-                    <p className="font-medium">{order.deliveryAddress}</p>
+                    <p className="font-medium">
+                      {typeof order.deliveryAddress === 'string' 
+                        ? order.deliveryAddress 
+                        : `${order.deliveryAddress.address || ''}, ${order.deliveryAddress.city || ''}, ${order.deliveryAddress.postalCode || ''}, ${order.deliveryAddress.country || ''}`.replace(/, ,/g, ',').replace(/^,|,$/g, '')}
+                    </p>
                   </div>
                 )}
               </div>
@@ -340,7 +439,11 @@ const OrderDetailPage = () => {
                 <button 
                   onClick={handleDownloadInvoice}
                   disabled={loadingInvoice}
-                  className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`w-full text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    canDownloadInvoice(order.startDate)
+                      ? 'bg-blue-600 hover:bg-blue-700'
+                      : 'bg-gray-600 hover:bg-gray-700'
+                  }`}
                 >
                   {loadingInvoice ? (
                     <>
@@ -349,15 +452,70 @@ const OrderDetailPage = () => {
                     </>
                   ) : (
                     <>
-                      <Download className="w-4 h-4" />
-                      Descargar Factura
+                      {canDownloadInvoice(order.startDate) ? (
+                        <Download className="w-4 h-4" />
+                      ) : (
+                        <FileText className="w-4 h-4" />
+                      )}
+                      {getDocumentAction(order.startDate)} PDF
+                    </>
+                  )}
+                </button>
+
+                <button 
+                  onClick={handleGenerateFacturae}
+                  disabled={loadingFacturae}
+                  className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loadingFacturae ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Generando...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      Generar Facturae XML
+                    </>
+                  )}
+                </button>
+
+                <button 
+                  onClick={handleDownloadFacturae}
+                  disabled={loadingFacturae}
+                  className="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loadingFacturae ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Descargando...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      Descargar Facturae XML
                     </>
                   )}
                 </button>
                 
                 <button 
-                  onClick={handleCancelOrder}
-                  disabled={cancelOrderMutation.isPending || order.status === 'CANCELLED'}
+                  onClick={() => {
+                    setEditData({
+                      notes: order.notes || '',
+                      internalNotes: order.internalNotes || ''
+                    });
+                    setShowEditModal(true);
+                  }}
+                  disabled={order.status === 'COMPLETED' || order.status === 'DELIVERED'}
+                  className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Editar Pedido
+                </button>
+
+                <button 
+                  data-testid="cancel-order"
+                  onClick={() => setShowCancelModal(true)}
+                  disabled={cancelOrderMutation.isPending || order.status === 'CANCELLED' || order.status === 'COMPLETED' || order.status === 'DELIVERED'}
                   className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {cancelOrderMutation.isPending ? 'Cancelando...' : 'Cancelar Pedido'}
@@ -407,6 +565,108 @@ const OrderDetailPage = () => {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {updateStatusMutation.isPending ? 'Actualizando...' : 'Confirmar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal para editar pedido */}
+        {showEditModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <h3 className="text-xl font-bold mb-4">Editar Pedido</h3>
+              
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notas del Cliente
+                  </label>
+                  <textarea
+                    value={editData.notes || ''}
+                    onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Notas visibles para el cliente..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notas Internas (Admin)
+                  </label>
+                  <textarea
+                    value={editData.internalNotes || ''}
+                    onChange={(e) => setEditData({ ...editData, internalNotes: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Notas internas solo para administradores..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditData({});
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal para cancelar pedido con razón */}
+        {showCancelModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-xl font-bold mb-4 text-red-600">Cancelar Pedido</h3>
+              
+              <div className="mb-6">
+                <p className="text-gray-600 mb-4">
+                  Esta acción <strong>no se puede deshacer</strong>. Por favor indica el motivo de la cancelación.
+                </p>
+                
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Motivo de Cancelación <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  rows={4}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  placeholder="Ej: Cliente solicitó cancelación, Error en el pedido, etc."
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowCancelModal(false);
+                    setCancelReason('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                >
+                  Volver
+                </button>
+                <button
+                  data-testid="confirm-cancel"
+                  onClick={handleCancelOrder}
+                  disabled={!cancelReason.trim() || cancelOrderMutation.isPending}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {cancelOrderMutation.isPending ? 'Cancelando...' : 'Confirmar Cancelación'}
                 </button>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit, Trash2, Tag, Save, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -9,6 +9,7 @@ interface Category {
   name: string;
   slug: string;
   description?: string;
+  imageUrl?: string | null;
   parentId?: string | null;
   isActive: boolean;
   createdAt: string;
@@ -26,9 +27,11 @@ const CategoriesManager = () => {
     name: '',
     slug: '',
     description: '',
+    imageUrl: '',
     parentId: null as string | null,
     isActive: true,
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -76,7 +79,7 @@ const CategoriesManager = () => {
       await api.post('/products/categories', formData);
       toast.success('Categoría creada exitosamente');
       setShowCreateForm(false);
-      setFormData({ name: '', slug: '', description: '', parentId: null, isActive: true });
+      setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true });
       loadCategories();
     } catch (error: any) {
       console.error('Error creando categoría:', error);
@@ -123,6 +126,7 @@ const CategoriesManager = () => {
       name: category.name,
       slug: category.slug,
       description: category.description || '',
+      imageUrl: category.imageUrl || '',
       parentId: category.parentId,
       isActive: category.isActive,
     });
@@ -130,7 +134,53 @@ const CategoriesManager = () => {
 
   const cancelEdit = () => {
     setEditingId(null);
-    setFormData({ name: '', slug: '', description: '', parentId: null, isActive: true });
+    setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true });
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Solo se permiten imágenes');
+      return;
+    }
+
+    // Validar tamaño (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('La imagen es demasiado grande (máx. 5MB)');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', file);
+
+      const response: any = await api.post('/upload/image', formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response?.data?.imageUrl) {
+        setFormData({ ...formData, imageUrl: response.data.imageUrl });
+        toast.success('Imagen subida correctamente');
+      } else {
+        throw new Error('Respuesta inválida del servidor');
+      }
+    } catch (error: any) {
+      console.error('Error subiendo imagen:', error);
+      toast.error('Error al subir la imagen');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeImage = () => {
+    setFormData({ ...formData, imageUrl: '' });
   };
 
   if (loading) {
@@ -239,6 +289,54 @@ const CategoriesManager = () => {
                   placeholder="Descripción opcional de la categoría"
                 />
               </div>
+              
+              {/* Image Upload */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Imagen de Categoría
+                </label>
+                {formData.imageUrl ? (
+                  <div className="relative inline-block">
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Preview" 
+                      className="w-40 h-40 object-cover rounded-lg border-2 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition">
+                      {uploadingImage ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-700"></div>
+                          <span>Subiendo...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-5 h-5" />
+                          <span>Subir Imagen</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={uploadingImage}
+                      />
+                    </label>
+                    <span className="text-sm text-gray-500">Máx. 5MB - JPG, PNG, WEBP</span>
+                  </div>
+                )}
+              </div>
+              
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -273,6 +371,9 @@ const CategoriesManager = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Imagen
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Nombre
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -292,7 +393,7 @@ const CategoriesManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {categories.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     No hay categorías. Crea la primera categoría.
                   </td>
                 </tr>
@@ -301,6 +402,19 @@ const CategoriesManager = () => {
                   <tr key={category.id} className="hover:bg-gray-50">
                     {editingId === category.id ? (
                       <>
+                        <td className="px-6 py-4">
+                          {formData.imageUrl ? (
+                            <img 
+                              src={formData.imageUrl} 
+                              alt="Category" 
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                              <ImageIcon className="w-6 h-6 text-gray-400" />
+                            </div>
+                          )}
+                        </td>
                         <td className="px-6 py-4">
                           <input
                             type="text"
@@ -347,6 +461,19 @@ const CategoriesManager = () => {
                       </>
                     ) : (
                       <>
+                        <td className="px-6 py-4">
+                          {category.imageUrl ? (
+                            <img 
+                              src={category.imageUrl} 
+                              alt={category.name} 
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                              <ImageIcon className="w-6 h-6 text-gray-400" />
+                            </div>
+                          )}
+                        </td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">{category.name}</div>
                           {category.description && (

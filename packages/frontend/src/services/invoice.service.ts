@@ -1,5 +1,4 @@
 import { api } from './api';
-import { useAuthStore } from '../stores/authStore';
 
 class InvoiceService {
   /**
@@ -13,29 +12,25 @@ class InvoiceService {
    * Download invoice PDF
    */
   async downloadInvoice(invoiceId: string) {
-    const token = useAuthStore.getState().accessToken;
-    
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/invoices/download/${invoiceId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token || ''}`,
-        'Content-Type': 'application/pdf',
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Error al descargar factura');
+    try {
+      // Use axios instance from api.ts which handles auth automatically
+      const response = await api.get(`/invoices/download/${invoiceId}`, {
+        responseType: 'blob',
+      });
+      
+      // Response is already a blob when responseType is 'blob'
+      return response as unknown as Blob;
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      throw error;
     }
-
-    return await response.blob();
   }
 
   /**
    * Send invoice by email
    */
   async sendInvoiceEmail(invoiceId: string) {
-    return await api.post(`/invoices/send/${invoiceId}`);
+    return await api.post(`/invoices/${invoiceId}/send`);
   }
 
   /**

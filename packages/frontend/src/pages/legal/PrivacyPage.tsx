@@ -33,9 +33,9 @@ const PrivacyPage = () => {
                   <p className="text-sm text-gray-700">
                     <strong>Responsable:</strong> ReSona Events S.L.<br />
                     <strong>CIF:</strong> B-12345678<br />
-                    <strong>Dirección:</strong> Calle Ejemplo 123, 28001 Madrid<br />
+                    <strong>Dirección:</strong> C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia<br />
                     <strong>Email:</strong> privacidad@resonaevents.com<br />
-                    <strong>Teléfono:</strong> +34 900 123 456
+                    <strong>Teléfono:</strong> +34 613 881 414
                   </p>
                 </div>
               </section>
@@ -228,8 +228,8 @@ const PrivacyPage = () => {
                 </p>
                 <ul className="list-none text-gray-700 space-y-2">
                   <li><strong>Email:</strong> privacidad@resonaevents.com</li>
-                  <li><strong>Teléfono:</strong> +34 900 123 456</li>
-                  <li><strong>Dirección:</strong> Calle Ejemplo 123, 28001 Madrid</li>
+                  <li><strong>Teléfono:</strong> +34 613 881 414</li>
+                  <li><strong>Dirección:</strong> C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</li>
                 </ul>
               </section>
             </div>

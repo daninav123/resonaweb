@@ -9,8 +9,9 @@ const productController = new ProductController();
 // ===== PUBLIC ROUTES - CATEGORIES =====
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/tree', categoryController.getCategoryTree);
-router.get('/categories/:id', categoryController.getCategoryById);
+// Rutas específicas ANTES de las genéricas
 router.get('/categories/slug/:slug', categoryController.getCategoryBySlug);
+router.get('/categories/:id', categoryController.getCategoryById);
 
 // ===== ADMIN ROUTES - CATEGORIES =====
 router.post(
@@ -46,9 +47,20 @@ router.get('/', productController.getAllProducts);
 router.get('/featured', productController.getFeaturedProducts);
 router.get('/search', productController.searchProducts);
 router.get('/category/:categoryId', productController.getProductsByCategory);
-router.get('/:id', productController.getProductById);
+
+// Pack routes (BEFORE generic :id routes)
+router.get('/packs', productController.getAllPacks);
+router.get('/:id/pack-details', productController.getPackWithComponents);
+router.post('/:id/check-pack-availability', productController.checkPackAvailability);
+router.get('/:id/max-pack-availability', productController.getPackMaxAvailability);
+
+// Check availability endpoint
+router.post('/check-availability', productController.checkAvailability);
+// Rutas específicas ANTES de las genéricas
 router.get('/slug/:slug', productController.getProductBySlug);
 router.get('/:id/related', productController.getRelatedProducts);
+// Ruta genérica al final
+router.get('/:id', productController.getProductById);
 
 // ===== ADMIN ROUTES - PRODUCTS =====
 router.post(
@@ -84,6 +96,14 @@ router.post(
   authenticate,
   authorize('ADMIN', 'SUPERADMIN'),
   productController.bulkUpdatePrices
+);
+
+// Pack management (ADMIN)
+router.post(
+  '/:id/components',
+  authenticate,
+  authorize('ADMIN', 'SUPERADMIN'),
+  productController.addComponentsToPack
 );
 
 export { router as productsRouter };

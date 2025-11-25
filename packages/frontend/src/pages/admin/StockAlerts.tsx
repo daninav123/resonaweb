@@ -17,11 +17,20 @@ export default function StockAlerts() {
 
   const fetchAlerts = async () => {
     try {
+      console.log('🔍 Cargando alertas de stock...');
       const res = await api.get('/stock-alerts') as any;
-      setAlerts(res.data?.alerts || []);
-      setSummary(res.data?.summary || { totalAlerts: 0, highPriority: 0, totalDeficit: 0 });
+      console.log('📦 Respuesta completa:', res);
+      console.log('📊 Alerts:', res?.alerts);
+      console.log('📊 Summary:', res?.summary);
+      
+      // api.get ya devuelve response.data, no response
+      setAlerts(res?.alerts || []);
+      setSummary(res?.summary || { totalAlerts: 0, highPriority: 0, totalDeficit: 0 });
+      
+      console.log(`✅ ${res?.alerts?.length || 0} alertas cargadas`);
     } catch (error: any) {
-      console.error(error);
+      console.error('❌ Error cargando alertas:', error);
+      console.error('❌ Error response:', error?.response);
       toast.error('Error al cargar alertas');
     } finally {
       setLoading(false);
@@ -39,8 +48,25 @@ export default function StockAlerts() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">🚨 Alertas de Stock</h1>
-        <p className="text-gray-600 mb-8">Necesidades de compra para cubrir pedidos</p>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h1 className="text-3xl font-bold">🚨 Alertas de Stock</h1>
+            <p className="text-gray-600 mt-1">Necesidades de compra para cubrir pedidos</p>
+          </div>
+          <button
+            onClick={() => {
+              setLoading(true);
+              fetchAlerts();
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark transition"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Actualizar
+          </button>
+        </div>
+        <div className="mb-8"></div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -139,10 +165,15 @@ export default function StockAlerts() {
                 <div className={`p-4 rounded ${
                   alert.priority === 'high' ? 'bg-red-50' : alert.priority === 'medium' ? 'bg-yellow-50' : 'bg-blue-50'
                 }`}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mb-2">
                     <ShoppingCart className="w-5 h-5" />
                     <span className="font-semibold">Necesitas comprar: {alert.deficit} unidades</span>
                   </div>
+                  {alert.affectedOrders && alert.affectedOrders.length > 1 && (
+                    <div className="text-sm text-gray-600 mt-2">
+                      <strong>Pedidos afectados:</strong> {alert.affectedOrders.join(', ')}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

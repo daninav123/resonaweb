@@ -32,7 +32,29 @@ export const guestCart = {
   getCart(): GuestCartItem[] {
     try {
       const cart = localStorage.getItem(GUEST_CART_KEY);
-      return cart ? JSON.parse(cart) : [];
+      if (!cart) return [];
+      
+      const items: GuestCartItem[] = JSON.parse(cart);
+      
+      // Detectar y limpiar IDs duplicados
+      const seenIds = new Set<string>();
+      const cleanedItems = items.filter(item => {
+        if (seenIds.has(item.id)) {
+          console.warn(`⚠️ Item duplicado detectado con ID: ${item.id}, eliminando...`);
+          return false;
+        }
+        seenIds.add(item.id);
+        return true;
+      });
+      
+      // Si encontramos duplicados, guardar carrito limpio
+      if (cleanedItems.length !== items.length) {
+        console.log(`✅ Carrito limpiado: ${items.length - cleanedItems.length} items duplicados eliminados`);
+        localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cleanedItems));
+        dispatchCartUpdate();
+      }
+      
+      return cleanedItems;
     } catch (error) {
       console.error('Error reading guest cart:', error);
       return [];
@@ -46,8 +68,19 @@ export const guestCart = {
     // Verificar si ya existe
     const existingIndex = cart.findIndex(item => item.productId === product.id);
     
+    if (existingIndex >= 0) {
+      // Actualizar cantidad si ya existe
+      cart[existingIndex].quantity += quantity;
+      localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
+      dispatchCartUpdate();
+      return cart[existingIndex];
+    }
+    
+    // Generar ID único usando timestamp + random + productId
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${product.id}`;
+    
     const newItem: GuestCartItem = {
-      id: Date.now().toString(),
+      id: uniqueId,
       productId: product.id,
       product: {
         id: product.id,
@@ -61,13 +94,8 @@ export const guestCart = {
       quantity,
     };
 
-    if (existingIndex >= 0) {
-      // Actualizar cantidad si ya existe
-      cart[existingIndex].quantity += quantity;
-    } else {
-      // Añadir nuevo
-      cart.push(newItem);
-    }
+    // Añadir nuevo
+    cart.push(newItem);
 
     localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
     dispatchCartUpdate();

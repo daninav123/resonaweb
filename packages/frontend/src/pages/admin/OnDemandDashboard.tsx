@@ -15,6 +15,10 @@ interface OnDemandProduct {
   purchaseNotes?: string;
   purchasePriority?: number;
   pricePerDay: number;
+  category?: {
+    id: string;
+    name: string;
+  };
   upcomingReservations?: Array<{
     id: string;
     startDate: string;
@@ -283,6 +287,9 @@ const OnDemandDashboard = () => {
                     Producto
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Categoría
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Stock
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -302,7 +309,7 @@ const OnDemandDashboard = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {products.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                       No hay productos bajo demanda configurados
                     </td>
                   </tr>
@@ -319,6 +326,15 @@ const OnDemandDashboard = () => {
                             </div>
                           )}
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {product.category ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {product.category.name}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">Sin categoría</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         <div>

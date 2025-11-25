@@ -38,39 +38,34 @@ export interface PaymentBreakdown {
 export const calculatePaymentBreakdown = (
   subtotal: number,
   shipping: number,
-  deliveryOption: 'pickup' | 'delivery'
+  deliveryOption: 'pickup' | 'delivery',
+  userLevel?: 'STANDARD' | 'VIP' | 'VIP_PLUS' | null,
+  vipDiscount: number = 0,
+  hasShippingInstallation: boolean = false // NUEVO: indica si productos incluyen transporte/montaje
 ): PaymentBreakdown => {
-  const beforeTax = subtotal + shipping;
+  // VIP users: No deposit
+  const isVIP = userLevel === 'VIP' || userLevel === 'VIP_PLUS';
+  
+  // Productos con transporte/montaje incluido: No deposit
+  const requiresDeposit = !isVIP && !hasShippingInstallation;
+  
+  // Calcular total después del descuento VIP
+  const beforeTax = subtotal + shipping - vipDiscount;
   const tax = beforeTax * 0.21; // IVA 21%
   const total = beforeTax + tax;
   
-  if (deliveryOption === 'pickup') {
-    // Recogida en tienda: 50% señal + fianza en tienda
-    const deposit = calculateDeposit(subtotal);
-    const payNow = total * 0.5; // 50% ahora
-    const payLater = total * 0.5; // 50% en tienda
-    
-    return {
-      subtotal,
-      shipping,
-      tax,
-      total,
-      deposit,
-      payNow,
-      payLater,
-      requiresDeposit: true,
-    };
-  } else {
-    // Envío a domicilio: 100% online, sin fianza
-    return {
-      subtotal,
-      shipping,
-      tax,
-      total,
-      deposit: 0,
-      payNow: total, // 100% ahora
-      payLater: 0,
-      requiresDeposit: false,
-    };
-  }
+  // TODOS pagan 100% online al reservar
+  // La fianza se cobra en tienda (no online)
+  const deposit = requiresDeposit ? calculateDeposit(subtotal) : 0;
+  
+  return {
+    subtotal,
+    shipping,
+    tax,
+    total,
+    deposit, // Fianza que se cobrará en tienda
+    payNow: total, // 100% ahora online (todos)
+    payLater: 0, // Nada más que pagar después (solo fianza en tienda)
+    requiresDeposit, // VIP o productos con transporte/montaje no requieren fianza
+  };
 };

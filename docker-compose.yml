@@ -40,9 +40,99 @@ services:
       - resona-network
     restart: unless-stopped
 
+  # ============= MONITORIZACIÓN =============
+  
+  # Prometheus - Recolección de métricas
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: resona-prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - resona-network
+    restart: unless-stopped
+    depends_on:
+      - alertmanager
+
+  # Alertmanager - Gestión de alertas
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: resona-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    environment:
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_FROM=${EMAIL_FROM:-alerts@resona.com}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - BACKUP_ERROR_EMAIL=${BACKUP_ERROR_EMAIL:-admin@resona.com}
+    networks:
+      - resona-network
+    restart: unless-stopped
+
+  # Grafana - Dashboards y visualización
+  grafana:
+    image: grafana/grafana:latest
+    container_name: resona-grafana
+    ports:
+      - "${GRAFANA_PORT:-3002}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3002
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - resona-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  # Node Exporter - Métricas del sistema (CPU, RAM, Disco)
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: resona-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - resona-network
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:
+  prometheus_data:
+  alertmanager_data:
+  grafana_data:
 
 networks:
   resona-network:

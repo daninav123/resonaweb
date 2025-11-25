@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { invoiceService } from '../services/invoice.service';
-import { Package, Download, Mail, Eye, FileText, Loader2 } from 'lucide-react';
+import { Package, Download, Eye, FileText, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const OrdersPage = () => {
+  const navigate = useNavigate();
   const [loadingInvoice, setLoadingInvoice] = useState<string | null>(null);
 
   const { data: ordersData, isLoading } = useQuery({
@@ -29,53 +31,59 @@ const OrdersPage = () => {
     return badges[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
   };
 
-  const handleDownloadInvoice = async (orderId: string) => {
+  const handleDownloadInvoice = async (order: any) => {
+    const docType = order.startDate && new Date(order.startDate) <= new Date() ? 'Factura' : 'Presupuesto';
+    const docTypeLower = docType.toLowerCase();
+    
     try {
-      setLoadingInvoice(orderId);
-      toast.loading('Generando factura...');
+      setLoadingInvoice(order.id);
+      const loadingToast = toast.loading(`Generando ${docTypeLower}...`);
+      
+      console.log(`📄 Generando ${docTypeLower} para pedido:`, order.id);
       
       // Generate invoice
-      const invoice: any = await invoiceService.generateInvoice(orderId);
+      const response: any = await invoiceService.generateInvoice(order.id);
+      console.log(`✅ ${docType} generado:`, response);
+      
+      // Extract invoice from response
+      const invoice = response?.invoice || response;
+      
+      if (!invoice || !invoice.id) {
+        throw new Error(`No se pudo generar el ${docTypeLower}`);
+      }
       
       // Download PDF
+      console.log(`📥 Descargando PDF de ${docTypeLower}:`, invoice.id);
       const blob = await invoiceService.downloadInvoice(invoice.id);
+      console.log('✅ PDF descargado, tamaño:', blob.size);
+      
+      if (!blob || blob.size === 0) {
+        throw new Error('El archivo PDF está vacío');
+      }
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `factura-${invoice.invoiceNumber}.pdf`;
+      link.download = `${docTypeLower}-${invoice.invoiceNumber || order.id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
+      toast.dismiss(loadingToast);
+      toast.success(`${docType} descargado correctamente`);
+    } catch (error: any) {
+      console.error(`❌ Error al descargar el ${docTypeLower}:`, error);
       toast.dismiss();
-      toast.success('Factura descargada correctamente');
-    } catch (error) {
-      toast.dismiss();
-      toast.error('Error al descargar la factura');
-      console.error(error);
+      
+      const errorMessage = error.response?.data?.message || error.message || `Error al descargar el ${docTypeLower}`;
+      toast.error(errorMessage, { duration: 5000 });
     } finally {
       setLoadingInvoice(null);
     }
   };
 
-  const handleSendInvoiceEmail = async (orderId: string) => {
-    try {
-      toast.loading('Enviando factura por email...');
-      
-      const invoice: any = await invoiceService.generateInvoice(orderId);
-      await invoiceService.sendInvoiceEmail(invoice.id);
-      
-      toast.dismiss();
-      toast.success('Factura enviada a tu email');
-    } catch (error) {
-      toast.dismiss();
-      toast.error('Error al enviar la factura');
-      console.error(error);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -108,10 +116,10 @@ const OrdersPage = () => {
             {orders.map((order: any) => {
               const badge = getStatusBadge(order.status);
               return (
-                <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
+                <div key={order.id} data-testid="order-card" className="bg-white rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">
+                      <h3 data-testid="order-number" className="text-lg font-bold text-gray-900">
                         Pedido #{order.orderNumber}
                       </h3>
                       <p className="text-sm text-gray-600">
@@ -122,7 +130,7 @@ const OrdersPage = () => {
                         })}
                       </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${badge.bg} ${badge.text}`}>
+                    <span data-testid="order-status" className={`px-3 py-1 rounded-full text-sm font-semibold ${badge.bg} ${badge.text}`}>
                       {badge.label}
                     </span>
                   </div>
@@ -131,7 +139,7 @@ const OrdersPage = () => {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-600">Total:</p>
-                        <p className="text-xl font-bold text-gray-900">
+                        <p data-testid="order-total" className="text-xl font-bold text-gray-900">
                           €{Number(order.total).toFixed(2)}
                         </p>
                       </div>
@@ -147,7 +155,8 @@ const OrdersPage = () => {
                   {/* Botones de acción */}
                   <div className="flex flex-wrap gap-3">
                     <button
-                      onClick={() => handleDownloadInvoice(order.id)}
+                      data-testid="download-invoice"
+                      onClick={() => handleDownloadInvoice(order)}
                       disabled={loadingInvoice === order.id}
                       className="flex items-center gap-2 px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -165,15 +174,7 @@ const OrdersPage = () => {
                     </button>
 
                     <button
-                      onClick={() => handleSendInvoiceEmail(order.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-resona text-resona rounded-lg hover:bg-blue-50 transition"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Enviar por Email
-                    </button>
-
-                    <button
-                      onClick={() => {/* Navigate to order details */}}
+                      onClick={() => navigate(`/mis-pedidos/${order.id}`)}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
                     >
                       <Eye className="w-4 h-4" />

@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Calculator, Save, Plus, Trash2, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { useCalculatorConfig } from '../../hooks/useCalculatorConfig';
 import { SERVICE_LEVEL_LABELS, ServiceLevel } from '../../types/calculator.types';
+import { productService } from '../../services/product.service';
+import PackSelector from '../../components/admin/PackSelector';
+import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
 
 const CalculatorManagerNew = () => {
   const {
@@ -22,6 +26,16 @@ const CalculatorManagerNew = () => {
     updateServicePrice,
     selectedEvent,
   } = useCalculatorConfig();
+
+  // Cargar productos (packs)
+  const { data: catalogProducts = [] } = useQuery({
+    queryKey: ['catalog-products-admin'],
+    queryFn: async () => {
+      const result = await productService.getProducts({ limit: 200 });
+      // El servicio ahora devuelve { data: [...], pagination: {...} }
+      return result?.data || [];
+    },
+  });
 
   // Validación y debug
   if (!selectedEvent) {
@@ -140,53 +154,6 @@ const CalculatorManagerNew = () => {
                 ))}
               </nav>
             </div>
-
-            {/* Prices */}
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="font-semibold text-gray-900 mb-4">Precios (€/día)</h3>
-              <div className="space-y-4">
-                {/* Sound */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">🎵 Sonido</h4>
-                  <div className="space-y-2 text-xs">
-                    {(['basic', 'intermediate', 'professional', 'premium'] as const).map((level) => (
-                      <div key={level} className="flex justify-between items-center">
-                        <span className="text-gray-600">{SERVICE_LEVEL_LABELS[level]}:</span>
-                        <div className="flex items-center gap-1">
-                          <span>€</span>
-                          <input
-                            type="number"
-                            value={config.servicePrices.sound[level]}
-                            onChange={(e) => updateServicePrice('sound', level, parseInt(e.target.value) || 0)}
-                            className="w-16 px-2 py-1 border border-gray-300 rounded text-right focus:ring-2 focus:ring-resona"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Lighting */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">💡 Iluminación</h4>
-                  <div className="space-y-2 text-xs">
-                    {(['basic', 'intermediate', 'professional', 'premium'] as const).map((level) => (
-                      <div key={level} className="flex justify-between items-center">
-                        <span className="text-gray-600">{SERVICE_LEVEL_LABELS[level]}:</span>
-                        <div className="flex items-center gap-1">
-                          <span>€</span>
-                          <input
-                            type="number"
-                            value={config.servicePrices.lighting[level]}
-                            onChange={(e) => updateServicePrice('lighting', level, parseInt(e.target.value) || 0)}
-                            className="w-16 px-2 py-1 border border-gray-300 rounded text-right focus:ring-2 focus:ring-resona"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Main Content */}
@@ -282,7 +249,7 @@ const CalculatorManagerNew = () => {
                               <div className="text-left">
                                 <div className="font-semibold text-gray-900">{part.name}</div>
                                 <div className="text-sm text-gray-500">
-                                  {part.defaultDuration}h • Sonido: {SERVICE_LEVEL_LABELS[part.soundLevel]} • Ilum: {SERVICE_LEVEL_LABELS[part.lightingLevel]}
+                                  {part.defaultDuration}h
                                 </div>
                               </div>
                             </div>
@@ -334,47 +301,102 @@ const CalculatorManagerNew = () => {
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
                                 />
                               </div>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-2">Duración (horas)</label>
-                                  <input
-                                    type="number"
-                                    step="0.5"
-                                    value={part.defaultDuration}
-                                    onChange={(e) => updateEventPart(selectedEventIndex, partIndex, 'defaultDuration', parseFloat(e.target.value) || 0)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-2">Nivel Sonido</label>
-                                  <select
-                                    value={part.soundLevel}
-                                    onChange={(e) => updateEventPart(selectedEventIndex, partIndex, 'soundLevel', e.target.value as ServiceLevel)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
-                                  >
-                                    {Object.entries(SERVICE_LEVEL_LABELS).map(([value, label]) => (
-                                      <option key={value} value={value}>{label}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-2">Nivel Iluminación</label>
-                                  <select
-                                    value={part.lightingLevel}
-                                    onChange={(e) => updateEventPart(selectedEventIndex, partIndex, 'lightingLevel', e.target.value as ServiceLevel)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
-                                  >
-                                    {Object.entries(SERVICE_LEVEL_LABELS).map(([value, label]) => (
-                                      <option key={value} value={value}>{label}</option>
-                                    ))}
-                                  </select>
-                                </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Duración (horas)</label>
+                                <input
+                                  type="number"
+                                  step="0.5"
+                                  value={part.defaultDuration}
+                                  onChange={(e) => updateEventPart(selectedEventIndex, partIndex, 'defaultDuration', parseFloat(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                                />
                               </div>
                             </div>
                           )}
                         </div>
                       ))
                     )}
+                  </div>
+                </div>
+
+                {/* Packs Configuration */}
+                <div className="bg-white rounded-lg shadow">
+                  <div className="p-6 border-b">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-2xl">📦</span>
+                      Configuración de Packs
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Define qué packs están disponibles y cuáles recomendar según el número de asistentes
+                    </p>
+                  </div>
+
+                  <div className="p-6 space-y-6">
+                    {/* Available Packs */}
+                    <div>
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Packs Disponibles para este Evento
+                        </label>
+                        <p className="text-xs text-gray-500">
+                          Solo estos packs se mostrarán en la calculadora para este tipo de evento
+                        </p>
+                      </div>
+                      <PackSelector
+                        allPacks={catalogProducts.filter((p: any) => p.isPack)}
+                        selectedPacks={selectedEvent.availablePacks || []}
+                        onChange={(packs) => updateEventType(selectedEventIndex, 'availablePacks', packs)}
+                      />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="border-t pt-6">
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Reglas de Recomendación
+                        </label>
+                        <p className="text-xs text-gray-500">
+                          Define qué packs recomendar según el número de asistentes. Las reglas con prioridad 1 se mostrarán primero.
+                        </p>
+                      </div>
+                      <PackRecommendationEditor
+                        rules={selectedEvent.recommendedPacks || []}
+                        availablePacks={selectedEvent.availablePacks || []}
+                        allPacks={catalogProducts.filter((p: any) => p.isPack)}
+                        onChange={(rules) => updateEventType(selectedEventIndex, 'recommendedPacks', rules)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Extras Configuration */}
+                <div className="bg-white rounded-lg shadow mt-6">
+                  <div className="p-6 border-b">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-2xl">✨</span>
+                      Configuración de Extras
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Define qué productos individuales están disponibles como extras para este tipo de evento
+                    </p>
+                  </div>
+
+                  <div className="p-6">
+                    <div>
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Extras Disponibles para este Evento
+                        </label>
+                        <p className="text-xs text-gray-500">
+                          Solo estos productos se mostrarán como extras en la calculadora para este tipo de evento
+                        </p>
+                      </div>
+                      <PackSelector
+                        allPacks={catalogProducts.filter((p: any) => !p.isPack && p.isActive)}
+                        selectedPacks={selectedEvent.availableExtras || []}
+                        onChange={(extras) => updateEventType(selectedEventIndex, 'availableExtras', extras)}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

@@ -15,14 +15,14 @@ const SEOHead = ({
   title = 'Resona Events - Alquiler de Material para Eventos',
   description = 'Alquiler profesional de equipos de sonido, iluminación, fotografía y video para eventos. Bodas, conciertos, conferencias y eventos corporativos. Presupuesto online.',
   keywords = 'alquiler sonido, alquiler iluminación, alquiler material eventos, alquiler equipos audiovisuales, sonido profesional, iluminación eventos, fotografía eventos, video eventos, bodas, conciertos',
-  ogImage = 'https://resona.com/og-image.jpg',
+  ogImage = 'https://resonaevents.com/og-image.jpg',
   ogType = 'website',
   canonicalUrl,
   noindex = false,
   schema,
 }: SEOProps) => {
   const fullTitle = title.includes('Resona') ? title : `${title} | Resona Events`;
-  const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : 'https://resona.com');
+  const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : 'https://resonaevents.com');
 
   return (
     <Helmet>

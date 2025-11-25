@@ -58,6 +58,9 @@ const BlogListPage = () => {
         blogService.getCategories(),
       ]);
 
+      console.log('📦 Datos del blog recibidos:', postsData);
+      console.log('📁 Categorías recibidas:', categoriesData);
+
       setPosts((postsData as any)?.posts || []);
       setPagination((postsData as any)?.pagination || { page: 1, totalPages: 1, total: 0 });
       setCategories((categoriesData as any) || []);
@@ -91,8 +94,9 @@ const BlogListPage = () => {
 
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-resona to-resona-dark text-white py-16">
-          <div className="container mx-auto px-4">
+        <div className="relative bg-resona text-white py-16">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+          <div className="relative container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog de ReSona</h1>
             <p className="text-xl text-gray-100 max-w-2xl">
               Guías, consejos y las últimas tendencias en alquiler de material audiovisual para eventos

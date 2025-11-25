@@ -1,43 +1,53 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, Calculator, Users, Clock, Calendar, Package, Mail, Plus, Minus } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import { ChevronLeft, ChevronRight, Calculator, Users, Clock, Calendar, Package, Mail, Plus, Minus, AlertTriangle, MapPin, CreditCard } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { serviceSchema } from '../utils/schemas';
-import { DEFAULT_CALCULATOR_CONFIG, SERVICE_LEVEL_LABELS } from '../types/calculator.types';
+import { DEFAULT_CALCULATOR_CONFIG } from '../types/calculator.types';
 import { productService } from '../services/product.service';
+import { validateEventData, type EventValidation } from '../utils/eventValidation';
+import { guestCart } from '../utils/guestCart';
 
-type ServiceLevel = 'none' | 'basic' | 'intermediate' | 'professional' | 'premium';
 
 interface EventData {
   eventType: string;
   attendees: number;
   duration: number;
   durationType: 'hours' | 'days';
+  startTime: string; // Hora de inicio (formato HH:mm)
+  endTime: string; // Hora de fin (formato HH:mm)
   eventDate: string;
+  eventLocation: string; // Dirección del evento
   // Partes seleccionadas (IDs de las partes que el cliente quiere)
   selectedParts: string[];
-  // Productos del catálogo seleccionados { productId: quantity }
-  selectedProducts: Record<string, number>;
-  soundLevel: ServiceLevel;
-  lightingLevel: ServiceLevel;
+  // Pack seleccionado (solo uno)
+  selectedPack: string | null;
+  // Productos extras seleccionados { productId: quantity }
+  selectedExtras: Record<string, number>;
   email?: string;
 }
 
 const EventCalculatorPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated } = useAuthStore();
   const [step, setStep] = useState(1);
   const [eventData, setEventData] = useState<EventData>({
     eventType: '',
     attendees: 50,
     duration: 4,
     durationType: 'hours',
+    startTime: '10:00',
+    endTime: '14:00',
     eventDate: '',
+    eventLocation: '',
     selectedParts: [],
-    selectedProducts: {},
-    soundLevel: 'none',
-    lightingLevel: 'none',
+    selectedPack: null,
+    selectedExtras: {},
   });
+  const [eventValidation, setEventValidation] = useState<EventValidation | null>(null);
 
   // Cargar configuración desde el gestor de admin
   const [calculatorConfig, setCalculatorConfig] = useState(() => {
@@ -60,15 +70,13 @@ const EventCalculatorPage = () => {
     parts: et.parts || [],
   }));
 
-  // Precios base por categoría y nivel (por día)
-  const basePrices = calculatorConfig.servicePrices;
-
   // Cargar productos del catálogo
   const { data: catalogProducts = [] } = useQuery({
     queryKey: ['catalog-products'],
     queryFn: async () => {
       const result = await productService.getProducts({ limit: 100 });
-      return result || [];
+      // El servicio ahora devuelve { data: [...], pagination: {...} }
+      return result?.data || [];
     },
   });
 
@@ -81,97 +89,42 @@ const EventCalculatorPage = () => {
     },
   });
 
-  const serviceLevels = [
-    { value: 'none', label: 'No necesito', multiplier: 0 },
-    { value: 'basic', label: 'Básico', multiplier: 1 },
-    { value: 'intermediate', label: 'Intermedio', multiplier: 1 },
-    { value: 'professional', label: 'Profesional', multiplier: 1 },
-    { value: 'premium', label: 'Premium', multiplier: 1 },
-  ];
-
-  // Función para recomendar nivel de servicio basado en asistentes
-  const getRecommendedLevel = (attendees: number, serviceType: 'sound' | 'lighting'): ServiceLevel => {
-    // Rangos de asistentes para recomendaciones
-    if (attendees <= 50) return 'basic';
-    if (attendees <= 100) return 'intermediate';
-    if (attendees <= 200) return 'professional';
-    return 'premium';
-  };
-
-  // Aplicar recomendaciones automáticamente cuando cambian los asistentes o se llega al paso 5
+  // Validar ubicación y fecha cuando llegamos al Step 6 (Resumen final)
   useEffect(() => {
-    if (step === 5 && eventData.attendees > 0) {
-      // Solo aplicar si aún no se ha seleccionado nada
-      if (eventData.soundLevel === 'none' && eventData.lightingLevel === 'none') {
-        const recommendedSound = getRecommendedLevel(eventData.attendees, 'sound');
-        const recommendedLighting = getRecommendedLevel(eventData.attendees, 'lighting');
-        setEventData({
-          ...eventData,
-          soundLevel: recommendedSound,
-          lightingLevel: recommendedLighting,
-        });
+    if (step === 6) {
+      validateEventData(eventData.eventLocation, eventData.eventDate).then(validation => {
+        setEventValidation(validation);
+      });
+    }
+  }, [step, eventData.eventLocation, eventData.eventDate]);
+
+  // Recuperar solicitud pendiente después del login
+  useEffect(() => {
+    // Recuperar solicitud de presupuesto pendiente
+    const pendingRequest = sessionStorage.getItem('pendingQuoteRequest');
+    if (pendingRequest && isAuthenticated) {
+      try {
+        const savedData = JSON.parse(pendingRequest);
+        setEventData(savedData);
+        sessionStorage.removeItem('pendingQuoteRequest');
+        // Ir al último paso (resumen)
+        setStep(6);
+      } catch (error) {
+        console.error('Error recuperando solicitud:', error);
       }
     }
-  }, [step]);
-
-  const calculateEstimate = () => {
-    const selectedType = eventTypes.find(t => t.id === eventData.eventType);
-    const multiplier = selectedType?.multiplier || 1.0;
-    
-    // Factor de asistentes (más personas = más equipo)
-    const attendeeFactor = Math.log10(eventData.attendees / 10) + 1;
-    
-    // Factor de duración
-    const durationInDays = eventData.durationType === 'hours' 
-      ? eventData.duration / 8 
-      : eventData.duration;
-
-    let total = 0;
-    const breakdown: { category: string; level: string; amount: number }[] = [];
-
-    // Productos del catálogo
-    Object.entries(eventData.selectedProducts).forEach(([productId, quantity]) => {
-      const product = catalogProducts.find((p: any) => p._id === productId);
-      if (product && quantity > 0) {
-        const amount = Math.round(product.price * quantity * durationInDays);
-        breakdown.push({
-          category: product.name,
-          level: `${quantity} unidad${quantity > 1 ? 'es' : ''}`,
-          amount
-        });
-        total += amount;
-      }
-    });
-
-    // Sonido (nivel general)
-    if (eventData.soundLevel !== 'none') {
-      const basePrice = basePrices.sound[eventData.soundLevel as keyof typeof basePrices.sound];
-      const amount = Math.round(basePrice * multiplier * attendeeFactor * durationInDays);
-      breakdown.push({ 
-        category: '🎵 Sonido (Servicios adicionales)', 
-        level: serviceLevels.find(l => l.value === eventData.soundLevel)?.label || '',
-        amount 
-      });
-      total += amount;
-    }
-
-    // Iluminación (nivel general)
-    if (eventData.lightingLevel !== 'none') {
-      const basePrice = basePrices.lighting[eventData.lightingLevel as keyof typeof basePrices.lighting];
-      const amount = Math.round(basePrice * multiplier * attendeeFactor * durationInDays);
-      breakdown.push({ 
-        category: '💡 Iluminación (Servicios adicionales)', 
-        level: serviceLevels.find(l => l.value === eventData.lightingLevel)?.label || '',
-        amount 
-      });
-      total += amount;
-    }
-
-    return { total, breakdown };
-  };
+  }, [isAuthenticated]);
 
   const selectedEventType = eventTypes.find(et => et.id === eventData.eventType);
   const hasParts = selectedEventType?.parts && selectedEventType.parts.length > 0;
+
+  // Scroll hacia arriba cuando cambia el paso
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [step]);
 
   const handleNext = () => {
     // Si estamos en paso 2 (Detalles) y el evento NO tiene partes, saltar al paso 4 (Equipos)
@@ -191,26 +144,220 @@ const EventCalculatorPage = () => {
     }
   };
 
-  const handleRequestQuote = () => {
-    // Aquí podrías enviar los datos a un endpoint
-    navigate('/contacto', { 
-      state: { 
-        subject: 'Solicitud de Presupuesto',
-        eventData 
-      } 
+  const handleAddToCartAndCheckout = () => {
+    // 1. Verificar que haya productos seleccionados
+    if (!eventData.selectedPack && Object.keys(eventData.selectedExtras).length === 0) {
+      alert('❌ Por favor selecciona al menos un pack o producto extra');
+      return;
+    }
+
+    // 2. Calcular total incluyendo transporte y montaje
+    let totalCalculated = 0;
+    let itemCount = 0;
+
+    // 3. Añadir pack al carrito
+    if (eventData.selectedPack) {
+      const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+      if (pack) {
+        guestCart.addItem(pack, 1);
+        const basePrice = Number(pack.pricePerDay);
+        const shipping = Number(pack.shippingCost || 0);
+        const installation = Number(pack.installationCost || 0);
+        totalCalculated += basePrice + shipping + installation;
+        itemCount += 1;
+      }
+    }
+
+    // 4. Añadir extras al carrito
+    Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
+      if (Number(quantity) > 0) {
+        const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+        if (product) {
+          guestCart.addItem(product, Number(quantity));
+          const basePrice = Number(product.pricePerDay);
+          const shipping = Number(product.shippingCost || 0);
+          const installation = Number(product.installationCost || 0);
+          totalCalculated += (basePrice + shipping + installation) * Number(quantity);
+          itemCount += Number(quantity);
+        }
+      }
     });
+
+    const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
+    const totalFinal = totalCalculated * days;
+
+    // 5. Mostrar confirmación
+    alert(
+      `✅ Productos añadidos al carrito!\n\n` +
+      `${itemCount} producto${itemCount > 1 ? 's' : ''} listos para checkout.\n` +
+      `Total estimado: €${totalFinal.toFixed(2)}\n` +
+      `(${days} día${days > 1 ? 's' : ''}, incluye transporte y montaje)\n\n` +
+      `Te redirigiremos al carrito para completar tu pedido.`
+    );
+
+    // 6. Marcar que los productos ya incluyen transporte/montaje
+    localStorage.setItem('cartIncludesShippingInstallation', 'true');
+    localStorage.setItem('cartFromCalculator', 'true');
+
+    // 7. Guardar fechas del evento para el carrito
+    if (eventData.eventDate) {
+      const eventDate = new Date(eventData.eventDate);
+      const startDate = eventDate.toISOString().split('T')[0];
+      
+      // Calcular fecha de fin según duración
+      const endDate = new Date(eventDate);
+      const daysToAdd = eventData.durationType === 'hours' 
+        ? Math.ceil(eventData.duration / 8) 
+        : eventData.duration;
+      endDate.setDate(endDate.getDate() + daysToAdd - 1); // -1 porque el primer día cuenta
+      
+      localStorage.setItem('cartEventDates', JSON.stringify({
+        start: startDate,
+        end: endDate.toISOString().split('T')[0]
+      }));
+    }
+
+    // 8. Guardar información completa del evento para las notas
+    const eventInfo = {
+      eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
+      attendees: eventData.attendees,
+      duration: eventData.duration,
+      durationType: eventData.durationType,
+      startTime: eventData.startTime,
+      endTime: eventData.endTime,
+      eventDate: eventData.eventDate,
+      eventLocation: eventData.eventLocation,
+      selectedParts: eventData.selectedParts,
+    };
+    localStorage.setItem('cartEventInfo', JSON.stringify(eventInfo));
+
+    // 9. Redirigir al checkout
+    navigate('/checkout');
   };
 
-  const estimate = step === 6 ? calculateEstimate() : null;
+  const handleRequestQuote = async () => {
+    // Verificar si el usuario está logueado
+    if (!isAuthenticated || !user) {
+      const shouldLogin = confirm(
+        '🔒 Inicia sesión para solicitar presupuesto\n\n' +
+        'Para poder contactarte y gestionar tu solicitud correctamente,\n' +
+        'necesitamos que inicies sesión o crees una cuenta.\n\n' +
+        '¿Quieres ir al login ahora?'
+      );
+      
+      if (shouldLogin) {
+        // Guardar el estado actual en sessionStorage para recuperarlo después
+        sessionStorage.setItem('pendingQuoteRequest', JSON.stringify(eventData));
+        navigate('/login', { 
+          state: { 
+            from: location.pathname,
+            message: 'Inicia sesión para solicitar tu presupuesto' 
+          } 
+        });
+      }
+      return;
+    }
+
+    try {
+      // Calcular total estimado (incluyendo transporte y montaje)
+      let total = 0;
+      if (eventData.selectedPack) {
+        const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+        if (pack) {
+          const basePrice = Number(pack.pricePerDay);
+          const shipping = Number(pack.shippingCost || 0);
+          const installation = Number(pack.installationCost || 0);
+          total += basePrice + shipping + installation;
+        }
+      }
+      Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
+        const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+        if (product) {
+          const basePrice = Number(product.pricePerDay);
+          const shipping = Number(product.shippingCost || 0);
+          const installation = Number(product.installationCost || 0);
+          total += (basePrice + shipping + installation) * quantity;
+        }
+      });
+      const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
+      const totalFinal = total * days;
+
+      // Preparar datos para enviar (usar datos del usuario logueado)
+      const quoteData = {
+        customerEmail: user.email,
+        customerName: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email,
+        customerPhone: user.phone || '',
+        eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
+        attendees: eventData.attendees,
+        duration: eventData.duration,
+        durationType: eventData.durationType,
+        eventDate: eventData.eventDate,
+        eventLocation: eventData.eventLocation,
+        selectedPack: eventData.selectedPack,
+        selectedExtras: eventData.selectedExtras,
+        estimatedTotal: totalFinal,
+        notes: `Solicitud desde calculadora web`
+      };
+
+      // Obtener token
+      const token = useAuthStore.getState().token || localStorage.getItem('token');
+      
+      // Enviar solicitud
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        body: JSON.stringify(quoteData),
+      });
+
+      if (response.ok) {
+        // Mostrar mensaje de éxito con SweetAlert o alert personalizado
+        const confirmed = confirm(
+          '✅ ¡Solicitud enviada correctamente!\n\n' +
+          'Hemos recibido tu solicitud de presupuesto.\n' +
+          'Nuestro equipo la revisará y te contactará en menos de 24 horas.\n\n' +
+          '¿Quieres ver más productos mientras tanto?'
+        );
+        
+        if (confirmed) {
+          navigate('/productos');
+        } else {
+          navigate('/');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error al enviar solicitud');
+      }
+    } catch (error) {
+      console.error('Error enviando solicitud:', error);
+      alert(
+        '❌ No se pudo enviar la solicitud automáticamente.\n\n' +
+        'Por favor, contáctanos directamente por email o teléfono.\n' +
+        'Te redirigiremos a nuestra página de contacto.'
+      );
+      
+      // Solo ir a contacto si hay error
+      setTimeout(() => {
+        navigate('/contacto', { 
+          state: { 
+            subject: 'Solicitud de Presupuesto',
+            eventData 
+          } 
+        });
+      }, 1000);
+    }
+  };
 
   // Determinar el total de pasos según si el evento tiene partes
   const totalSteps = hasParts ? 6 : 5;
   const stepLabels = hasParts
-    ? ['Tipo', 'Detalles', 'Partes', 'Equipos', 'Resumen', 'Presupuesto']
-    : ['Tipo', 'Detalles', 'Equipos', 'Resumen', 'Presupuesto'];
+    ? ['Tipo', 'Detalles', 'Partes', 'Equipos', 'Extras', 'Resumen']
+    : ['Tipo', 'Detalles', 'Equipos', 'Extras', 'Resumen'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <SEOHead
         title="Calculadora de Presupuesto para Eventos Online | Resona Events"
         description="Calcula el presupuesto estimado para tu evento en minutos. Bodas, conciertos, conferencias, eventos corporativos. Presupuesto inmediato y sin compromiso. Herramienta gratuita."
@@ -318,28 +465,71 @@ const EventCalculatorPage = () => {
                   </div>
                 </div>
 
-                {/* Duration */}
+                {/* Horario del Evento */}
                 <div>
                   <label className="flex items-center gap-2 text-gray-700 font-medium mb-2">
                     <Clock className="w-5 h-5 text-resona" />
-                    Duración del Evento
+                    Horario del Evento
                   </label>
-                  <div className="flex gap-4">
-                    <input
-                      type="number"
-                      value={eventData.duration}
-                      onChange={(e) => setEventData({ ...eventData, duration: Number(e.target.value) })}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
-                      min="1"
-                    />
-                    <select
-                      value={eventData.durationType}
-                      onChange={(e) => setEventData({ ...eventData, durationType: e.target.value as 'hours' | 'days' })}
-                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
-                    >
-                      <option value="hours">Horas</option>
-                      <option value="days">Días</option>
-                    </select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+                      <input
+                        type="time"
+                        value={eventData.startTime}
+                        onChange={(e) => {
+                          const newStartTime = e.target.value;
+                          setEventData({ ...eventData, startTime: newStartTime });
+                          
+                          // Calcular duración automáticamente
+                          if (newStartTime && eventData.endTime) {
+                            const [startH, startM] = newStartTime.split(':').map(Number);
+                            const [endH, endM] = eventData.endTime.split(':').map(Number);
+                            const startMinutes = startH * 60 + startM;
+                            const endMinutes = endH * 60 + endM;
+                            let durationMinutes = endMinutes - startMinutes;
+                            
+                            // Si la hora de fin es menor, asumimos que es al día siguiente
+                            if (durationMinutes < 0) {
+                              durationMinutes += 24 * 60;
+                            }
+                            
+                            const hours = Math.round(durationMinutes / 60 * 10) / 10; // Redondear a 1 decimal
+                            setEventData(prev => ({ ...prev, duration: hours, durationType: 'hours' }));
+                          }
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
+                      <input
+                        type="time"
+                        value={eventData.endTime}
+                        onChange={(e) => {
+                          const newEndTime = e.target.value;
+                          setEventData({ ...eventData, endTime: newEndTime });
+                          
+                          // Calcular duración automáticamente
+                          if (eventData.startTime && newEndTime) {
+                            const [startH, startM] = eventData.startTime.split(':').map(Number);
+                            const [endH, endM] = newEndTime.split(':').map(Number);
+                            const startMinutes = startH * 60 + startM;
+                            const endMinutes = endH * 60 + endM;
+                            let durationMinutes = endMinutes - startMinutes;
+                            
+                            // Si la hora de fin es menor, asumimos que es al día siguiente
+                            if (durationMinutes < 0) {
+                              durationMinutes += 24 * 60;
+                            }
+                            
+                            const hours = Math.round(durationMinutes / 60 * 10) / 10; // Redondear a 1 decimal
+                            setEventData(prev => ({ ...prev, duration: hours, durationType: 'hours' }));
+                          }
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -356,6 +546,24 @@ const EventCalculatorPage = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
                     min={new Date().toISOString().split('T')[0]}
                   />
+                </div>
+
+                {/* Event Location */}
+                <div>
+                  <label className="flex items-center gap-2 text-gray-700 font-medium mb-2">
+                    <Mail className="w-5 h-5 text-resona" />
+                    Lugar del Evento (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={eventData.eventLocation}
+                    onChange={(e) => setEventData({ ...eventData, eventLocation: e.target.value })}
+                    placeholder="Dirección completa del evento"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  />
+                  <p className="mt-2 text-sm text-gray-500">
+                    💡 Si no especificas lugar y fecha, el presupuesto será válido solo para eventos a menos de 50km de Valencia y en fechas normales.
+                  </p>
                 </div>
               </div>
             </div>
@@ -422,265 +630,512 @@ const EventCalculatorPage = () => {
             </div>
           )}
 
-          {/* Step 4: Equipment Selection */}
+          {/* Step 4: Pack Selection */}
           {step === 4 && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6 text-center">
-                Selecciona los equipos que necesitas
+                Elige el material para tu evento
               </h2>
               <p className="text-center text-gray-600 mb-8">
-                Elige del catálogo profesional los componentes para tu {selectedEventType?.name.toLowerCase()}
+                Packs recomendados para {eventData.attendees} personas en tu {selectedEventType?.name.toLowerCase()}
               </p>
               
-              {categories.map((category: any) => {
-                const categoryProducts = catalogProducts.filter((p: any) => p.category === category.slug);
-                if (categoryProducts.length === 0) return null;
+              {(() => {
+                // Filtrar packs según asistentes y partes del evento
+                const availablePacks = catalogProducts.filter((p: any) => {
+                  if (!p.isPack || !p.isActive) return false;
+                  
+                  // Si el producto tiene especificaciones, filtrar por asistentes y partes
+                  if (p.specifications) {
+                    const specs = typeof p.specifications === 'string' 
+                      ? JSON.parse(p.specifications) 
+                      : p.specifications;
+                    
+                    // Filtrar por número de asistentes
+                    if (specs.minAttendees !== undefined && eventData.attendees < specs.minAttendees) {
+                      return false;
+                    }
+                    if (specs.maxAttendees !== undefined && eventData.attendees > specs.maxAttendees) {
+                      return false;
+                    }
+                    
+                    // Filtrar por partes del evento (si el pack tiene partes específicas)
+                    if (specs.eventParts && Array.isArray(specs.eventParts) && specs.eventParts.length > 0) {
+                      // Si el evento tiene partes seleccionadas, al menos una debe coincidir
+                      if (eventData.selectedParts.length > 0) {
+                        const hasMatchingPart = eventData.selectedParts.some((partId: string) => 
+                          specs.eventParts.includes(partId)
+                        );
+                        if (!hasMatchingPart) return false;
+                      }
+                    }
+                  }
+                  
+                  return true;
+                });
                 
                 return (
-                  <div key={category.slug} className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <span>{category.icon}</span>
-                      <span>{category.name}</span>
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {categoryProducts.map((product: any) => {
-                        const quantity = eventData.selectedProducts[product._id] || 0;
-                        
-                        return (
-                          <div key={product._id} className="bg-white rounded-lg border-2 border-gray-200 p-4 hover:border-resona/50 transition-all">
-                            <div className="flex gap-4">
-                              {product.images && product.images.length > 0 && (
-                                <img 
-                                  src={product.images[0]} 
-                                  alt={product.name}
-                                  className="w-20 h-20 object-cover rounded-lg"
-                                />
-                              )}
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-gray-900">{product.name}</h4>
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
-                                <div className="mt-2 flex items-center justify-between">
-                                  <span className="text-lg font-bold text-resona">
-                                    €{product.price}/día
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={() => {
-                                        if (quantity > 0) {
-                                          const newProducts = { ...eventData.selectedProducts };
-                                          if (quantity === 1) {
-                                            delete newProducts[product._id];
-                                          } else {
-                                            newProducts[product._id] = quantity - 1;
-                                          }
-                                          setEventData({ ...eventData, selectedProducts: newProducts });
-                                        }
-                                      }}
-                                      disabled={quantity === 0}
-                                      className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-30 flex items-center justify-center transition-colors"
-                                    >
-                                      <Minus className="w-4 h-4" />
-                                    </button>
-                                    <span className="w-8 text-center font-medium">{quantity}</span>
-                                    <button
-                                      onClick={() => {
-                                        const newProducts = { ...eventData.selectedProducts };
-                                        newProducts[product._id] = quantity + 1;
-                                        setEventData({ ...eventData, selectedProducts: newProducts });
-                                      }}
-                                      className="w-8 h-8 rounded-full bg-resona hover:bg-resona-dark text-white flex items-center justify-center transition-colors"
-                                    >
-                                      <Plus className="w-4 h-4" />
-                                    </button>
+                  <>
+                    {/* Packs Disponibles */}
+                    {availablePacks.length > 0 ? (
+                      <div className="mb-8">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                          <span>📦</span>
+                          <span>Packs Disponibles</span>
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {availablePacks.map((pack: any) => {
+                            const isSelected = eventData.selectedPack === pack.id;
+                            
+                            return (
+                              <button
+                                key={pack.id}
+                                onClick={() => {
+                                  // Solo permitir seleccionar UN pack
+                                  setEventData({ 
+                                    ...eventData, 
+                                    selectedPack: isSelected ? null : pack.id 
+                                  });
+                                }}
+                                className={`text-left bg-white rounded-lg border-2 p-6 transition-all hover:shadow-lg ${
+                                  isSelected
+                                    ? 'border-resona bg-resona/5 shadow-md'
+                                    : 'border-gray-200 hover:border-resona/50'
+                                }`}
+                              >
+                                <div className="flex items-start gap-4">
+                                  {pack.mainImageUrl && (
+                                    <img 
+                                      src={pack.mainImageUrl} 
+                                      alt={pack.name}
+                                      className="w-24 h-24 object-cover rounded-lg"
+                                    />
+                                  )}
+                                  <div className="flex-1">
+                                    <div className="flex items-start justify-between">
+                                      <h4 className="font-bold text-gray-900 text-lg">{pack.name}</h4>
+                                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                                        isSelected
+                                          ? 'border-resona bg-resona'
+                                          : 'border-gray-300'
+                                      }`}>
+                                        {isSelected && (
+                                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                          </svg>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{pack.description}</p>
+                                    
+                                    {/* Badge de rango de asistentes */}
+                                    {(() => {
+                                      const specs = pack.specifications 
+                                        ? (typeof pack.specifications === 'string' ? JSON.parse(pack.specifications) : pack.specifications)
+                                        : null;
+                                      
+                                      if (specs && (specs.minAttendees || specs.maxAttendees)) {
+                                        return (
+                                          <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                                            <Users className="w-3 h-3" />
+                                            {specs.minAttendees && specs.maxAttendees 
+                                              ? `${specs.minAttendees}-${specs.maxAttendees} personas`
+                                              : specs.minAttendees 
+                                              ? `Mín. ${specs.minAttendees} personas`
+                                              : `Máx. ${specs.maxAttendees} personas`
+                                            }
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    })()}
+                                    
+                                    <div className="mt-3">
+                                      {(() => {
+                                        const basePrice = Number(pack.pricePerDay);
+                                        const shipping = Number(pack.shippingCost || 0);
+                                        const installation = Number(pack.installationCost || 0);
+                                        const totalPrice = basePrice + shipping + installation;
+                                        
+                                        return (
+                                          <div>
+                                            <span className="text-xl font-bold text-resona">
+                                              €{totalPrice.toFixed(2)}/día
+                                            </span>
+                                            {(shipping > 0 || installation > 0) && (
+                                              <p className="text-xs text-gray-500 mt-1">
+                                                Incluye transporte y montaje
+                                              </p>
+                                            )}
+                                          </div>
+                                        );
+                                      })()}
+                                    </div>
                                   </div>
                                 </div>
-                                {quantity > 0 && (
-                                  <div className="mt-2 text-sm font-medium text-resona">
-                                    Subtotal: €{(product.price * quantity).toFixed(2)}/día
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600">No hay packs disponibles en este momento.</p>
+                        <p className="text-sm text-gray-500 mt-2">Puedes continuar y te contactaremos para personalizar tu evento.</p>
+                      </div>
+                    )}
+                  </>
                 );
-              })}
+              })()}
               
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  💡 <strong>Tip:</strong> Selecciona solo lo que necesites. Puedes ajustar las cantidades en cualquier momento.
+                  💡 <strong>Tip:</strong> Selecciona UN pack que se ajuste a tu evento. Podrás añadir productos extra en el siguiente paso.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Step 5: Service Levels */}
+          {/* Step 5: Extras - Productos adicionales */}
           {step === 5 && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6 text-center">
-                ¿Qué nivel de servicio necesitas?
+                Extras para tu Evento
               </h2>
-              <p className="text-center text-gray-600 mb-2">
-                Para {eventData.attendees} personas
+              <p className="text-center text-gray-600 mb-8">
+                Añade productos adicionales que complementen tu evento
               </p>
-              <div className="text-center mb-6">
-                <span className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
-                  ✨ Recomendado: {SERVICE_LEVEL_LABELS[getRecommendedLevel(eventData.attendees, 'sound')]}
-                </span>
-              </div>
-              <div className="space-y-6">
-                {[
-                  { key: 'soundLevel', icon: '🎵', label: 'Sonido', desc: 'Micrófonos, altavoces, mesas de mezcla', type: 'sound' as const },
-                  { key: 'lightingLevel', icon: '💡', label: 'Iluminación', desc: 'Focos, proyectores, luces LED', type: 'lighting' as const },
-                ].map((item) => {
-                  const recommended = getRecommendedLevel(eventData.attendees, item.type);
-                  const currentValue = eventData[item.key as keyof EventData] as string;
+              
+              {(() => {
+                // Filtrar extras según la configuración del evento
+                const selectedEventType = eventTypes.find(t => t.id === eventData.eventType);
+                const availableExtras = selectedEventType?.availableExtras || [];
+                
+                // Si el evento tiene extras configurados, mostrar solo esos
+                // Si no tiene configuración, mostrar todos (comportamiento por defecto)
+                const extrasProducts = catalogProducts.filter((p: any) => {
+                  if (!p.isActive || p.isPack) return false;
                   
-                  return (
-                    <div key={item.key} className="p-6 rounded-lg border-2 border-gray-200 bg-white">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="text-3xl">{item.icon}</div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-gray-900 text-lg">{item.label}</div>
-                          <div className="text-sm text-gray-600">{item.desc}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 gap-3">
-                        {serviceLevels.map((level) => {
-                          const isRecommended = level.value === recommended;
-                          const isSelected = currentValue === level.value;
-                          const price = level.value !== 'none' 
-                            ? basePrices[item.type][level.value as keyof typeof basePrices.sound]
-                            : 0;
-                          
-                          return (
-                            <button
-                              key={level.value}
-                              onClick={() => setEventData({ ...eventData, [item.key]: level.value })}
-                              className={`p-4 rounded-lg border-2 transition-all text-left ${
-                                isSelected
-                                  ? 'border-resona bg-resona/10 shadow-md'
-                                  : isRecommended
-                                  ? 'border-green-400 bg-green-50 hover:border-green-500'
-                                  : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium text-gray-900">{level.label}</span>
-                                    {isRecommended && (
-                                      <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
-                                        Recomendado
-                                      </span>
-                                    )}
-                                  </div>
-                                  {price > 0 && (
-                                    <div className="text-sm text-gray-600 mt-1">
-                                      Desde €{price}/día
+                  // Si hay extras configurados, filtrar por ellos
+                  if (availableExtras.length > 0) {
+                    return availableExtras.includes(p.id);
+                  }
+                  
+                  // Si no hay configuración, mostrar todos
+                  return true;
+                });
+                
+                // Agrupar productos por categoría
+                const productsByCategory: Record<string, any[]> = {};
+                extrasProducts.forEach((product: any) => {
+                  const categoryName = product.category?.name || 'Sin categoría';
+                  if (!productsByCategory[categoryName]) {
+                    productsByCategory[categoryName] = [];
+                  }
+                  productsByCategory[categoryName].push(product);
+                });
+                
+                return extrasProducts.length > 0 ? (
+                  <div className="space-y-8">
+                    {Object.entries(productsByCategory).map(([categoryName, products]) => (
+                      <div key={categoryName}>
+                        {/* Título de la categoría */}
+                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b-2 border-resona">
+                          <span className="bg-resona text-white px-3 py-1 rounded-lg text-sm">
+                            {products.length}
+                          </span>
+                          <span>{categoryName}</span>
+                        </h3>
+                        
+                        {/* Productos de la categoría */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {products.map((product: any) => {
+                            const isSelected = !!eventData.selectedExtras[product.id];
+                            const quantity = eventData.selectedExtras[product.id] || 0;
+                            
+                            return (
+                              <div
+                                key={product.id}
+                                className={`bg-white rounded-lg border-2 p-4 transition-all ${
+                                  isSelected ? 'border-resona bg-resona/5' : 'border-gray-200'
+                                }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  {product.mainImageUrl && (
+                                    <img 
+                                      src={product.mainImageUrl} 
+                                      alt={product.name}
+                                      className="w-16 h-16 object-cover rounded-lg"
+                                    />
+                                  )}
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-900">{product.name}</h4>
+                                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
+                                    <div className="mt-2">
+                                      {(() => {
+                                        const basePrice = Number(product.pricePerDay);
+                                        const shipping = Number(product.shippingCost || 0);
+                                        const installation = Number(product.installationCost || 0);
+                                        const totalPrice = basePrice + shipping + installation;
+                                        
+                                        return (
+                                          <>
+                                            <div className="font-bold text-resona">
+                                              €{totalPrice.toFixed(2)}/día
+                                            </div>
+                                            {(shipping > 0 || installation > 0) && (
+                                              <p className="text-xs text-gray-500">
+                                                Inc. transporte y montaje
+                                              </p>
+                                            )}
+                                          </>
+                                        );
+                                      })()}
                                     </div>
-                                  )}
+                                  </div>
                                 </div>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                  isSelected
-                                    ? 'border-resona bg-resona'
-                                    : 'border-gray-300'
-                                }`}>
-                                  {isSelected && (
-                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                  )}
+                                
+                                <div className="mt-3 flex items-center gap-2">
+                                  <button
+                                    onClick={() => {
+                                      const newExtras = { ...eventData.selectedExtras };
+                                      const currentQty = newExtras[product.id] || 0;
+                                      if (currentQty > 1) {
+                                        newExtras[product.id] = currentQty - 1;
+                                      } else {
+                                        delete newExtras[product.id];
+                                      }
+                                      setEventData({ ...eventData, selectedExtras: newExtras });
+                                    }}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 hover:border-resona hover:bg-resona/10 flex items-center justify-center transition-colors"
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </button>
+                                  <span className="w-12 text-center font-medium">{quantity}</span>
+                                  <button
+                                    onClick={() => {
+                                      const newExtras = { ...eventData.selectedExtras };
+                                      newExtras[product.id] = (newExtras[product.id] || 0) + 1;
+                                      setEventData({ ...eventData, selectedExtras: newExtras });
+                                    }}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 hover:border-resona hover:bg-resona/10 flex items-center justify-center transition-colors"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                  </button>
                                 </div>
                               </div>
-                            </button>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No hay productos extras disponibles</p>
+                  </div>
+                );
+              })()}
+              
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  💡 <strong>Nota:</strong> Estas son nuestras recomendaciones para {eventData.attendees} personas, 
-                  pero puedes seleccionar cualquier nivel según tus necesidades y presupuesto.
+                  💡 <strong>Nota:</strong> Los extras son opcionales. Puedes añadir la cantidad que necesites de cada producto.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Step 6: Estimate */}
-          {step === 6 && estimate && (
+          {/* Step 6: Resumen Final */}
+          {step === 6 && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6 text-center">
-                Tu Presupuesto Estimado
+                Resumen de tu Evento
               </h2>
               
-              {/* Summary */}
-              <div className="bg-gradient-to-br from-resona to-resona-dark text-white rounded-lg p-6 mb-6">
-                <div className="text-center">
-                  <div className="text-sm opacity-90 mb-2">Precio Estimado Total</div>
-                  <div className="text-5xl font-bold">€{estimate.total}</div>
-                  <div className="text-sm opacity-90 mt-2">
-                    Para {eventData.attendees} personas · {eventData.duration} {eventData.durationType === 'hours' ? 'horas' : 'días'}
+              {/* Información del Evento */}
+              <div className="space-y-4 mb-6">
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-gray-600 font-medium">Tipo de Evento</p>
+                  <p className="font-semibold text-lg mt-1">{eventTypes.find(t => t.id === eventData.eventType)?.name}</p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600 font-medium">Asistentes</p>
+                    <p className="font-semibold text-lg mt-1">{eventData.attendees} personas</p>
+                  </div>
+                  
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600 font-medium">Duración</p>
+                    <p className="font-semibold text-lg mt-1">{eventData.duration} {eventData.durationType === 'hours' ? 'horas' : 'días'}</p>
                   </div>
                 </div>
+                
+                {eventData.eventDate && (
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600 font-medium">Fecha del Evento</p>
+                    <p className="font-semibold text-lg mt-1">{new Date(eventData.eventDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  </div>
+                )}
+                
+                {eventData.eventLocation && (
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600 font-medium">Ubicación</p>
+                    <p className="font-semibold text-lg mt-1">{eventData.eventLocation}</p>
+                  </div>
+                )}
+
+                {/* Pack Seleccionado */}
+                {eventData.selectedPack && (() => {
+                  const selectedPackData = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+                  return selectedPackData ? (
+                    <div className="p-4 bg-resona/10 rounded-lg border border-resona/30">
+                      <p className="text-sm text-resona font-medium mb-2">📦 Pack Seleccionado</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-semibold text-gray-900">{selectedPackData.name}</span>
+                          {(Number(selectedPackData.shippingCost || 0) > 0 || Number(selectedPackData.installationCost || 0) > 0) && (
+                            <p className="text-xs text-gray-500">Incluye transporte y montaje</p>
+                          )}
+                        </div>
+                        <span className="font-bold text-resona">
+                          €{(Number(selectedPackData.pricePerDay) + Number(selectedPackData.shippingCost || 0) + Number(selectedPackData.installationCost || 0)).toFixed(2)}/día
+                        </span>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+
+                {/* Extras Seleccionados */}
+                {Object.keys(eventData.selectedExtras).length > 0 && (
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-600 font-medium mb-2">✨ Extras Seleccionados</p>
+                    <div className="space-y-2">
+                      {Object.entries(eventData.selectedExtras).map(([productId, quantity]) => {
+                        const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+                        return product ? (
+                          <div key={productId} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700">{quantity}x {product.name}</span>
+                            <span className="text-sm font-semibold text-gray-900">€{((Number(product.pricePerDay) + Number(product.shippingCost || 0) + Number(product.installationCost || 0)) * quantity).toFixed(2)}/día</span>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Precio Total */}
+                {(() => {
+                  let total = 0;
+                  
+                  // Añadir precio del pack (incluyendo transporte y montaje)
+                  if (eventData.selectedPack) {
+                    const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+                    if (pack) {
+                      const basePrice = Number(pack.pricePerDay);
+                      const shipping = Number(pack.shippingCost || 0);
+                      const installation = Number(pack.installationCost || 0);
+                      total += basePrice + shipping + installation;
+                    }
+                  }
+                  
+                  // Añadir precio de extras (incluyendo transporte y montaje)
+                  Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
+                    const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+                    if (product) {
+                      const basePrice = Number(product.pricePerDay);
+                      const shipping = Number(product.shippingCost || 0);
+                      const installation = Number(product.installationCost || 0);
+                      total += (basePrice + shipping + installation) * quantity;
+                    }
+                  });
+                  
+                  // Calcular por días
+                  const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
+                  const totalFinal = total * days;
+                  
+                  return total > 0 ? (
+                    <div className="p-5 bg-green-50 rounded-lg border-2 border-green-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">Subtotal por día:</span>
+                        <span className="font-semibold text-gray-900">€{total.toFixed(2)}</span>
+                      </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">Duración:</span>
+                        <span className="font-semibold text-gray-900">{days} día{days > 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="pt-2 border-t-2 border-green-300 mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-gray-900">TOTAL:</span>
+                          <span className="text-2xl font-bold text-green-600">€{totalFinal.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        * IVA no incluido. Precio final puede variar según disponibilidad.
+                      </p>
+                    </div>
+                  ) : null;
+                })()}
               </div>
 
-              {/* Breakdown */}
-              {estimate.breakdown.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-4 text-gray-700">Desglose por Categoría:</h3>
-                  <div className="space-y-3">
-                    {estimate.breakdown.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <span className="font-medium">{item.category}</span>
-                          <span className="text-sm text-gray-600 ml-2">({item.level})</span>
-                        </div>
-                        <span className="text-resona font-bold">€{item.amount}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Disclaimer */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-yellow-800">
-                  <strong>Nota:</strong> Este es un presupuesto estimado. El precio final puede variar según 
-                  la disponibilidad de productos y necesidades específicas de tu evento.
+              {/* Info Note */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-800">
+                  <strong>ℹ️ Información:</strong> Este es el resumen de tu evento. Para obtener un presupuesto detallado, 
+                  haz clic en "Solicitar Presupuesto" y nos pondremos en contacto contigo.
                 </p>
               </div>
 
               {/* Actions */}
               <div className="space-y-3">
+                {/* NUEVO: Añadir al Carrito y Checkout */}
+                <button
+                  onClick={handleAddToCartAndCheckout}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                  <CreditCard className="w-5 h-5" />
+                  🛒 Añadir al Carrito y Pagar
+                </button>
+                
+                {/* Divisor */}
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">o</span>
+                  </div>
+                </div>
+                
+                {/* Existente: Solicitar Presupuesto */}
                 <button
                   onClick={handleRequestQuote}
                   className="w-full bg-resona hover:bg-resona-dark text-white font-semibold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <Mail className="w-5 h-5" />
-                  Solicitar Presupuesto Detallado
+                  Solicitar Presupuesto Personalizado
                 </button>
                 <button
                   onClick={() => navigate('/productos')}
                   className="w-full bg-white hover:bg-gray-50 text-resona border-2 border-resona font-semibold py-4 rounded-lg transition-all flex items-center justify-center gap-2"
                 >
                   <Package className="w-5 h-5" />
-                  Ver Catálogo de Productos
+                  Ver Productos en el Catálogo
+                </button>
+                <button
+                  onClick={() => setStep(1)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg transition-all"
+                >
+                  ← Modificar Evento
                 </button>
               </div>
             </div>
           )}
 
           {/* Navigation Buttons */}
-          {step < 5 && (
+          {step < 6 && (
             <div className="flex justify-between mt-8 pt-6 border-t">
               <button
                 onClick={handleBack}
@@ -697,40 +1152,16 @@ const EventCalculatorPage = () => {
               <button
                 onClick={handleNext}
                 disabled={
-                  (step === 1 && !eventData.eventType) ||
-                  (step === 5 && eventData.soundLevel === 'none' && eventData.lightingLevel === 'none')
+                  (step === 1 && !eventData.eventType)
                 }
                 className="flex items-center gap-2 px-6 py-3 bg-resona hover:bg-resona-dark text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
               >
-                Siguiente
+                {step === 5 ? 'Ver Resumen' : 'Siguiente'}
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           )}
 
-          {step === 6 && (
-            <div className="flex justify-center mt-8 pt-6 border-t">
-              <button
-                onClick={() => {
-                  setStep(1);
-                  setEventData({
-                    eventType: '',
-                    attendees: 50,
-                    duration: 4,
-                    durationType: 'hours',
-                    eventDate: '',
-                    selectedParts: [],
-                    selectedProducts: {},
-                    soundLevel: 'none',
-                    lightingLevel: 'none',
-                  });
-                }}
-                className="text-gray-600 hover:text-resona font-medium transition-colors"
-              >
-                ← Hacer otro cálculo
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Info Footer */}

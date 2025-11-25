@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { productService } from '../services/product.service';
 import { Product, Category } from '../types';
-import { Calendar, Users, Package, Shield } from 'lucide-react';
+import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { organizationSchema, websiteSchema, localBusinessSchema } from '../utils/schemas';
 
@@ -48,46 +48,79 @@ const HomePage = () => {
         schema={[organizationSchema, websiteSchema, localBusinessSchema]}
       />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-resona-dark to-resona text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 py-24">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">
-              Alquiler de Material para Eventos
+      <section className="relative bg-resona text-white overflow-hidden">
+        {/* Overlay oscuro para mejor contraste y suavizar el color */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        
+        {/* Pattern overlay sutil */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+        
+        <div className="relative container mx-auto px-4 py-20 md:py-28">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Main Title */}
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+              Equipos Audiovisuales Profesionales para tu Evento en Valencia
             </h1>
-            <p className="text-xl mb-8">
-              Todo lo que necesitas para hacer de tu evento algo inolvidable
+            
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-white/90 mb-6">
+              Con montaje incluido o solo alquiler, tú decides
             </p>
             
-            {/* Search Bar */}
-            <div className="bg-white rounded-lg shadow-xl p-6 text-gray-900">
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Fecha inicio</label>
-                  <input
-                    type="date"
-                    value={searchDates.start}
-                    onChange={(e) => setSearchDates({ ...searchDates, start: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Fecha fin</label>
-                  <input
-                    type="date"
-                    value={searchDates.end}
-                    onChange={(e) => setSearchDates({ ...searchDates, end: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                  />
-                </div>
-                <div className="flex items-end">
-                  <button
-                    onClick={handleSearch}
-                    className="w-full bg-resona text-white py-2 px-6 rounded-lg hover:bg-resona-dark transition font-medium shadow-lg hover:shadow-xl"
-                  >
-                    Buscar Disponibilidad
-                  </button>
-                </div>
+            {/* Services Icons */}
+            <div className="flex items-center justify-center gap-6 mb-8 text-white/90">
+              <div className="flex items-center gap-2">
+                <Music className="w-5 h-5" />
+                <span className="text-lg font-medium">Sonido</span>
+              </div>
+              <span className="text-2xl">·</span>
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5" />
+                <span className="text-lg font-medium">Iluminación</span>
+              </div>
+              <span className="text-2xl">·</span>
+              <div className="flex items-center gap-2">
+                <Video className="w-5 h-5" />
+                <span className="text-lg font-medium">Vídeo</span>
+              </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+              <Link
+                to="/calculadora-eventos"
+                className="group bg-white text-resona px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <Calculator className="w-5 h-5" />
+                Calcula tu Presupuesto
+              </Link>
+              <Link
+                to="/productos"
+                className="group bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/20 transition-all border-2 border-white/30 hover:border-white/50 flex items-center justify-center gap-2"
+              >
+                <Package className="w-5 h-5" />
+                Ver Catálogo Completo
+              </Link>
+            </div>
+
+            {/* Benefits */}
+            <div className="grid md:grid-cols-3 gap-4 max-w-2xl mx-auto text-sm md:text-base">
+              <div className="flex items-center justify-center gap-2 text-white/90">
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                <span>Montaje e instalación incluidos</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 text-white/90">
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                <span>+500 eventos realizados</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 text-white/90">
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                <span>Equipos profesionales</span>
               </div>
             </div>
           </div>
@@ -225,24 +258,27 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-blue-900 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative py-16 bg-resona text-white overflow-hidden">
+        {/* Overlay para legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        
+        <div className="relative container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             ¿Necesitas ayuda con tu evento?
           </h2>
-          <p className="text-xl mb-8">
+          <p className="text-xl text-white/90 mb-8">
             Nuestro equipo de expertos está aquí para asesorarte
           </p>
           <div className="flex justify-center gap-4">
             <Link
               to="/contacto"
-              className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+              className="bg-white text-resona px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
             >
               Contactar Ahora
             </Link>
             <Link
               to="/productos"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition"
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-resona transition"
             >
               Ver Catálogo
             </Link>

@@ -253,7 +253,7 @@ const CookiesPage = () => {
                 </p>
                 <ul className="list-none text-gray-700 space-y-2">
                   <li><strong>Email:</strong> privacidad@resonaevents.com</li>
-                  <li><strong>Teléfono:</strong> +34 900 123 456</li>
+                  <li><strong>Teléfono:</strong> +34 613 881 414</li>
                 </ul>
               </section>
             </div>

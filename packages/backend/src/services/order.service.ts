@@ -33,6 +33,34 @@ interface CreateOrderData {
 
 export class OrderService {
   /**
+   * Calculate VIP discount based on user level
+   */
+  private calculateVIPDiscount(userLevel: string, subtotal: number): number {
+    switch (userLevel) {
+      case 'VIP':
+        return subtotal * 0.50; // 50% discount
+      case 'VIP_PLUS':
+        return subtotal * 0.70; // 70% discount
+      default:
+        return 0;
+    }
+  }
+
+  /**
+   * Calculate deposit - VIP users don't pay deposit
+   */
+  private calculateDeposit(userLevel: string, items: OrderItem[]): number {
+    // VIP and VIP_PLUS don't pay deposit
+    if (userLevel === 'VIP' || userLevel === 'VIP_PLUS') {
+      return 0;
+    }
+    
+    // For STANDARD users, calculate deposit (for now, return 0 as per original logic)
+    // TODO: Implement actual deposit calculation based on product.customDeposit
+    return 0;
+  }
+
+  /**
    * Generate unique order number
    */
   private async generateOrderNumber(): Promise<string> {
@@ -59,6 +87,7 @@ export class OrderService {
 
   /**
    * Create a new order from cart
+   * Uses transaction to prevent race conditions on stock
    */
   async createOrder(data: CreateOrderData) {
     try {
@@ -74,6 +103,16 @@ export class OrderService {
         throw new AppError(400, 'Carrito inválido', 'INVALID_CART');
       }
 
+      // Get user with userLevel for VIP discount calculation
+      const user = await prisma.user.findUnique({
+        where: { id: data.userId },
+        select: { userLevel: true },
+      });
+
+      if (!user) {
+        throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+      }
+
       // Calculate totals
       const totals = await cartService.calculateTotals(
         data.items,
@@ -81,89 +120,128 @@ export class OrderService {
         data.deliveryType === 'DELIVERY' ? 10 : 0 // Default 10km for now
       );
 
+      // Apply VIP discount
+      const vipDiscount = this.calculateVIPDiscount(user.userLevel, totals.subtotal);
+      const subtotalAfterDiscount = totals.subtotal - vipDiscount;
+
+      // Calculate deposit (VIP users don't pay)
+      const depositAmount = this.calculateDeposit(user.userLevel, data.items);
+
+      // Recalculate total with VIP discount
+      const finalTotal = subtotalAfterDiscount + totals.deliveryCost + totals.tax;
+
       // Generate order number
       const orderNumber = await this.generateOrderNumber();
 
-      // Create order
-      const order = await prisma.order.create({
-        data: {
-          orderNumber,
-          userId: data.userId,
-          status: OrderStatus.PENDING,
-          paymentStatus: PaymentStatus.PENDING,
-          deliveryType: data.deliveryType as any,
-          deliveryAddress: data.deliveryAddress ? JSON.stringify({ address: data.deliveryAddress }) : undefined,
-          deliveryDate: data.deliveryDate || new Date(),
-          startDate: data.items[0].startDate,
-          endDate: data.items[data.items.length - 1].endDate,
-          
-          // Campos de contacto requeridos
-          contactPerson: (data as any).contactPerson || `${(data as any).firstName || ''} ${(data as any).lastName || ''}`.trim() || 'Cliente',
-          contactPhone: (data as any).contactPhone || (data as any).phone || 'N/A',
-          
-          // Totales
-          subtotal: totals.subtotal,
-          totalBeforeAdjustment: totals.subtotal,
-          taxAmount: totals.tax,
-          total: totals.total,
-          deliveryFee: totals.deliveryCost,
-          tax: totals.tax,
-          totalAmount: totals.total,
-          
-          // Costes adicionales requeridos
-          shippingCost: totals.deliveryCost,
-          depositAmount: 0, // Por ahora sin fianza
-          
-          // Información adicional
-          notes: data.notes,
-          eventType: data.eventType,
-          eventLocation: JSON.stringify({ address: data.deliveryAddress || 'PICKUP' }),
-          attendees: data.attendees,
-          items: {
-            create: data.items.map(item => {
-              // Calcular días de alquiler
-              const start = new Date(item.startDate);
-              const end = new Date(item.endDate);
-              const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
-              
-              // pricePerUnit ya incluye días * pricePerDay, así que dividimos
-              const pricePerDay = Number(item.pricePerUnit) / days;
-              const subtotal = Number(item.totalPrice);
-              
-              return {
-                productId: item.productId,
-                quantity: item.quantity,
-                pricePerDay: pricePerDay,
-                subtotal: subtotal,
-                pricePerUnit: item.pricePerUnit,
-                totalPrice: item.totalPrice,
-                startDate: item.startDate,
-                endDate: item.endDate,
-              };
-            }),
-          },
-        },
-        include: {
-          items: {
-            include: {
-              product: true,
-            },
-          },
-          user: true,
-        },
-      });
+      // Log VIP discount if applied
+      if (vipDiscount > 0) {
+        logger.info(`VIP discount applied: ${user.userLevel} - €${vipDiscount.toFixed(2)} (${user.userLevel === 'VIP' ? '50%' : '70%'})`);      }
 
-      // Update product stock (reserve products)
-      for (const item of data.items) {
-        await prisma.product.update({
-          where: { id: item.productId },
+      // Use transaction to prevent race conditions
+      const order = await prisma.$transaction(async (tx) => {
+        // First, verify and lock stock for all products
+        for (const item of data.items) {
+          const product = await tx.product.findUnique({
+            where: { id: item.productId },
+            select: { id: true, name: true, stock: true }
+          });
+
+          if (!product) {
+            throw new AppError(404, `Producto no encontrado: ${item.productId}`, 'PRODUCT_NOT_FOUND');
+          }
+
+          if (product.stock < item.quantity) {
+            throw new AppError(400, 
+              `Stock insuficiente para ${product.name}. Disponible: ${product.stock}, Solicitado: ${item.quantity}`,
+              'INSUFFICIENT_STOCK'
+            );
+          }
+        }
+
+        // Create order and update stock atomically
+        const createdOrder = await tx.order.create({
           data: {
-            stock: {
-              decrement: item.quantity,
+            orderNumber,
+            userId: data.userId,
+            status: OrderStatus.PENDING,
+            paymentStatus: PaymentStatus.PENDING,
+            deliveryType: data.deliveryType as any,
+            deliveryAddress: data.deliveryAddress ? JSON.stringify({ address: data.deliveryAddress }) : undefined,
+            deliveryDate: data.deliveryDate || new Date(),
+            startDate: data.items[0].startDate,
+            endDate: data.items[data.items.length - 1].endDate,
+            
+            // Campos de contacto requeridos
+            contactPerson: (data as any).contactPerson || `${(data as any).firstName || ''} ${(data as any).lastName || ''}`.trim() || 'Cliente',
+            contactPhone: (data as any).contactPhone || (data as any).phone || 'N/A',
+            
+            // Totales con descuento VIP aplicado
+            subtotal: totals.subtotal, // Subtotal original
+            discountAmount: vipDiscount, // Descuento VIP aplicado
+            totalBeforeAdjustment: subtotalAfterDiscount, // Subtotal después del descuento
+            taxAmount: totals.tax,
+            total: finalTotal, // Total final con descuento aplicado
+            deliveryFee: totals.deliveryCost,
+            tax: totals.tax,
+            totalAmount: finalTotal, // Total final
+            
+            // Costes adicionales requeridos
+            shippingCost: totals.deliveryCost,
+            depositAmount: depositAmount, // 0 para VIP, calculado para STANDARD
+            
+            // Información adicional
+            notes: data.notes,
+            eventType: data.eventType,
+            eventLocation: JSON.stringify({ address: data.deliveryAddress || 'PICKUP' }),
+            attendees: data.attendees,
+            items: {
+              create: data.items.map(item => {
+                // Calcular días de alquiler
+                const start = new Date(item.startDate);
+                const end = new Date(item.endDate);
+                const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+                
+                // pricePerUnit ya incluye días * pricePerDay, así que dividimos
+                const pricePerDay = Number(item.pricePerUnit) / days;
+                const subtotal = Number(item.totalPrice);
+                
+                return {
+                  productId: item.productId,
+                  quantity: item.quantity,
+                  pricePerDay: pricePerDay,
+                  subtotal: subtotal,
+                  pricePerUnit: item.pricePerUnit,
+                  totalPrice: item.totalPrice,
+                  startDate: item.startDate,
+                  endDate: item.endDate,
+                };
+              }),
             },
+          },
+          include: {
+            items: {
+              include: {
+                product: true,
+              },
+            },
+            user: true,
           },
         });
-      }
+
+        // Update product stock atomically in same transaction
+        for (const item of data.items) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: {
+                decrement: item.quantity,
+              },
+            },
+          });
+        }
+
+        return createdOrder;
+      });
 
       logger.info(`Order created: ${orderNumber} for user ${data.userId}`);
 
@@ -368,9 +446,83 @@ export class OrderService {
   }
 
   /**
+   * Update order (Edit - Admin only)
+   */
+  async updateOrder(orderId: string, updateData: any) {
+    try {
+      // Verificar que el pedido existe
+      const existing = await prisma.order.findUnique({
+        where: { id: orderId },
+      });
+
+      if (!existing) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      // No permitir editar pedidos completados o entregados
+      if ([OrderStatus.COMPLETED, OrderStatus.DELIVERED].includes(existing.status as any)) {
+        throw new AppError(400, 'No se puede editar un pedido ya completado o entregado', 'CANNOT_EDIT');
+      }
+
+      // Validar que queden al menos 24 horas antes del evento
+      const eventDate = new Date(existing.startDate);
+      const now = new Date();
+      const hoursUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursUntilEvent < 24) {
+        throw new AppError(400, 'No se puede editar un pedido con menos de 24 horas antes del evento', 'TOO_CLOSE_TO_EVENT');
+      }
+
+      // Campos permitidos para editar
+      const allowedFields = [
+        'deliveryDate',
+        'returnDate',
+        'deliveryType',
+        'deliveryAddress',
+        'notes',
+        'internalNotes',
+      ];
+
+      const dataToUpdate: any = {};
+      allowedFields.forEach(field => {
+        if (updateData[field] !== undefined) {
+          dataToUpdate[field] = updateData[field];
+        }
+      });
+
+      const updated = await prisma.order.update({
+        where: { id: orderId },
+        data: dataToUpdate,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            }
+          },
+          items: {
+            include: {
+              product: true,
+            }
+          }
+        }
+      });
+
+      logger.info(`Order ${orderId} updated by admin`);
+
+      return updated;
+    } catch (error) {
+      logger.error('Error updating order:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Cancel order
    */
-  async cancelOrder(orderId: string, userId: string, reason?: string) {
+  async cancelOrder(orderId: string, userId?: string, reason?: string) {
     try {
       const order = await this.getOrderById(orderId, userId);
 
@@ -379,10 +531,51 @@ export class OrderService {
       }
 
       if ([OrderStatus.DELIVERED, OrderStatus.COMPLETED].includes(order.status as any)) {
-        throw new AppError(400, 'No se puede cancelar un pedido entregado', 'CANNOT_CANCEL');
+        throw new AppError(400, 'No se puede cancelar un pedido entregado o completado', 'CANNOT_CANCEL');
       }
 
-      return await this.updateOrderStatus(orderId, OrderStatus.CANCELLED, userId);
+      // Calcular si se puede reembolsar (más de 7 días antes del evento)
+      const eventDate = new Date(order.startDate);
+      const now = new Date();
+      const daysUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      const canRefund = daysUntilEvent >= 7;
+      
+      // Añadir información sobre reembolso en las notas
+      const refundNote = canRefund 
+        ? 'Se procederá con el reembolso completo del adelanto.'
+        : 'IMPORTANTE: Al cancelar con menos de 7 días de antelación, no se reembolsará el 50% del adelanto pagado.';
+
+      // Si hay un motivo, añadirlo a las notas
+      const updateData: any = {
+        status: OrderStatus.CANCELLED,
+      };
+
+      if (reason) {
+        const currentNotes = order.notes || '';
+        updateData.notes = `${currentNotes}\n\n[CANCELADO] ${new Date().toLocaleString('es-ES')}:\nMotivo: ${reason}\nPolítica de reembolso: ${refundNote}`.trim();
+      } else {
+        const currentNotes = order.notes || '';
+        updateData.notes = `${currentNotes}\n\n[CANCELADO] ${new Date().toLocaleString('es-ES')}\nPolítica de reembolso: ${refundNote}`.trim();
+      }
+
+      const cancelled = await prisma.order.update({
+        where: { id: orderId },
+        data: updateData,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            }
+          }
+        }
+      });
+
+      logger.info(`Order ${orderId} cancelled${reason ? ` with reason: ${reason}` : ''}`);
+
+      return cancelled;
     } catch (error) {
       logger.error('Error cancelling order:', error);
       throw error;

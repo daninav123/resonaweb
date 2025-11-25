@@ -17,11 +17,27 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const data: any = await analyticsService.getDashboardStats();
+      
+      console.log('📊 Dashboard data received:', data);
+      console.log('📦 Recent orders:', data?.recentOrders);
+      
       setStats(data);
-      setRecentOrders(data?.recentOrders || []);
+      
+      // Asegurar que recentOrders es un array
+      if (Array.isArray(data?.recentOrders)) {
+        setRecentOrders(data.recentOrders);
+      } else if (data?.recentOrders) {
+        console.warn('⚠️ recentOrders no es un array:', typeof data.recentOrders);
+        setRecentOrders([]);
+      } else {
+        console.log('ℹ️ No hay recentOrders en la respuesta');
+        setRecentOrders([]);
+      }
     } catch (error: any) {
-      console.error('Error cargando dashboard:', error);
-      toast.error('Error al cargar estadísticas');
+      console.error('❌ Error cargando dashboard:', error);
+      console.error('Response:', error.response?.data);
+      toast.error('Error al cargar estadísticas del dashboard');
+      setRecentOrders([]);
     } finally {
       setLoading(false);
     }
@@ -31,7 +47,7 @@ const Dashboard = () => {
     const badges: any = {
       PENDING: 'bg-yellow-100 text-yellow-800',
       CONFIRMED: 'bg-blue-100 text-blue-800',
-      IN_PROGRESS: 'bg-purple-100 text-purple-800',
+      IN_PROGRESS: 'bg-resona/10 text-resona',
       DELIVERED: 'bg-green-100 text-green-800',
       COMPLETED: 'bg-green-100 text-green-800',
       CANCELLED: 'bg-red-100 text-red-800',
@@ -56,72 +72,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-gray-900 text-white min-h-screen">
-          <div className="p-4">
-            <h2 className="text-2xl font-bold mb-8">Panel Admin</h2>
-            <nav className="space-y-2">
-              <Link to="/admin" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <TrendingUp className="w-5 h-5" />
-                Dashboard
-              </Link>
-              <Link to="/admin/products" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Package className="w-5 h-5" />
-                Productos
-              </Link>
-              <Link to="/admin/stock-alerts" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800 bg-red-900">
-                <AlertTriangle className="w-5 h-5" />
-                <span className="flex items-center gap-2">
-                  Alertas de Stock
-                  <span className="text-xs bg-yellow-500 text-yellow-900 px-1.5 py-0.5 rounded">Beta</span>
-                </span>
-              </Link>
-              <Link to="/admin/orders" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <ShoppingCart className="w-5 h-5" />
-                Pedidos
-              </Link>
-              <Link to="/admin/users" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Users className="w-5 h-5" />
-                Usuarios
-              </Link>
-              <Link to="/admin/calendar" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Calendar className="w-5 h-5" />
-                Calendario
-              </Link>
-              <Link to="/admin/blog" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <FileText className="w-5 h-5" />
-                Blog
-              </Link>
-              <Link to="/admin/calculator" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Calculator className="w-5 h-5" />
-                Calculadora
-              </Link>
-              <Link to="/admin/shipping-config" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Truck className="w-5 h-5" />
-                Envío y Montaje
-              </Link>
-              <Link to="/admin/company-settings" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Building2 className="w-5 h-5" />
-                Datos de Facturación
-              </Link>
-              <Link to="/admin/settings" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <Settings className="w-5 h-5" />
-                Configuración
-              </Link>
-              <hr className="my-4 border-gray-700" />
-              <Link to="/" className="flex items-center gap-3 p-3 rounded hover:bg-gray-800">
-                <LogOut className="w-5 h-5" />
-                Salir
-              </Link>
-            </nav>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
 
           {/* Stats */}
           <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -181,7 +133,7 @@ const Dashboard = () => {
           </div>
 
           {/* Quick Access */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Link to="/admin/shipping-config" className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
               <div className="flex items-center gap-4">
                 <div className="bg-white/20 p-3 rounded-lg">
@@ -217,6 +169,18 @@ const Dashboard = () => {
                 </div>
               </div>
             </Link>
+
+            <Link to="/admin/invoices/manual" className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <FileText className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Factura Manual</h3>
+                  <p className="text-orange-100 text-sm">Eventos externos</p>
+                </div>
+              </div>
+            </Link>
           </div>
 
           {/* Recent Orders Table */}
@@ -246,28 +210,53 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {recentOrders.length === 0 ? (
+                  {!recentOrders || recentOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                        No hay pedidos recientes
+                      <td colSpan={5} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <ShoppingCart className="w-12 h-12 text-gray-300" />
+                          <p className="text-gray-500 font-medium">No hay pedidos recientes</p>
+                          <p className="text-sm text-gray-400">Los nuevos pedidos aparecerán aquí</p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
-                    recentOrders.map((order) => {
-                      const statusBadge = getStatusBadge(order.status);
+                    recentOrders.map((order, index) => {
+                      if (!order) {
+                        console.warn(`⚠️ Pedido en índice ${index} es null/undefined`);
+                        return null;
+                      }
+                      
+                      const statusBadge = getStatusBadge(order.status || 'PENDING');
+                      const orderId = order.id || `temp-${index}`;
+                      const orderNumber = order.orderNumber || (order.id ? `#${order.id.slice(0, 8)}` : `#${index + 1}`);
+                      const customerName = order.user?.firstName 
+                        ? `${order.user.firstName} ${order.user.lastName || ''}`.trim()
+                        : order.user?.email 
+                        ? order.user.email.split('@')[0]
+                        : 'Cliente';
+                      const orderDate = order.createdAt 
+                        ? new Date(order.createdAt).toLocaleDateString('es-ES')
+                        : '-';
+                      const orderTotal = typeof order.total === 'number' 
+                        ? order.total.toFixed(2)
+                        : '0.00';
+                      
                       return (
-                        <tr key={order.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            #{order.orderNumber || order.id.slice(0, 8)}
+                        <tr key={orderId} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <Link to={`/admin/orders`} className="hover:text-resona">
+                              {orderNumber}
+                            </Link>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {order.customerName || 'Cliente'}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {customerName}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {new Date(order.createdAt).toLocaleDateString('es-ES')}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {orderDate}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            €{order.total?.toFixed(2) || '0.00'}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                            €{orderTotal}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge.class}`}>
@@ -282,8 +271,6 @@ const Dashboard = () => {
               </table>
             </div>
           </div>
-        </main>
-      </div>
     </div>
   );
 };

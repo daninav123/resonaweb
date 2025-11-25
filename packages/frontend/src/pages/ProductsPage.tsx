@@ -55,7 +55,8 @@ const ProductsPage = () => {
         limit: 12,
       };
       const result = await productService.getProducts(params);
-      return { data: result || [], pagination: { page, limit: 12, total: result?.length || 0 } };
+      // El servicio ahora devuelve { data: [...], pagination: { total, ... } }
+      return result;
     },
   });
 
@@ -136,9 +137,12 @@ const ProductsPage = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h1 className="text-2xl font-bold">Catálogo de Productos</h1>
-                  {productsData && (
+                  {productsData && productsData.pagination && (
                     <p className="text-gray-600 mt-1">
-                      {productsData.data.length} productos encontrados
+                      {productsData.pagination.total} productos disponibles
+                      {productsData.data.length < productsData.pagination.total && (
+                        <span className="text-sm"> · Mostrando {productsData.data.length}</span>
+                      )}
                     </p>
                   )}
                 </div>
@@ -217,7 +221,7 @@ const ProductsPage = () => {
                 {productsData.data.map((product: Product) => (
                   <Link
                     key={product.id}
-                    to={`/producto/${product.slug}`}
+                    to={`/productos/${product.slug}`}
                     className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow ${
                       viewMode === 'list' ? 'flex' : ''
                     }`}

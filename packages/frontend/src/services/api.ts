@@ -22,12 +22,26 @@ class ApiClient {
   }
 
   private setupInterceptors() {
+    // Endpoints que deberían silenciar 401 (son esperados sin autenticación)
+    const silentOn401Endpoints = [
+      '/notifications/unread-count',
+      '/cart',
+      '/auth/me',
+      '/auth/refresh'
+    ];
+
     // Request interceptor - add auth token
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        const token = useAuthStore.getState().accessToken;
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
+        // NO añadir token a endpoints de autenticación
+        const isAuthEndpoint = config.url?.includes('/auth/login') || 
+                              config.url?.includes('/auth/register');
+        
+        if (!isAuthEndpoint) {
+          const token = useAuthStore.getState().accessToken;
+          if (token && config.headers) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
         return config;
       },
@@ -41,9 +55,21 @@ class ApiClient {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        const status = error.response?.status;
+
+        // Verificar si este endpoint debe silenciar 401
+        const shouldSilent401 = status === 401 && 
+          silentOn401Endpoints.some(endpoint => originalRequest.url?.includes(endpoint));
+
+        // Handle 429 Rate Limiting - no reintentar automáticamente
+        if (status === 429) {
+          console.warn('⚠️ Rate limiting (429) - esperando antes de reintentar');
+          // No hacer nada, dejar que se recupere naturalmente
+          return Promise.reject(error);
+        }
 
         // Handle 401 Unauthorized
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (status === 401 && !originalRequest._retry) {
           // No intentar refresh para endpoints de auth
           if (originalRequest.url?.includes('/auth/me') || 
               originalRequest.url?.includes('/auth/login') || 
@@ -72,22 +98,44 @@ class ApiClient {
             // Retry original request
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return this.axiosInstance(originalRequest);
-          } catch (refreshError) {
-            // No hacer logout automático
+          } catch (refreshError: any) {
+            // Si el refresh falla por rate limiting, no reintentar
+            if (refreshError?.response?.status === 429) {
+              console.warn('⚠️ Rate limiting en refresh - esperando...');
+              return Promise.reject(refreshError);
+            }
+            
+            // Si el refresh falla con 401 (token expirado), hacer logout
+            if (refreshError?.response?.status === 401) {
+              console.warn('🔒 Sesión expirada - redirigiendo a login...');
+              useAuthStore.getState().logout();
+              
+              // Mostrar toast solo si no estamos ya en login
+              if (!window.location.pathname.includes('/login')) {
+                toast.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                // Redirigir a login después de un breve delay
+                setTimeout(() => {
+                  window.location.href = '/login';
+                }, 1500);
+              }
+            }
+            
             return Promise.reject(refreshError);
           }
         }
 
-        // Handle other errors (no mostrar toast para auth endpoints 401)
-        if (error.response?.status === 401 && 
-            (error.config?.url?.includes('/auth/me') || 
-             error.config?.url?.includes('/auth/refresh'))) {
-          // Silencioso para auth checks
+        // Handle other errors - NO mostrar toast para endpoints silenciosos con 401
+        if (shouldSilent401) {
+          // Silencioso - no mostrar toast ni loguear
+          return Promise.reject(error);
+        } else if (status === 429) {
+          // Rate limiting - no mostrar toast, es temporal
+          return Promise.reject(error);
         } else if (error.response?.data?.error?.message) {
           toast.error(error.response.data.error.message);
         } else if (error.response?.data?.message) {
           toast.error(error.response.data.message);
-        } else if (error.message && error.response?.status !== 401) {
+        } else if (error.message && status !== 401) {
           toast.error(error.message);
         }
 

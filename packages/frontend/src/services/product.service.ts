@@ -25,7 +25,8 @@ class ProductService {
     }
     const queryString = params.toString();
     const response: any = await api.get(`/products${queryString ? `?${queryString}` : ''}`);
-    return response?.data || [];
+    // El backend devuelve { data: [...], pagination: { total, ... } }
+    return response || { data: [], pagination: { total: 0 } };
   }
 
   /**

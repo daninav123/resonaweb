@@ -18,6 +18,20 @@ enum UserRole {
   SUPERADMIN
 }
 
+enum QuoteStatus {
+  PENDING
+  CONTACTED
+  QUOTED
+  CONVERTED
+  REJECTED
+}
+
+enum UserLevel {
+  STANDARD
+  VIP
+  VIP_PLUS
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -51,6 +65,24 @@ enum PaymentStatus {
   REFUNDED
   PARTIALLY_REFUNDED
   CANCELLED
+}
+
+enum RefundStatus {
+  NONE
+  PARTIAL
+  FULL
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ModificationType {
+  ADD_ITEMS
+  REMOVE_ITEMS
+  MODIFY_ITEMS
+  CHANGE_DATES
+  CANCEL
 }
 
 enum DepositStatus {
@@ -164,6 +196,7 @@ model User {
   lastName          String
   phone             String?
   role              UserRole  @default(CLIENT)
+  userLevel         UserLevel @default(STANDARD)
   
   // Dirección
   address           Json?
@@ -200,6 +233,8 @@ model User {
   coupons           Coupon[]
   couponUsages      CouponUsage[]
   userDiscount      UserDiscount?
+  billingData       BillingData?
+  orderModifications OrderModification[]
   
   // Stripe
   stripeCustomerId  String?
@@ -211,6 +246,39 @@ model User {
   @@index([email])
   @@index([role])
   @@index([stripeCustomerId])
+}
+
+model BillingData {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Datos fiscales
+  companyName     String?   // Razón social (opcional para particulares)
+  taxId           String    // NIF/CIF/DNI (obligatorio)
+  taxIdType       String    @default("NIF") // NIF, CIF, NIE, PASSPORT
+  
+  // Dirección fiscal
+  address         String
+  addressLine2    String?   // Piso, puerta, etc.
+  city            String
+  state           String    // Provincia
+  postalCode      String
+  country         String    @default("España")
+  
+  // Contacto
+  phone           String?
+  email           String?   // Email de facturación (puede ser diferente al de la cuenta)
+  
+  // Preferencias
+  isDefault       Boolean   @default(true)
+  
+  // Metadata
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([taxId])
 }
 
 model Category {
@@ -261,7 +329,7 @@ model Product {
   realStock               Int       @default(0)
   availableStock          Int       @default(0)
   status                  ProductStatus @default(AVAILABLE)
-  stockStatus             StockStatus @default(ON_DEMAND)
+  stockStatus             StockStatus @default(IN_STOCK)
   leadTimeDays            Int       @default(30)
   canBuyOnDemand          Boolean   @default(true)
   
@@ -312,6 +380,9 @@ model Product {
   featured                Boolean   @default(false)
   maintenanceRequired     Boolean   @default(false)
   
+  // Pack
+  isPack                  Boolean   @default(false)
+  
   // Metadatos
   tags                    String[]
   
@@ -328,10 +399,38 @@ model Product {
   productSpecs            ProductSpecification?
   coupons                 Coupon[]
   
+  // Relaciones de Pack (cuando este producto ES un pack)
+  components              ProductComponent[] @relation("PackComponents")
+  // Relaciones cuando este producto ES componente de un pack
+  usedInPacks             ProductComponent[] @relation("ComponentInPacks")
+  
   @@index([categoryId])
   @@index([slug])
   @@index([stockStatus])
   @@index([isActive, featured])
+  @@index([isPack])
+}
+
+// Componentes de un pack (qué productos incluye cada pack)
+model ProductComponent {
+  id           String   @id @default(uuid())
+  
+  // El pack (producto que ES un pack)
+  packId       String
+  pack         Product  @relation("PackComponents", fields: [packId], references: [id], onDelete: Cascade)
+  
+  // El componente (producto que está DENTRO del pack)
+  componentId  String
+  component    Product  @relation("ComponentInPacks", fields: [componentId], references: [id], onDelete: Cascade)
+  
+  // Cantidad de este componente en el pack
+  quantity     Int      @default(1)
+  
+  createdAt    DateTime @default(now())
+  
+  @@unique([packId, componentId])
+  @@index([packId])
+  @@index([componentId])
 }
 
 model Pack {
@@ -457,11 +556,22 @@ model Order {
   payment                 Payment?
   orderNotes              OrderNote[]
   couponUsages            CouponUsage[]
+  modifications           OrderModification[]
   
   // Descuentos aplicados
   couponCode              String?
   discountAmount          Decimal       @db.Decimal(10, 2) @default(0)
   discountPercentage      Decimal?      @db.Decimal(5, 2)
+  
+  // Modificaciones y reembolsos
+  isModified              Boolean       @default(false)
+  originalTotal           Decimal?      @db.Decimal(10, 2)
+  modificationCount       Int           @default(0)
+  lastModifiedAt          DateTime?
+  cancelReason            String?
+  refundAmount            Decimal?      @db.Decimal(10, 2)
+  refundStatus            RefundStatus  @default(NONE)
+  refundProcessedAt       DateTime?
   
   // Campos adicionales para compatibilidad
   totalAmount             Decimal       @db.Decimal(10, 2) @default(0)
@@ -617,8 +727,8 @@ model CustomInvoice {
 model Invoice {
   id                String        @id @default(uuid())
   invoiceNumber     String        @unique
-  orderId           String        @unique
-  order             Order         @relation(fields: [orderId], references: [id])
+  orderId           String?       @unique
+  order             Order?        @relation(fields: [orderId], references: [id])
   
   issueDate         DateTime      @default(now())
   dueDate           DateTime
@@ -632,6 +742,12 @@ model Invoice {
   pdfUrl            String?
   sentAt            DateTime?
   paidAt            DateTime?
+  
+  // Facturae (XML electrónico español)
+  facturaeXml       String?       @db.Text  // Contenido XML Facturae
+  facturaeUrl       String?                 // URL del archivo XML
+  facturaeSeries    String?       @default("A")  // Serie de factura
+  facturaeGenerated Boolean       @default(false)
   
   // Additional fields for compatibility
   metadata          Json?
@@ -1182,6 +1298,49 @@ model UserDiscount {
   @@index([isActive])
 }
 
+model OrderModification {
+  id                String            @id @default(uuid())
+  orderId           String
+  order             Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  modifiedBy        String
+  modifiedByUser    User              @relation(fields: [modifiedBy], references: [id])
+  
+  type              ModificationType
+  reason            String?           @db.Text
+  
+  // Valores antes de la modificación
+  oldTotal          Decimal           @db.Decimal(10, 2)
+  oldItems          Json?             // Array de items originales
+  oldDates          Json?             // {startDate, endDate} originales
+  
+  // Valores después de la modificación
+  newTotal          Decimal           @db.Decimal(10, 2)
+  newItems          Json?             // Array de items nuevos
+  newDates          Json?             // {startDate, endDate} nuevas
+  
+  // Diferencia monetaria
+  difference        Decimal           @db.Decimal(10, 2) // Positivo = cargo, Negativo = reembolso
+  
+  // Pago/Reembolso asociado a esta modificación
+  stripePaymentId   String?           // Payment Intent ID para cargos adicionales
+  stripeRefundId    String?           // Refund ID para reembolsos
+  paymentStatus     PaymentStatus     @default(PENDING)
+  
+  // Detalles adicionales
+  itemsAdded        Json?             // Items que se añadieron
+  itemsRemoved      Json?             // Items que se eliminaron
+  
+  createdAt         DateTime          @default(now())
+  processedAt       DateTime?
+  
+  @@index([orderId])
+  @@index([modifiedBy])
+  @@index([type])
+  @@index([createdAt])
+  @@map("order_modifications")
+}
+
 model ProductSpecification {
   id                String        @id @default(uuid())
   productId         String        @unique
@@ -1213,4 +1372,42 @@ model ProductSpecification {
   updatedAt         DateTime      @updatedAt
   
   @@map("product_specifications")
+}
+
+model QuoteRequest {
+  id              String   @id @default(uuid())
+  
+  // Información del cliente
+  customerName    String?
+  customerEmail   String
+  customerPhone   String?
+  
+  // Información del evento
+  eventType       String
+  attendees       Int
+  duration        Int
+  durationType    String   // 'hours' | 'days'
+  eventDate       String?
+  eventLocation   String?
+  
+  // Productos seleccionados
+  selectedPack    String?  // ID del pack
+  selectedExtras  Json     // { productId: quantity }
+  
+  // Cálculo automático
+  estimatedTotal  Decimal? @db.Decimal(10, 2)
+  
+  // Estado
+  status          QuoteStatus @default(PENDING)
+  notes           String?  @db.Text
+  adminNotes      String?  @db.Text
+  
+  // Metadata
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([status])
+  @@index([customerEmail])
+  @@index([createdAt])
+  @@map("quote_requests")
 }

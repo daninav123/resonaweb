@@ -1,0 +1,119 @@
+name: PR Checks
+
+'on':
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ============= PR VALIDATION =============
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check for package-lock changes
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "package-lock.json"; then
+            echo "✅ package-lock.json was updated"
+          fi
+      
+      - name: Lint changed files
+        run: npm run lint
+        continue-on-error: true
+      
+      - name: Check for console.log
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(ts|js)$' | grep -v 'tests/' | grep -v 'scripts/' || true)
+          if [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -n "console\.log" 2>/dev/null; then
+              echo "⚠️ Warning: console.log found in changed files"
+              echo "Consider using logger instead"
+            fi
+          fi
+        continue-on-error: true
+      
+      - name: Check bundle size
+        run: |
+          npm run build --workspace=frontend
+          DIST_SIZE=$(du -sh packages/frontend/dist | cut -f1)
+          echo "📦 Frontend bundle size: $DIST_SIZE"
+        env:
+          VITE_API_URL: http://localhost:3001/api/v1
+        continue-on-error: true
+
+  # ============= CODE QUALITY =============
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run TypeScript check
+        run: |
+          cd packages/backend && npx tsc --noEmit
+          cd ../frontend && npx tsc --noEmit
+        continue-on-error: true
+      
+      - name: Check formatting
+        run: |
+          npm run format --workspace=backend -- --check || echo "Backend needs formatting"
+        continue-on-error: true
+
+  # ============= COMMENT PR =============
+  comment:
+    name: Comment on PR
+    runs-on: ubuntu-latest
+    needs: [validate, quality]
+    if: always()
+    
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `
+            ## 🤖 Automated PR Checks
+            
+            **Validation:** ${{ needs.validate.result == 'success' && '✅ Passed' || '⚠️ Check warnings' }}
+            **Quality:** ${{ needs.quality.result == 'success' && '✅ Passed' || '⚠️ Check warnings' }}
+            
+            ### Next Steps
+            - Review the CI logs above
+            - Address any warnings or errors
+            - Request a review when ready
+            
+            ---
+            *Automated checks by GitHub Actions*
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

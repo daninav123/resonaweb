@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, Tag, Clock } from 'lucide-react';
 
@@ -22,13 +23,25 @@ interface BlogCardProps {
 }
 
 export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
+  const [imageError, setImageError] = React.useState(false);
+  
+  // Validar datos
+  if (!post || !post.title || !post.slug) {
+    console.error('BlogCard: Post inválido', post);
+    return null;
+  }
+  
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    } catch {
+      return 'Fecha no disponible';
+    }
   };
 
   // Construir URL completa de la imagen
@@ -54,12 +67,12 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
             onError={(e) => {
               // Si falla la carga, mostrar placeholder
               e.currentTarget.style.display = 'none';
-              e.currentTarget.parentElement!.innerHTML = '<div class="aspect-video bg-gradient-to-br from-resona to-resona-dark flex items-center justify-center"><span class="text-white text-4xl font-bold opacity-20">ReSona</span></div>';
+              e.currentTarget.parentElement!.innerHTML = '<div class="aspect-video bg-resona flex items-center justify-center"><span class="text-white text-4xl font-bold opacity-20">ReSona</span></div>';
             }}
           />
         </div>
       ) : (
-        <div className="aspect-video bg-gradient-to-br from-resona to-resona-dark flex items-center justify-center">
+        <div className="aspect-video bg-resona flex items-center justify-center">
           <span className="text-white text-4xl font-bold opacity-20">ReSona</span>
         </div>
       )}
@@ -67,14 +80,16 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
       {/* Contenido */}
       <div className="p-6">
         {/* Categoría */}
-        <div className="flex items-center gap-2 mb-3">
-          <span
-            className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-            style={{ backgroundColor: post.category.color || '#5ebbff' }}
-          >
-            {post.category.name}
-          </span>
-        </div>
+        {post.category && (
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+              style={{ backgroundColor: post.category.color || '#5ebbff' }}
+            >
+              {post.category.name}
+            </span>
+          </div>
+        )}
 
         {/* Título */}
         <Link to={`/blog/${post.slug}`}>
@@ -90,15 +105,19 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         {/* Metadatos */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
-            <span>{formatDate(post.publishedAt)}</span>
-          </div>
+          {post.publishedAt && (
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4" />
+              <span>{formatDate(post.publishedAt)}</span>
+            </div>
+          )}
           
-          <div className="flex items-center gap-1">
-            <User className="w-4 h-4" />
-            <span>{post.author.firstName} {post.author.lastName}</span>
-          </div>
+          {post.author && (
+            <div className="flex items-center gap-1">
+              <User className="w-4 h-4" />
+              <span>{post.author.firstName} {post.author.lastName}</span>
+            </div>
+          )}
 
           {post.readingTime && (
             <div className="flex items-center gap-1">

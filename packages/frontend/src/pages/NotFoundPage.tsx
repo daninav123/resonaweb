@@ -10,7 +10,7 @@ const NotFoundPage = () => {
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-resona/10 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="max-w-lg w-full text-center">
           {/* 404 Number */}
           <div className="mb-8">

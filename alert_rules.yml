@@ -1,0 +1,201 @@
+# Reglas de Alertas para ReSona Events
+# Estas reglas se evalúan cada 15 segundos (evaluation_interval)
+
+groups:
+  # ============= ALERTAS CRÍTICAS =============
+  - name: critical_alerts
+    interval: 30s
+    rules:
+      # API Backend caída
+      - alert: BackendDown
+        expr: up{job="resona-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "🚨 CRÍTICO: Backend API está caído"
+          description: "El backend de ReSona no responde. La aplicación está inaccesible."
+          action: "Revisar logs del backend y reiniciar si es necesario"
+
+      # Frontend caído
+      - alert: FrontendDown
+        expr: up{job="resona-frontend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: frontend
+        annotations:
+          summary: "🚨 CRÍTICO: Frontend está caído"
+          description: "El frontend de ReSona no responde. Los usuarios no pueden acceder."
+          action: "Revisar logs del frontend y reiniciar si es necesario"
+
+      # Base de datos no responde
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "🚨 CRÍTICO: Base de datos caída"
+          description: "PostgreSQL no responde. Toda la aplicación está afectada."
+          action: "Revisar estado de PostgreSQL inmediatamente"
+
+      # Alta tasa de errores 5xx
+      - alert: HighServerErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) 
+            / 
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "🚨 CRÍTICO: Alta tasa de errores 5xx (>5%)"
+          description: "Más del 5% de las peticiones están fallando con errores de servidor"
+          action: "Revisar logs del backend para identificar el problema"
+
+  # ============= ALERTAS DE ADVERTENCIA =============
+  - name: warning_alerts
+    interval: 1m
+    rules:
+      # Latencia alta en API
+      - alert: HighAPILatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route)
+          ) > 1
+        for: 10m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "⚠️ ADVERTENCIA: Latencia alta en API"
+          description: "El 95% de las peticiones tardan más de 1 segundo en route {{ $labels.route }}"
+          action: "Revisar rendimiento del backend y base de datos"
+
+      # Uso alto de CPU
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 15m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "⚠️ ADVERTENCIA: Uso alto de CPU (>80%)"
+          description: "CPU en {{ $labels.instance }} está al {{ $value | humanize }}%"
+          action: "Considerar escalar recursos o optimizar código"
+
+      # Uso alto de memoria
+      - alert: HighMemoryUsage
+        expr: |
+          (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+          / node_memory_MemTotal_bytes * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "⚠️ ADVERTENCIA: Uso alto de memoria (>85%)"
+          description: "Memoria en {{ $labels.instance }} está al {{ $value | humanize }}%"
+          action: "Revisar consumo de memoria de las aplicaciones"
+
+      # Poco espacio en disco
+      - alert: LowDiskSpace
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/"} 
+          / node_filesystem_size_bytes{mountpoint="/"} * 100) < 15
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "⚠️ ADVERTENCIA: Poco espacio en disco (<15%)"
+          description: "Disco en {{ $labels.instance }} tiene solo {{ $value | humanize }}% libre"
+          action: "Limpiar espacio o expandir disco"
+
+      # Tasa de errores 4xx alta (posible ataque)
+      - alert: HighClientErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"4.."}[5m])) 
+            / 
+            sum(rate(http_requests_total[5m]))
+          ) > 0.20
+        for: 10m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "⚠️ ADVERTENCIA: Alta tasa de errores 4xx (>20%)"
+          description: "Muchas peticiones con errores de cliente. Posible ataque o problema de integración."
+          action: "Revisar logs de acceso y considerar rate limiting"
+
+  # ============= ALERTAS DE NEGOCIO =============
+  - name: business_alerts
+    interval: 5m
+    rules:
+      # No hay pedidos nuevos (posible problema)
+      - alert: NoNewOrders
+        expr: |
+          rate(orders_created_total[1h]) == 0
+        for: 2h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "⚠️ No hay pedidos nuevos en 2 horas"
+          description: "No se han creado pedidos en las últimas 2 horas. Puede ser normal o un problema."
+          action: "Verificar que el checkout funciona correctamente"
+
+      # Alta tasa de carritos abandonados
+      - alert: HighCartAbandonmentRate
+        expr: |
+          (
+            rate(carts_abandoned_total[1h]) 
+            / 
+            rate(carts_created_total[1h])
+          ) > 0.70
+        for: 30m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "📊 Alta tasa de abandono de carritos (>70%)"
+          description: "Los usuarios están abandonando carritos más de lo normal"
+          action: "Revisar proceso de checkout y precios"
+
+  # ============= ALERTAS DE SEGURIDAD =============
+  - name: security_alerts
+    interval: 1m
+    rules:
+      # Muchos intentos de login fallidos
+      - alert: BruteForceAttempt
+        expr: |
+          rate(login_attempts_failed_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "🔒 Posible ataque de fuerza bruta"
+          description: "Más de 10 intentos de login fallidos por minuto"
+          action: "Revisar IPs en logs y considerar bloqueo temporal"
+
+      # Rate limiting activado frecuentemente
+      - alert: FrequentRateLimiting
+        expr: |
+          rate(rate_limit_exceeded_total[5m]) > 5
+        for: 10m
+        labels:
+          severity: info
+          component: security
+        annotations:
+          summary: "⚡ Rate limiting activado frecuentemente"
+          description: "El rate limiting se está activando más de lo normal"
+          action: "Revisar si es tráfico legítimo o ataque"

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Camera, Music, Lightbulb, Video, Headphones, Sparkles, Users, Clock, Shield, Phone } from 'lucide-react';
+import { Camera, Music, Lightbulb, Video, Headphones, Users, Clock, Shield, Phone } from 'lucide-react';
 
 const ServicesPage = () => {
   const mainServices = [
@@ -76,56 +76,12 @@ const ServicesPage = () => {
     },
   ];
 
-  const packages = [
-    {
-      name: 'Paquete Boda',
-      description: 'Todo lo necesario para inmortalizar tu día especial',
-      price: '€450',
-      duration: '1 día',
-      includes: [
-        '2 Cámaras DSLR profesionales',
-        'Sistema de sonido completo',
-        'Iluminación ambiental',
-        'Micrófonos inalámbricos',
-        'Soporte técnico incluido',
-      ],
-      popular: true,
-    },
-    {
-      name: 'Paquete Concierto',
-      description: 'Equipo profesional para eventos musicales',
-      price: '€850',
-      duration: '1 día',
-      includes: [
-        'Sistema de PA completo',
-        'Iluminación escénica RGB',
-        'Mesa de mezclas digital',
-        '6 Micrófonos profesionales',
-        'Técnico de sonido incluido',
-      ],
-      popular: false,
-    },
-    {
-      name: 'Paquete Corporativo',
-      description: 'Equipamiento para eventos empresariales',
-      price: '€350',
-      duration: '1 día',
-      includes: [
-        'Sistema de proyección',
-        'Micrófonos de conferencia',
-        'Sistema de sonido portátil',
-        'Iluminación profesional',
-        'Instalación incluida',
-      ],
-      popular: false,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-20">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-resona text-white py-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">Nuestros Servicios</h1>
             <p className="text-xl text-blue-100 mb-8">
@@ -231,107 +187,39 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Packages */}
-      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Paquetes Populares</h2>
-            <p className="text-lg text-gray-600">
-              Soluciones completas para tu evento al mejor precio
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {packages.map((pkg, index) => (
-              <div
-                key={index}
-                className={`bg-white rounded-xl shadow-lg overflow-hidden ${
-                  pkg.popular ? 'ring-2 ring-blue-600 transform scale-105' : ''
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="bg-blue-600 text-white text-center py-2 text-sm font-semibold">
-                    ⭐ Más Popular
-                  </div>
-                )}
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-6">{pkg.description}</p>
-                  
-                  <div className="mb-6">
-                    <div className="text-4xl font-bold text-blue-600 mb-1">{pkg.price}</div>
-                    <div className="text-gray-500 text-sm">{pkg.duration}</div>
-                  </div>
-
-                  <div className="space-y-3 mb-8">
-                    {pkg.includes.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 text-sm">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link
-                    to="/contacto"
-                    className={`block text-center py-3 rounded-lg font-semibold transition ${
-                      pkg.popular
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                    }`}
-                  >
-                    Reservar Paquete
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
-              ¿Necesitas algo personalizado?
-            </p>
-            <Link
-              to="/contacto"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700"
-            >
-              Solicita un presupuesto personalizado
-              <span>→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="py-16 bg-blue-600 text-white">
-        <div className="container mx-auto px-4">
+      <section className="relative py-16 bg-resona text-white overflow-hidden">
+        {/* Overlay para legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        
+        <div className="relative container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">¿Listo para tu evento?</h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-white/90 mb-8">
               Contáctanos y te ayudaremos a elegir el equipamiento perfecto
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 to="/productos"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
+                className="bg-white text-resona px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
               >
                 Explorar Catálogo
               </Link>
               <Link
                 to="/contacto"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition"
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-resona transition"
               >
                 Contactar Ahora
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap justify-center gap-8 text-blue-100">
+            <div className="mt-8 flex flex-wrap justify-center gap-8 text-white/90">
               <div className="flex items-center gap-2">
                 <Phone className="w-5 h-5" />
-                <span>+34 600 123 456</span>
+                <span>+34 613 881 414</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>📧</span>
-                <span>info@resona.com</span>
+                <span>info@resonaevents.com</span>
               </div>
             </div>
           </div>

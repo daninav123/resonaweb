@@ -348,6 +348,14 @@ export class ProductService {
     specifications?: any;
     tags?: string[];
     featured?: boolean;
+    isPack?: boolean;
+    shippingCost?: number;
+    installationCost?: number;
+    installationTimeMinutes?: number;
+    requiresInstallation?: boolean;
+    installationComplexity?: number;
+    stockStatus?: string;
+    leadTimeDays?: number;
     metaTitle?: string;
     metaDescription?: string;
     metaKeywords?: string;
@@ -432,9 +440,17 @@ export class ProductService {
       tags: string[];
       featured: boolean;
       isActive: boolean;
+      isPack: boolean;
       metaTitle: string;
       metaDescription: string;
       metaKeywords: string;
+      shippingCost: number;
+      installationCost: number;
+      installationTimeMinutes: number;
+      requiresInstallation: boolean;
+      installationComplexity: number;
+      stockStatus: string;
+      leadTimeDays: number;
     }>
   ) {
     // Check if product exists
@@ -477,6 +493,13 @@ export class ProductService {
     let specifications = data.specifications;
     delete data.specifications;
     
+    logger.info(`📦 Updating product ${id}:`, {
+      stock: data.stock,
+      realStock: data.realStock,
+      oldStock: existingProduct.stock,
+      oldRealStock: existingProduct.realStock,
+    });
+    
     // Update stock status if stock changes
     if (data.stock !== undefined) {
       const updateData: any = data;
@@ -491,6 +514,11 @@ export class ProductService {
     const product = await prisma.product.update({
       where: { id },
       data,
+    });
+    
+    logger.info(`✅ Product updated:`, {
+      stock: product.stock,
+      realStock: product.realStock,
     });
 
     // Update specifications if provided

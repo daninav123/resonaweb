@@ -8,6 +8,7 @@
     "dev:quick": "cross-env TS_NODE_TRANSPILE_ONLY=true ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "postinstall": "prisma generate",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -22,7 +23,16 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
-    "db:seed": "ts-node src/scripts/seed-simple.ts",
+    "db:seed": "ts-node src/scripts/seed.ts",
+    "db:seed:force": "cross-env FORCE_SEED=true ts-node src/scripts/seed.ts",
+    "db:seed:blog": "ts-node src/scripts/seed-blog-data.ts",
+    "db:seed:packs": "ts-node src/scripts/seed-packs.ts",
+    "db:seed:product-packs": "ts-node src/scripts/seed-product-packs.ts",
+    "db:create:packs-category": "ts-node src/scripts/create-packs-category.ts",
+    "db:reset": "ts-node src/scripts/reset-database.ts",
+    "db:test-data": "ts-node src/scripts/create-test-data.ts",
+    "db:update-prices": "ts-node scripts/update-product-prices.ts",
+    "db:reorganize-skus": "ts-node scripts/reorganize-skus.ts",
     "db:studio": "prisma studio",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
@@ -34,6 +44,7 @@
     "@prisma/client": "^5.7.0",
     "@sendgrid/mail": "^8.1.6",
     "@types/pdfkit": "^0.17.3",
+    "archiver": "^6.0.1",
     "axios": "^1.13.2",
     "bcrypt": "^5.1.1",
     "bull": "^4.11.5",
@@ -47,6 +58,7 @@
     "express-validator": "^7.0.1",
     "handlebars": "^4.7.8",
     "helmet": "^7.1.0",
+    "html-entities": "^2.6.0",
     "ical-generator": "^10.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
@@ -56,8 +68,11 @@
     "nodemailer": "^7.0.10",
     "openai": "^6.8.1",
     "pdfkit": "^0.17.2",
+    "prom-client": "^15.1.3",
     "puppeteer": "^21.11.0",
     "redis": "^4.6.11",
+    "redsys-easy": "^5.3.0",
+    "redsys-pos": "^1.0.2",
     "resend": "^6.4.2",
     "sharp": "^0.34.5",
     "slugify": "^1.6.6",
@@ -65,6 +80,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.11.0",
+    "xmlbuilder2": "^4.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -93,5 +109,9 @@
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

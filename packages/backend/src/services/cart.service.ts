@@ -334,15 +334,32 @@ export class CartService {
         const daysUntilStart = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
         // Stock validation con lógica de "producto bajo pedido"
-        if (product.stock <= 0) {
-          // Producto sin stock o con stock negativo (reservado): requiere 30 días de antelación
-          if (daysUntilStart < 30) {
-            errors.push(`"${product.name}" no está disponible para las fechas seleccionadas. Este producto está bajo pedido y requiere al menos 30 días de antelación (seleccionaste ${daysUntilStart} días).`);
+        // Si la reserva es con más de 30 días de antelación, siempre se permite (tiempo para conseguir stock)
+        if (daysUntilStart > 30) {
+          // Con más de 30 días de antelación, siempre disponible (se puede conseguir stock)
+          console.log(`✅ ${product.name}: Reserva con ${daysUntilStart} días de antelación - bajo pedido permitido`);
+        } else {
+          // Con menos de 30 días, verificar stock real disponible
+          // Obtener reservas confirmadas que solapen con las fechas solicitadas
+          const overlappingItems = await prisma.orderItem.findMany({
+            where: {
+              productId: product.id,
+              order: {
+                status: 'CONFIRMED',
+                startDate: { lte: endDate },
+                endDate: { gte: startDate }
+              }
+            },
+            select: { quantity: true }
+          });
+
+          const reservedStock = overlappingItems.reduce((sum, orderItem) => sum + orderItem.quantity, 0);
+          const currentStock = product.realStock ?? product.stock ?? 0;
+          const availableStock = currentStock - reservedStock;
+
+          if (availableStock < item.quantity) {
+            errors.push(`Stock insuficiente para ${product.name}. Disponible: ${Math.max(0, availableStock)}, solicitado: ${item.quantity}`);
           }
-          // Si >= 30 días, se permite el pedido (bajo pedido)
-        } else if (product.stock < item.quantity) {
-          // Producto con stock positivo pero insuficiente: validación normal
-          errors.push(`Stock insuficiente para ${product.name}. Disponible: ${product.stock}, solicitado: ${item.quantity}`);
         }
 
         if (startDate < now) {

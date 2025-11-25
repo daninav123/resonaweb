@@ -133,8 +133,8 @@ const PaymentSuccessPage = () => {
           <div className="mt-8 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               ¿Tienes alguna pregunta? Contáctanos en{' '}
-              <a href="mailto:info@resona.com" className="text-resona hover:underline">
-                info@resona.com
+              <a href="mailto:info@resonaevents.com" className="text-resona hover:underline">
+                info@resonaevents.com
               </a>
             </p>
           </div>

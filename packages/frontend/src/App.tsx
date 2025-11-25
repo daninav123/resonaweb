@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAuthStore } from './stores/authStore';
 import Layout from './components/Layout/Layout';
+import AdminLayout from './components/AdminLayout';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -23,11 +24,15 @@ const TestCheckoutE2EPage = lazy(() => import('./pages/TestCheckoutE2EPage'));
 const TestFullOrderFlowPage = lazy(() => import('./pages/TestFullOrderFlowPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const CheckoutPageStripe = lazy(() => import('./pages/CheckoutPageStripe'));
+const CheckoutPageRedsys = lazy(() => import('./pages/CheckoutPageRedsys'));
+const ManualPaymentInstructionsPage = lazy(() => import('./pages/ManualPaymentInstructionsPage'));
 const PaymentSuccessPage = lazy(() => import('./pages/checkout/PaymentSuccessPage'));
 const PaymentErrorPage = lazy(() => import('./pages/checkout/PaymentErrorPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
+const OrderDetailUserPage = lazy(() => import('./pages/OrderDetailUserPage'));
+const ModificationPaymentPage = lazy(() => import('./pages/ModificationPaymentPage'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -38,6 +43,8 @@ const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
 const OrdersManager = lazy(() => import('./pages/admin/OrdersManager'));
 const OrderDetailPage = lazy(() => import('./pages/admin/OrderDetailPage'));
+const ManualInvoicePage = lazy(() => import('./pages/admin/ManualInvoicePage'));
+const InvoicesListPage = lazy(() => import('./pages/admin/InvoicesListPage'));
 const ShippingConfigPage = lazy(() => import('./pages/admin/ShippingConfigPage'));
 const UsersManager = lazy(() => import('./pages/admin/UsersManager'));
 const CalendarManager = lazy(() => import('./pages/admin/CalendarManager'));
@@ -47,14 +54,19 @@ const StockAlerts = lazy(() => import('./pages/admin/StockAlerts'));
 const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManagerNew'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
+const AdminQuoteRequestsPage = lazy(() => import('./pages/AdminQuoteRequestsPageV2'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
-const TermsPage = lazy(() => import('./pages/legal/TermsPage'));
-const PrivacyPage = lazy(() => import('./pages/legal/PrivacyPage'));
-const CookiesPage = lazy(() => import('./pages/legal/CookiesPage'));
+const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
+const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
+
+// Cookie Banner
+import CookieBanner from './components/CookieBanner';
 
 // Loading component
 const Loading = () => (
@@ -79,11 +91,12 @@ if (typeof window !== 'undefined') {
 }
 
 function App() {
-  const { checkAuth } = useAuthStore();
+  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar al montar
 
   return (
     <HelmetProvider>
@@ -110,9 +123,14 @@ function App() {
             <Route path="/blog/:slug" element={<Layout><BlogPostPage /></Layout>} />
             
             {/* Legal Pages */}
-            <Route path="/legal/terminos" element={<Layout><TermsPage /></Layout>} />
-            <Route path="/legal/privacidad" element={<Layout><PrivacyPage /></Layout>} />
-            <Route path="/legal/cookies" element={<Layout><CookiesPage /></Layout>} />
+            <Route path="/terminos-condiciones" element={<Layout><TermsAndConditions /></Layout>} />
+            <Route path="/politica-privacidad" element={<Layout><PrivacyPolicy /></Layout>} />
+            <Route path="/politica-cookies" element={<Layout><CookiesPolicy /></Layout>} />
+            <Route path="/aviso-legal" element={<Layout><LegalNotice /></Layout>} />
+            {/* Rutas legacy */}
+            <Route path="/legal/terminos" element={<Layout><TermsAndConditions /></Layout>} />
+            <Route path="/legal/privacidad" element={<Layout><PrivacyPolicy /></Layout>} />
+            <Route path="/legal/cookies" element={<Layout><CookiesPolicy /></Layout>} />
             
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -122,37 +140,49 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
               <Route path="/checkout/stripe" element={<Layout><CheckoutPageStripe /></Layout>} />
+              <Route path="/checkout/redsys" element={<Layout><CheckoutPageRedsys /></Layout>} />
+              <Route path="/checkout/manual-payment" element={<Layout><ManualPaymentInstructionsPage /></Layout>} />
               <Route path="/checkout/success" element={<Layout><PaymentSuccessPage /></Layout>} />
               <Route path="/checkout/error" element={<Layout><PaymentErrorPage /></Layout>} />
               <Route path="/cuenta" element={<Layout><AccountPage /></Layout>} />
               <Route path="/mis-pedidos" element={<Layout><OrdersPage /></Layout>} />
+              <Route path="/mis-pedidos/:id" element={<Layout><OrderDetailUserPage /></Layout>} />
+              {/* Ruta legacy para compatibilidad con emails */}
+              <Route path="/orders/:id" element={<Layout><OrderDetailUserPage /></Layout>} />
+              <Route path="/modification-payment/:orderId" element={<Layout><ModificationPaymentPage /></Layout>} />
               <Route path="/favoritos" element={<Layout><FavoritesPage /></Layout>} />
             </Route>
             
             {/* Admin Routes */}
             <Route element={<PrivateRoute requireAdmin />}>
-              <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
-              <Route path="/admin/products" element={<Layout><ProductsManager /></Layout>} />
-              <Route path="/admin/categories" element={<Layout><CategoriesManager /></Layout>} />
-              <Route path="/admin/stock-alerts" element={<Layout><StockAlerts /></Layout>} />
-              <Route path="/admin/orders" element={<Layout><OrdersManager /></Layout>} />
-              <Route path="/admin/orders/:id" element={<Layout><OrderDetailPage /></Layout>} />
-              <Route path="/admin/users" element={<Layout><UsersManager /></Layout>} />
-              <Route path="/admin/company-settings" element={<Layout><CompanySettingsPage /></Layout>} />
-              <Route path="/admin/calendar" element={<Layout><CalendarManager /></Layout>} />
-              <Route path="/admin/blog" element={<Layout><BlogManager /></Layout>} />
-              <Route path="/admin/calculator" element={<Layout><CalculatorManager /></Layout>} />
-              <Route path="/admin/coupons" element={<Layout><CouponsManager /></Layout>} />
-              <Route path="/admin/stock" element={<Layout><StockManager /></Layout>} />
-              <Route path="/admin/settings" element={<Layout><SettingsManager /></Layout>} />
-              <Route path="/admin/shipping-config" element={<Layout><ShippingConfigPage /></Layout>} />
-              <Route path="/admin/*" element={<Layout><AdminDashboard /></Layout>} />
+              <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+              <Route path="/admin/products" element={<AdminLayout><ProductsManager /></AdminLayout>} />
+              <Route path="/admin/categories" element={<AdminLayout><CategoriesManager /></AdminLayout>} />
+              <Route path="/admin/stock-alerts" element={<AdminLayout><StockAlerts /></AdminLayout>} />
+              <Route path="/admin/orders" element={<AdminLayout><OrdersManager /></AdminLayout>} />
+              <Route path="/admin/orders/:id" element={<AdminLayout><OrderDetailPage /></AdminLayout>} />
+              <Route path="/admin/invoices" element={<AdminLayout><InvoicesListPage /></AdminLayout>} />
+              <Route path="/admin/invoices/manual" element={<AdminLayout><ManualInvoicePage /></AdminLayout>} />
+              <Route path="/admin/users" element={<AdminLayout><UsersManager /></AdminLayout>} />
+              <Route path="/admin/company-settings" element={<AdminLayout><CompanySettingsPage /></AdminLayout>} />
+              <Route path="/admin/calendar" element={<AdminLayout><CalendarManager /></AdminLayout>} />
+              <Route path="/admin/blog" element={<AdminLayout><BlogManager /></AdminLayout>} />
+              <Route path="/admin/calculator" element={<AdminLayout><CalculatorManager /></AdminLayout>} />
+              <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
+              <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
+              <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
+              <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
+              <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
+              <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             </Route>
             
             {/* 404 - Not Found */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
+        
+        {/* Cookie Consent Banner */}
+        <CookieBanner />
         
         <Toaster
           position="top-right"

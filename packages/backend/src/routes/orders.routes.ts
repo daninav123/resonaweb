@@ -1,17 +1,23 @@
 import { Router } from 'express';
 import { orderController } from '../controllers/order.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
+import { orderCreationRateLimiter } from '../middleware/rateLimiters';
 
 const router = Router();
-
-console.log('🔥 REGISTRANDO RUTAS DE ORDERS - orders.routes.ts CARGADO');
 
 // Specific routes MUST BE BEFORE generic /:id routes
 // Cancel order (specific action on order)
 router.post('/:id/cancel', authenticate, (req, res, next) => {
-  console.log('🎯 RUTA /cancel EJECUTADA para order:', req.params.id);
   orderController.cancelOrder.bind(orderController)(req, res, next);
 });
+
+// Update order (Edit - Admin only)
+router.put(
+  '/:id',
+  authenticate,
+  authorize('ADMIN', 'SUPERADMIN'),
+  orderController.updateOrder.bind(orderController)
+);
 
 // Update order status
 router.patch('/:id/status', authenticate, orderController.updateOrderStatus.bind(orderController));
@@ -48,7 +54,16 @@ router.get(
 router.post(
   '/',
   authenticate,
+  orderCreationRateLimiter, // 3 pedidos cada 5 minutos
   orderController.createOrder.bind(orderController)
+);
+
+// Crear pedido desde calculadora (pago directo)
+router.post(
+  '/create-from-calculator',
+  authenticate,
+  orderCreationRateLimiter,
+  orderController.createOrderFromCalculator.bind(orderController)
 );
 
 router.get(
@@ -57,14 +72,5 @@ router.get(
   orderController.getOrderById.bind(orderController)
 );
 
-console.log('✅ RUTAS DE ORDERS REGISTRADAS:');
-console.log('   POST   /:id/cancel');
-console.log('   PATCH  /:id/status');
-console.log('   GET    /');
-console.log('   GET    /my-orders');
-console.log('   GET    /upcoming');
-console.log('   GET    /stats');
-console.log('   POST   /');
-console.log('   GET    /:id');
 
 export { router as ordersRouter };

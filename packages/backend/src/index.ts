@@ -28,16 +28,29 @@ import { searchRouter } from './routes/search.routes';
 import { notificationRouter } from './routes/notification.routes';
 import { uploadRouter } from './routes/upload.routes';
 import { stockAlertsRouter } from './routes/stock-alerts.routes';
+import billingRouter from './routes/billing.routes';
+import orderModificationRouter from './routes/orderModification.routes';
+import packRouter from './routes/pack.routes';
+import orderExpirationRouter from './routes/orderExpiration.routes';
+import quoteRequestRouter from './routes/quoteRequest.routes';
+import { metricsRouter } from './routes/metrics.routes';
+// import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
 import { notFoundHandler } from './middleware/notFound.middleware';
 import { rateLimiter } from './middleware/rateLimit.middleware';
+import { httpsRedirect, securityHeaders } from './middleware/httpsRedirect.middleware';
+import { sanitizeInputs, detectXSS } from './middleware/sanitize.middleware';
+import { metricsMiddleware } from './middleware/metrics.middleware';
 
 // Import services
 import { logger } from './utils/logger';
-import { setupEmailReminders } from './jobs/emailReminders.job';
+// import { setupEmailReminders } from './jobs/emailReminders.job';
 import { setupPublishScheduledPosts, setupDailyArticleGeneration } from './jobs/blog.job';
+import { setupGMBPostGenerator } from './jobs/gmb-post-generator.job';
+// import { orderExpirationScheduler } from './schedulers/orderExpiration.scheduler';
+// import { initErrorTracking, getSentryRequestHandler, getSentryTracingHandler, getSentryErrorHandler } from './services/errorTracking.service';
 
 // Initialize Prisma
 export const prisma = new PrismaClient({
@@ -51,7 +64,20 @@ const app = express();
 const PORT = process.env.BACKEND_PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
+// Initialize error tracking (Sentry)
+// DESACTIVADO TEMPORALMENTE - Causaba crash
+// initErrorTracking();
+
 // Middleware
+// Sentry debe ser de los primeros
+// DESACTIVADO TEMPORALMENTE - Causaba crash
+// app.use(getSentryRequestHandler());
+// app.use(getSentryTracingHandler());
+
+// HTTPS redirect (debe ser primero en producción)
+app.use(httpsRedirect);
+app.use(securityHeaders);
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: false,
@@ -87,6 +113,13 @@ app.use('/uploads/products', (req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Sanitización de inputs (prevenir XSS)
+app.use(sanitizeInputs);
+app.use(detectXSS);
+
+// Metrics middleware (debe ir antes de las rutas para capturar todas)
+app.use(metricsMiddleware);
+
 // Logging
 if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -108,13 +141,14 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Metrics endpoint (para Prometheus) - ANTES del rate limiting
+app.use('/metrics', metricsRouter);
+
 // API Routes
-console.log('🌐 Registrando rutas API...');
+logger.info('🌐 Registrando rutas API...');
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/products', productsRouter);
-console.log('📦 Registrando /api/v1/orders con ordersRouter');
 app.use('/api/v1/orders', ordersRouter);
-console.log('✅ Ruta /api/v1/orders registrada');
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/payment', paymentRouter);
@@ -133,9 +167,16 @@ app.use('/api/v1/search', searchRouter);
 app.use('/api/v1/products/search', searchRouter); // Alias para búsqueda de productos
 app.use('/api/v1/upload', uploadRouter);
 app.use('/api/v1', stockAlertsRouter);
+app.use('/api/v1/billing', billingRouter);
+app.use('/api/v1/order-modifications', orderModificationRouter);
+app.use('/api/v1/packs', packRouter);
+app.use('/api/v1/order-expiration', orderExpirationRouter);
+app.use('/api/v1/quote-requests', quoteRequestRouter);
+// app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling
 app.use(notFoundHandler);
+// app.use(getSentryErrorHandler()); // Sentry error handler antes del custom - DESACTIVADO
 app.use(errorHandler);
 
 // Start server
@@ -146,20 +187,52 @@ async function startServer() {
     logger.info('✅ Database connected successfully');
 
     // Setup cron jobs for email reminders
-    setupEmailReminders();
-    logger.info('✅ Email reminders scheduled');
+    // DESACTIVADO TEMPORALMENTE - Causaba crash en startup
+    // try {
+    //   setupEmailReminders();
+    //   logger.info('✅ Email reminders scheduled');
+    // } catch (e) {
+    //   logger.warn('⚠️  Email reminders setup failed:', e);
+    // }
 
-    // Setup blog cron jobs with AI
-    setupPublishScheduledPosts();
-    logger.info('✅ Blog scheduled posts job started');
-    
-    const adminUser = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
-    if (adminUser) {
-      setupDailyArticleGeneration(adminUser.id);
-      logger.info('✅ Daily AI article generation job started (2 AM daily)');
-    } else {
-      logger.warn('⚠️  No admin user found, daily article generation disabled');
+    // Setup blog jobs
+    try {
+      setupPublishScheduledPosts();
+      logger.info('✅ Blog scheduled posts job started (runs every hour)');
+    } catch (e) {
+      logger.warn('⚠️  Blog scheduled posts setup failed:', e);
     }
+    
+    try {
+      const adminUser = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+      if (adminUser) {
+        setupDailyArticleGeneration(adminUser.id);
+        logger.info('✅ Daily AI article generation job started (2 AM daily)');
+      } else {
+        logger.warn('⚠️  No admin user found, daily article generation disabled');
+      }
+    } catch (e) {
+      logger.warn('⚠️  Daily article generation setup failed:', e);
+    }
+
+    // Setup GMB post generator (generates posts for Google My Business)
+    try {
+      setupGMBPostGenerator();
+      logger.info('✅ GMB post generator started (every Monday 9:30 AM)');
+    } catch (e) {
+      logger.warn('⚠️  GMB post generator setup failed:', e);
+    }
+
+    // Setup order expiration scheduler
+    // DESACTIVADO TEMPORALMENTE - Causaba crash en startup
+    // try {
+    //   orderExpirationScheduler.start();
+    //   logger.info('✅ Order expiration scheduler started');
+    // } catch (e) {
+    //   logger.warn('⚠️  Order expiration scheduler setup failed:', e);
+    // }
+    
+    logger.info('⚠️  Schedulers desactivados temporalmente');
 
     // Start listening
     app.listen(PORT, () => {

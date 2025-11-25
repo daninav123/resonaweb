@@ -3,7 +3,7 @@ import { authController } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validation.middleware';
 import { body } from 'express-validator';
-import { authRateLimiter } from '../middleware/rateLimit.middleware';
+import { loginRateLimiter, registerRateLimiter, passwordResetRateLimiter, authRateLimiter } from '../middleware/rateLimiters';
 import {
   validate,
   registerSchema,
@@ -18,14 +18,14 @@ const router = Router();
 // Public routes (with rate limiting for auth endpoints)
 router.post(
   '/register',
-  authRateLimiter,
+  registerRateLimiter, // 3 intentos por hora
   validate(registerSchema),
   authController.register
 );
 
 router.post(
   '/login',
-  authRateLimiter,
+  loginRateLimiter, // 5 intentos cada 15 min
   validate(loginSchema),
   authController.login
 );
@@ -39,7 +39,7 @@ router.post(
 
 router.post(
   '/password-reset',
-  authRateLimiter,
+  passwordResetRateLimiter, // 3 intentos por hora
   validate(resetPasswordRequestSchema),
   authController.requestPasswordReset
 );

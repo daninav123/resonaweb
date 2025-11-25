@@ -2,14 +2,53 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag } from 'lucide-react';
+import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag, Star, Crown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import { CouponInput } from '../components/coupons/CouponInput';
+import { useAuthStore } from '../stores/authStore';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const authStore = useAuthStore();
+  const user = authStore.user;
+  const isAuthenticated = authStore.isAuthenticated;
+  const [authChecked, setAuthChecked] = useState(false);
+  
+  // 🔍 Verificar autenticación al montar
+  useEffect(() => {
+    const checkUserAuth = async () => {
+      // Si no hay usuario pero sí hay token en localStorage, forzar checkAuth
+      const stored = localStorage.getItem('auth-storage');
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          if (data.state?.accessToken && !user) {
+            console.log('🔄 Forzando checkAuth porque hay token pero no user');
+            await authStore.checkAuth();
+          }
+        } catch (e) {
+          console.error('Error parsing auth storage:', e);
+        }
+      }
+      setAuthChecked(true);
+    };
+    
+    checkUserAuth();
+  }, []);
+  
+  // 🔍 DEBUG: Log user state
+  useEffect(() => {
+    console.log('🔍 CheckoutPage - User state:', {
+      exists: !!user,
+      email: user?.email,
+      userLevel: user?.userLevel,
+      isAuthenticated,
+      authChecked
+    });
+  }, [user, isAuthenticated, authChecked]);
+  
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -57,6 +96,10 @@ const CheckoutPage = () => {
   const [includeInstallation, setIncludeInstallation] = useState(false);
   const [calculatedShipping, setCalculatedShipping] = useState<any>(null);
   const [shippingConfig, setShippingConfig] = useState<any>(null);
+  
+  // Control para evitar bucle infinito en cálculo de envío
+  const [lastShippingCalc, setLastShippingCalc] = useState<string>('');
+  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
 
   // Cargar configuración de envío al montar
   useEffect(() => {
@@ -68,7 +111,6 @@ const CheckoutPage = () => {
         console.error('Error cargando configuración de envío:', error);
       }
     };
-
     loadShippingConfig();
   }, []);
 
@@ -76,7 +118,18 @@ const CheckoutPage = () => {
   useEffect(() => {
     const calculateShipping = async () => {
       if (distance > 0 && cartItems.length > 0 && formData.deliveryOption === 'delivery') {
+        // Crear clave única para esta configuración
+        const calcKey = `${distance}-${includeInstallation}-${cartItems.length}`;
+        
+        // Solo calcular si cambió algo Y no estamos calculando ya
+        if (calcKey === lastShippingCalc || isCalculatingShipping) {
+          return;
+        }
+        
         try {
+          setIsCalculatingShipping(true);
+          setLastShippingCalc(calcKey);
+          
           const productsData = cartItems.map((item: any) => ({
             shippingCost: Number(item.product.shippingCost || 0),
             installationCost: Number(item.product.installationCost || 0),
@@ -91,14 +144,51 @@ const CheckoutPage = () => {
           setCalculatedShipping(response);
         } catch (error) {
           console.error('Error calculando envío:', error);
+        } finally {
+          setIsCalculatingShipping(false);
         }
       } else {
         setCalculatedShipping(null);
       }
     };
 
-    calculateShipping();
-  }, [distance, includeInstallation, cartItems, formData.deliveryOption]);
+    // Debounce de 300ms
+    const timer = setTimeout(() => {
+      calculateShipping();
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [distance, includeInstallation, cartItems.length, formData.deliveryOption, lastShippingCalc, isCalculatingShipping]);
+
+  // Cargar datos del usuario automáticamente
+  useEffect(() => {
+    if (user) {
+      console.log('👤 Cargando datos del usuario:', user);
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: (user as any).phone || '',
+      }));
+    }
+  }, [user]);
+
+  // Forzar volver a Step 1 si los datos no están completos y estamos en Step 2
+  useEffect(() => {
+    if (step === 2 && (!formData.firstName || !formData.email || !formData.phone)) {
+      console.log('⚠️ Datos incompletos, volviendo a Step 1');
+      setStep(1);
+      if (!formData.phone) {
+        toast.error('Por favor añade tu número de teléfono');
+      } else {
+        toast.error('Por favor completa tus datos personales en tu perfil');
+      }
+    }
+  }, [step, formData.firstName, formData.email, formData.phone]);
+
+  // Estado para saber si productos incluyen transporte/montaje (sin fianza)
+  const [shippingIncludedInPrice, setShippingIncludedInPrice] = useState(false);
 
   useEffect(() => {
     // Cargar items del carrito desde localStorage
@@ -106,13 +196,32 @@ const CheckoutPage = () => {
     console.log('📦 Carrito en checkout:', items);
     setCartItems(items);
     
-    // Cargar datos de envío desde localStorage si existen
+    // Cargar configuración de entrega desde localStorage del carrito
+    const savedDeliveryOption = localStorage.getItem('checkoutDeliveryOption');
     const savedDistance = localStorage.getItem('checkoutDistance');
     const savedAddress = localStorage.getItem('checkoutAddress');
     const savedInstallation = localStorage.getItem('checkoutInstallation');
     
+    // Detectar si productos incluyen transporte/montaje
+    const hasShipping = localStorage.getItem('cartIncludesShippingInstallation') === 'true';
+    setShippingIncludedInPrice(hasShipping);
+    
+    console.log('📦 Configuración de entrega del carrito:', {
+      deliveryOption: savedDeliveryOption,
+      distance: savedDistance,
+      address: savedAddress,
+      installation: savedInstallation,
+      shippingIncluded: hasShipping
+    });
+    
+    if (savedDeliveryOption) {
+      setFormData(prev => ({ ...prev, deliveryOption: savedDeliveryOption as 'pickup' | 'delivery' }));
+    }
     if (savedDistance) setDistance(Number(savedDistance));
-    if (savedAddress) setDeliveryAddress(savedAddress);
+    if (savedAddress) {
+      setDeliveryAddress(savedAddress);
+      setFormData(prev => ({ ...prev, address: savedAddress }));
+    }
     if (savedInstallation) setIncludeInstallation(savedInstallation === 'true');
     
     // Verificar que hay items y tienen fechas
@@ -150,33 +259,41 @@ const CheckoutPage = () => {
       navigate('/carrito');
       return;
     }
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar al montar el componente
 
   // Crear orden
   const createOrderMutation = useMutation({
     mutationFn: async (orderData: any) => {
+      // api.post ya retorna response.data, no necesitamos .data otra vez
       const response: any = await api.post('/orders', orderData);
-      return response.data;
+      return response;
     },
     onSuccess: (data) => {
       console.log('✅ ORDEN CREADA EXITOSAMENTE:', data);
-      console.log('✅ Estructura completa:', JSON.stringify(data, null, 2));
+      console.log('✅ Tipo de data:', typeof data);
+      console.log('✅ Data completo:', JSON.stringify(data, null, 2));
       
-      toast.success('¡Pedido realizado con éxito!');
-      
-      // Limpiar carrito después del éxito
+      // Limpiar carrito
       guestCart.clear();
       
-      // El backend devuelve { message: '...', order: { id, ... } }
-      const orderId = data?.order?.id || data?.id || data?.data?.id;
+      // data ya es { message: '...', order: {...} }
+      const order = data?.order || data;
+      const orderId = order?.id;
       
-      if (orderId) {
-        console.log('✅ Navegando a pedido:', orderId);
-        navigate(`/mis-pedidos/${orderId}`);
-      } else {
-        console.log('⚠️ No se encontró ID de orden, navegando a lista de pedidos');
-        navigate('/mis-pedidos');
+      console.log('✅ Order extraído:', order);
+      console.log('✅ Order ID:', orderId);
+      
+      if (!orderId) {
+        console.error('❌ ERROR: No se pudo obtener el ID del pedido');
+        toast.error('Error: No se pudo obtener el ID del pedido');
+        setIsProcessing(false);
+        return;
       }
+      
+      // Redirigir a Stripe para el pago
+      toast.success('Redirigiendo a pago seguro...');
+      navigate(`/checkout/stripe?orderId=${orderId}`);
       
       setIsProcessing(false);
     },
@@ -233,11 +350,27 @@ const CheckoutPage = () => {
     return appliedCoupon.discountAmount;
   };
 
+  // Calcular descuento VIP
+  const calculateVIPDiscount = () => {
+    if (!user || !user.userLevel) return 0;
+    
+    const subtotal = calculateSubtotal();
+    
+    if (user.userLevel === 'VIP') {
+      return subtotal * 0.50; // 50% descuento
+    } else if (user.userLevel === 'VIP_PLUS') {
+      return subtotal * 0.70; // 70% descuento
+    }
+    
+    return 0;
+  };
+
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
     const shipping = appliedCoupon?.freeShipping ? 0 : calculateShippingCost();
-    const discount = calculateDiscount();
-    const beforeTax = subtotal + shipping - discount;
+    const couponDiscount = calculateDiscount();
+    const vipDiscount = calculateVIPDiscount();
+    const beforeTax = subtotal + shipping - couponDiscount - vipDiscount;
     return Math.max(0, beforeTax * 1.21); // Con IVA (nunca negativo)
   };
 
@@ -245,11 +378,20 @@ const CheckoutPage = () => {
   const paymentBreakdown = calculatePaymentBreakdown(
     calculateSubtotal(),
     calculateShippingCost(),
-    formData.deliveryOption as 'pickup' | 'delivery'
+    formData.deliveryOption as 'pickup' | 'delivery',
+    user?.userLevel, // ⭐ Pasar nivel VIP
+    calculateVIPDiscount(), // ⭐ Pasar descuento VIP
+    shippingIncludedInPrice // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validar campos requeridos
+    if (!formData.firstName || !formData.email || !formData.phone) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
     
     if (!formData.acceptTerms) {
       toast.error('Debes aceptar los términos y condiciones');
@@ -378,6 +520,14 @@ const CheckoutPage = () => {
                     Datos Personales
                   </h2>
                   
+                  {/* Nota de datos cargados automáticamente */}
+                  <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <p className="text-sm text-blue-700 flex items-center gap-2">
+                      <Info className="w-4 h-4" />
+                      Datos cargados automáticamente de tu perfil
+                    </p>
+                  </div>
+                  
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
@@ -385,8 +535,8 @@ const CheckoutPage = () => {
                         type="text"
                         required
                         value={formData.firstName}
-                        onChange={(e) => updateFormData('firstName', e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        readOnly
+                        className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed"
                       />
                     </div>
                     <div>
@@ -395,8 +545,8 @@ const CheckoutPage = () => {
                         type="text"
                         required
                         value={formData.lastName}
-                        onChange={(e) => updateFormData('lastName', e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        readOnly
+                        className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -409,14 +559,16 @@ const CheckoutPage = () => {
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) => updateFormData('email', e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        readOnly
+                        className="w-full pl-10 pr-3 py-2 border rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed"
                       />
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono {!formData.phone && <span className="text-orange-600">(requerido - añádelo)</span>}
+                    </label>
                     <div className="relative">
                       <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
                       <input
@@ -424,15 +576,37 @@ const CheckoutPage = () => {
                         required
                         value={formData.phone}
                         onChange={(e) => updateFormData('phone', e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className={`w-full pl-10 pr-3 py-2 border rounded-lg ${
+                          formData.phone 
+                            ? 'bg-gray-50 text-gray-700' 
+                            : 'bg-white focus:ring-2 focus:ring-blue-500'
+                        }`}
+                        placeholder="+34 600 000 000"
                       />
                     </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-xs text-gray-600">
+                      💡 Puedes editar el teléfono aquí. Para modificar nombre y email, ve a tu <button type="button" onClick={() => navigate('/cuenta')} className="text-blue-600 hover:underline">perfil de usuario</button>
+                    </p>
                   </div>
 
                   <div className="mt-6 flex justify-end">
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
+                      onClick={() => {
+                        // Validar que los datos estén completos
+                        if (!formData.firstName || !formData.email) {
+                          toast.error('Por favor, asegúrate de tener nombre y email en tu perfil');
+                          return;
+                        }
+                        if (!formData.phone) {
+                          toast.error('Por favor, añade un número de teléfono');
+                          return;
+                        }
+                        setStep(2);
+                      }}
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
                     >
                       Siguiente
@@ -441,257 +615,130 @@ const CheckoutPage = () => {
                 </div>
               )}
 
-              {/* Step 2: Dirección y Fechas */}
+              {/* Step 2: Confirmar Entrega */}
               {step === 2 && (
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5" />
-                    Entrega y Fechas
+                    Confirmación de Entrega
                   </h2>
 
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Método de entrega</label>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <label className={`border rounded-lg p-4 cursor-pointer ${formData.deliveryOption === 'pickup' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}>
-                        <input
-                          type="radio"
-                          name="delivery"
-                          value="pickup"
-                          checked={formData.deliveryOption === 'pickup'}
-                          onChange={(e) => updateFormData('deliveryOption', e.target.value)}
-                          className="sr-only"
-                        />
-                        <div>
-                          <p className="font-medium">Recogida en tienda</p>
-                          <p className="text-sm text-gray-600">Gratis - Calle Example 123, Valencia</p>
-                        </div>
-                      </label>
-                      <label className={`border rounded-lg p-4 cursor-pointer ${formData.deliveryOption === 'delivery' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}>
-                        <input
-                          type="radio"
-                          name="delivery"
-                          value="delivery"
-                          checked={formData.deliveryOption === 'delivery'}
-                          onChange={(e) => updateFormData('deliveryOption', e.target.value)}
-                          className="sr-only"
-                        />
-                        <div>
-                          <p className="font-medium">Envío a domicilio</p>
-                          <p className="text-sm text-gray-600">+€50 - Introduce tu dirección</p>
-                        </div>
-                      </label>
-                    </div>
+                  {/* Nota de configuración del carrito */}
+                  <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <p className="text-sm text-blue-700 flex items-center gap-2">
+                      <Info className="w-4 h-4" />
+                      Configuración seleccionada en el carrito
+                    </p>
                   </div>
 
-                  {formData.deliveryOption === 'delivery' && (
-                    <div className="space-y-4 mb-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.address}
-                          onChange={(e) => updateFormData('address', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        />
+                  <div className="mb-6 p-5 bg-gray-50 rounded-lg border-2 border-gray-200">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        {formData.deliveryOption === 'pickup' ? (
+                          <ShoppingBag className="w-6 h-6 text-blue-600" />
+                        ) : (
+                          <MapPin className="w-6 h-6 text-blue-600" />
+                        )}
                       </div>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
-                          <input
-                            type="text"
-                            required
-                            value={formData.city}
-                            onChange={(e) => updateFormData('city', e.target.value)}
-                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Código Postal</label>
-                          <input
-                            type="text"
-                            required
-                            value={formData.zipCode}
-                            onChange={(e) => updateFormData('zipCode', e.target.value)}
-                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">📍 Distancia aproximada (km)</label>
-                        <input
-                          type="number"
-                          min="1"
-                          value={distance}
-                          onChange={(e) => {
-                            setDistance(Number(e.target.value));
-                            localStorage.setItem('checkoutDistance', e.target.value);
-                          }}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                          placeholder="15"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Distancia desde nuestra ubicación ({shippingConfig?.baseAddress || 'Madrid, España'})
-                        </p>
-                      </div>
-                      
-                      <div className="border-t pt-4">
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={includeInstallation}
-                            onChange={(e) => {
-                              setIncludeInstallation(e.target.checked);
-                              localStorage.setItem('checkoutInstallation', e.target.checked.toString());
-                            }}
-                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-gray-900">🔧 ¿Necesitas montaje/instalación?</span>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Nuestro equipo montará todo el equipo en tu evento
-                            </p>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                          {formData.deliveryOption === 'pickup' ? 'Recogida en tienda' : 'Envío a domicilio'}
+                        </h3>
+                        {formData.deliveryOption === 'pickup' ? (
+                          <p className="text-sm text-gray-600">Gratis - C/ de l'Illa Cabrera, 13, 46026 València</p>
+                        ) : (
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-700"><strong>Dirección:</strong> {deliveryAddress || formData.address}</p>
+                            <p className="text-sm text-gray-700"><strong>Distancia:</strong> {distance} km</p>
+                            {includeInstallation && (
+                              <p className="text-sm text-green-700 flex items-center gap-1 mt-2">
+                                <span className="text-lg">🔧</span>
+                                <strong>Incluye montaje/instalación</strong>
+                              </p>
+                            )}
+                            {calculatedShipping && (
+                              <div className="mt-3 pt-3 border-t border-gray-300">
+                                <p className="text-sm text-gray-700">
+                                  <strong>Coste de envío:</strong> €{calculatedShipping.shippingCost?.toFixed(2) || '0.00'}
+                                </p>
+                                {includeInstallation && calculatedShipping.installationCost > 0 && (
+                                  <p className="text-sm text-gray-700">
+                                    <strong>Coste de instalación:</strong> €{calculatedShipping.installationCost?.toFixed(2) || '0.00'}
+                                  </p>
+                                )}
+                              </div>
+                            )}
                           </div>
-                        </label>
-                      </div>
-                      
-                      {calculatedShipping && (
-                        <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                          <p className="text-xs text-blue-900 font-semibold">
-                            Zona: {calculatedShipping.zone === 'LOCAL' ? '🟢 Local' : 
-                                  calculatedShipping.zone === 'REGIONAL' ? '🔵 Regional' :
-                                  calculatedShipping.zone === 'EXTENDED' ? '🟡 Ampliada' : '🔴 Personalizada'}
-                          </p>
-                          <p className="text-xs text-blue-800 mt-1">
-                            Coste: €{calculateShippingCost().toFixed(2)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="text-gray-600 hover:text-gray-800"
-                    >
-                      Anterior
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
-                    >
-                      Siguiente
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Pago */}
-              {step === 2 && (
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5" />
-                    Información de Pago
-                  </h2>
-
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <div className="flex gap-3">
-                      <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-yellow-800">
-                          <strong>Modo Demo:</strong> Usa la tarjeta 4242 4242 4242 4242 con cualquier fecha futura y CVC.
-                        </p>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Titular de la tarjeta</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.cardName}
-                        onChange={(e) => updateFormData('cardName', e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="Juan Pérez"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Número de tarjeta</label>
-                      <div className="relative">
-                        <CreditCard className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-                        <input
-                          type="text"
-                          required
-                          value={formData.cardNumber}
-                          onChange={(e) => updateFormData('cardNumber', e.target.value)}
-                          className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                          placeholder="4242 4242 4242 4242"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de expiración</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.cardExpiry}
-                          onChange={(e) => updateFormData('cardExpiry', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                          placeholder="MM/YY"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                        <div className="relative">
-                          <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-                          <input
-                            type="text"
-                            required
-                            value={formData.cardCvc}
-                            onChange={(e) => updateFormData('cardCvc', e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                            placeholder="123"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-xs text-gray-600">
+                      💡 Para modificar la entrega, vuelve al <button type="button" onClick={() => navigate('/carrito')} className="text-blue-600 hover:underline">carrito</button>
+                    </p>
                   </div>
 
+                  {/* Método de Pago - Solo información, no selector */}
                   <div className="mt-6">
-                    <label className="flex items-center">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Método de Pago</h3>
+                    <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                      <p className="text-sm text-blue-900 mb-2">
+                        <strong>💳 Aceptamos los siguientes métodos de pago:</strong>
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <span className="text-lg">💳</span>
+                          <div>
+                            <strong>Tarjeta de crédito/débito</strong>
+                            <p className="text-xs text-blue-600">Pago instantáneo</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <span className="text-lg">🅿️</span>
+                          <div>
+                            <strong>PayPal</strong>
+                            <p className="text-xs text-blue-600">Pago instantáneo</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <span className="text-lg">🏦</span>
+                          <div>
+                            <strong>Transferencia bancaria SEPA</strong>
+                            <p className="text-xs text-blue-600">Se procesa en 3-5 días • Comisión más baja</p>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-blue-700 mt-3 pt-3 border-t border-blue-200">
+                        Selecciona tu método preferido en la siguiente pantalla de pago seguro
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Términos y condiciones */}
+                  <div className="mt-6">
+                    <label className="flex items-start gap-2">
                       <input
                         type="checkbox"
+                        name="acceptTerms"
+                        data-testid="accept-terms"
                         checked={formData.acceptTerms}
                         onChange={(e) => updateFormData('acceptTerms', e.target.checked)}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-sm text-gray-700">
-                        Acepto los términos y condiciones y la política de privacidad
+                      <span className="text-sm text-gray-700">
+                        Acepto los <button type="button" className="text-blue-600 hover:underline">términos y condiciones</button> y la <button type="button" className="text-blue-600 hover:underline">política de privacidad</button>
                       </span>
                     </label>
                   </div>
 
-                  <div className="flex justify-between mt-6">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="text-gray-600 hover:text-gray-800"
-                    >
-                      Anterior
-                    </button>
+                  <div className="mt-6">
                     <button
                       type="submit"
+                      data-testid="submit-checkout"
                       disabled={isProcessing}
-                      className="bg-blue-600 text-white px-8 py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="w-full bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isProcessing ? (
                         <>
@@ -701,13 +748,14 @@ const CheckoutPage = () => {
                       ) : (
                         <>
                           <Lock className="w-4 h-4" />
-                          Pagar €{total.toFixed(2)}
+                          Continuar al Pago
                         </>
                       )}
                     </button>
                   </div>
                 </div>
               )}
+
             </form>
           </div>
 
@@ -715,6 +763,23 @@ const CheckoutPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
               <h2 className="text-xl font-semibold mb-4">Resumen del Pedido</h2>
+              
+              {/* Alerta VIP */}
+              {user && user.userLevel && user.userLevel !== 'STANDARD' && (
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-4">
+                  <h3 className="font-bold text-yellow-900 flex items-center gap-2 mb-2">
+                    {user.userLevel === 'VIP' ? (
+                      <><Star className="w-5 h-5" /> ⭐ Beneficio VIP</>
+                    ) : (
+                      <><Crown className="w-5 h-5" /> 👑 Beneficio VIP PLUS</>
+                    )}
+                  </h3>
+                  <ul className="text-sm text-yellow-800 space-y-1">
+                    <li>✓ {user.userLevel === 'VIP' ? '50%' : '70%'} de descuento aplicado</li>
+                    <li>✓ Sin fianza requerida (€0)</li>
+                  </ul>
+                </div>
+              )}
               
               <div className="space-y-3 mb-4">
                 {cartItems.map((item: any) => (
@@ -748,6 +813,20 @@ const CheckoutPage = () => {
                       Descuento ({appliedCoupon.code})
                     </span>
                     <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                {/* Descuento VIP */}
+                {calculateVIPDiscount() > 0 && (
+                  <div className="flex justify-between text-sm font-semibold mb-2">
+                    <span className="text-yellow-700 flex items-center gap-1">
+                      {user?.userLevel === 'VIP' ? (
+                        <><Star className="w-4 h-4" /> Descuento VIP (50%)</>
+                      ) : (
+                        <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
+                      )}
+                    </span>
+                    <span className="text-green-600 font-bold">-€{calculateVIPDiscount().toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -801,84 +880,47 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              {/* Desglose de Pago según método de entrega */}
-              {formData.deliveryOption === 'pickup' ? (
-                <>
-                  {/* RECOGIDA EN TIENDA */}
-                  <div className="mt-4 p-4 bg-orange-50 border-2 border-orange-200 rounded-lg">
-                    <div className="flex items-start gap-2 mb-3">
-                      <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h3 className="font-bold text-orange-900 text-sm mb-1">Pago en Tienda</h3>
-                        <p className="text-xs text-orange-800">
-                          Para recogidas en tienda, pagas el 50% ahora como señal.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">💳 A pagar ahora (50%):</span>
-                        <span className="font-bold text-green-600">
-                          €{paymentBreakdown.payNow.toFixed(2)}
-                        </span>
-                      </div>
-                      
-                      <div className="border-t border-orange-200 pt-2 mt-2">
-                        <p className="text-xs text-orange-800 font-semibold mb-2">
-                          En tienda pagarás:
-                        </p>
-                        <div className="flex justify-between text-xs pl-3">
-                          <span>• Resto del alquiler (50%):</span>
-                          <span>€{paymentBreakdown.payLater.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-xs pl-3 mt-1">
-                          <span>• Fianza (reembolsable):</span>
-                          <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between font-bold text-xs mt-2 pt-2 border-t border-orange-200">
-                          <span>Total en tienda:</span>
-                          <span>€{(paymentBreakdown.payLater + paymentBreakdown.deposit).toFixed(2)}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white p-2 rounded mt-2">
-                        <p className="text-xs text-gray-600">
-                          ℹ️ La fianza se devolverá al finalizar el alquiler si el material se devuelve en perfectas condiciones.
-                        </p>
-                      </div>
-                    </div>
+              {/* Información de pago */}
+              <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                <div className="flex items-start gap-2 mb-3">
+                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-blue-900 text-sm mb-1">💳 Pago Total Online</h3>
+                    <p className="text-xs text-blue-800">
+                      Pagas el 100% del pedido ahora al reservar el material.
+                    </p>
                   </div>
-                </>
-              ) : (
-                <>
-                  {/* ENVÍO A DOMICILIO */}
-                  <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                    <div className="flex items-start gap-2 mb-3">
-                      <Info className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h3 className="font-bold text-green-900 text-sm mb-1">Pago Total Online</h3>
-                        <p className="text-xs text-green-800">
-                          Para envíos a domicilio, pagas el 100% ahora. Sin fianza.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between text-lg font-bold">
-                      <span className="text-gray-700">💳 A pagar ahora:</span>
-                      <span className="text-green-600">
-                        €{paymentBreakdown.payNow.toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <div className="bg-white p-2 rounded mt-3">
-                      <p className="text-xs text-gray-600">
-                        ✅ Sin fianza • Todo incluido • Pago único
-                      </p>
-                    </div>
+                </div>
+                
+                <div className="flex justify-between text-lg font-bold mb-3">
+                  <span className="text-gray-700">A pagar ahora:</span>
+                  <span className="text-blue-600">
+                    €{paymentBreakdown.payNow.toFixed(2)}
+                  </span>
+                </div>
+                
+                {paymentBreakdown.requiresDeposit && (
+                  <div className="bg-blue-100 p-3 rounded border border-blue-200">
+                    <p className="text-xs text-blue-900 font-semibold mb-1">
+                      ℹ️ Fianza en tienda
+                    </p>
+                    <p className="text-xs text-blue-800">
+                      Al recoger el material, se cobrará una fianza de <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span> (reembolsable al devolver el material en perfectas condiciones).
+                    </p>
                   </div>
-                </>
-              )}
+                )}
+                
+                {!paymentBreakdown.requiresDeposit && user && (user.userLevel === 'VIP' || user.userLevel === 'VIP_PLUS') && (
+                  <div className="bg-yellow-100 p-3 rounded border border-yellow-200">
+                    <p className="text-xs text-yellow-900 font-semibold mb-1">
+                      ⭐ Beneficio {user.userLevel}
+                    </p>
+                    <p className="text-xs text-yellow-800">
+                      Como usuario {user.userLevel}, no necesitas pagar fianza.
+                    </p>
+                  </div>
+                )}
+              </div>
 
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">

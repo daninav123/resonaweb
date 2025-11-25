@@ -10,12 +10,23 @@ export interface EventPart {
   lightingLevel: ServiceLevel;
 }
 
+export interface PackRecommendationRule {
+  packId: string; // ID del producto pack
+  minAttendees?: number; // Mínimo de asistentes
+  maxAttendees?: number; // Máximo de asistentes
+  priority: number; // 1 = más alta prioridad para recomendar
+  reason?: string; // Razón de la recomendación (opcional)
+}
+
 export interface EventTypeConfig {
   id: string;
   name: string;
   icon: string;
   multiplier: number;
   parts: EventPart[];
+  recommendedPacks?: PackRecommendationRule[]; // Packs recomendados según condiciones
+  availablePacks?: string[]; // IDs de packs disponibles para este tipo de evento
+  availableExtras?: string[]; // IDs de productos extras disponibles para este tipo de evento
 }
 
 export interface ServicePrices {

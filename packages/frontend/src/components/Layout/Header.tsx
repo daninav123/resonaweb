@@ -46,11 +46,11 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       {/* Top Bar */}
-      <div className="bg-gradient-to-r from-resona to-resona-dark text-white py-2">
+      <div className="bg-resona text-white py-2">
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
-            <span>Tel: +34 600 123 456</span>
-            <span className="hidden sm:inline">Email: info@resona.com</span>
+            <span>Tel: +34 613 881 414</span>
+            <span className="hidden sm:inline">Email: info@resonaevents.com</span>
           </div>
           <div className="flex items-center gap-4">
             {!isAuthenticated ? (
@@ -132,8 +132,8 @@ const Header = () => {
               </>
             )}
 
-            {/* Notifications */}
-            {isAuthenticated && (
+            {/* Notifications - Solo para admins */}
+            {isAuthenticated && user?.role === 'ADMIN' && (
               <NotificationBell />
             )}
 
@@ -153,7 +153,7 @@ const Header = () => {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden"
+              className="md:hidden"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6 text-gray-700" />
@@ -182,20 +182,20 @@ const Header = () => {
       </div>
 
       {/* Navigation */}
-      <nav className={`bg-gray-50 border-t ${isMenuOpen ? 'block' : 'hidden lg:block'}`}>
+      <nav className={`bg-gray-50 border-t ${isMenuOpen ? 'block' : 'hidden md:block'}`}>
         <div className="container mx-auto px-4">
-          <ul className="flex flex-col lg:flex-row lg:items-center lg:gap-8 py-2">
+          <ul className="flex flex-col md:flex-row md:items-center md:gap-8 py-2">
             <li className="relative group">
-              <button className="flex items-center gap-1 py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors w-full lg:w-auto">
-                Catálogo
+              <button className="flex items-center gap-1 py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors w-full md:w-auto">
+                Alquiler
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <ul className="lg:absolute lg:left-0 lg:top-full lg:bg-white lg:shadow-lg lg:rounded-lg lg:w-56 lg:hidden lg:group-hover:block lg:z-50">
+              <ul className="md:absolute md:left-0 md:top-full md:bg-white md:shadow-lg md:rounded-lg md:w-56 md:hidden md:group-hover:block md:z-50">
                 <li>
                   <Link to="/productos" className="block px-4 py-3 hover:bg-resona/10 hover:text-resona transition-colors font-medium border-b border-gray-100">
-                    ðŸ“¦ Ver Todo el Catálogo
+                    📦 Ver Todos los Equipos
                   </Link>
                 </li>
                 <li className="pt-2">
@@ -218,7 +218,7 @@ const Header = () => {
             <li>
               <Link
                 to="/calculadora-evento"
-                className="block py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors flex items-center gap-1"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors flex items-center gap-1"
               >
                 <Calendar className="w-4 h-4" />
                 Calculadora de Eventos
@@ -227,7 +227,7 @@ const Header = () => {
             <li>
               <Link
                 to="/servicios"
-                className="block py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Servicios
               </Link>
@@ -235,7 +235,7 @@ const Header = () => {
             <li>
               <Link
                 to="/blog"
-                className="block py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Blog
               </Link>
@@ -243,7 +243,7 @@ const Header = () => {
             <li>
               <Link
                 to="/sobre-nosotros"
-                className="block py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Nosotros
               </Link>
@@ -251,7 +251,7 @@ const Header = () => {
             <li>
               <Link
                 to="/contacto"
-                className="block py-2 lg:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Contacto
               </Link>
@@ -260,7 +260,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/admin"
-                  className="block py-2 lg:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
+                  className="block py-2 md:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
                 >
                   Panel Admin
                 </Link>

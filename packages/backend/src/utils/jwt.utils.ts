@@ -1,8 +1,16 @@
 import jwt from 'jsonwebtoken';
 import type { User } from '@prisma/client';
 
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'access-secret';
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
+// Validate JWT secrets on startup
+if (!process.env.JWT_ACCESS_SECRET) {
+  throw new Error('JWT_ACCESS_SECRET must be defined in environment variables');
+}
+if (!process.env.JWT_REFRESH_SECRET) {
+  throw new Error('JWT_REFRESH_SECRET must be defined in environment variables');
+}
+
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const ACCESS_EXPIRES = process.env.JWT_ACCESS_EXPIRES || '15m';
 const REFRESH_EXPIRES = process.env.JWT_REFRESH_EXPIRES || '7d';
 

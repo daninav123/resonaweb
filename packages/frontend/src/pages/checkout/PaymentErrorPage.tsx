@@ -90,16 +90,16 @@ const PaymentErrorPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
               <a
-                href="mailto:soporte@resona.com"
+                href="mailto:info@resonaevents.com"
                 className="text-resona hover:underline"
               >
-                📧 soporte@resona.com
+                📧 info@resonaevents.com
               </a>
               <a
-                href="tel:+34600123456"
+                href="tel:+34613881414"
                 className="text-resona hover:underline"
               >
-                📞 +34 600 123 456
+                📞 +34 613 881 414
               </a>
             </div>
           </div>

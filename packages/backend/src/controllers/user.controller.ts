@@ -95,6 +95,29 @@ export class UserController {
   }
 
   /**
+   * Update user level (VIP status) - Admin only
+   */
+  async updateUserLevel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { userLevel } = req.body;
+
+      if (!['STANDARD', 'VIP', 'VIP_PLUS'].includes(userLevel)) {
+        throw new AppError(400, 'Nivel de usuario inválido', 'INVALID_USER_LEVEL');
+      }
+
+      const user = await userService.updateUserLevel(id, userLevel);
+
+      res.json({
+        message: `Usuario actualizado a nivel ${userLevel}`,
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get user orders
    */
   async getUserOrders(req: Request, res: Response, next: NextFunction) {

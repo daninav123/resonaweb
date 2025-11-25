@@ -165,7 +165,7 @@ const TermsPage = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Ley Aplicable y Jurisdicción</h2>
                 <p className="text-gray-700 mb-4">
                   Estos términos se rigen por la legislación española. Para cualquier controversia, las partes
-                  se someten a los juzgados y tribunales de Madrid.
+                  se someten a los juzgados y tribunales de Valencia.
                 </p>
               </section>
 
@@ -176,8 +176,8 @@ const TermsPage = () => {
                 </p>
                 <ul className="list-none text-gray-700 space-y-2">
                   <li><strong>Email:</strong> info@resonaevents.com</li>
-                  <li><strong>Teléfono:</strong> +34 900 123 456</li>
-                  <li><strong>Dirección:</strong> Calle Ejemplo 123, 28001 Madrid</li>
+                  <li><strong>Teléfono:</strong> +34 613 881 414</li>
+                  <li><strong>Dirección:</strong> C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</li>
                 </ul>
               </section>
             </div>

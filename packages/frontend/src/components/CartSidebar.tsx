@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ShoppingCart, Trash2, Calendar } from 'lucide-react';
+import { X, ShoppingCart, Trash2, Calendar, Star, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
@@ -63,6 +63,22 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   };
 
   const subtotal = cartItems.reduce((sum, item) => sum + calculateItemPrice(item), 0);
+
+  // Calcular descuento VIP
+  const calculateVIPDiscount = () => {
+    if (!user || !user.userLevel) return 0;
+    
+    if (user.userLevel === 'VIP') {
+      return subtotal * 0.50; // 50% descuento
+    } else if (user.userLevel === 'VIP_PLUS') {
+      return subtotal * 0.70; // 70% descuento
+    }
+    
+    return 0;
+  };
+
+  const vipDiscount = calculateVIPDiscount();
+  const total = subtotal - vipDiscount;
 
   const handleViewCart = () => {
     onClose();
@@ -165,23 +181,62 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         {/* Footer */}
         {cartItems.length > 0 && (
           <div className="border-t p-4 space-y-3">
-            <div className="flex justify-between text-lg font-bold">
-              <span>Subtotal:</span>
-              <span className="text-blue-600">
-                {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
-              </span>
+            {/* Alerta VIP */}
+            {user && user.userLevel && user.userLevel !== 'STANDARD' && (
+              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 rounded-r">
+                <p className="text-xs font-bold text-yellow-900 flex items-center gap-1">
+                  {user.userLevel === 'VIP' ? (
+                    <><Star className="w-3 h-3" /> ⭐ VIP</>  
+                  ) : (
+                    <><Crown className="w-3 h-3" /> 👑 VIP PLUS</>
+                  )}
+                </p>
+                <p className="text-xs text-yellow-800 mt-1">
+                  {user.userLevel === 'VIP' ? '50%' : '70%'} descuento
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-semibold">
+                  {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
+                </span>
+              </div>
+
+              {/* Descuento VIP */}
+              {vipDiscount > 0 && (
+                <div className="flex justify-between text-sm font-semibold text-green-600">
+                  <span className="flex items-center gap-1">
+                    {user?.userLevel === 'VIP' ? (
+                      <><Star className="w-3 h-3" /> Descuento VIP</>
+                    ) : (
+                      <><Crown className="w-3 h-3" /> Descuento VIP+</>
+                    )}
+                  </span>
+                  <span>-€{vipDiscount.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                <span>Total:</span>
+                <span className="text-resona">
+                  €{total.toFixed(2)}
+                </span>
+              </div>
             </div>
 
             <button
               onClick={handleViewCart}
-              className="w-full text-center py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+              className="w-full text-center py-3 border-2 border-resona text-resona rounded-lg font-semibold hover:bg-resona/5 transition"
             >
               Ver carrito completo
             </button>
 
             <button
               onClick={handleCheckout}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="w-full bg-resona text-white py-3 rounded-lg font-semibold hover:bg-resona-dark transition"
             >
               {user ? 'Proceder al checkout' : 'Iniciar sesión'}
             </button>

@@ -24,7 +24,7 @@ const CheckoutPageStripe = () => {
   const loadOrderAndPayment = async () => {
     if (!orderId) {
       toast.error('No se especificó un pedido');
-      navigate('/orders');
+      navigate('/mis-pedidos');
       return;
     }
 
@@ -46,7 +46,7 @@ const CheckoutPageStripe = () => {
     } catch (error: any) {
       console.error('Error loading checkout:', error);
       toast.error(error.message || 'Error al cargar el checkout');
-      navigate('/orders');
+      navigate('/mis-pedidos');
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ const CheckoutPageStripe = () => {
         <div className="text-center">
           <p className="text-red-600">Error al cargar el checkout</p>
           <button
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/mis-pedidos')}
             className="mt-4 text-resona hover:underline"
           >
             Volver a pedidos
@@ -93,7 +93,7 @@ const CheckoutPageStripe = () => {
     );
   }
 
-  const options = {
+  const options: any = {
     clientSecret,
     appearance: {
       theme: 'stripe' as const,
@@ -106,6 +106,12 @@ const CheckoutPageStripe = () => {
         borderRadius: '8px',
       },
     },
+    // Métodos de pago habilitados: Tarjeta, PayPal, Transferencia SEPA
+    paymentMethodOrder: [
+      'card',        // Tarjeta de crédito/débito
+      'paypal',      // PayPal
+      'sepa_debit',  // Transferencia bancaria SEPA
+    ],
   };
 
   return (
@@ -206,6 +212,13 @@ const CheckoutPageStripe = () => {
               <div className="flex items-center mb-6">
                 <CreditCard className="w-6 h-6 text-resona mr-2" />
                 <h2 className="text-xl font-semibold">Método de Pago</h2>
+              </div>
+
+              {/* Mensaje sobre métodos de pago */}
+              <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                <p className="text-sm text-blue-900">
+                  💳 <strong>Aceptamos múltiples métodos de pago:</strong> Tarjeta de crédito/débito, PayPal, Transferencia bancaria (SEPA/Bizum) y más.
+                </p>
               </div>
 
               <Elements stripe={stripePromise} options={options}>

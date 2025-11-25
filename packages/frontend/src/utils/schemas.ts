@@ -12,21 +12,19 @@ export const organizationSchema = {
   description: 'Alquiler profesional de equipos de sonido, iluminación y audiovisuales para eventos',
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+34-600-123-456',
+    telephone: '+34-613-881-414',
     contactType: 'customer service',
-    email: 'info@resona.com',
+    email: 'info@resonaevents.com',
     availableLanguage: ['Spanish'],
   },
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'C/ de l\'Illa Cabrera, 13',
+    addressLocality: 'València',
+    addressRegion: 'Quatre Carreres',
+    postalCode: '46026',
     addressCountry: 'ES',
-    addressLocality: 'Valencia',
   },
-  sameAs: [
-    'https://www.facebook.com/resonaevents',
-    'https://www.instagram.com/resonaevents',
-    'https://twitter.com/resonaevents',
-  ],
 };
 
 // Schema del sitio web
@@ -55,12 +53,15 @@ export const localBusinessSchema = {
   description: 'Alquiler de material profesional para eventos: sonido, iluminación, fotografía y video',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'C/ de l\'Illa Cabrera, 13',
+    addressLocality: 'València',
+    addressRegion: 'Quatre Carreres',
+    postalCode: '46026',
     addressCountry: 'ES',
-    addressLocality: 'Valencia',
   },
-  telephone: '+34-600-123-456',
-  email: 'info@resona.com',
-  url: 'https://resona.com',
+  telephone: '+34-613-881-414',
+  email: 'info@resonaevents.com',
+  url: 'https://resonaevents.com',
   priceRange: '€€',
   openingHoursSpecification: [
     {

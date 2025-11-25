@@ -43,7 +43,8 @@ const BlogManager = () => {
       console.log('Categories data:', categoriesData);
       console.log('Stats data:', statsData);
       
-      const posts = (postsData as any).data || [];
+      // El backend devuelve { posts, pagination }, no { data }
+      const posts = (postsData as any).posts || [];
       setPosts(posts);
       setCategories((categoriesData as any) || []);
       setStats(statsData || null);
@@ -216,7 +217,7 @@ const BlogManager = () => {
             <button
               onClick={handleGenerateAI}
               disabled={generatingAI}
-              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 bg-resona text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Sparkles className="w-5 h-5" />
               {generatingAI ? 'Generando...' : 'Generar con IA'}

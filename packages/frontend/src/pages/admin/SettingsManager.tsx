@@ -37,7 +37,7 @@ const SettingsManager = () => {
               </label>
               <input
                 type="email"
-                defaultValue="info@resona.com"
+                defaultValue="info@resonaevents.com"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               />
             </div>
@@ -47,7 +47,7 @@ const SettingsManager = () => {
               </label>
               <input
                 type="tel"
-                defaultValue="+34 123 456 789"
+                defaultValue="+34 613 881 414"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               />
             </div>

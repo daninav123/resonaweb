@@ -16,7 +16,7 @@ export class StripeService {
     }
 
     this.stripe = new Stripe(secretKey, {
-      apiVersion: '2024-11-20.acacia',
+      apiVersion: '2023-10-16',
       typescript: true,
     });
 
@@ -120,7 +120,7 @@ export class StripeService {
       const order = await prisma.order.update({
         where: { id: orderId },
         data: {
-          paymentStatus: 'PAID',
+          paymentStatus: 'COMPLETED',
           status: 'CONFIRMED',
           paidAt: new Date(),
         },
@@ -138,11 +138,11 @@ export class StripeService {
       await prisma.payment.create({
         data: {
           orderId: order.id,
-          userId: order.userId,
           amount: Number(order.total),
           method: 'STRIPE',
           status: 'COMPLETED',
-          transactionId: paymentIntent.id,
+          stripePaymentIntentId: paymentIntent.id,
+          stripeChargeId: paymentIntent.latest_charge as string,
           metadata: {
             paymentIntent: paymentIntentId,
             chargeId: paymentIntent.latest_charge,
@@ -214,11 +214,10 @@ export class StripeService {
       await prisma.payment.create({
         data: {
           orderId: order.id,
-          userId: order.userId,
           amount: -(refundAmount / 100),
           method: 'STRIPE',
           status: 'COMPLETED',
-          transactionId: refund.id,
+          stripePaymentIntentId: refund.id,
           metadata: {
             refundId: refund.id,
             paymentIntent: order.stripePaymentIntentId,
@@ -406,6 +405,68 @@ export class StripeService {
       
     } catch (error) {
       logger.error('Error handling charge.dispute.created:', error);
+    }
+  }
+
+  /**
+   * Crear reembolso por Payment Intent
+   */
+  async createRefundByPaymentIntent(paymentIntentId: string, amount: number, reason?: string) {
+    try {
+      const refund = await this.stripe.refunds.create({
+        payment_intent: paymentIntentId,
+        amount: Math.round(amount), // amount en centavos
+        reason: 'requested_by_customer',
+        metadata: {
+          reason: reason || 'Modificación de pedido',
+        },
+      });
+
+      logger.info(`Refund created: ${refund.id} for ${amount / 100}€`);
+      return refund;
+    } catch (error) {
+      logger.error('Error creating refund:', error);
+      throw new AppError(500, 'Error procesando reembolso', 'REFUND_ERROR');
+    }
+  }
+
+  /**
+   * Crear pago adicional (para modificaciones de pedido)
+   */
+  async createAdditionalPayment(orderId: string, userId: string, amount: number, description?: string) {
+    try {
+      const order = await prisma.order.findFirst({
+        where: { id: orderId, userId },
+        include: { user: true },
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      const amountInCents = Math.round(amount * 100);
+
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: 'eur',
+        customer: order.stripeCustomerId || undefined,
+        description: description || `Cargo adicional - Pedido ${order.orderNumber}`,
+        metadata: {
+          orderId: order.id,
+          userId: order.userId,
+          orderNumber: order.orderNumber,
+          type: 'additional_charge',
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      logger.info(`Additional payment created: ${paymentIntent.id} for €${amount}`);
+      return paymentIntent;
+    } catch (error) {
+      logger.error('Error creating additional payment:', error);
+      throw new AppError(500, 'Error creando cargo adicional', 'PAYMENT_ERROR');
     }
   }
 

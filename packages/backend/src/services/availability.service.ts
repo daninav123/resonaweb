@@ -36,24 +36,21 @@ export class AvailabilityService {
         throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
       }
 
-      // Check lead time for ON_DEMAND products
-      if (product.stockStatus === 'ON_DEMAND' && product.leadTimeDays) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const leadTimeDays = product.leadTimeDays;
-        const minimumDate = new Date(today);
-        minimumDate.setDate(minimumDate.getDate() + leadTimeDays);
-        
-        if (startDate < minimumDate) {
-          logger.info(`Product ${productId} requires ${leadTimeDays} days lead time. Minimum date: ${minimumDate.toISOString().split('T')[0]}`);
-          throw new AppError(
-            400,
-            `Este producto requiere reserva con ${leadTimeDays} días de antelación. Fecha mínima disponible: ${minimumDate.toLocaleDateString('es-ES')}`,
-            'LEAD_TIME_REQUIRED'
-          );
-        }
+      // TODOS los productos: Si la reserva es para más de 30 días, se considera disponible
+      // (tiempo suficiente para conseguir el producto si no hay stock)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const daysUntilEvent = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      const LEAD_TIME_THRESHOLD = 30; // 30 días de antelación
+      
+      if (daysUntilEvent > LEAD_TIME_THRESHOLD) {
+        // Reserva con más de 30 días de antelación: siempre disponible
+        logger.info(`Product ${productId} reserved ${daysUntilEvent} days in advance. Auto-approved (enough lead time to acquire stock).`);
+        return true;
       }
+      
+      // Para reservas con menos de 30 días: verificar stock real
 
       // Get all orders that overlap with the requested dates
       const overlappingOrders = await prisma.item.findMany({

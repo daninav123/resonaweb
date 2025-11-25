@@ -16,8 +16,11 @@ export const useCartCount = () => {
           const items = response.data?.items || [];
           const totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
           setCount(totalItems);
-        } catch (error) {
-          // Si falla, mostrar 0
+        } catch (error: any) {
+          // Silenciar error 401 (no autenticado) - es esperado al inicio
+          if (error?.response?.status !== 401) {
+            console.error('Error loading cart:', error);
+          }
           setCount(0);
         }
       } else {

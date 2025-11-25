@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import { notificationService } from '../../services/notification.service';
+import { useAuthStore } from '../../stores/authStore';
 import NotificationList from './NotificationList';
 
 const NotificationBell = () => {
@@ -8,26 +9,35 @@ const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    loadUnreadCount();
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(loadUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    // Solo cargar si el usuario está autenticado
+    if (user) {
+      loadUnreadCount();
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(loadUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (showDropdown) {
+    if (showDropdown && user) {
       loadNotifications();
     }
-  }, [showDropdown]);
+  }, [showDropdown, user]);
 
   const loadUnreadCount = async () => {
+    if (!user) return; // No hacer llamada si no hay usuario
+    
     try {
       const count = await notificationService.getUnreadCount();
       setUnreadCount(count);
     } catch (error) {
-      console.error('Error loading unread count:', error);
+      // Silenciar error si es 401 (no autenticado)
+      if (error?.response?.status !== 401) {
+        console.error('Error loading unread count:', error);
+      }
     }
   };
 

@@ -242,7 +242,7 @@ const CompanySettingsPage = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                  placeholder="+34 600 123 456"
+                  placeholder="+34 613 881 414"
                 />
               </div>
 
@@ -256,7 +256,7 @@ const CompanySettingsPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                  placeholder="info@resona.com"
+                  placeholder="info@resonaevents.com"
                 />
               </div>
 

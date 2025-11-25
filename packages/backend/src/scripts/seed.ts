@@ -6,7 +6,31 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando seed de la base de datos...\n');
 
-  // 1. Limpiar datos existentes
+  // ✅ VERIFICACIÓN DE SEGURIDAD: No borrar datos existentes
+  console.log('🔍 Verificando si hay datos existentes...');
+  const existingProducts = await prisma.product.count();
+  const existingUsers = await prisma.user.count();
+  const existingCategories = await prisma.category.count();
+
+  if (existingProducts > 0 || existingUsers > 0 || existingCategories > 0) {
+    console.log('\n⚠️  ¡ADVERTENCIA! La base de datos ya contiene datos:\n');
+    console.log(`   📦 Productos: ${existingProducts}`);
+    console.log(`   👥 Usuarios: ${existingUsers}`);
+    console.log(`   📁 Categorías: ${existingCategories}`);
+    console.log('\n❌ Abortando seed para proteger tus datos.\n');
+    console.log('💡 OPCIONES:\n');
+    console.log('   1. Si quieres RESETEAR la BD completamente:');
+    console.log('      npm run db:reset\n');
+    console.log('   2. Si quieres FORZAR el seed (CUIDADO - borra todo):');
+    console.log('      FORCE_SEED=true npm run db:seed\n');
+    console.log('   3. Si quieres MANTENER los datos actuales:');
+    console.log('      Simplemente cancela este proceso.\n');
+    process.exit(0);
+  }
+
+  console.log('✅ Base de datos vacía. Procediendo con seed...\n');
+
+  // 1. Limpiar datos existentes (ahora es seguro porque verificamos)
   console.log('🗑️  Limpiando datos existentes...');
   await prisma.review.deleteMany();
   await prisma.favorite.deleteMany();

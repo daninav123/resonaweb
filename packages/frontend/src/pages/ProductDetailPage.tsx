@@ -11,6 +11,7 @@ const ProductDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { user } = useAuthStore();
 
   const { data: product, isLoading, error } = useQuery({
@@ -35,10 +36,17 @@ const ProductDetailPage = () => {
 
   const handleAddToFavorites = async () => {
     try {
-      await api.post('/users/favorites', { productId: product.id });
-      toast.success('Añadido a favoritos');
+      if (isFavorite) {
+        await api.delete(`/users/favorites/${product.id}`);
+        setIsFavorite(false);
+        toast.success('Eliminado de favoritos');
+      } else {
+        await api.post('/users/favorites', { productId: product.id });
+        setIsFavorite(true);
+        toast.success('Añadido a favoritos');
+      }
     } catch (error) {
-      toast.error('Error al añadir a favoritos');
+      toast.error('Error al gestionar favoritos');
     }
   };
 
@@ -66,8 +74,51 @@ const ProductDetailPage = () => {
     );
   }
 
+  // Schema.org Product JSON-LD
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "sku": product.sku,
+    "image": product.mainImageUrl || product.images?.[0],
+    "brand": {
+      "@type": "Brand",
+      "name": "ReSona Events"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://resonaevents.com/producto/${product.slug}`,
+      "priceCurrency": "EUR",
+      "price": product.pricePerDay,
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": product.pricePerDay,
+        "priceCurrency": "EUR",
+        "unitText": "DAY"
+      },
+      "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "ReSona Events"
+      }
+    },
+    "category": product.category?.name || "Equipos Audiovisuales",
+    "aggregateRating": product.rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating,
+      "reviewCount": product.reviewCount || 1
+    } : undefined
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      {/* Schema.org Product Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <nav className="text-sm mb-6">
@@ -95,7 +146,7 @@ const ProductDetailPage = () => {
               {product.mainImageUrl ? (
                 <img
                   src={product.mainImageUrl}
-                  alt={product.name}
+                  alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
                   className="w-full h-96 object-cover"
                 />
               ) : (
@@ -139,37 +190,56 @@ const ProductDetailPage = () => {
               <h3 className="text-lg font-semibold mb-3">Cantidad</h3>
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                  onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
+                  aria-label="Disminuir cantidad"
                 >
-                  -
+                  −
                 </button>
-                <span className="text-xl font-medium w-12 text-center">{quantity}</span>
-                <button
-                  onClick={() => {
-                    // Si no hay stock (stock = 0), permitir aumentar sin límite
-                    // Si hay stock, limitar a la cantidad disponible
-                    if (product.stock === 0) {
-                      setQuantity(quantity + 1);
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    // Simplemente establecer el valor sin validaciones estrictas
+                    // La validación real se hará en el carrito al seleccionar fechas
+                    if (isNaN(value) || value < 1) {
+                      setQuantity(1);
                     } else {
-                      setQuantity(Math.min(product.stock, quantity + 1));
+                      setQuantity(value);
                     }
                   }}
-                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                  onBlur={(e) => {
+                    // Asegurar que al salir del campo siempre haya un valor válido
+                    const value = parseInt(e.target.value);
+                    if (!e.target.value || isNaN(value) || value < 1) {
+                      setQuantity(1);
+                    }
+                  }}
+                  className="w-20 text-xl font-medium text-center border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={() => {
+                    setQuantity(prev => prev + 1);
+                  }}
+                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
+                  aria-label="Aumentar cantidad"
                 >
                   +
                 </button>
               </div>
-              {product.stock === 0 && (
-                <p className="text-xs text-gray-500 mt-2">
-                  Producto bajo pedido - sin límite de cantidad
+              <div className="mt-2">
+                <p className="text-xs text-gray-500">
+                  La disponibilidad se verificará al seleccionar fechas en el carrito
                 </p>
-              )}
+              </div>
             </div>
 
             {/* Actions */}
             <div className="flex gap-4 mb-8">
               <button
+                data-testid="add-to-cart"
                 onClick={handleAddToCart}
                 className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
               >
@@ -177,10 +247,16 @@ const ProductDetailPage = () => {
                 Añadir al carrito
               </button>
               <button
+                data-testid="favorite-button"
+                data-favorited={isFavorite}
                 onClick={handleAddToFavorites}
-                className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className={`p-3 border rounded-lg transition ${
+                  isFavorite 
+                    ? 'border-red-500 bg-red-50 text-red-600' 
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}
               >
-                <Heart className="w-5 h-5" />
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
               <button
                 className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
@@ -199,13 +275,26 @@ const ProductDetailPage = () => {
             {product.specifications && (
               <div className="border-t pt-6 mt-6">
                 <h3 className="text-lg font-semibold mb-3">Especificaciones</h3>
-                <dl className="space-y-2">
-                  {Object.entries(product.specifications).map(([key, value]: [string, any]) => (
-                    <div key={key} className="flex">
-                      <dt className="font-medium text-gray-700 w-32">{key}:</dt>
-                      <dd className="text-gray-600">{value}</dd>
-                    </div>
-                  ))}
+                <dl className="space-y-3">
+                  {typeof product.specifications === 'string' ? (
+                    // Si es un string, mostrar directamente
+                    <dd className="text-gray-600 whitespace-pre-line">{product.specifications}</dd>
+                  ) : typeof product.specifications === 'object' && !Array.isArray(product.specifications) ? (
+                    // Si es un objeto, iterar sobre las propiedades
+                    Object.entries(product.specifications).map(([key, value]: [string, any]) => (
+                      <div key={key} className="grid grid-cols-3 gap-4 pb-2 border-b border-gray-100 last:border-b-0">
+                        <dt className="font-medium text-gray-700 col-span-1">{key}:</dt>
+                        <dd className="text-gray-600 col-span-2">{String(value)}</dd>
+                      </div>
+                    ))
+                  ) : Array.isArray(product.specifications) ? (
+                    // Si es un array, mostrar como lista
+                    product.specifications.map((spec: any, idx: number) => (
+                      <div key={idx} className="pb-2 border-b border-gray-100 last:border-b-0">
+                        <dd className="text-gray-600">{String(spec)}</dd>
+                      </div>
+                    ))
+                  ) : null}
                 </dl>
               </div>
             )}

@@ -29,6 +29,7 @@ export class UserService {
           lastName: true,
           phone: true,
           role: true,
+          userLevel: true, // ⭐ AÑADIDO
           isActive: true,
           emailVerified: true,
           createdAt: true,
@@ -239,6 +240,36 @@ export class UserService {
     logger.info(`User deactivated: ${deletedUser.email}`);
 
     return { message: 'Usuario eliminado correctamente' };
+  }
+
+  /**
+   * Update user level (VIP status)
+   */
+  async updateUserLevel(id: string, userLevel: 'STANDARD' | 'VIP' | 'VIP_PLUS') {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { userLevel },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        userLevel: true,
+        role: true,
+      },
+    });
+
+    logger.info(`User level updated: ${updatedUser.email} -> ${userLevel}`);
+
+    return updatedUser;
   }
 
   /**

@@ -42,6 +42,14 @@ router.delete(
   userController.deleteUser
 );
 
+// Update user level (VIP status) - Admin only
+router.patch(
+  '/:id/level',
+  authenticate,
+  authorize('ADMIN', 'SUPERADMIN'),
+  userController.updateUserLevel
+);
+
 // User related data
 router.get(
   '/:id/orders',

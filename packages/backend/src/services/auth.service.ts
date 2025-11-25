@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { prisma } from '../index';
 import { generateTokenPair, verifyRefreshToken } from '../utils/jwt.utils';
 import { AppError } from '../middleware/error.middleware';
@@ -145,6 +146,7 @@ export class AuthService {
         lastName: true,
         phone: true,
         role: true,
+        userLevel: true, // ⭐ AÑADIDO
         isActive: true,
         emailVerified: true,
         createdAt: true,
@@ -206,9 +208,13 @@ export class AuthService {
     }
 
     // Generate reset token
+    if (!process.env.JWT_ACCESS_SECRET) {
+      throw new Error('JWT_ACCESS_SECRET not configured');
+    }
+    
     const resetToken = jwt.sign(
       { userId: user.id, type: 'password-reset' },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_ACCESS_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -236,9 +242,13 @@ export class AuthService {
   async resetPasswordWithToken(token: string, newPassword: string) {
     try {
       // Verify token
+      if (!process.env.JWT_ACCESS_SECRET) {
+        throw new Error('JWT_ACCESS_SECRET not configured');
+      }
+      
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET || 'your-secret-key'
+        process.env.JWT_ACCESS_SECRET
       ) as any;
 
       if (decoded.type !== 'password-reset') {
