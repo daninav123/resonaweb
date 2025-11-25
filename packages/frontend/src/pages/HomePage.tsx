@@ -6,6 +6,7 @@ import { Product, Category } from '../types';
 import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { organizationSchema, websiteSchema, localBusinessSchema } from '../utils/schemas';
+import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 
 const HomePage = () => {
   const [searchDates, setSearchDates] = useState({
@@ -229,9 +230,12 @@ const HomePage = () => {
                   <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
                     {product.mainImageUrl ? (
                       <img
-                        src={product.mainImageUrl}
+                        src={getImageUrl(product.mainImageUrl)}
                         alt={product.name}
                         className="w-full h-48 object-cover group-hover:scale-105 transition"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = placeholderImage;
+                        }}
                       />
                     ) : (
                       <div className="w-full h-48 bg-gray-200 flex items-center justify-center">

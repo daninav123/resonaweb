@@ -8,6 +8,7 @@ import { CategorySidebar } from '../components/CategorySidebar';
 import type { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { breadcrumbSchema } from '../utils/schemas';
+import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -228,11 +229,14 @@ const ProductsPage = () => {
                   >
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={product.images[0] as any}
+                        src={getImageUrl(product.images[0] as any)}
                         alt={product.name}
                         className={`object-cover ${
                           viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
                         }`}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = placeholderImage;
+                        }}
                       />
                     ) : (
                       <div className={`bg-gray-200 flex items-center justify-center ${

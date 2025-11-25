@@ -6,6 +6,7 @@ import { ShoppingCart, Heart, Share2, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
+import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -145,9 +146,12 @@ const ProductDetailPage = () => {
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               {product.mainImageUrl ? (
                 <img
-                  src={product.mainImageUrl}
+                  src={getImageUrl(product.mainImageUrl)}
                   alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
                   className="w-full h-96 object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = placeholderImage;
+                  }}
                 />
               ) : (
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
@@ -160,9 +164,12 @@ const ProductDetailPage = () => {
                 {product.images.map((img: string, idx: number) => (
                   <img
                     key={idx}
-                    src={img}
+                    src={getImageUrl(img)}
                     alt={`${product.name} ${idx + 1}`}
                     className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = placeholderImage;
+                    }}
                   />
                 ))}
               </div>
@@ -313,9 +320,12 @@ const ProductDetailPage = () => {
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer"
                 >
                   <img
-                    src={related.mainImageUrl || '/placeholder.png'}
+                    src={getImageUrl(related.mainImageUrl) || placeholderImage}
                     alt={related.name}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = placeholderImage;
+                    }}
                   />
                   <div className="p-4">
                     <h3 className="font-semibold mb-2 line-clamp-2">{related.name}</h3>
