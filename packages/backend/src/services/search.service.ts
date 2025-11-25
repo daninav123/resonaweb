@@ -47,7 +47,8 @@ export class SearchService {
 
     // Filtro por categorías
     if (categories && categories.length > 0) {
-      where.AND!.push({
+      if (!Array.isArray(where.AND)) where.AND = [];
+      (where.AND as any[]).push({
         categoryId: { in: categories }
       });
     }
@@ -57,18 +58,20 @@ export class SearchService {
       const priceFilter: any = {};
       if (minPrice !== undefined) priceFilter.gte = minPrice;
       if (maxPrice !== undefined) priceFilter.lte = maxPrice;
-      where.AND!.push({ pricePerDay: priceFilter });
+      if (!Array.isArray(where.AND)) where.AND = [];
+      (where.AND as any[]).push({ pricePerDay: priceFilter });
     }
 
     // Filtro por disponibilidad
     if (availability && availability !== 'ALL') {
+      if (!Array.isArray(where.AND)) where.AND = [];
       if (availability === 'IN_STOCK') {
-        where.AND!.push({ 
+        (where.AND as any[]).push({ 
           realStock: { gt: 0 },
           stockStatus: 'IN_STOCK'
         });
       } else if (availability === 'ON_DEMAND') {
-        where.AND!.push({ 
+        (where.AND as any[]).push({ 
           stockStatus: 'ON_DEMAND',
           canBuyOnDemand: true
         });
@@ -76,7 +79,7 @@ export class SearchService {
     }
 
     // Limpiar array vacío
-    if (where.AND!.length === 0) {
+    if (Array.isArray(where.AND) && where.AND.length === 0) {
       delete where.AND;
     }
 

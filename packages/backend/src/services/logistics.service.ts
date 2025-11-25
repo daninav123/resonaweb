@@ -392,15 +392,15 @@ export class LogisticsService {
       return deliveries.map(delivery => ({
         id: delivery.id,
         orderNumber: ((delivery as any).order?.orderNumber || ''),
-        customer: `${((order as any).user?.firstName || '')} ${((order as any).user?.lastName || '')}`,
-        phone: ((order as any).user?.phone || ''),
-        address: ((order.deliveryAddress || {}) || {}),
+        customer: `${((delivery as any).order?.user?.firstName || '')} ${((delivery as any).order?.user?.lastName || '')}`,
+        phone: ((delivery as any).order?.user?.phone || ''),
+        address: (((delivery as any).order?.deliveryAddress || {}) || {}),
         plannedTime: delivery.plannedDate,
         status: delivery.status,
         vehicleId: delivery.vehicleId,
         driverId: delivery.driverId,
-        items: ((order as any).items || []).length,
-        totalQuantity: ((order as any).items || []).reduce((sum, item) => sum + item.quantity, 0),
+        items: (((delivery as any).order?.items || []).length),
+        totalQuantity: (((delivery as any).order?.items || []).reduce((sum: number, item: any) => sum + item.quantity, 0)),
       }));
     } catch (error) {
       logger.error('Error getting delivery schedule:', error);

@@ -305,12 +305,12 @@ export class NotificationService {
 
       const html = `
         <h2>Recordatorio: Tu evento es mañana</h2>
-        <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
+        <p>Hola ${((order as any).user?.firstName || '')},</p>
         <p>Te recordamos que tu evento es mañana ${new Date(order.startDate).toLocaleDateString('es-ES')}.</p>
         <p>Pedido: #${order.orderNumber}</p>
         <h3>Productos alquilados:</h3>
         <ul>
-          ${((invoice.order as any).items || []).map(item => 
+          ${((order as any).items || []).map((item: any) => 
             `<li>${item.product.name} (x${item.quantity})</li>`
           ).join('')}
         </ul>
@@ -319,7 +319,7 @@ export class NotificationService {
       `;
 
       await this.sendEmail({
-        to: ((invoice.order as any).user?.email || ''),
+        to: ((order as any).user?.email || ''),
         subject: `Recordatorio: Tu evento es mañana`,
         html,
       });
