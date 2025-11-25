@@ -1,6 +1,9 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install && npm run build"
+buildCommand = "npm ci && npm run build"
 
 [deploy]
 startCommand = "npm run preview -- --host 0.0.0.0 --port $PORT"
+
+[start]
+cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
