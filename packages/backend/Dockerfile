@@ -7,8 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Instalar dependencias
-RUN npm ci --omit=dev
+# Instalar TODAS las dependencias (incluyendo devDependencies para el build)
+RUN npm ci
 
 # Generar Prisma Client
 RUN npx prisma generate
@@ -16,7 +16,7 @@ RUN npx prisma generate
 # Copiar código fuente
 COPY . .
 
-# Compilar TypeScript
+# Compilar TypeScript usando script personalizado
 RUN npm run build
 
 # Exponer puerto

@@ -6,6 +6,14 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strict": false,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false,
+    "strictFunctionTypes": false,
+    "noImplicitThis": false,
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": true
+  },
+  "exclude": ["node_modules", "dist", "tests", "**/*.test.ts", "**/*.spec.ts"]
 }
