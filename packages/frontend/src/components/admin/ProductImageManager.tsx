@@ -24,8 +24,7 @@ export const ProductImageManager = ({ product, isOpen, onClose, onSuccess }: Pro
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.patch(`/products/${product.id}`, {
-        images,
+      await api.put(`/products/${product.id}`, {
         mainImageUrl: images[0] || null
       });
 
@@ -34,7 +33,10 @@ export const ProductImageManager = ({ product, isOpen, onClose, onSuccess }: Pro
       onClose();
     } catch (error: any) {
       console.error('Error al guardar imágenes:', error);
-      toast.error(error.response?.data?.error || 'Error al guardar las imágenes');
+      const errorMessage = typeof error.response?.data?.error === 'string' 
+        ? error.response.data.error 
+        : error.response?.data?.message || error.message || 'Error al guardar las imágenes';
+      toast.error(errorMessage);
     } finally {
       setSaving(false);
     }

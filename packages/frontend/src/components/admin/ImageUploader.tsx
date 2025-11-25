@@ -66,7 +66,9 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
         }
 
         // Construir URL completa
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        // Para imágenes, usar la URL base sin /api/v1
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
+        const baseUrl = apiUrl.replace('/api/v1', '');
         const imagePath = responseData.imageUrl;
         
         // Si la imagen ya tiene URL completa, usarla directamente
@@ -200,7 +202,7 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
                   alt={`Imagen ${index + 1}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=Error';
+                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect fill="%23ddd" width="300" height="300"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="20" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EError%3C/text%3E%3C/svg%3E';
                   }}
                 />
 
