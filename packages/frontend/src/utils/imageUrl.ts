@@ -24,6 +24,15 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
 };
 
 /**
+ * Decodifica entidades HTML
+ */
+const decodeHtmlEntities = (text: string): string => {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
+/**
  * Convierte una URL completa a ruta relativa
  * @param imageUrl - URL completa (ej: http://localhost:3001/uploads/products/imagen.webp)
  * @returns Ruta relativa (ej: /uploads/products/imagen.webp)
@@ -33,19 +42,25 @@ export const getRelativePath = (imageUrl: string | null | undefined): string => 
     return '';
   }
 
+  // Decodificar entidades HTML por si acaso
+  let cleanUrl = imageUrl;
+  if (imageUrl.includes('&#x')) {
+    cleanUrl = decodeHtmlEntities(imageUrl);
+  }
+
   // Si ya es una ruta relativa, devolverla
-  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-    return imageUrl;
+  if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+    return cleanUrl;
   }
 
   // Extraer la parte después del dominio
   try {
-    const url = new URL(imageUrl);
+    const url = new URL(cleanUrl);
     return url.pathname;
   } catch {
     // Si falla el parsing, intentar extraer manualmente
-    const match = imageUrl.match(/https?:\/\/[^/]+(\/.*)/);
-    return match ? match[1] : imageUrl;
+    const match = cleanUrl.match(/https?:\/\/[^/]+(\/.*)/);
+    return match ? match[1] : cleanUrl;
   }
 };
 
