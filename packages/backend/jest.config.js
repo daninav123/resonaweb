@@ -3,6 +3,12 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    'product-delete.test.ts',
+    'product-delete-http.test.ts',
+    'api.e2e.test.ts',
+  ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },

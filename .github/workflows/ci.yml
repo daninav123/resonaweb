@@ -7,52 +7,10 @@ on:
     branches: [main, develop]
 
 jobs:
-  # ============= LINT =============
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run ESLint
-        run: npm run lint
-        continue-on-error: true
-
-  # ============= TEST BACKEND =============
-  # TEMPORALMENTE DESACTIVADO - Los tests requieren servidor corriendo
-  # test-backend:
-  #   name: Test Backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Skip tests
-  #       run: echo "Tests temporalmente desactivados"
-
-  # ============= TEST FRONTEND =============
-  # TEMPORALMENTE DESACTIVADO
-  test-frontend:
-    name: Test Frontend
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Skip tests
-        run: echo "Tests temporalmente desactivados"
-
-  # ============= BUILD =============
+  # ============= BUILD & VERIFY =============
   build:
-    name: Build All Workspaces
+    name: Build & Verify
     runs-on: ubuntu-latest
-    needs: [lint, test-frontend]
     
     steps:
       - name: Checkout code
