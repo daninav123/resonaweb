@@ -1,9 +1,10 @@
 [phases.setup]
 nixPkgs = ['nodejs_18']
+aptPkgs = []
 
 [phases.install]
 cmds = [
-  'npm ci --omit=dev --ignore-scripts',
+  'npm ci --omit=dev',
   'npx prisma generate'
 ]
 
