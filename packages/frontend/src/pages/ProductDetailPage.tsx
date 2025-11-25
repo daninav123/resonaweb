@@ -148,7 +148,7 @@ const ProductDetailPage = () => {
                 <img
                   src={getImageUrl(product.mainImageUrl)}
                   alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
-                  className="w-full h-96 object-cover"
+                  className="w-full h-96 object-contain bg-white"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = placeholderImage;
                   }}
@@ -166,7 +166,7 @@ const ProductDetailPage = () => {
                     key={idx}
                     src={getImageUrl(img)}
                     alt={`${product.name} ${idx + 1}`}
-                    className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75"
+                    className="w-full h-24 object-contain bg-white rounded-lg cursor-pointer hover:opacity-75"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = placeholderImage;
                     }}
@@ -322,7 +322,7 @@ const ProductDetailPage = () => {
                   <img
                     src={getImageUrl(related.mainImageUrl) || placeholderImage}
                     alt={related.name}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-contain bg-white"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = placeholderImage;
                     }}

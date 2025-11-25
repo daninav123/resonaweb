@@ -232,7 +232,7 @@ const HomePage = () => {
                       <img
                         src={getImageUrl(product.mainImageUrl)}
                         alt={product.name}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition"
+                        className="w-full h-48 object-contain bg-white group-hover:scale-105 transition"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = placeholderImage;
                         }}

@@ -231,7 +231,7 @@ const ProductsPage = () => {
                       <img
                         src={getImageUrl(product.images[0] as any)}
                         alt={product.name}
-                        className={`object-cover ${
+                        className={`object-contain bg-white ${
                           viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
                         }`}
                         onError={(e) => {
