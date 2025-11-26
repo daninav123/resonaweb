@@ -34,6 +34,7 @@ import packRouter from './routes/pack.routes';
 import orderExpirationRouter from './routes/orderExpiration.routes';
 import quoteRequestRouter from './routes/quoteRequest.routes';
 import { metricsRouter } from './routes/metrics.routes';
+import backupRouter from './routes/backup.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -172,6 +173,7 @@ app.use('/api/v1/order-modifications', orderModificationRouter);
 app.use('/api/v1/packs', packRouter);
 app.use('/api/v1/order-expiration', orderExpirationRouter);
 app.use('/api/v1/quote-requests', quoteRequestRouter);
+app.use('/api/v1/admin/backups', backupRouter);
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling

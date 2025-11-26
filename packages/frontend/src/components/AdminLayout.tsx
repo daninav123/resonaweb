@@ -19,7 +19,8 @@ import {
   Home,
   Menu,
   X,
-  Mail
+  Mail,
+  Database
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -49,6 +50,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
     { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
     { path: '/admin/blog', icon: FileText, label: 'Blog' },
+    { path: '/admin/backups', icon: Database, label: 'Backups' },
     { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
     { path: '/admin/settings', icon: Settings, label: 'Configuración' },
   ];
