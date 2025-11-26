@@ -78,15 +78,15 @@ async function backupDatabase() {
     console.log(`💾 Tamaño: ${fileSize} MB`);
     console.log(`🕐 Fecha: ${new Date().toLocaleString()}\n`);
 
-    // Mantener solo los últimos 10 backups
+    // Mantener solo los últimos 20 backups
     const files = fs.readdirSync(backupDir)
       .filter(f => f.startsWith('backup_') && f.endsWith('.json'))
       .sort()
       .reverse();
 
-    if (files.length > 10) {
+    if (files.length > 20) {
       console.log('🧹 Limpiando backups antiguos...');
-      files.slice(10).forEach(f => {
+      files.slice(20).forEach(f => {
         fs.unlinkSync(path.join(backupDir, f));
         console.log(`   Eliminado: ${f}`);
       });

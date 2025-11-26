@@ -25,10 +25,12 @@ export default function BackupManager() {
     try {
       setLoading(true);
       const response = await api.get('/admin/backups');
-      setBackups(response.data.backups || []);
-    } catch (error) {
+      console.log('Backups response:', response.data);
+      setBackups(response.data?.backups || response.data || []);
+    } catch (error: any) {
       console.error('Error al cargar backups:', error);
-      toast.error('Error al cargar backups');
+      console.error('Error response:', error.response?.data);
+      toast.error(error.response?.data?.message || 'Error al cargar backups');
     } finally {
       setLoading(false);
     }
@@ -236,7 +238,7 @@ export default function BackupManager() {
         <ul className="text-sm text-yellow-800 space-y-1">
           <li>• Crea un backup manual ANTES de hacer cambios importantes</li>
           <li>• Descarga los backups importantes a tu PC como respaldo adicional</li>
-          <li>• Los backups se mantienen automáticamente (últimos 10)</li>
+          <li>• Los backups se mantienen automáticamente (últimos 20)</li>
           <li>• Restaurar un backup BORRA todos los datos actuales</li>
         </ul>
       </div>
