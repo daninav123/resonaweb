@@ -51,10 +51,14 @@ class BackupController {
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
 
-      res.json({
+      const response = {
         backups: files,
         count: files.length
-      });
+      };
+
+      console.log('📋 Enviando lista de backups:', response);
+
+      res.json(response);
     } catch (error) {
       next(error);
     }
@@ -130,12 +134,16 @@ class BackupController {
       console.log('✅ Backup creado:', backupFile);
       console.log('📁 Tamaño:', (fs.statSync(backupFile).size / 1024).toFixed(2), 'KB');
 
-      res.json({
+      const response = {
         message: 'Backup creado exitosamente',
         timestamp: new Date().toISOString(),
         filename: `backup_${timestamp}.json`,
         path: backupFile
-      });
+      };
+
+      console.log('📤 Enviando respuesta:', response);
+
+      res.json(response);
     } catch (error) {
       next(error);
     }
