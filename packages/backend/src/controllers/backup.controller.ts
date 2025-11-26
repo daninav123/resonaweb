@@ -3,6 +3,8 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs';
+import archiver from 'archiver';
+import extract from 'extract-zip';
 import { AppError } from '../middleware/error.middleware';
 
 const execAsync = promisify(exec);
@@ -28,20 +30,33 @@ class BackupController {
       }
 
       const files = fs.readdirSync(backupDir)
-        .filter(f => f.startsWith('backup_') && f.endsWith('.json'))
+        .filter(f => f.startsWith('backup_') && (f.endsWith('.zip') || f.endsWith('.json')))
         .map(filename => {
           const filepath = path.join(backupDir, filename);
           const stats = fs.statSync(filepath);
-          const data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+          
+          let data: any = { timestamp: stats.mtime, data: {} };
+          
+          // Si es JSON, leer los datos
+          if (filename.endsWith('.json')) {
+            try {
+              data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+            } catch (e) {
+              // Si falla, usar datos por defecto
+            }
+          }
 
           return {
             filename,
-            date: new Date(data.timestamp).toLocaleString('es-ES'),
-            size: `${(stats.size / 1024).toFixed(2)} KB`,
-            products: data.data.products?.length || 0,
-            users: data.data.users?.length || 0,
-            packs: data.data.packs?.length || 0,
-            timestamp: data.timestamp
+            date: new Date(data.timestamp || stats.mtime).toLocaleString('es-ES'),
+            size: stats.size >= 1024 * 1024 
+              ? `${(stats.size / 1024 / 1024).toFixed(2)} MB` 
+              : `${(stats.size / 1024).toFixed(2)} KB`,
+            products: data.data?.products?.length || 0,
+            users: data.data?.users?.length || 0,
+            packs: data.data?.packs?.length || 0,
+            timestamp: data.timestamp || stats.mtime,
+            type: filename.endsWith('.zip') ? 'complete' : 'database'
           };
         })
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -87,7 +102,8 @@ class BackupController {
 
       const now = new Date();
       const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
-      const backupFile = path.join(backupScript, `backup_${timestamp}.json`);
+      const backupFile = path.join(backupScript, `backup_${timestamp}.zip`);
+      const tempDbFile = path.join(backupScript, `temp_${timestamp}.json`);
 
       // Extraer TODOS los datos de la base de datos
       console.log('📊 Extrayendo todos los datos...');
@@ -168,19 +184,60 @@ class BackupController {
 
       console.log('✅ Datos extraídos completamente');
 
-      // Guardar backup
-      fs.writeFileSync(backupFile, JSON.stringify(backup, null, 2));
-
       await prisma.$disconnect();
 
-      console.log('✅ Backup creado:', backupFile);
-      console.log('📁 Tamaño:', (fs.statSync(backupFile).size / 1024).toFixed(2), 'KB');
+      // Guardar JSON temporal
+      console.log('💾 Guardando datos temporales...');
+      fs.writeFileSync(tempDbFile, JSON.stringify(backup, null, 2));
+
+      // Crear archivo ZIP
+      console.log('📦 Creando archivo ZIP con imágenes...');
+      
+      const output = fs.createWriteStream(backupFile);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      await new Promise<void>((resolve, reject) => {
+        output.on('close', () => {
+          // Borrar archivo temporal
+          fs.unlinkSync(tempDbFile);
+          
+          console.log('✅ Backup ZIP creado:', backupFile);
+          console.log('📁 Tamaño:', (archive.pointer() / 1024 / 1024).toFixed(2), 'MB');
+          resolve();
+        });
+
+        archive.on('error', (err) => {
+          reject(err);
+        });
+
+        archive.pipe(output);
+
+        // Añadir el JSON de la base de datos
+        archive.file(tempDbFile, { name: 'database.json' });
+
+        // Añadir carpeta de imágenes de productos
+        const uploadsProductsDir = path.join(__dirname, '../../uploads/products');
+        if (fs.existsSync(uploadsProductsDir)) {
+          archive.directory(uploadsProductsDir, 'uploads/products');
+          console.log('📸 Incluyendo imágenes de productos...');
+        }
+
+        // Añadir carpeta de facturas
+        const uploadsInvoicesDir = path.join(__dirname, '../../uploads/invoices');
+        if (fs.existsSync(uploadsInvoicesDir)) {
+          archive.directory(uploadsInvoicesDir, 'uploads/invoices');
+          console.log('🧾 Incluyendo facturas...');
+        }
+
+        archive.finalize();
+      });
 
       const response = {
-        message: 'Backup creado exitosamente',
+        message: 'Backup completo creado exitosamente',
         timestamp: new Date().toISOString(),
-        filename: `backup_${timestamp}.json`,
-        path: backupFile
+        filename: `backup_${timestamp}.zip`,
+        path: backupFile,
+        includesImages: true
       };
 
       console.log('📤 Enviando respuesta:', response);
@@ -214,8 +271,24 @@ class BackupController {
 
       console.log('🔄 Restaurando backup:', backupPath);
 
-      // Leer backup
-      const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+      let backupData: any;
+      let tempExtractDir: string | null = null;
+
+      // Detectar si es ZIP o JSON
+      if (filename.endsWith('.zip')) {
+        console.log('📦 Descomprimiendo backup ZIP...');
+        tempExtractDir = path.join(__dirname, `../../../../backups/temp_${Date.now()}`);
+        
+        // Extraer ZIP
+        await extract(backupPath, { dir: tempExtractDir });
+        
+        // Leer el database.json del ZIP
+        const dbJsonPath = path.join(tempExtractDir, 'database.json');
+        backupData = JSON.parse(fs.readFileSync(dbJsonPath, 'utf8'));
+      } else {
+        // Es JSON directo (backups antiguos)
+        backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+      }
       
       const { PrismaClient } = require('@prisma/client');
       const prisma = new PrismaClient();
@@ -349,9 +422,69 @@ class BackupController {
         restored.others += await restoreSimple('quoteRequest', backupData.data.quoteRequests);
         restored.others += await restoreSimple('auditLog', backupData.data.auditLogs);
 
-        console.log('✅ Restauración completada');
+        console.log('✅ Restauración de base de datos completada');
 
         await prisma.$disconnect();
+
+        // Restaurar imágenes si es un backup ZIP
+        if (tempExtractDir && filename.endsWith('.zip')) {
+          console.log('📸 Restaurando imágenes...');
+          
+          const extractedUploadsDir = path.join(tempExtractDir, 'uploads');
+          const targetUploadsDir = path.join(__dirname, '../../uploads');
+          
+          if (fs.existsSync(extractedUploadsDir)) {
+            // Copiar productos
+            const extractedProductsDir = path.join(extractedUploadsDir, 'products');
+            const targetProductsDir = path.join(targetUploadsDir, 'products');
+            
+            if (fs.existsSync(extractedProductsDir)) {
+              // Limpiar carpeta destino
+              if (fs.existsSync(targetProductsDir)) {
+                fs.rmSync(targetProductsDir, { recursive: true, force: true });
+              }
+              fs.mkdirSync(targetProductsDir, { recursive: true });
+              
+              // Copiar archivos
+              const files = fs.readdirSync(extractedProductsDir);
+              for (const file of files) {
+                fs.copyFileSync(
+                  path.join(extractedProductsDir, file),
+                  path.join(targetProductsDir, file)
+                );
+              }
+              console.log(`✅ ${files.length} imágenes de productos restauradas`);
+            }
+            
+            // Copiar facturas
+            const extractedInvoicesDir = path.join(extractedUploadsDir, 'invoices');
+            const targetInvoicesDir = path.join(targetUploadsDir, 'invoices');
+            
+            if (fs.existsSync(extractedInvoicesDir)) {
+              // Limpiar carpeta destino
+              if (fs.existsSync(targetInvoicesDir)) {
+                fs.rmSync(targetInvoicesDir, { recursive: true, force: true });
+              }
+              fs.mkdirSync(targetInvoicesDir, { recursive: true });
+              
+              // Copiar archivos
+              const files = fs.readdirSync(extractedInvoicesDir);
+              for (const file of files) {
+                fs.copyFileSync(
+                  path.join(extractedInvoicesDir, file),
+                  path.join(targetInvoicesDir, file)
+                );
+              }
+              console.log(`✅ ${files.length} facturas restauradas`);
+            }
+          }
+          
+          // Limpiar directorio temporal
+          console.log('🧹 Limpiando archivos temporales...');
+          fs.rmSync(tempExtractDir, { recursive: true, force: true });
+        }
+
+        console.log('✅ Restauración completada');
 
         res.json({
           message: 'Backup restaurado exitosamente',
@@ -361,10 +494,17 @@ class BackupController {
             products: backupData.data.products?.length || 0,
             categories: backupData.data.categories?.length || 0,
             packs: backupData.data.packs?.length || 0
-          }
+          },
+          imagesRestored: filename.endsWith('.zip')
         });
       } catch (error) {
         await prisma.$disconnect();
+        
+        // Limpiar directorio temporal en caso de error
+        if (tempExtractDir && fs.existsSync(tempExtractDir)) {
+          fs.rmSync(tempExtractDir, { recursive: true, force: true });
+        }
+        
         throw error;
       }
     } catch (error) {
