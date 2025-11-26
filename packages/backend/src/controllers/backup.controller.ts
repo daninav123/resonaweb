@@ -76,7 +76,8 @@ class BackupController {
       const { PrismaClient } = require('@prisma/client');
       const prisma = new PrismaClient();
 
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
       const backupFile = path.join(backupScript, `backup_${timestamp}.json`);
 
       // Extraer datos
