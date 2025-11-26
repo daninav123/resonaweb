@@ -64,13 +64,67 @@ class BackupController {
         throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
       }
 
-      const scriptPath = path.join(__dirname, '../scripts/backup-now.js');
+      // Ejecutar script de backup directamente usando require
+      const backupScript = path.join(__dirname, '../../../backups/database');
       
-      await execAsync(`node "${scriptPath}"`);
+      // Asegurar que existe el directorio
+      if (!fs.existsSync(backupScript)) {
+        fs.mkdirSync(backupScript, { recursive: true });
+      }
+
+      // Importar y ejecutar la función de backup
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      const backupFile = path.join(backupScript, `backup_${timestamp}.json`);
+
+      // Extraer datos
+      const backup = {
+        timestamp: new Date().toISOString(),
+        version: '1.0',
+        data: {
+          users: await prisma.user.findMany(),
+          products: await prisma.product.findMany({
+            include: {
+              orderItems: true,
+              packItems: true,
+              reviews: true,
+              favorites: true
+            }
+          }),
+          categories: await prisma.category.findMany(),
+          packs: await prisma.pack.findMany({
+            include: {
+              items: {
+                include: {
+                  product: true
+                }
+              }
+            }
+          }),
+          orders: await prisma.order.findMany({
+            include: {
+              items: true,
+              user: true
+            }
+          }),
+          invoices: await prisma.invoice.findMany(),
+          coupons: await prisma.coupon.findMany(),
+          companySettings: await prisma.companySettings.findMany(),
+          blogPosts: await prisma.blogPost.findMany()
+        }
+      };
+
+      // Guardar backup
+      fs.writeFileSync(backupFile, JSON.stringify(backup, null, 2));
+
+      await prisma.$disconnect();
 
       res.json({
         message: 'Backup creado exitosamente',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        filename: `backup_${timestamp}.json`
       });
     } catch (error) {
       next(error);
