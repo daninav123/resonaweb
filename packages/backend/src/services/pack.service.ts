@@ -416,6 +416,26 @@ class PackService {
     logger.info(`Pack updated: ${updatedPack!.name}`);
     return updatedPack;
   }
+
+  /**
+   * Eliminar pack
+   */
+  async deletePack(packId: string) {
+    const pack = await prisma.pack.findUnique({
+      where: { id: packId },
+      select: { name: true }
+    });
+
+    if (!pack) {
+      throw new AppError(404, 'Pack no encontrado', 'PACK_NOT_FOUND');
+    }
+
+    await prisma.pack.delete({
+      where: { id: packId }
+    });
+
+    logger.info(`Pack deleted: ${pack.name}`);
+  }
 }
 
 export const packService = new PackService();

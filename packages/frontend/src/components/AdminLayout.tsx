@@ -19,7 +19,8 @@ import {
   Home,
   Menu,
   X,
-  Mail
+  Mail,
+  Boxes
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -42,6 +43,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
     { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
     { path: '/admin/products', icon: Package, label: 'Productos' },
+    { path: '/admin/packs', icon: Boxes, label: 'Packs' },
     { path: '/admin/categories', icon: Grid, label: 'Categorías' },
     { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
     { path: '/admin/users', icon: Users, label: 'Usuarios' },

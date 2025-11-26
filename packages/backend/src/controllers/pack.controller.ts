@@ -128,6 +128,26 @@ class PackController {
       next(error);
     }
   }
+
+  /**
+   * Eliminar pack (ADMIN)
+   */
+  async deletePack(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user || (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN')) {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      const { id } = req.params;
+      await packService.deletePack(id);
+      
+      res.json({
+        message: 'Pack eliminado correctamente',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const packController = new PackController();

@@ -13,5 +13,6 @@ router.get('/:id/max-availability', packController.getMaxAvailability.bind(packC
 // Rutas admin
 router.post('/', authenticate, authorize('ADMIN', 'SUPERADMIN'), packController.createPack.bind(packController));
 router.put('/:id', authenticate, authorize('ADMIN', 'SUPERADMIN'), packController.updatePack.bind(packController));
+router.delete('/:id', authenticate, authorize('ADMIN', 'SUPERADMIN'), packController.deletePack.bind(packController));
 
 export default router;
