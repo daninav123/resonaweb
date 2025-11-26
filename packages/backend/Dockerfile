@@ -1,13 +1,13 @@
-# Dockerfile para Railway - Sin Chromium
-FROM node:18-slim
+# Railway Dockerfile - Optimized Build
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar package files
+# Copiar archivos de dependencias
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Instalar TODAS las dependencias (incluyendo devDependencies para el build)
+# Instalar dependencias
 RUN npm ci
 
 # Generar Prisma Client
@@ -16,8 +16,24 @@ RUN npx prisma generate
 # Copiar código fuente
 COPY . .
 
-# Compilar TypeScript usando script personalizado
+# Compilar TypeScript
 RUN npm run build
+
+# Producción
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copiar package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Instalar solo dependencias de producción
+RUN npm ci --omit=dev
+
+# Copiar Prisma Client generado y código compilado desde builder
+COPY --from=builder /app/node_modules/.prisma /app/node_modules/.prisma
+COPY --from=builder /app/dist ./dist
 
 # Exponer puerto
 EXPOSE 3001
