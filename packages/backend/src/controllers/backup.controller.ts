@@ -46,6 +46,11 @@ class BackupController {
         })
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
+      // No cachear esta respuesta
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+
       res.json({
         backups: files,
         count: files.length
@@ -122,10 +127,14 @@ class BackupController {
 
       await prisma.$disconnect();
 
+      console.log('✅ Backup creado:', backupFile);
+      console.log('📁 Tamaño:', (fs.statSync(backupFile).size / 1024).toFixed(2), 'KB');
+
       res.json({
         message: 'Backup creado exitosamente',
         timestamp: new Date().toISOString(),
-        filename: `backup_${timestamp}.json`
+        filename: `backup_${timestamp}.json`,
+        path: backupFile
       });
     } catch (error) {
       next(error);

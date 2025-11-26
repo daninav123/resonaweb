@@ -42,9 +42,15 @@ export default function BackupManager() {
     try {
       setCreating(true);
       const response = await api.post('/admin/backups/create');
+      console.log('Backup created:', response.data);
       toast.success('Backup creado exitosamente');
-      loadBackups();
+      
+      // Esperar un poco y recargar
+      setTimeout(() => {
+        loadBackups();
+      }, 500);
     } catch (error: any) {
+      console.error('Create backup error:', error);
       toast.error(error.response?.data?.message || 'Error al crear backup');
     } finally {
       setCreating(false);
