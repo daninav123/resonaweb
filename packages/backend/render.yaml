@@ -4,7 +4,7 @@ services:
     env: node
     region: frankfurt
     plan: free
-    buildCommand: npm install && npm run build && npx prisma generate && npx prisma migrate deploy
+    buildCommand: cd ../.. && npm install --ignore-scripts && cd packages/backend && npm install && npm run build && npx prisma generate && npx prisma migrate deploy
     startCommand: npm start
     envVars:
       - key: NODE_ENV
