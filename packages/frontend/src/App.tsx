@@ -41,7 +41,6 @@ const EventCalculatorPage = lazy(() => import('./pages/EventCalculatorPage'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
-const PacksManager = lazy(() => import('./pages/admin/PacksManager'));
 const OrdersManager = lazy(() => import('./pages/admin/OrdersManager'));
 const OrderDetailPage = lazy(() => import('./pages/admin/OrderDetailPage'));
 const ManualInvoicePage = lazy(() => import('./pages/admin/ManualInvoicePage'));
@@ -158,7 +157,6 @@ function App() {
             <Route element={<PrivateRoute requireAdmin />}>
               <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
               <Route path="/admin/products" element={<AdminLayout><ProductsManager /></AdminLayout>} />
-              <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
               <Route path="/admin/categories" element={<AdminLayout><CategoriesManager /></AdminLayout>} />
               <Route path="/admin/stock-alerts" element={<AdminLayout><StockAlerts /></AdminLayout>} />
               <Route path="/admin/orders" element={<AdminLayout><OrdersManager /></AdminLayout>} />
