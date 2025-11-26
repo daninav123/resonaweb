@@ -84,7 +84,25 @@ app.use(helmet({
   contentSecurityPolicy: false,
 }));
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
+    
+    // Permitir requests sin origin (mobile apps, Postman, etc)
+    if (!origin) return callback(null, true);
+    
+    // Verificar si el origin está en la lista exacta
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Permitir cualquier subdominio de vercel.app
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Rechazar otros origins
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 
@@ -94,7 +112,7 @@ app.use('/uploads', (req, res, next) => {
   const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
   const origin = req.headers.origin;
   
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app'))) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   
