@@ -19,42 +19,80 @@ async function backupDatabase() {
       fs.mkdirSync(backupDir, { recursive: true });
     }
 
-    console.log('📊 Extrayendo datos...\n');
+    console.log('📊 Extrayendo TODOS los datos de la base de datos...\n');
 
-    // Extraer todos los datos
+    // Extraer TODOS los datos
     const backup = {
       timestamp: new Date().toISOString(),
-      version: '1.0',
+      version: '2.0',
       data: {
+        // Usuarios y datos relacionados
         users: await prisma.user.findMany(),
-        products: await prisma.product.findMany({
-          include: {
-            orderItems: true,
-            packItems: true,
-            reviews: true,
-            favorites: true
-          }
-        }),
+        billingData: await prisma.billingData.findMany(),
+        userDiscounts: await prisma.userDiscount.findMany(),
+        customerNotes: await prisma.customerNote.findMany(),
+        
+        // Catálogo de productos
         categories: await prisma.category.findMany(),
-        packs: await prisma.pack.findMany({
-          include: {
-            items: {
-              include: {
-                product: true
-              }
-            }
-          }
-        }),
-        orders: await prisma.order.findMany({
-          include: {
-            items: true,
-            user: true
-          }
-        }),
+        products: await prisma.product.findMany(),
+        productSpecifications: await prisma.productSpecification.findMany(),
+        productComponents: await prisma.productComponent.findMany(),
+        
+        // Packs
+        packs: await prisma.pack.findMany(),
+        packItems: await prisma.packItem.findMany(),
+        
+        // Pedidos y relacionados
+        orders: await prisma.order.findMany(),
+        orderItems: await prisma.orderItem.findMany(),
+        orderNotes: await prisma.orderNote.findMany(),
+        orderServices: await prisma.orderService.findMany(),
+        orderModifications: await prisma.orderModification.findMany(),
+        
+        // Entregas
+        deliveries: await prisma.delivery.findMany(),
+        
+        // Facturas y pagos
         invoices: await prisma.invoice.findMany(),
+        customInvoices: await prisma.customInvoice.findMany(),
+        payments: await prisma.payment.findMany(),
+        
+        // Servicios
+        services: await prisma.service.findMany(),
+        shippingRates: await prisma.shippingRate.findMany(),
+        
+        // Reviews y favoritos
+        reviews: await prisma.review.findMany(),
+        favorites: await prisma.favorite.findMany(),
+        
+        // Blog
+        blogPosts: await prisma.blogPost.findMany(),
+        blogCategories: await prisma.blogCategory.findMany(),
+        blogTags: await prisma.blogTag.findMany(),
+        
+        // Cupones
         coupons: await prisma.coupon.findMany(),
+        couponUsages: await prisma.couponUsage.findMany(),
+        
+        // Configuración
         companySettings: await prisma.companySettings.findMany(),
-        blogPosts: await prisma.blogPost.findMany()
+        shippingConfig: await prisma.shippingConfig.findMany(),
+        systemConfig: await prisma.systemConfig.findMany(),
+        
+        // Notificaciones
+        notifications: await prisma.notification.findMany(),
+        emailNotifications: await prisma.emailNotification.findMany(),
+        
+        // Analytics y métricas
+        productInteractions: await prisma.productInteraction.findMany(),
+        productDemandAnalytics: await prisma.productDemandAnalytics.findMany(),
+        
+        // Solicitudes de presupuesto
+        quoteRequests: await prisma.quoteRequest.findMany(),
+        
+        // API y seguridad
+        apiKeys: await prisma.apiKey.findMany(),
+        auditLogs: await prisma.auditLog.findMany()
       }
     };
 
