@@ -25,8 +25,16 @@ export default function BackupManager() {
     try {
       setLoading(true);
       const response = await api.get('/admin/backups');
-      console.log('Backups response:', response.data);
-      setBackups(response.data?.backups || response.data || []);
+      console.log('Full response:', response);
+      console.log('Response data:', response.data);
+      console.log('Response data type:', typeof response.data);
+      
+      // Axios devuelve los datos en response.data
+      const data = response.data || response || {};
+      const backupList = data.backups || [];
+      
+      console.log('Backups list:', backupList);
+      setBackups(backupList);
     } catch (error: any) {
       console.error('Error al cargar backups:', error);
       console.error('Error response:', error.response?.data);

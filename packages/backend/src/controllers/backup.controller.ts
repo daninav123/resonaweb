@@ -170,14 +170,98 @@ class BackupController {
         throw new AppError(404, 'Backup no encontrado', 'BACKUP_NOT_FOUND');
       }
 
-      const scriptPath = path.join(__dirname, '../scripts/restore-backup.js');
-      
-      await execAsync(`node "${scriptPath}" "${filename}"`);
+      console.log('🔄 Restaurando backup:', backupPath);
 
-      res.json({
-        message: 'Backup restaurado exitosamente',
-        filename
-      });
+      // Leer backup
+      const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+      
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+
+      try {
+        console.log('🗑️  Limpiando datos actuales...');
+
+        // Limpiar en orden correcto para evitar errores de foreign key
+        await prisma.orderItem.deleteMany();
+        await prisma.order.deleteMany();
+        await prisma.invoice.deleteMany();
+        await prisma.packItem.deleteMany();
+        await prisma.pack.deleteMany();
+        await prisma.review.deleteMany();
+        await prisma.favorite.deleteMany();
+        await prisma.product.deleteMany();
+        await prisma.category.deleteMany();
+        await prisma.user.deleteMany();
+        await prisma.coupon.deleteMany();
+        await prisma.companySettings.deleteMany();
+        await prisma.blogPost.deleteMany();
+
+        console.log('✅ Datos limpiados');
+        console.log('📥 Restaurando datos...');
+
+        // Restaurar categorías
+        if (backupData.data.categories?.length > 0) {
+          for (const cat of backupData.data.categories) {
+            await prisma.category.create({ data: cat });
+          }
+          console.log(`✅ ${backupData.data.categories.length} categorías restauradas`);
+        }
+
+        // Restaurar usuarios
+        if (backupData.data.users?.length > 0) {
+          for (const user of backupData.data.users) {
+            const { orderItems, orders, reviews, favorites, ...userData } = user;
+            await prisma.user.create({ data: userData });
+          }
+          console.log(`✅ ${backupData.data.users.length} usuarios restaurados`);
+        }
+
+        // Restaurar productos
+        if (backupData.data.products?.length > 0) {
+          for (const product of backupData.data.products) {
+            const { orderItems, packItems, reviews, favorites, ...productData } = product;
+            await prisma.product.create({ data: productData });
+          }
+          console.log(`✅ ${backupData.data.products.length} productos restaurados`);
+        }
+
+        // Restaurar packs
+        if (backupData.data.packs?.length > 0) {
+          for (const pack of backupData.data.packs) {
+            const { items, ...packData } = pack;
+            await prisma.pack.create({
+              data: {
+                ...packData,
+                items: {
+                  create: items.map((item: any) => ({
+                    productId: item.productId,
+                    quantity: item.quantity
+                  }))
+                }
+              }
+            });
+          }
+          console.log(`✅ ${backupData.data.packs.length} packs restaurados`);
+        }
+
+        console.log('✅ Restauración completada');
+
+        await prisma.$disconnect();
+
+        res.json({
+          message: 'Backup restaurado exitosamente',
+          filename,
+          restored: {
+            users: backupData.data.users?.length || 0,
+            products: backupData.data.products?.length || 0,
+            categories: backupData.data.categories?.length || 0,
+            packs: backupData.data.packs?.length || 0
+          }
+        });
+      } catch (error) {
+        await prisma.$disconnect();
+        throw error;
+      }
     } catch (error) {
       next(error);
     }
