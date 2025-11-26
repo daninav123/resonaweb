@@ -21,7 +21,7 @@ class BackupController {
         throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
       }
 
-      const backupDir = path.join(__dirname, '../../../backups/database');
+      const backupDir = path.join(__dirname, '../../../../backups/database');
       
       if (!fs.existsSync(backupDir)) {
         fs.mkdirSync(backupDir, { recursive: true });
@@ -69,8 +69,8 @@ class BackupController {
         throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
       }
 
-      // Ejecutar script de backup directamente usando require
-      const backupScript = path.join(__dirname, '../../../backups/database');
+      // Ejecutar script de backup directamente usando require  
+      const backupScript = path.join(__dirname, '../../../../backups/database');
       
       // Asegurar que existe el directorio
       if (!fs.existsSync(backupScript)) {
@@ -156,7 +156,7 @@ class BackupController {
         throw new AppError(400, 'Filename requerido', 'MISSING_FILENAME');
       }
 
-      const backupPath = path.join(__dirname, '../../../backups/database', filename);
+      const backupPath = path.join(__dirname, '../../../../backups/database', filename);
 
       if (!fs.existsSync(backupPath)) {
         throw new AppError(404, 'Backup no encontrado', 'BACKUP_NOT_FOUND');
@@ -190,7 +190,7 @@ class BackupController {
         throw new AppError(400, 'Filename requerido', 'MISSING_FILENAME');
       }
 
-      const backupPath = path.join(__dirname, '../../../backups/database', filename);
+      const backupPath = path.join(__dirname, '../../../../backups/database', filename);
 
       if (!fs.existsSync(backupPath)) {
         throw new AppError(404, 'Backup no encontrado', 'BACKUP_NOT_FOUND');
