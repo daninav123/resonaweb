@@ -1,6 +1,8 @@
 import { prisma } from '../index';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+import { packPricingService } from './pack-pricing.service';
+import { Prisma } from '@prisma/client';
 
 class PackService {
   /**
@@ -271,8 +273,9 @@ class PackService {
   async createPack(data: {
     name: string;
     description: string;
-    pricePerDay: number;
-    discount: number;
+    priceExtra?: number;
+    discount?: number;
+    autoCalculate?: boolean;
     items: Array<{ productId: string; quantity: number }>;
     imageUrl?: string;
     featured?: boolean;
@@ -282,13 +285,17 @@ class PackService {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
+    // Crear pack temporalmente para calcular precio
     const pack = await prisma.pack.create({
       data: {
         name: data.name,
         slug,
         description: data.description,
-        pricePerDay: data.pricePerDay,
-        discount: data.discount,
+        priceExtra: new Prisma.Decimal(data.priceExtra || 0),
+        discount: new Prisma.Decimal(data.discount || 0),
+        autoCalculate: data.autoCalculate !== false, // Por defecto true
+        basePrice: 0,
+        pricePerDay: 0, // Se calculará después
         imageUrl: data.imageUrl,
         featured: data.featured || false,
         items: {
@@ -307,8 +314,25 @@ class PackService {
       },
     });
 
-    logger.info(`Pack created: ${pack.name} with ${pack.items.length} products`);
-    return pack;
+    // Calcular y actualizar precio automáticamente
+    if (pack.autoCalculate) {
+      await packPricingService.updatePackPrice(pack.id);
+    }
+
+    // Obtener pack actualizado
+    const updatedPack = await prisma.pack.findUnique({
+      where: { id: pack.id },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    logger.info(`Pack created: ${updatedPack!.name} with ${updatedPack!.items.length} products`);
+    return updatedPack;
   }
 
   /**
@@ -319,8 +343,9 @@ class PackService {
     data: {
       name?: string;
       description?: string;
-      pricePerDay?: number;
+      priceExtra?: number;
       discount?: number;
+      autoCalculate?: boolean;
       imageUrl?: string;
       featured?: boolean;
       isActive?: boolean;
@@ -342,8 +367,9 @@ class PackService {
           slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
         }),
         ...(data.description && { description: data.description }),
-        ...(data.pricePerDay !== undefined && { pricePerDay: data.pricePerDay }),
-        ...(data.discount !== undefined && { discount: data.discount }),
+        ...(data.priceExtra !== undefined && { priceExtra: new Prisma.Decimal(data.priceExtra) }),
+        ...(data.discount !== undefined && { discount: new Prisma.Decimal(data.discount) }),
+        ...(data.autoCalculate !== undefined && { autoCalculate: data.autoCalculate }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
         ...(data.featured !== undefined && { featured: data.featured }),
         ...(data.isActive !== undefined && { isActive: data.isActive }),
@@ -365,8 +391,30 @@ class PackService {
       },
     });
 
-    logger.info(`Pack updated: ${pack.name}`);
-    return pack;
+    // Recalcular precio si autoCalculate está activado
+    const currentPack = await prisma.pack.findUnique({
+      where: { id: packId },
+      select: { autoCalculate: true }
+    });
+
+    if (currentPack?.autoCalculate) {
+      await packPricingService.updatePackPrice(packId);
+    }
+
+    // Obtener pack actualizado
+    const updatedPack = await prisma.pack.findUnique({
+      where: { id: packId },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    logger.info(`Pack updated: ${updatedPack!.name}`);
+    return updatedPack;
   }
 }
 

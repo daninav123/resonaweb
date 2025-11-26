@@ -440,8 +440,14 @@ model Pack {
   description String    @db.Text
   imageUrl    String?
   
-  pricePerDay Decimal   @db.Decimal(10, 2)
-  discount    Decimal   @db.Decimal(5, 2)
+  // Cálculo de precios
+  basePrice     Decimal   @db.Decimal(10, 2) @default(0)  // Suma automática de productos
+  priceExtra    Decimal   @db.Decimal(10, 2) @default(0)  // Extra editable
+  autoCalculate Boolean   @default(true)                   // Si calcula automáticamente
+  
+  // Precio final
+  pricePerDay   Decimal   @db.Decimal(10, 2)              // Precio total (base + extra - descuento)
+  discount      Decimal   @db.Decimal(5, 2) @default(0)   // Descuento en porcentaje
   
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)
