@@ -43,9 +43,8 @@ export class ProductController {
       }
 
       // Build where clause
-      let where: any = {
-        isPack: false, // Excluir packs de la lista de productos
-      };
+      let where: any = {};
+      let isPacksCategory = false;
       
       // Filter by category slug if provided
       if (categorySlug) {
@@ -57,10 +56,25 @@ export class ProductController {
         
         if (category) {
           console.log('✅ Categoría encontrada:', category.name, 'ID:', category.id);
-          where.categoryId = category.id;
+          
+          // Verificar si es la categoría de packs
+          isPacksCategory = category.slug.toLowerCase() === 'packs' || category.name.toLowerCase() === 'packs';
+          
+          if (isPacksCategory) {
+            console.log('📦 Es categoría de PACKS - mostrando solo packs');
+            where.isPack = true; // Mostrar SOLO packs
+          } else {
+            console.log('📂 Categoría normal - mostrando productos sin packs');
+            where.categoryId = category.id;
+            where.isPack = false; // Excluir packs
+          }
         } else {
           console.log('❌ No se encontró categoría con slug:', categorySlug);
+          where.isPack = false; // Por defecto, excluir packs
         }
+      } else {
+        // Sin categoría, excluir packs
+        where.isPack = false;
       }
 
       console.log('📦 Where clause para productos:', where);
