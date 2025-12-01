@@ -9,11 +9,14 @@ export class CategoryController {
     try {
       const includeInactive = req.query.includeInactive === 'true';
       const parentId = req.query.parentId as string | undefined;
+      // Si es admin, incluir categorías ocultas
+      const includeHidden = (req as any).user?.role === 'ADMIN' || (req as any).user?.role === 'SUPERADMIN';
 
       console.log('📦 Fetching todas las categorías...');
       const categories = await categoryService.getAllCategories({
         includeInactive,
         parentId: parentId === 'null' ? null : parentId,
+        includeHidden,
       });
 
       console.log(`✅ Categorías encontradas: ${categories?.length || 0}`);

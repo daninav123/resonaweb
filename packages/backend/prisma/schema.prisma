@@ -289,6 +289,7 @@ model Category {
   
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)
+  isHidden    Boolean   @default(false)  // Categoría oculta (solo admin)
   sortOrder   Int       @default(0)
   
   createdAt   DateTime  @default(now())

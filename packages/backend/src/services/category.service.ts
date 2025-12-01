@@ -12,14 +12,20 @@ export class CategoryService {
   async getAllCategories(params?: {
     includeInactive?: boolean;
     parentId?: string | null;
+    includeHidden?: boolean;  // Para admin
   }) {
     try {
-      const { includeInactive = false, parentId } = params || {};
+      const { includeInactive = false, parentId, includeHidden = false } = params || {};
 
       const where: any = {};
       
       if (!includeInactive) {
         where.isActive = true;
+      }
+      
+      // Excluir categorías ocultas a menos que sea admin
+      if (!includeHidden) {
+        where.isHidden = false;
       }
       
       if (parentId !== undefined) {
@@ -185,6 +191,7 @@ export class CategoryService {
           imageUrl: data.imageUrl,
           featured: data.featured,
           isActive: data.isActive,
+          isHidden: data.isHidden,
           sortOrder: data.sortOrder,
         },
       });
