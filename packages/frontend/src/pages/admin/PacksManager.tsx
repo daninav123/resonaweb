@@ -87,7 +87,8 @@ const PacksManager = () => {
 
   const loadProducts = async () => {
     try {
-      const response: any = await api.get('/products');
+      // Cargar TODOS los productos sin límite
+      const response: any = await api.get('/products?limit=1000');
       console.log('📦 Respuesta de productos:', response);
       
       let prods = [];
@@ -469,52 +470,79 @@ const PacksManager = () => {
                     <div className="space-y-3">
                       {formData.items.map((item, index) => {
                         const availableProducts = getAvailableProducts();
+                        const selectedProduct = availableProducts.find(p => p.id === item.productId);
+                        
                         return (
-                          <div key={index} className="flex gap-3 items-end bg-gray-50 p-3 rounded">
-                            <div className="flex-1">
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Producto {availableProducts.length > 0 && `(${availableProducts.length} disponibles)`}
+                          <div key={index} className="bg-gray-50 p-3 rounded">
+                            <div className="flex justify-between items-center mb-2">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Producto {index + 1} {availableProducts.length > 0 && `(${availableProducts.length} disponibles)`}
                               </label>
-                              <select
-                                value={item.productId}
-                                onChange={(e) => updateProduct(index, 'productId', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                              <button
+                                onClick={() => removeProduct(index)}
+                                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                title="Eliminar"
                               >
-                                <option value="">Seleccionar producto...</option>
-                                {availableProducts.length === 0 ? (
-                                  <option value="" disabled>No hay productos disponibles con estos filtros</option>
-                                ) : (
-                                  availableProducts.map((product) => (
-                                    <option key={product.id} value={product.id}>
-                                      {product.name} - €{product.pricePerDay}/día
-                                      {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
-                                      {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
-                                    </option>
-                                  ))
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            <div className="flex gap-3 items-start">
+                              {/* Lista de productos con scroll */}
+                              <div className="flex-1">
+                                {selectedProduct && (
+                                  <div className="mb-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
+                                    <strong>Seleccionado:</strong> {selectedProduct.name} - €{selectedProduct.pricePerDay}/día
+                                  </div>
                                 )}
-                              </select>
-                            </div>
+                                
+                                <div className="border border-gray-300 rounded max-h-48 overflow-y-auto bg-white">
+                                  {availableProducts.length === 0 ? (
+                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                      No hay productos disponibles con estos filtros
+                                    </div>
+                                  ) : (
+                                    <div className="divide-y">
+                                      {availableProducts.map((product) => (
+                                        <button
+                                          key={product.id}
+                                          type="button"
+                                          onClick={() => updateProduct(index, 'productId', product.id)}
+                                          className={`w-full text-left px-3 py-2 hover:bg-blue-50 transition-colors ${
+                                            item.productId === product.id 
+                                              ? 'bg-blue-100 border-l-4 border-blue-500' 
+                                              : ''
+                                          }`}
+                                        >
+                                          <div className="text-sm font-medium text-gray-900">
+                                            {product.name}
+                                          </div>
+                                          <div className="text-xs text-gray-600 mt-0.5">
+                                            €{product.pricePerDay}/día
+                                            {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
+                                            {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
+                                          </div>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
 
-                            <div className="w-24">
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Cantidad
-                              </label>
-                              <input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) => updateProduct(index, 'quantity', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                              />
+                              {/* Campo de cantidad */}
+                              <div className="w-24 flex-shrink-0">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Cantidad
+                                </label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.quantity}
+                                  onChange={(e) => updateProduct(index, 'quantity', e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                                />
+                              </div>
                             </div>
-
-                            <button
-                              onClick={() => removeProduct(index)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded"
-                              title="Eliminar"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
                           </div>
                         );
                       })}
