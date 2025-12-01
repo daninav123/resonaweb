@@ -109,8 +109,21 @@ export async function isAuthenticated(page: Page): Promise<boolean> {
  */
 export async function clearSession(page: Page) {
   await page.context().clearCookies();
-  await page.evaluate(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  });
+  
+  // Solo limpiar storage si la página está en un contexto válido
+  try {
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  } catch (error) {
+    // Si falla (ej: página no cargada), navegar primero y luego limpiar
+    await page.goto('about:blank');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    }).catch(() => {
+      // Ignorar si aún falla - puede ser que el navegador no lo permita
+    });
+  }
 }
