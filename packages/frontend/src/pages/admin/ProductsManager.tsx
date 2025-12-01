@@ -452,7 +452,7 @@ const ProductsManager = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-3 mb-4">
+        <div className="grid md:grid-cols-4 gap-3 mb-4">
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -485,6 +485,20 @@ const ProductsManager = () => {
               <p className="text-sm text-gray-600">Categorías</p>
               <p className="text-2xl font-bold text-gray-900">
                 {new Set(products.map(p => p.category?.name).filter(Boolean)).size}
+              </p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div>
+              <p className="text-sm text-gray-600">Valor Total Inventario</p>
+              <p className="text-2xl font-bold text-green-600">
+                €{(products
+                  .filter(p => !(p as any).isPack)
+                  .reduce((acc, p) => acc + ((p.pricePerDay || 0) * (p.realStock || p.stock || 0)), 0)
+                ).toFixed(2)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Precio/día × Stock
               </p>
             </div>
           </div>
