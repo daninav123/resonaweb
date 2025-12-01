@@ -911,6 +911,27 @@ export class ProductService {
   ) {
     const { skip = 0, take = 20, includeSubcategories = false } = params || {};
 
+    // Verificar si la categoría es "PACKS" (por ID o slug)
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { slug: true, name: true }
+    });
+
+    const isPacksCategory = category?.slug?.toLowerCase() === 'packs' || category?.name?.toLowerCase() === 'packs';
+
+    // Si es la categoría de packs, devolver solo packs
+    if (isPacksCategory) {
+      return this.getAllProducts({
+        skip,
+        take,
+        where: {
+          isActive: true,
+          isPack: true, // Mostrar SOLO packs
+        },
+      });
+    }
+
+    // Para otras categorías, devolver productos normales (sin packs)
     let categoryIds = [categoryId];
 
     // If include subcategories, get all child category IDs
