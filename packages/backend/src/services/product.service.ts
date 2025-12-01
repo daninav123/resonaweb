@@ -270,6 +270,8 @@ export class ProductService {
     const relatedProducts: any[] = [];
 
     try {
+      logger.info('🔍 Buscando productos relacionados', { productId, categoryId });
+
       // 1. Buscar packs que incluyan este producto
       const packsWithProduct = await prisma.pack.findMany({
         where: {
@@ -295,6 +297,8 @@ export class ProductService {
         }
       });
 
+      logger.info(`📦 Packs encontrados: ${packsWithProduct.length}`);
+
       // Convertir packs a formato de producto con campo especial
       const packProducts = packsWithProduct.slice(0, 3).map(pack => ({
         id: pack.id,
@@ -311,12 +315,14 @@ export class ProductService {
       // 2. Si no tenemos suficientes relacionados, agregar productos de la misma categoría
       const remainingSlots = 6 - relatedProducts.length;
       
+      logger.info(`🎯 Slots restantes: ${remainingSlots}, categoryId: ${categoryId}`);
+      
       if (remainingSlots > 0 && categoryId) {
         const sameCategory = await prisma.product.findMany({
           where: {
             categoryId: categoryId,
             id: { not: productId }, // Excluir el producto actual
-            status: ProductStatus.ACTIVE,
+            status: ProductStatus.AVAILABLE,
           },
           take: remainingSlots,
           orderBy: [
@@ -334,10 +340,13 @@ export class ProductService {
           }
         });
 
+        logger.info(`🏷️  Productos de la misma categoría encontrados: ${sameCategory.length}`);
         relatedProducts.push(...sameCategory);
       }
+
+      logger.info(`✅ Total productos relacionados: ${relatedProducts.length}`);
     } catch (error) {
-      logger.error('Error fetching related products:', error);
+      logger.error('❌ Error fetching related products:', error);
       // Retornar array vacío en caso de error para no romper la página
     }
 

@@ -30,6 +30,13 @@ export class CategoryService {
       const categories = await prisma.category.findMany({
         where,
         orderBy: { sortOrder: 'asc' },
+        include: {
+          _count: {
+            select: {
+              products: true
+            }
+          }
+        }
       });
 
       console.log(`📊 Categorías en BD (con filtro): ${categories.length}`);
