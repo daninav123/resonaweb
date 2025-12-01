@@ -244,12 +244,18 @@ export class ProductService {
       _avg: { rating: true },
     });
 
-    // Buscar productos relacionados (temporalmente deshabilitado)
+    // Buscar productos relacionados
     let relatedProducts: any[] = [];
     try {
+      logger.info('🚀 Iniciando búsqueda de productos relacionados', { 
+        productId: product.id, 
+        productName: product.name,
+        categoryId: product.categoryId 
+      });
       relatedProducts = await this.getRelatedProducts(product.id, product.categoryId);
+      logger.info('✅ Productos relacionados encontrados:', relatedProducts.length);
     } catch (error) {
-      logger.error('Error en getRelatedProducts, continuando sin productos relacionados:', error);
+      logger.error('❌ Error en getRelatedProducts, continuando sin productos relacionados:', error);
       relatedProducts = [];
     }
 

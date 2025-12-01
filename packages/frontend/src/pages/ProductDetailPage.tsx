@@ -20,7 +20,9 @@ const ProductDetailPage = () => {
     queryKey: ['product', slug],
     queryFn: async () => {
       const response: any = await api.get(`/products/slug/${slug}`);
-      return response.data;
+      console.log('📦 Producto recibido:', response);
+      console.log('🔗 Productos relacionados:', response?.data?.relatedProducts || response?.relatedProducts);
+      return response.data || response;
     },
     enabled: !!slug,
   });
