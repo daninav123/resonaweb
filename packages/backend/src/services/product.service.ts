@@ -267,7 +267,7 @@ export class ProductService {
       // 1. Buscar packs que incluyan este producto
       const packsWithProduct = await prisma.pack.findMany({
         where: {
-          status: 'ACTIVE',
+          isActive: true,
           items: {
             some: {
               productId: productId
@@ -284,8 +284,8 @@ export class ProductService {
           slug: true,
           description: true,
           imageUrl: true,
-          price: true,
-          status: true,
+          pricePerDay: true,
+          isActive: true,
         }
       });
 
@@ -296,7 +296,7 @@ export class ProductService {
         slug: pack.slug,
         description: pack.description,
         mainImageUrl: pack.imageUrl,
-        pricePerDay: pack.price,
+        pricePerDay: pack.pricePerDay,
         isPack: true, // Identificador especial
       }));
 
