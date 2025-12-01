@@ -328,7 +328,7 @@ const PacksManager = () => {
     let totalInstallation = 0;
     let totalCost = 0; // Nuevo: coste total basado en purchasePrice
 
-    formData.items.forEach(item => {
+    formData.items.forEach((item, index) => {
       const product = products.find(p => p.id === item.productId);
       if (product) {
         // Calcular cantidad efectiva:
@@ -338,7 +338,21 @@ const PacksManager = () => {
           ? item.numberOfPeople * item.hoursPerPerson
           : item.quantity;
 
-        totalPricePerDay += Number(product.pricePerDay || 0) * effectiveQuantity;
+        const itemCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+        const itemPrice = Number(product.pricePerDay || 0) * effectiveQuantity;
+
+        console.log(`📦 Item ${index}: ${product.name}`, {
+          numberOfPeople: item.numberOfPeople,
+          hoursPerPerson: item.hoursPerPerson,
+          quantity: item.quantity,
+          effectiveQuantity,
+          purchasePrice: product.purchasePrice,
+          pricePerDay: product.pricePerDay,
+          itemCost,
+          itemPrice
+        });
+
+        totalPricePerDay += itemPrice;
         // Solo sumar si está marcado para incluir
         if (formData.includeShipping) {
           totalShipping += Number(product.shippingCost || 0) * effectiveQuantity;
@@ -347,7 +361,7 @@ const PacksManager = () => {
           totalInstallation += Number(product.installationCost || 0) * effectiveQuantity;
         }
         // Nuevo: calcular coste basado en purchasePrice
-        totalCost += Number(product.purchasePrice || 0) * effectiveQuantity;
+        totalCost += itemCost;
       }
     });
 
