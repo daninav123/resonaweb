@@ -462,6 +462,8 @@ model Pack {
   
   // Configuración
   autoCalculate           Boolean   @default(true)                  // Si calcula automáticamente los precios
+  includeShipping         Boolean   @default(true)                  // Si incluye transporte en el precio
+  includeInstallation     Boolean   @default(true)                  // Si incluye montaje en el precio
   
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)

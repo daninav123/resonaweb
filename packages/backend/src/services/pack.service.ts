@@ -277,12 +277,17 @@ class PackService {
     name: string;
     description: string;
     discountPercentage?: number;
+    discountAmount?: number;
     customFinalPrice?: number;
     autoCalculate?: boolean;
+    includeShipping?: boolean;
+    includeInstallation?: boolean;
     items: Array<{ productId: string; quantity: number }>;
     imageUrl?: string;
     featured?: boolean;
   }) {
+    console.log('🆕 Creando nuevo pack:', { name: data.name, discountAmount: data.discountAmount });
+
     const slug = data.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
@@ -295,6 +300,7 @@ class PackService {
         slug,
         description: data.description,
         discountPercentage: new Prisma.Decimal(data.discountPercentage || 0),
+        discountAmount: new Prisma.Decimal(data.discountAmount || 0),
         autoCalculate: data.autoCalculate !== false, // Por defecto true
         customPriceEnabled: !!data.customFinalPrice,
         finalPrice: data.customFinalPrice ? new Prisma.Decimal(data.customFinalPrice) : 0, // Se calculará después
@@ -304,6 +310,8 @@ class PackService {
         calculatedTotalPrice: 0,
         imageUrl: data.imageUrl,
         featured: data.featured || false,
+        includeShipping: data.includeShipping !== false, // Por defecto true
+        includeInstallation: data.includeInstallation !== false, // Por defecto true
         items: {
           create: data.items.map(item => ({
             productId: item.productId,
@@ -319,6 +327,8 @@ class PackService {
         },
       },
     });
+
+    console.log('✅ Pack creado en BD:', pack.id);
 
     // Calcular y actualizar precio automáticamente
     if (pack.autoCalculate) {
@@ -350,14 +360,19 @@ class PackService {
       name?: string;
       description?: string;
       discountPercentage?: number;
+      discountAmount?: number;
       customFinalPrice?: number;
       autoCalculate?: boolean;
       imageUrl?: string;
       featured?: boolean;
       isActive?: boolean;
+      includeShipping?: boolean;
+      includeInstallation?: boolean;
       items?: Array<{ productId: string; quantity: number }>;
     }
   ) {
+    console.log('🔄 Actualizando pack:', { packId, data });
+
     // Si se actualizan los items, eliminar los existentes y crear los nuevos
     if (data.items) {
       await prisma.packItem.deleteMany({
@@ -374,6 +389,7 @@ class PackService {
         }),
         ...(data.description && { description: data.description }),
         ...(data.discountPercentage !== undefined && { discountPercentage: new Prisma.Decimal(data.discountPercentage) }),
+        ...(data.discountAmount !== undefined && { discountAmount: new Prisma.Decimal(data.discountAmount) }),
         ...(data.customFinalPrice !== undefined && { 
           customPriceEnabled: true,
           finalPrice: new Prisma.Decimal(data.customFinalPrice) 
@@ -382,6 +398,8 @@ class PackService {
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
         ...(data.featured !== undefined && { featured: data.featured }),
         ...(data.isActive !== undefined && { isActive: data.isActive }),
+        ...(data.includeShipping !== undefined && { includeShipping: data.includeShipping }),
+        ...(data.includeInstallation !== undefined && { includeInstallation: data.includeInstallation }),
         ...(data.items && {
           items: {
             create: data.items.map(item => ({
@@ -399,6 +417,8 @@ class PackService {
         },
       },
     });
+
+    console.log('✅ Pack actualizado en BD:', pack.id);
 
     // Recalcular precio si autoCalculate está activado
     const currentPack = await prisma.pack.findUnique({
