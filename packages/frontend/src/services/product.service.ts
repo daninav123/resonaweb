@@ -12,7 +12,7 @@ export interface ProductFilters {
 
 class ProductService {
   /**
-   * Get all products
+   * Get all products (EXCLUYE categoría Personal para usuarios públicos)
    */
   async getProducts(filters?: ProductFilters) {
     const params = new URLSearchParams();
@@ -25,7 +25,15 @@ class ProductService {
     }
     const queryString = params.toString();
     const response: any = await api.get(`/products${queryString ? `?${queryString}` : ''}`);
-    // El backend devuelve { data: [...], pagination: { total, ... } }
+    
+    // Filtrar productos de categoría "Personal" (solo para admin)
+    if (response?.data) {
+      response.data = response.data.filter((product: any) => {
+        const categoryName = product.category?.name?.toLowerCase() || '';
+        return categoryName !== 'personal';
+      });
+    }
+    
     return response || { data: [], pagination: { total: 0 } };
   }
 
@@ -38,11 +46,17 @@ class ProductService {
   }
 
   /**
-   * Get featured products
+   * Get featured products (EXCLUYE categoría Personal)
    */
   async getFeaturedProducts(limit: number = 6) {
     const response: any = await api.get(`/products/featured?limit=${limit}`);
-    return response?.data || [];
+    const products = response?.data || [];
+    
+    // Filtrar productos de categoría "Personal"
+    return products.filter((product: any) => {
+      const categoryName = product.category?.name?.toLowerCase() || '';
+      return categoryName !== 'personal';
+    });
   }
 
   /**
@@ -62,27 +76,42 @@ class ProductService {
   }
 
   /**
-   * Get all categories
+   * Get all categories (EXCLUYE categoría Personal para usuarios públicos)
    */
   async getCategories() {
     const response: any = await api.get('/products/categories');
-    return response?.data || [];
+    const categories = response?.data || [];
+    
+    // Filtrar categoría "Personal" (solo visible en admin)
+    return categories.filter((cat: any) => cat.name.toLowerCase() !== 'personal');
   }
 
   /**
-   * Get products by category
+   * Get products by category (EXCLUYE categoría Personal)
    */
   async getProductsByCategory(categorySlug: string, page: number = 1, limit: number = 12) {
     const response: any = await api.get(`/products?category=${categorySlug}&page=${page}&limit=${limit}`);
-    return response?.data || [];
+    const products = response?.data || [];
+    
+    // Filtrar productos de categoría "Personal"
+    return products.filter((product: any) => {
+      const categoryName = product.category?.name?.toLowerCase() || '';
+      return categoryName !== 'personal';
+    });
   }
 
   /**
-   * Search products
+   * Search products (EXCLUYE categoría Personal)
    */
   async searchProducts(query: string, page: number = 1, limit: number = 12) {
     const response: any = await api.get(`/products/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
-    return response?.data || [];
+    const products = response?.data || [];
+    
+    // Filtrar productos de categoría "Personal"
+    return products.filter((product: any) => {
+      const categoryName = product.category?.name?.toLowerCase() || '';
+      return categoryName !== 'personal';
+    });
   }
 
   /**
