@@ -115,11 +115,22 @@ const PacksManager = () => {
     let filtered = products.filter(p => !p.isPack);
     console.log('🔍 Después de filtrar packs:', filtered.length);
     
+    if (filtered.length > 0) {
+      console.log('📋 Categorías de productos disponibles:', [...new Set(filtered.map(p => p.categoryId))]);
+      console.log('📋 Primeros 3 productos antes de filtrar:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
+    }
+    
     // Filtrar por categoría si hay una seleccionada
     if (productFilter.categoryId) {
       console.log('🔍 Filtrando por categoría:', productFilter.categoryId);
       const beforeCatFilter = filtered.length;
-      filtered = filtered.filter(p => p.categoryId === productFilter.categoryId);
+      filtered = filtered.filter(p => {
+        const match = p.categoryId === productFilter.categoryId;
+        if (!match && beforeCatFilter < 5) {
+          console.log(`   ❌ Producto "${p.name}" tiene categoryId: ${p.categoryId}`);
+        }
+        return match;
+      });
       console.log(`🔍 Después de filtro categoría: ${beforeCatFilter} -> ${filtered.length}`);
     }
     
@@ -137,12 +148,14 @@ const PacksManager = () => {
     
     console.log('✅ Productos finales disponibles:', filtered.length);
     if (filtered.length > 0) {
-      console.log('📋 Primeros 3 productos:', filtered.slice(0, 3).map(p => ({ id: p.id, name: p.name, isPack: p.isPack, categoryId: p.categoryId })));
+      console.log('📋 Primeros 3 productos finales:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
     }
     return filtered;
   };
 
   const handleCreate = () => {
+    console.log('🆕 Abriendo modal de crear pack');
+    console.log('🔄 Estado actual de filtros ANTES de resetear:', productFilter);
     setEditingPack(null);
     setFormData({
       name: '',
@@ -152,10 +165,12 @@ const PacksManager = () => {
       items: []
     });
     // Resetear filtros
-    setProductFilter({
+    const newFilters = {
       categoryId: '',
       search: ''
-    });
+    };
+    setProductFilter(newFilters);
+    console.log('✅ Filtros reseteados a:', newFilters);
     setShowModal(true);
   };
 
@@ -399,21 +414,31 @@ const PacksManager = () => {
                   <div className="mb-4 grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Filtrar por categoría
+                        Filtrar por categoría (Actual: {productFilter.categoryId ? 'Filtrado' : 'Todas'})
                       </label>
                       <select
                         value={productFilter.categoryId}
                         onChange={(e) => {
-                          console.log('📂 Cambiando filtro categoría a:', e.target.value);
+                          console.log('📂 Cambiando filtro categoría de', productFilter.categoryId, 'a:', e.target.value);
                           setProductFilter({ ...productFilter, categoryId: e.target.value });
                         }}
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                        autoComplete="off"
                       >
                         <option value="">Todas las categorías</option>
                         {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
                           <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                       </select>
+                      <button
+                        onClick={() => {
+                          console.log('🔄 Limpiando filtros');
+                          setProductFilter({ categoryId: '', search: '' });
+                        }}
+                        className="mt-1 text-xs text-blue-600 hover:underline"
+                      >
+                        Limpiar filtros
+                      </button>
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
