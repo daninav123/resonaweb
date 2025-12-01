@@ -196,9 +196,14 @@ const PacksManager = () => {
       includeInstallation: pack.includeInstallation !== false, // Por defecto true
       items: pack.items?.map((item: any) => ({
         productId: item.productId || item.product?.id,
-        quantity: item.quantity
+        quantity: item.quantity,
+        // IMPORTANTE: Cargar numberOfPeople y hoursPerPerson si existen
+        ...(item.numberOfPeople !== undefined && { numberOfPeople: item.numberOfPeople }),
+        ...(item.hoursPerPerson !== undefined && { hoursPerPerson: item.hoursPerPerson })
       })) || []
     });
+    console.log('✏️ Editando pack:', pack);
+    console.log('📦 Items cargados:', pack.items);
     setShowModal(true);
   };
 
