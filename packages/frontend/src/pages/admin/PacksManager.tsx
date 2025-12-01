@@ -374,7 +374,6 @@ const PacksManager = () => {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nombre</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Descripción</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Precio/Día</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Estado</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Acciones</th>
               </tr>
             </thead>
@@ -383,14 +382,7 @@ const PacksManager = () => {
                 <tr key={pack.id} className="border-b hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">€{Number(pack.pricePerDay || 0).toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      pack.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {pack.isActive ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm space-x-2">
                     <button 
                       onClick={() => handleEdit(pack)}

@@ -390,7 +390,10 @@ class PackService {
       }
       if (data.description) updateData.description = data.description;
       if (data.discountPercentage !== undefined) updateData.discountPercentage = new Prisma.Decimal(data.discountPercentage);
-      if (data.discountAmount !== undefined) updateData.discountAmount = new Prisma.Decimal(data.discountAmount);
+      if (data.discountAmount !== undefined) {
+        console.log(`💰 Guardando descuento: ${data.discountAmount} (tipo: ${typeof data.discountAmount})`);
+        updateData.discountAmount = new Prisma.Decimal(data.discountAmount);
+      }
       if (data.customFinalPrice !== undefined) {
         updateData.customPriceEnabled = true;
         updateData.finalPrice = new Prisma.Decimal(data.customFinalPrice);
