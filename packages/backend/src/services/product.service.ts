@@ -624,27 +624,47 @@ export class ProductService {
     let specifications = data.specifications;
     delete data.specifications;
     
+    // Limpiar campos de fecha vacíos o inválidos
+    const cleanData: any = { ...data };
+    
+    // Lista de campos de fecha que pueden venir vacíos del frontend
+    const dateFields = ['purchaseDate', 'createdAt', 'updatedAt'];
+    dateFields.forEach(field => {
+      if (field in cleanData) {
+        // Si es string vacío, null, o undefined, eliminarlo del objeto
+        if (!cleanData[field] || cleanData[field] === '' || cleanData[field] === 'null') {
+          delete cleanData[field];
+        }
+      }
+    });
+    
+    // Eliminar campos que no deberían actualizarse desde el frontend
+    delete cleanData.createdAt;
+    delete cleanData.updatedAt;
+    delete cleanData.id;
+    delete cleanData.averageRating;
+    delete cleanData._count;
+    
     logger.info(`📦 Updating product ${id}:`, {
-      stock: data.stock,
-      realStock: data.realStock,
+      stock: cleanData.stock,
+      realStock: cleanData.realStock,
       oldStock: existingProduct.stock,
       oldRealStock: existingProduct.realStock,
     });
     
     // Update stock status if stock changes
-    if (data.stock !== undefined) {
-      const updateData: any = data;
-      if (data.stock === 0) {
-        updateData.stockStatus = 'OUT_OF_STOCK';
-      } else if (data.stock > 0 && existingProduct.stockStatus === 'OUT_OF_STOCK') {
-        updateData.stockStatus = 'IN_STOCK';
+    if (cleanData.stock !== undefined) {
+      if (cleanData.stock === 0) {
+        cleanData.stockStatus = 'OUT_OF_STOCK';
+      } else if (cleanData.stock > 0 && existingProduct.stockStatus === 'OUT_OF_STOCK') {
+        cleanData.stockStatus = 'IN_STOCK';
       }
     }
 
     // Update product
     const product = await prisma.product.update({
       where: { id },
-      data,
+      data: cleanData,
     });
     
     logger.info(`✅ Product updated:`, {
