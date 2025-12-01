@@ -348,7 +348,7 @@ const PacksManager = () => {
           if (isPersonal) {
             costPersonal += Number(product.purchasePrice || 0) * effectiveQuantity;
           } else {
-            costDepreciation += Number(product.purchasePrice || 0) * effectiveQuantity * 0.10;
+            costDepreciation += Number(product.purchasePrice || 0) * effectiveQuantity * 0.05;
           }
 
           if (pack.includeShipping !== false) {
@@ -376,7 +376,7 @@ const PacksManager = () => {
     // Costes separados
     let costMaterial = 0; // Coste directo de material (si lo hubiera)
     let costPersonal = 0; // Coste de personal (por hora)
-    let costDepreciation = 0; // Amortización del material (10%)
+    let costDepreciation = 0; // Amortización del material (5%)
     let costShippingInstallation = 0; // Envío + Montaje
 
     formData.items.forEach((item, index) => {
@@ -399,8 +399,8 @@ const PacksManager = () => {
           const personalCost = Number(product.purchasePrice || 0) * effectiveQuantity;
           costPersonal += personalCost;
         } else {
-          // MATERIAL: depreciación (10% del precio de compra por día)
-          const depreciationRate = 0.10;
+          // MATERIAL: depreciación (5% del precio de compra por día)
+          const depreciationRate = 0.05;
           const depreciation = Number(product.purchasePrice || 0) * effectiveQuantity * depreciationRate;
           costDepreciation += depreciation;
         }
@@ -974,7 +974,7 @@ const PacksManager = () => {
                                 </div>
                               </div>
                               <div className="text-xs text-blue-600 mt-2 italic">
-                                * Amortización: 10% del valor | Personal: coste/hora
+                                * Amortización: 5% del valor | Personal: coste/hora
                               </div>
                             </div>
                             <div className="border-t border-blue-200 pt-2 mt-2">
@@ -1014,7 +1014,7 @@ const PacksManager = () => {
                               </p>
                               <p className="text-xs text-yellow-600 mt-1">
                                 • Personal: Coste por hora trabajada<br/>
-                                • Material: Valor del equipo (se calcula 10% depreciación)
+                                • Material: Valor del equipo (se calcula 5% depreciación)
                               </p>
                             </div>
                           )}
