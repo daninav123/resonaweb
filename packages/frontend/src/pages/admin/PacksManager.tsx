@@ -301,6 +301,7 @@ const PacksManager = () => {
     let totalPricePerDay = 0;
     let totalShipping = 0;
     let totalInstallation = 0;
+    let totalCost = 0; // Nuevo: coste total basado en purchasePrice
 
     formData.items.forEach(item => {
       const product = products.find(p => p.id === item.productId);
@@ -313,6 +314,8 @@ const PacksManager = () => {
         if (formData.includeInstallation) {
           totalInstallation += Number(product.installationCost || 0) * item.quantity;
         }
+        // Nuevo: calcular coste basado en purchasePrice
+        totalCost += Number(product.purchasePrice || 0) * item.quantity;
       }
     });
 
@@ -322,13 +325,20 @@ const PacksManager = () => {
       ? Number(formData.customFinalPrice) 
       : Math.max(0, subtotal - discountAmount);
 
+    // Calcular margen de beneficio
+    const profit = finalPrice - totalCost;
+    const profitMargin = totalCost > 0 ? (profit / finalPrice) * 100 : 0;
+
     return {
       totalPricePerDay,
       totalShipping,
       totalInstallation,
       subtotal,
       discountAmount,
-      finalPrice
+      finalPrice,
+      totalCost, // Nuevo
+      profit, // Nuevo
+      profitMargin // Nuevo
     };
   };
 
@@ -719,6 +729,52 @@ const PacksManager = () => {
                               <p className="text-xs text-green-700 mt-1">por día</p>
                             </div>
                           </div>
+                        </div>
+
+                        {/* 💰 Análisis de Costes y Margen */}
+                        <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
+                          <h4 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
+                            <Calculator className="w-4 h-4" />
+                            Análisis de Rentabilidad
+                          </h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-blue-700">Coste Total (purchasePrice):</span>
+                              <span className="font-semibold text-blue-900">€{totals.totalCost.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-blue-700">Precio de Venta:</span>
+                              <span className="font-semibold text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
+                            </div>
+                            <div className="border-t border-blue-200 pt-2 mt-2">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm font-semibold text-blue-800">Beneficio:</span>
+                                <span className={`text-lg font-bold ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  €{totals.profit.toFixed(2)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center mt-1">
+                                <span className="text-sm font-semibold text-blue-800">Margen:</span>
+                                <span className={`text-lg font-bold ${totals.profitMargin >= 30 ? 'text-green-600' : totals.profitMargin >= 15 ? 'text-yellow-600' : 'text-red-600'}`}>
+                                  {totals.profitMargin.toFixed(1)}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          {totals.profitMargin < 15 && totals.totalCost > 0 && (
+                            <div className="mt-3 bg-red-100 border border-red-300 rounded p-2">
+                              <p className="text-xs text-red-700 font-medium">
+                                ⚠️ Margen bajo: considera aumentar el precio o reducir costes
+                              </p>
+                            </div>
+                          )}
+                          {totals.totalCost === 0 && (
+                            <div className="mt-3 bg-yellow-100 border border-yellow-300 rounded p-2">
+                              <p className="text-xs text-yellow-700 font-medium">
+                                💡 Tip: Añade el "Precio de Compra" a los productos para ver el margen real
+                              </p>
+                            </div>
+                          )}
                         </div>
 
                         {/* Opción: Precio Personalizado */}
