@@ -197,22 +197,25 @@ class PackService {
       throw new AppError(404, 'Pack no encontrado', 'PACK_NOT_FOUND');
     }
 
-    // Calcular precio total de productos individuales
-    const individualPrice = pack.items.reduce((total, item) => {
-      return total + (Number(item.product.pricePerDay) * item.quantity);
-    }, 0);
-
-    const packPrice = Number(pack.pricePerDay);
-    const savings = individualPrice - packPrice;
-    const savingsPercentage = (savings / individualPrice) * 100;
-
+    // Los precios y ahorros ya están calculados en el pack
     return {
       ...pack,
       pricing: {
-        packPrice,
-        individualPrice,
-        savings,
-        savingsPercentage: Math.round(savingsPercentage),
+        // Precio total calculado (suma de todo sin descuento)
+        calculatedTotalPrice: Number(pack.calculatedTotalPrice),
+        // Precio final que paga el cliente
+        finalPrice: Number(pack.finalPrice),
+        // Ahorro del cliente
+        savingsAmount: Number(pack.savingsAmount),
+        savingsPercentage: Math.round(Number(pack.savingsPercentage)),
+        // Desglose
+        breakdown: {
+          basePricePerDay: Number(pack.basePricePerDay),
+          baseShippingCost: Number(pack.baseShippingCost),
+          baseInstallationCost: Number(pack.baseInstallationCost),
+          discountPercentage: Number(pack.discountPercentage),
+          discountAmount: Number(pack.discountAmount),
+        },
       },
     };
   }
@@ -273,8 +276,8 @@ class PackService {
   async createPack(data: {
     name: string;
     description: string;
-    priceExtra?: number;
-    discount?: number;
+    discountPercentage?: number;
+    customFinalPrice?: number;
     autoCalculate?: boolean;
     items: Array<{ productId: string; quantity: number }>;
     imageUrl?: string;
@@ -291,11 +294,14 @@ class PackService {
         name: data.name,
         slug,
         description: data.description,
-        priceExtra: new Prisma.Decimal(data.priceExtra || 0),
-        discount: new Prisma.Decimal(data.discount || 0),
+        discountPercentage: new Prisma.Decimal(data.discountPercentage || 0),
         autoCalculate: data.autoCalculate !== false, // Por defecto true
-        basePrice: 0,
-        pricePerDay: 0, // Se calculará después
+        customPriceEnabled: !!data.customFinalPrice,
+        finalPrice: data.customFinalPrice ? new Prisma.Decimal(data.customFinalPrice) : 0, // Se calculará después
+        basePricePerDay: 0,
+        baseShippingCost: 0,
+        baseInstallationCost: 0,
+        calculatedTotalPrice: 0,
         imageUrl: data.imageUrl,
         featured: data.featured || false,
         items: {
@@ -343,8 +349,8 @@ class PackService {
     data: {
       name?: string;
       description?: string;
-      priceExtra?: number;
-      discount?: number;
+      discountPercentage?: number;
+      customFinalPrice?: number;
       autoCalculate?: boolean;
       imageUrl?: string;
       featured?: boolean;
@@ -367,8 +373,11 @@ class PackService {
           slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
         }),
         ...(data.description && { description: data.description }),
-        ...(data.priceExtra !== undefined && { priceExtra: new Prisma.Decimal(data.priceExtra) }),
-        ...(data.discount !== undefined && { discount: new Prisma.Decimal(data.discount) }),
+        ...(data.discountPercentage !== undefined && { discountPercentage: new Prisma.Decimal(data.discountPercentage) }),
+        ...(data.customFinalPrice !== undefined && { 
+          customPriceEnabled: true,
+          finalPrice: new Prisma.Decimal(data.customFinalPrice) 
+        }),
         ...(data.autoCalculate !== undefined && { autoCalculate: data.autoCalculate }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
         ...(data.featured !== undefined && { featured: data.featured }),

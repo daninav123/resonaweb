@@ -442,14 +442,26 @@ model Pack {
   description String    @db.Text
   imageUrl    String?
   
-  // Cálculo de precios
-  basePrice     Decimal   @db.Decimal(10, 2) @default(0)  // Suma automática de productos
-  priceExtra    Decimal   @db.Decimal(10, 2) @default(0)  // Extra editable
-  autoCalculate Boolean   @default(true)                   // Si calcula automáticamente
+  // Cálculo automático de precios (suma de todos los componentes)
+  basePricePerDay         Decimal   @db.Decimal(10, 2) @default(0)  // Suma de pricePerDay de productos
+  baseShippingCost        Decimal   @db.Decimal(10, 2) @default(0)  // Suma de shippingCost de productos
+  baseInstallationCost    Decimal   @db.Decimal(10, 2) @default(0)  // Suma de installationCost de productos
+  calculatedTotalPrice    Decimal   @db.Decimal(10, 2) @default(0)  // basePricePerDay + baseShipping + baseInstallation
   
-  // Precio final
-  pricePerDay   Decimal   @db.Decimal(10, 2)              // Precio total (base + extra - descuento)
-  discount      Decimal   @db.Decimal(5, 2) @default(0)   // Descuento en porcentaje
+  // Descuento del pack
+  discountPercentage      Decimal   @db.Decimal(5, 2) @default(0)   // Descuento en porcentaje (0-100)
+  discountAmount          Decimal   @db.Decimal(10, 2) @default(0)  // Cantidad de descuento calculada
+  
+  // Precio final (editable por admin)
+  finalPrice              Decimal   @db.Decimal(10, 2)              // Precio final que paga el cliente
+  customPriceEnabled      Boolean   @default(false)                 // Si el admin estableció un precio personalizado
+  
+  // Ahorro para el cliente
+  savingsAmount           Decimal   @db.Decimal(10, 2) @default(0)  // calculatedTotalPrice - finalPrice
+  savingsPercentage       Decimal   @db.Decimal(5, 2) @default(0)   // (savingsAmount / calculatedTotalPrice) * 100
+  
+  // Configuración
+  autoCalculate           Boolean   @default(true)                  // Si calcula automáticamente los precios
   
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)

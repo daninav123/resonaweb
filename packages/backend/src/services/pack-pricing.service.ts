@@ -3,20 +3,39 @@ import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export interface PackPricing {
-  basePrice: number;
-  priceExtra: number;
-  discount: number;
-  finalPrice: number;
+  // Precios base calculados automáticamente
+  basePricePerDay: number;           // Suma de pricePerDay de todos los productos
+  baseShippingCost: number;          // Suma de shippingCost de todos los productos
+  baseInstallationCost: number;      // Suma de installationCost de todos los productos
+  calculatedTotalPrice: number;      // Suma de los 3 anteriores
+  
+  // Descuento aplicado
+  discountPercentage: number;        // Porcentaje de descuento (0-100)
+  discountAmount: number;            // Cantidad en euros del descuento
+  
+  // Precio final
+  finalPrice: number;                // Precio que paga el cliente
+  customPriceEnabled: boolean;       // Si el admin estableció un precio personalizado
+  
+  // Ahorro para el cliente
+  savingsAmount: number;             // calculatedTotalPrice - finalPrice
+  savingsPercentage: number;         // (savingsAmount / calculatedTotalPrice) * 100
+  
+  // Desglose detallado
   breakdown: {
-    itemsTotal: number;
-    extra: number;
+    basePricePerDay: number;
+    baseShippingCost: number;
+    baseInstallationCost: number;
+    subtotal: number;
     discountAmount: number;
+    finalPrice: number;
   };
 }
 
 /**
  * Calcula el precio de un pack automáticamente
- * Fórmula: (basePrice + priceExtra) * (1 - discount/100)
+ * Incluye precio por día + coste de envío + coste de instalación
+ * Aplica descuentos y calcula ahorros para el cliente
  */
 export async function calculatePackPrice(packId: string): Promise<PackPricing> {
   // Obtener el pack con sus items y productos
@@ -27,7 +46,9 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
         include: {
           product: {
             select: {
-              pricePerDay: true
+              pricePerDay: true,
+              shippingCost: true,
+              installationCost: true
             }
           }
         }
@@ -39,44 +60,85 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
     throw new Error('Pack no encontrado');
   }
 
-  // Calcular precio base (suma de todos los productos)
-  const basePrice = pack.items.reduce((sum, item) => {
-    const productPrice = Number(item.product.pricePerDay);
+  // Calcular suma de precios por día de todos los productos
+  const basePricePerDay = pack.items.reduce((sum, item) => {
+    const productPrice = Number(item.product.pricePerDay) || 0;
     return sum + (productPrice * item.quantity);
   }, 0);
 
-  const priceExtra = Number(pack.priceExtra);
-  const discount = Number(pack.discount);
+  // Calcular suma de costes de envío de todos los productos
+  const baseShippingCost = pack.items.reduce((sum, item) => {
+    const shippingCost = Number(item.product.shippingCost) || 0;
+    return sum + (shippingCost * item.quantity);
+  }, 0);
 
-  // Calcular precio antes de descuento
-  const priceBeforeDiscount = basePrice + priceExtra;
+  // Calcular suma de costes de instalación de todos los productos
+  const baseInstallationCost = pack.items.reduce((sum, item) => {
+    const installationCost = Number(item.product.installationCost) || 0;
+    return sum + (installationCost * item.quantity);
+  }, 0);
 
-  // Calcular descuento en euros
-  const discountAmount = priceBeforeDiscount * (discount / 100);
+  // Precio total calculado (sin descuento)
+  const calculatedTotalPrice = basePricePerDay + baseShippingCost + baseInstallationCost;
 
-  // Precio final
-  const finalPrice = priceBeforeDiscount - discountAmount;
+  // Obtener porcentaje de descuento
+  const discountPercentage = Number(pack.discountPercentage) || 0;
+
+  // Calcular cantidad de descuento en euros
+  const discountAmount = calculatedTotalPrice * (discountPercentage / 100);
+
+  // Precio después de descuento
+  const priceAfterDiscount = calculatedTotalPrice - discountAmount;
+
+  // Determinar precio final
+  let finalPrice: number;
+  let customPriceEnabled: boolean = false;
+  
+  if (Number(pack.finalPrice) > 0 && pack.customPriceEnabled) {
+    // Si el admin estableció un precio personalizado, usarlo
+    finalPrice = Number(pack.finalPrice);
+    customPriceEnabled = true;
+  } else {
+    // Usar el precio calculado con descuento
+    finalPrice = priceAfterDiscount;
+  }
+
+  // Calcular ahorro para el cliente
+  const savingsAmount = Math.max(0, calculatedTotalPrice - finalPrice);
+  const savingsPercentage = calculatedTotalPrice > 0 
+    ? (savingsAmount / calculatedTotalPrice) * 100 
+    : 0;
 
   return {
-    basePrice,
-    priceExtra,
-    discount,
+    basePricePerDay,
+    baseShippingCost,
+    baseInstallationCost,
+    calculatedTotalPrice,
+    discountPercentage,
+    discountAmount,
     finalPrice,
+    customPriceEnabled,
+    savingsAmount,
+    savingsPercentage,
     breakdown: {
-      itemsTotal: basePrice,
-      extra: priceExtra,
-      discountAmount
+      basePricePerDay,
+      baseShippingCost,
+      baseInstallationCost,
+      subtotal: calculatedTotalPrice,
+      discountAmount,
+      finalPrice
     }
   };
 }
 
 /**
  * Actualiza el precio de un pack automáticamente
+ * Calcula todos los campos: precios base, descuentos, precio final y ahorros
  */
 export async function updatePackPrice(packId: string): Promise<void> {
   const pack = await prisma.pack.findUnique({
     where: { id: packId },
-    select: { autoCalculate: true }
+    select: { autoCalculate: true, customPriceEnabled: true }
   });
 
   if (!pack) {
@@ -93,8 +155,17 @@ export async function updatePackPrice(packId: string): Promise<void> {
   await prisma.pack.update({
     where: { id: packId },
     data: {
-      basePrice: new Prisma.Decimal(pricing.basePrice),
-      pricePerDay: new Prisma.Decimal(pricing.finalPrice)
+      basePricePerDay: new Prisma.Decimal(pricing.basePricePerDay),
+      baseShippingCost: new Prisma.Decimal(pricing.baseShippingCost),
+      baseInstallationCost: new Prisma.Decimal(pricing.baseInstallationCost),
+      calculatedTotalPrice: new Prisma.Decimal(pricing.calculatedTotalPrice),
+      discountAmount: new Prisma.Decimal(pricing.discountAmount),
+      savingsAmount: new Prisma.Decimal(pricing.savingsAmount),
+      savingsPercentage: new Prisma.Decimal(pricing.savingsPercentage),
+      // Solo actualizar finalPrice si no hay precio personalizado
+      ...(!pack.customPriceEnabled && {
+        finalPrice: new Prisma.Decimal(pricing.finalPrice)
+      })
     }
   });
 }
