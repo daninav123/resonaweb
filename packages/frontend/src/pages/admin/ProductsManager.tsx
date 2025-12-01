@@ -24,6 +24,7 @@ interface Product {
   installationTimeMinutes?: number;
   requiresInstallation?: boolean;
   installationComplexity?: number;
+  isPack?: boolean;
 }
 
 const ProductsManager = () => {
@@ -561,6 +562,12 @@ const ProductsManager = () => {
                   €/día
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Envío
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Instalación
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Stock
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -571,7 +578,7 @@ const ProductsManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     {searchTerm || selectedCategory 
                       ? 'No se encontraron productos con los filtros aplicados' 
                       : 'No hay productos. Crea el primero.'}
@@ -604,6 +611,12 @@ const ProductsManager = () => {
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-semibold">
                       €{product.pricePerDay}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {product.shippingCost ? `€${product.shippingCost}` : '-'}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {product.installationCost ? `€${product.installationCost}` : '-'}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                       {product.stock}
