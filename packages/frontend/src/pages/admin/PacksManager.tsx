@@ -203,7 +203,17 @@ const PacksManager = () => {
       })) || []
     });
     console.log('✏️ Editando pack:', pack);
-    console.log('📦 Items cargados:', pack.items);
+    console.log('📦 Items del pack (detalle completo):');
+    pack.items?.forEach((item: any, index: number) => {
+      const product = products.find(p => p.id === (item.productId || item.product?.id));
+      console.log(`  Item ${index}: ${product?.name}`, {
+        productId: item.productId || item.product?.id,
+        quantity: item.quantity,
+        numberOfPeople: item.numberOfPeople,
+        hoursPerPerson: item.hoursPerPerson,
+        rawItem: item
+      });
+    });
     setShowModal(true);
   };
 
@@ -218,6 +228,17 @@ const PacksManager = () => {
         toast.error('Debes agregar al menos un producto al pack');
         return;
       }
+
+      console.log('💾 ANTES de mapear - formData.items:');
+      formData.items.forEach((item, index) => {
+        const product = products.find(p => p.id === item.productId);
+        console.log(`  Item ${index}: ${product?.name}`, {
+          productId: item.productId,
+          quantity: item.quantity,
+          numberOfPeople: item.numberOfPeople,
+          hoursPerPerson: item.hoursPerPerson
+        });
+      });
 
       const packData: any = {
         name: formData.name,
@@ -236,7 +257,16 @@ const PacksManager = () => {
         autoCalculate: true
       };
       
-      console.log('📦 Items a guardar:', packData.items);
+      console.log('📦 Items a guardar (detalle completo):');
+      packData.items.forEach((item: any, index: number) => {
+        const product = products.find(p => p.id === item.productId);
+        console.log(`  Item ${index}: ${product?.name}`, {
+          productId: item.productId,
+          quantity: item.quantity,
+          numberOfPeople: item.numberOfPeople,
+          hoursPerPerson: item.hoursPerPerson
+        });
+      });
 
       // Solo agregar categoryId si es un pack nuevo
       if (!editingPack) {
@@ -246,7 +276,8 @@ const PacksManager = () => {
       console.log('📦 Guardando pack:', {
         isNew: !editingPack,
         packId: editingPack?.id,
-        data: packData
+        name: packData.name,
+        itemsCount: packData.items.length
       });
 
       if (editingPack) {
