@@ -371,79 +371,90 @@ class PackService {
       items?: Array<{ productId: string; quantity: number }>;
     }
   ) {
-    console.log('🔄 Actualizando pack:', { packId, data });
+    try {
+      console.log('🔄 Actualizando pack:', { packId, data });
 
-    // Si se actualizan los items, eliminar los existentes y crear los nuevos
-    if (data.items) {
-      await prisma.packItem.deleteMany({
-        where: { packId },
-      });
-    }
+      // Si se actualizan los items, eliminar los existentes y crear los nuevos
+      if (data.items) {
+        await prisma.packItem.deleteMany({
+          where: { packId },
+        });
+      }
 
-    const pack = await prisma.pack.update({
-      where: { id: packId },
-      data: {
-        ...(data.name && {
-          name: data.name,
-          slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-        }),
-        ...(data.description && { description: data.description }),
-        ...(data.discountPercentage !== undefined && { discountPercentage: new Prisma.Decimal(data.discountPercentage) }),
-        ...(data.discountAmount !== undefined && { discountAmount: new Prisma.Decimal(data.discountAmount) }),
-        ...(data.customFinalPrice !== undefined && { 
-          customPriceEnabled: true,
-          finalPrice: new Prisma.Decimal(data.customFinalPrice) 
-        }),
-        ...(data.autoCalculate !== undefined && { autoCalculate: data.autoCalculate }),
-        ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
-        ...(data.featured !== undefined && { featured: data.featured }),
-        ...(data.isActive !== undefined && { isActive: data.isActive }),
-        ...(data.includeShipping !== undefined && { includeShipping: data.includeShipping }),
-        ...(data.includeInstallation !== undefined && { includeInstallation: data.includeInstallation }),
-        ...(data.items && {
+      // Construir objeto de actualización de forma segura
+      const updateData: any = {};
+      
+      if (data.name) {
+        updateData.name = data.name;
+        updateData.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+      if (data.description) updateData.description = data.description;
+      if (data.discountPercentage !== undefined) updateData.discountPercentage = new Prisma.Decimal(data.discountPercentage);
+      if (data.discountAmount !== undefined) updateData.discountAmount = new Prisma.Decimal(data.discountAmount);
+      if (data.customFinalPrice !== undefined) {
+        updateData.customPriceEnabled = true;
+        updateData.finalPrice = new Prisma.Decimal(data.customFinalPrice);
+      }
+      if (data.autoCalculate !== undefined) updateData.autoCalculate = data.autoCalculate;
+      if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+      if (data.featured !== undefined) updateData.featured = data.featured;
+      if (data.isActive !== undefined) updateData.isActive = data.isActive;
+      if (data.includeShipping !== undefined) updateData.includeShipping = data.includeShipping;
+      if (data.includeInstallation !== undefined) updateData.includeInstallation = data.includeInstallation;
+      
+      if (data.items) {
+        updateData.items = {
+          create: data.items.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          })),
+        };
+      }
+
+      console.log('📝 Datos a actualizar:', updateData);
+
+      const pack = await prisma.pack.update({
+        where: { id: packId },
+        data: updateData,
+        include: {
           items: {
-            create: data.items.map(item => ({
-              productId: item.productId,
-              quantity: item.quantity,
-            })),
-          },
-        }),
-      },
-      include: {
-        items: {
-          include: {
-            product: true,
+            include: {
+              product: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    console.log('✅ Pack actualizado en BD:', pack.id);
+      console.log('✅ Pack actualizado en BD:', pack.id);
 
-    // Recalcular precio si autoCalculate está activado
-    const currentPack = await prisma.pack.findUnique({
-      where: { id: packId },
-      select: { autoCalculate: true }
-    });
+      // Recalcular precio si autoCalculate está activado
+      const currentPack = await prisma.pack.findUnique({
+        where: { id: packId },
+        select: { autoCalculate: true }
+      });
 
-    if (currentPack?.autoCalculate) {
-      await packPricingService.updatePackPrice(packId);
+      if (currentPack?.autoCalculate) {
+        await packPricingService.updatePackPrice(packId);
+      }
+
+      // Obtener pack actualizado
+      const updatedPack = await prisma.pack.findUnique({
+        where: { id: packId },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      logger.info(`Pack updated: ${updatedPack!.name}`);
+      return updatedPack;
+    } catch (error) {
+      console.error('❌ Error actualizando pack:', error);
+      throw error;
     }
-
-    // Obtener pack actualizado
-    const updatedPack = await prisma.pack.findUnique({
-      where: { id: packId },
-      include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
-      },
-    });
-
-    logger.info(`Pack updated: ${updatedPack!.name}`);
-    return updatedPack;
   }
 
   /**
