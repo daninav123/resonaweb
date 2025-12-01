@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Package, Plus, Edit, Trash2, Search, X, Save, Image as ImageIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
 import { ProductImageManager } from '../../components/admin/ProductImageManager';
@@ -27,8 +27,11 @@ interface Product {
 }
 
 const ProductsManager = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [packsCategoryId, setPacksCategoryId] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null); // ID del producto que se está eliminando
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,6 +57,8 @@ const ProductsManager = () => {
     requiresInstallation: false,
     installationComplexity: 1,
     isPack: false,
+    purchasePrice: 0,
+    purchaseDate: '',
   });
 
   const [packComponents, setPackComponents] = useState<Array<{componentId: string, quantity: number}>>([]);
@@ -64,6 +69,59 @@ const ProductsManager = () => {
     loadProducts();
     loadCategories();
   }, []);
+
+  // Detectar si viene desde la página de packs para crear un pack
+  useEffect(() => {
+    const createPack = searchParams.get('createPack');
+    const editPackId = searchParams.get('editPack');
+    
+    if (createPack === 'true') {
+      // Abrir modal de creación con isPack=true
+      openCreateModal(true);
+    } else if (editPackId) {
+      // Buscar el pack en los productos cargados
+      const packToEdit = products.find(p => p.id === editPackId);
+      if (packToEdit) {
+        console.log('📝 Abriendo modal para editar pack:', packToEdit.name);
+        openEditModal(packToEdit);
+      } else if (products.length > 0) {
+        // Si no está en productos normales, cargarlo desde la API de packs
+        console.log('🔍 Pack no encontrado en productos, buscando en API de packs...');
+        loadPackById(editPackId);
+      }
+    }
+  }, [searchParams, products]);
+
+  const loadPackById = async (packId: string) => {
+    try {
+      // Cargar todos los packs y buscar el específico
+      const response: any = await api.get('/products/packs');
+      
+      console.log('🔎 Buscando pack ID:', packId);
+      console.log('📦 Respuesta completa de API:', response);
+      console.log('📦 response.data:', response.data);
+      console.log('📦 response.data.packs:', response.data?.packs);
+      
+      // Intentar múltiples formas de acceder a los packs
+      const packs = response.data?.packs || response.packs || response.data || [];
+      
+      console.log('📋 Packs extraídos:', packs);
+      console.log('📋 IDs disponibles:', packs.map((p: any) => p.id));
+      
+      const pack = packs.find((p: any) => p.id === packId);
+      
+      if (pack) {
+        console.log('✅ Pack encontrado en API:', pack.name);
+        openEditModal(pack);
+      } else {
+        console.log('⚠️ Pack no encontrado con ID:', packId);
+        toast.error('Pack no encontrado');
+      }
+    } catch (error) {
+      console.error('Error cargando pack:', error);
+      toast.error('Error al cargar el pack');
+    }
+  };
 
   const loadProducts = async () => {
     try {
@@ -84,7 +142,15 @@ const ProductsManager = () => {
   const loadCategories = async () => {
     try {
       const response: any = await api.get('/products/categories');
-      setCategories(response.data || []);
+      const cats = response.data || [];
+      setCategories(cats);
+      
+      // Buscar y guardar el ID de la categoría "Packs"
+      const packsCategory = cats.find((cat: any) => cat.slug === 'packs' || cat.name.toLowerCase() === 'packs');
+      if (packsCategory) {
+        setPacksCategoryId(packsCategory.id);
+        console.log('✅ Categoría Packs encontrada:', packsCategory.id);
+      }
     } catch (error: any) {
       console.error('Error cargando categorías:', error);
       toast.error('Error al cargar categorías');
@@ -99,27 +165,60 @@ const ProductsManager = () => {
       return;
     }
 
+    // La categoría siempre es requerida (incluye la categoría "Packs" para packs)
     if (!formData.categoryId) {
       toast.error('Debes seleccionar una categoría');
       return;
     }
 
+    // Validar que el precio sea mayor a 0
+    if (!formData.pricePerDay || formData.pricePerDay <= 0) {
+      toast.error('El precio por día debe ser mayor a 0');
+      return;
+    }
+
     try {
       // Calcular precios automáticamente
-      const productData = {
+      const productData: any = {
         ...formData,
-        pricePerWeekend: formData.pricePerDay * 1.5, // 1.5x para fin de semana
+        pricePerWeekend: formData.pricePerDay, // Fin de semana = mismo precio que 1 día
         pricePerWeek: formData.pricePerDay * 5, // 5x para semana completa
       };
       
-      await api.post('/products', productData);
-      toast.success('Producto creado exitosamente');
+      // Limpiar campos opcionales vacíos que causan problemas con Prisma
+      if (!productData.purchaseDate || productData.purchaseDate === '') {
+        delete productData.purchaseDate;
+      }
+      if (!productData.purchasePrice || productData.purchasePrice === 0) {
+        delete productData.purchasePrice;
+      }
+      
+      console.log('📤 Enviando nuevo producto:', productData);
+      console.log('🔄 Antes del api.post...');
+      
+      const response = await api.post('/products', productData);
+      
+      console.log('✅ Después del api.post');
+      console.log('✅ Respuesta del servidor:', response);
+      
+      const successMessage = formData.isPack ? 'Pack creado exitosamente' : 'Producto creado exitosamente';
+      toast.success(successMessage);
+      
       setShowCreateModal(false);
       resetForm();
-      loadProducts();
+      
+      // Si es un pack, redirigir a la página de packs
+      if (formData.isPack) {
+        navigate('/admin/packs');
+      } else {
+        await loadProducts();
+      }
     } catch (error: any) {
-      console.error('Error creando producto:', error);
-      toast.error(error.response?.data?.message || 'Error al crear producto');
+      console.error('❌ Error COMPLETO:', error);
+      console.error('❌ Error.response:', error?.response);
+      console.error('❌ Error.message:', error?.message);
+      console.error('❌ Error.stack:', error?.stack);
+      toast.error(error?.response?.data?.message || error?.message || 'Error al crear producto');
     }
   };
 
@@ -132,7 +231,7 @@ const ProductsManager = () => {
       // Calcular precios automáticamente
       const productData = {
         ...formData,
-        pricePerWeekend: formData.pricePerDay * 1.5,
+        pricePerWeekend: formData.pricePerDay, // Fin de semana = mismo precio que 1 día
         pricePerWeek: formData.pricePerDay * 5,
       };
       
@@ -153,11 +252,19 @@ const ProductsManager = () => {
         });
       }
       
-      toast.success('Producto actualizado exitosamente');
+      const successMessage = formData.isPack ? 'Pack actualizado exitosamente' : 'Producto actualizado exitosamente';
+      toast.success(successMessage);
+      
       setShowEditModal(false);
       setSelectedProduct(null);
       resetForm();
-      loadProducts();
+      
+      // Si es un pack, redirigir a la página de packs
+      if (formData.isPack) {
+        navigate('/admin/packs');
+      } else {
+        loadProducts();
+      }
     } catch (error: any) {
       console.error('❌ Error actualizando producto:', error);
       console.error('❌ Error response:', error.response?.data);
@@ -230,8 +337,11 @@ const ProductsManager = () => {
     }
   };
 
-  const openCreateModal = () => {
+  const openCreateModal = (isPack: boolean = false) => {
     resetForm();
+    if (isPack) {
+      setFormData(prev => ({ ...prev, isPack: true }));
+    }
     setShowCreateModal(true);
   };
 
@@ -253,6 +363,8 @@ const ProductsManager = () => {
       requiresInstallation: product.requiresInstallation || false,
       installationComplexity: product.installationComplexity || 1,
       isPack: (product as any).isPack || false,
+      purchasePrice: product.purchasePrice || 0,
+      purchaseDate: product.purchaseDate ? product.purchaseDate.split('T')[0] : '',
     });
     
     // Si es un pack, cargar sus componentes
@@ -282,6 +394,8 @@ const ProductsManager = () => {
       requiresInstallation: false,
       installationComplexity: 1,
       isPack: false,
+      purchasePrice: 0,
+      purchaseDate: '',
     });
     setPackComponents([]);
   };
@@ -326,7 +440,7 @@ const ProductsManager = () => {
               </Link>
               <button 
                 data-testid="new-product"
-                onClick={openCreateModal}
+                onClick={() => openCreateModal()}
                 className="bg-resona text-white px-3 py-1.5 text-sm rounded-lg hover:bg-resona-dark transition-colors flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" />
@@ -583,7 +697,11 @@ const ProductsManager = () => {
                   </label>
                   <select
                     value={formData.categoryId}
-                    onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
+                    onChange={(e) => {
+                      const categoryId = e.target.value;
+                      const isPack = categoryId === packsCategoryId;
+                      setFormData({...formData, categoryId, isPack});
+                    }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
                     required
                   >
@@ -594,7 +712,12 @@ const ProductsManager = () => {
                       </option>
                     ))}
                   </select>
-                  {categories.length === 0 && (
+                  {formData.isPack && (
+                    <p className="text-xs text-green-600 mt-1 font-medium">
+                      🎁 Este producto es un Pack
+                    </p>
+                  )}
+                  {!formData.isPack && categories.length === 0 && (
                     <p className="text-xs text-gray-500 mt-1">
                       No hay categorías. <Link to="/admin/categories" className="text-resona">Crear una</Link>
                     </p>
@@ -800,7 +923,11 @@ const ProductsManager = () => {
                   </label>
                   <select
                     value={formData.categoryId}
-                    onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
+                    onChange={(e) => {
+                      const categoryId = e.target.value;
+                      const isPack = categoryId === packsCategoryId;
+                      setFormData({...formData, categoryId, isPack});
+                    }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
                     required
                   >
@@ -811,6 +938,11 @@ const ProductsManager = () => {
                       </option>
                     ))}
                   </select>
+                  {formData.isPack && (
+                    <p className="text-xs text-green-600 mt-1 font-medium">
+                      🎁 Este producto es un Pack
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -943,18 +1075,6 @@ const ProductsManager = () => {
                     </label>
                   </div>
 
-                  <div className="mt-3">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.isPack}
-                        onChange={(e) => setFormData({...formData, isPack: e.target.checked})}
-                        className="w-4 h-4 text-resona rounded focus:ring-resona"
-                      />
-                      <span className="text-sm text-gray-700 font-medium">🎁 Este producto es un Pack</span>
-                    </label>
-                  </div>
-
                   {/* Gestión de componentes del pack */}
                   {formData.isPack && (
                     <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -1028,6 +1148,53 @@ const ProductsManager = () => {
                           Añadir Componente
                         </button>
                       )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Sección de Estadísticas de Compra (solo admin) */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900">📊 Estadísticas de Compra</h3>
+                  <p className="text-xs text-gray-500 mb-3">Información interna para análisis y gestión</p>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Precio de Compra (€)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.purchasePrice}
+                        onChange={(e) => setFormData({...formData, purchasePrice: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Coste de adquisición</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Fecha de Compra
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.purchaseDate}
+                        onChange={(e) => setFormData({...formData, purchaseDate: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Fecha de adquisición del producto</p>
+                    </div>
+                  </div>
+
+                  {selectedProduct && (
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Veces usado en pedidos:</span>
+                        <span className="text-lg font-bold text-resona">{selectedProduct.timesUsed || 0}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Se incrementa automáticamente con cada pedido</p>
                     </div>
                   )}
                 </div>

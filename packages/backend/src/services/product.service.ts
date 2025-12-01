@@ -124,6 +124,7 @@ export class ProductService {
     const products = await prisma.product.findMany({
       where: {
         isActive: true,
+        isPack: false, // Excluir packs de productos destacados
         featured: true,
         stock: { gt: 0 },
       },
@@ -280,6 +281,7 @@ export class ProductService {
     // Build where clause
     const where: Prisma.ProductWhereInput = {
       isActive: true,
+      isPack: false, // Excluir packs de búsquedas
       ...(query && {
         OR: [
           { name: { contains: query, mode: 'insensitive' } },
@@ -380,22 +382,43 @@ export class ProductService {
       throw new AppError(409, 'Ya existe un producto con este slug', 'SLUG_EXISTS');
     }
 
-    // Verify category exists
-    const category = await prisma.category.findUnique({
-      where: { id: data.categoryId },
-    });
+    // Verify category exists (solo si se proporciona categoryId)
+    if (data.categoryId) {
+      const category = await prisma.category.findUnique({
+        where: { id: data.categoryId },
+      });
 
-    if (!category) {
-      throw new AppError(404, 'Categoría no encontrada', 'CATEGORY_NOT_FOUND');
+      if (!category) {
+        throw new AppError(404, 'Categoría no encontrada', 'CATEGORY_NOT_FOUND');
+      }
     }
 
     // Create product
-    const product = await prisma.product.create({
-      data: {
-        ...data,
-        slug,
-      },
-    });
+    // Filtrar categoryId si es null (para packs sin categoría)
+    const productData: any = { ...data, slug };
+    if (!productData.categoryId) {
+      delete productData.categoryId;
+    }
+    
+    console.log('🔧 Datos procesados para Prisma:', JSON.stringify(productData, null, 2));
+    
+    let product;
+    try {
+      product = await prisma.product.create({
+        data: productData,
+      });
+      
+      console.log('✅ Producto creado en DB:', product.id);
+    } catch (prismaError: any) {
+      console.error('❌ ERROR DE PRISMA:');
+      console.error('Name:', prismaError.name);
+      console.error('Message:', prismaError.message);
+      console.error('Code:', prismaError.code);
+      if (prismaError.meta) {
+        console.error('Meta:', JSON.stringify(prismaError.meta, null, 2));
+      }
+      throw prismaError;
+    }
 
     // Create product specifications if provided
     if (data.specifications && Object.keys(data.specifications).length > 0) {
@@ -408,7 +431,6 @@ export class ProductService {
     }
 
     logger.info(`Product created: ${product.name} (${product.id})`);
-
     return product;
   }
 
@@ -757,6 +779,7 @@ export class ProductService {
       where: {
         categoryId: { in: categoryIds },
         isActive: true,
+        isPack: false, // Excluir packs de productos por categoría
       },
     });
   }
@@ -783,6 +806,7 @@ export class ProductService {
         AND: [
           { id: { not: productId } },
           { isActive: true },
+          { isPack: false }, // Excluir packs de productos relacionados
           { stock: { gt: 0 } },
           {
             OR: [

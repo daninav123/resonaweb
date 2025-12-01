@@ -13,24 +13,32 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
+    console.log('🔐 Auth middleware - Verificando autenticación...');
+    
     // Get token from header
     const authHeader = req.headers.authorization;
+    console.log('📝 Auth header presente:', authHeader ? 'Sí' : 'No');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ No hay token o formato incorrecto');
       throw new AppError(401, 'Token de autenticación no proporcionado', 'NO_TOKEN');
     }
 
     // Extract token
     const token = authHeader.substring(7);
+    console.log('🎟️ Token extraído:', token.substring(0, 20) + '...');
 
     // Check if token is blacklisted
     const isBlacklisted = await tokenBlacklistService.isBlacklisted(token);
     if (isBlacklisted) {
+      console.log('❌ Token en blacklist');
       throw new AppError(401, 'Token inválido', 'TOKEN_BLACKLISTED');
     }
 
     // Verify token
+    console.log('🔍 Verificando token...');
     const payload = verifyAccessToken(token);
+    console.log('✅ Token verificado, userId:', payload.userId);
 
     // Get user from database
     const user = await prisma.user.findUnique({
@@ -38,15 +46,24 @@ export const authenticate = async (
     });
 
     if (!user || !user.isActive) {
+      console.log('❌ Usuario no encontrado o inactivo');
       throw new AppError(401, 'Usuario no encontrado o inactivo', 'USER_NOT_FOUND');
     }
 
+    console.log('✅ Usuario autenticado:', user.email);
+    
     // Attach user to request
     req.user = user;
     req.token = token; // Store token for logout
 
     next();
   } catch (error: any) {
+    console.error('❌ Error en auth middleware:', {
+      message: error.message,
+      code: error.code,
+      name: error.name
+    });
+    
     if (error instanceof AppError) {
       next(error);
     } else {

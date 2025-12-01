@@ -127,10 +127,19 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        console.log('🚪 Cerrando sesión y limpiando tokens...');
+        
         // Clear token from axios defaults
         if (api.removeAuthToken) {
           api.removeAuthToken();
         }
+        
+        // Clear localStorage
+        localStorage.removeItem('auth-storage');
+        localStorage.removeItem('cart');
+        sessionStorage.clear();
+        
+        // Clear state
         set({
           user: null,
           token: null,
@@ -139,6 +148,8 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
           error: null,
         });
+        
+        console.log('✅ Sesión cerrada completamente');
       },
 
       refreshAccessToken: async () => {

@@ -74,11 +74,11 @@ const ModificationPaymentPage = () => {
     appearance: {
       theme: 'stripe',
     },
-    // Métodos de pago habilitados: Tarjeta, PayPal, Transferencia SEPA
+    // Métodos de pago habilitados: Tarjeta, Transferencia bancaria
     paymentMethodOrder: [
       'card',        // Tarjeta de crédito/débito
       'paypal',      // PayPal
-      'sepa_debit',  // Transferencia bancaria SEPA
+      'sepa_debit',  // Transferencia bancaria
     ],
   };
 

@@ -414,6 +414,7 @@ export class OrderController {
           deliveryFee: 0,
           tax: taxAmount,
           depositAmount: total * 0.2, // 20% fianza
+          depositStatus: 'PENDING', // Estado inicial de la fianza
           
           status: 'PENDING', // Cambiará a CONFIRMED tras pago
           paymentStatus: 'PENDING',
@@ -437,6 +438,84 @@ export class OrderController {
         success: true,
         message: 'Pedido creado correctamente',
         data: { order },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Marcar pedido como devuelto
+   */
+  async markAsReturned(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { notes, condition } = req.body;
+
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      const order = await orderService.markAsReturned(id, {
+        notes,
+        condition,
+        returnedBy: req.user.id,
+      });
+
+      res.json({
+        success: true,
+        message: 'Pedido marcado como devuelto',
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Cobrar fianza
+   */
+  async captureDeposit(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { notes } = req.body;
+
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      const order = await orderService.captureDeposit(id, notes);
+
+      res.json({
+        success: true,
+        message: 'Fianza cobrada correctamente',
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Devolver fianza
+   */
+  async releaseDeposit(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { retainedAmount, notes } = req.body;
+
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      const order = await orderService.releaseDeposit(id, retainedAmount, notes);
+
+      res.json({
+        success: true,
+        message: retainedAmount > 0 
+          ? 'Fianza devuelta parcialmente' 
+          : 'Fianza devuelta completamente',
+        data: order,
       });
     } catch (error) {
       next(error);

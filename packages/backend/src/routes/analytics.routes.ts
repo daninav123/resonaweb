@@ -10,6 +10,7 @@ router.use(authorize('ADMIN', 'SUPERADMIN'));
 
 // Dashboard stats
 router.get('/dashboard', analyticsController.getDashboardStats);
+router.get('/dashboard/complete', analyticsController.getCompleteDashboard);
 
 // Charts and graphs
 router.get('/revenue-chart', analyticsController.getRevenueChart);
@@ -28,5 +29,8 @@ router.get('/inventory-utilization', analyticsController.getInventoryUtilization
 // Performance
 router.get('/performance-metrics', analyticsController.getPerformanceMetrics);
 router.get('/rental-periods', analyticsController.getPopularRentalPeriods);
+
+// Amortization
+router.get('/product-amortization', analyticsController.getProductAmortization);
 
 export { router as analyticsRouter };

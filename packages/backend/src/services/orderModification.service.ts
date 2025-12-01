@@ -19,7 +19,7 @@ class OrderModificationService {
     const hoursUntil = (new Date(order.startDate).getTime() - Date.now()) / (1000 * 60 * 60);
     
     if (hoursUntil < 24) {
-      return { canModify: false, reason: 'Solo se puede editar hasta 24h antes del evento' };
+      return { canModify: false, reason: 'Solo se puede editar hasta 24h antes del pedido' };
     }
 
     return { canModify: true, hoursUntil, daysUntil: hoursUntil / 24 };

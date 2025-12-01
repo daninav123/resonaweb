@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Database, Download, Upload, RefreshCw, Clock, HardDrive, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Database, Download, Upload, RefreshCw, Clock, HardDrive, AlertCircle, FileUp } from 'lucide-react';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,8 @@ export default function BackupManager() {
   const [backups, setBackups] = useState<Backup[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadBackups();
@@ -87,21 +89,94 @@ export default function BackupManager() {
 
   const downloadBackup = async (filename: string) => {
     try {
+      console.log('📥 Iniciando descarga de:', filename);
+      
       const response = await api.get(`/admin/backups/download/${filename}`, {
         responseType: 'blob'
       });
       
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      console.log('📦 Respuesta completa:', {
+        data: response.data,
+        dataType: typeof response.data,
+        headers: response.headers,
+        status: response.status
+      });
+      
+      if (!response.data) {
+        throw new Error('No se recibió contenido del servidor');
+      }
+      
+      // response.data ya es un Blob cuando usamos responseType: 'blob'
+      const blob = response.data;
+      
+      console.log('📊 Archivo recibido:', {
+        size: blob.size,
+        type: blob.type,
+        isBlob: blob instanceof Blob,
+        contentType: response.headers['content-type']
+      });
+      
+      // Verificar que el blob tiene contenido
+      if (!blob.size || blob.size === 0) {
+        throw new Error('El archivo descargado está vacío');
+      }
+      
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-      link.remove();
       
-      toast.success('Backup descargado');
-    } catch (error) {
-      toast.error('Error al descargar backup');
+      // Limpiar después de un delay
+      setTimeout(() => {
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }, 100);
+      
+      toast.success(`Backup descargado (${(blob.size / 1024 / 1024).toFixed(2)} MB)`);
+    } catch (error: any) {
+      console.error('❌ Error descargando:', error);
+      toast.error(error.response?.data?.message || 'Error al descargar backup');
+    }
+  };
+
+  const uploadBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar que sea un archivo JSON o ZIP
+    if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
+      toast.error('Solo se aceptan archivos JSON o ZIP');
+      return;
+    }
+
+    if (!confirm(`¿Subir el backup "${file.name}"? Se agregará a la lista de backups disponibles.`)) {
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await api.post('/admin/backups/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      toast.success('Backup subido exitosamente');
+      loadBackups();
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.response?.data?.message || 'Error al subir backup');
+    } finally {
+      setUploading(false);
+      // Limpiar el input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -132,6 +207,30 @@ export default function BackupManager() {
             <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
             Actualizar
           </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+          >
+            {uploading ? (
+              <>
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                Subiendo...
+              </>
+            ) : (
+              <>
+                <FileUp className="w-5 h-5" />
+                Subir Backup
+              </>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,.zip"
+            onChange={uploadBackup}
+            className="hidden"
+          />
           <button
             onClick={createBackup}
             disabled={creating}

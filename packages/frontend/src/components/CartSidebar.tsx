@@ -85,18 +85,6 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     navigate('/carrito');
   };
 
-  const handleCheckout = () => {
-    onClose();
-    
-    if (!user) {
-      toast('Inicia sesión o regístrate para continuar', { icon: 'ℹ️' });
-      navigate('/login', { state: { from: '/carrito' } });
-      return;
-    }
-    
-    navigate('/checkout');
-  };
-
   return (
     <>
       {/* Overlay */}
@@ -229,16 +217,9 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
             <button
               onClick={handleViewCart}
-              className="w-full text-center py-3 border-2 border-resona text-resona rounded-lg font-semibold hover:bg-resona/5 transition"
-            >
-              Ver carrito completo
-            </button>
-
-            <button
-              onClick={handleCheckout}
               className="w-full bg-resona text-white py-3 rounded-lg font-semibold hover:bg-resona-dark transition"
             >
-              {user ? 'Proceder al checkout' : 'Iniciar sesión'}
+              Ver carrito completo
             </button>
           </div>
         )}

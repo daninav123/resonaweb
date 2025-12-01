@@ -131,6 +131,9 @@ class ApiClient {
         } else if (status === 429) {
           // Rate limiting - no mostrar toast, es temporal
           return Promise.reject(error);
+        } else if (status === 404) {
+          // 404 - No mostrar toast, es esperado en algunos casos (ej: productos no encontrados)
+          return Promise.reject(error);
         } else if (error.response?.data?.error?.message) {
           toast.error(error.response.data.error.message);
         } else if (error.response?.data?.message) {

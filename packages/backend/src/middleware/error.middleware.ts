@@ -28,6 +28,11 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
+  console.log('🔴 ERROR MIDDLEWARE ACTIVADO');
+  console.log('🔴 Tipo de error:', err.name);
+  console.log('🔴 Mensaje:', err.message);
+  console.log('🔴 URL:', req.method, req.url);
+  
   // Log error
   logger.error({
     error: err.message,
@@ -49,6 +54,7 @@ export const errorHandler = (
 
   // Handle different error types
   if (err instanceof AppError) {
+    console.log('🔴 Es AppError, statusCode:', err.statusCode);
     statusCode = err.statusCode;
     code = err.code;
     message = err.message;

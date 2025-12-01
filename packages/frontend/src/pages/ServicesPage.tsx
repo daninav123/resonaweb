@@ -1,31 +1,31 @@
 import { Link } from 'react-router-dom';
-import { Camera, Music, Lightbulb, Video, Headphones, Users, Clock, Shield, Phone } from 'lucide-react';
+import { Heart, Music, Lightbulb, PartyPopper, Users, Clock, Shield, Phone } from 'lucide-react';
 
 const ServicesPage = () => {
   const mainServices = [
     {
-      icon: Camera,
-      title: 'Alquiler de Equipos Fotográficos',
-      description: 'Cámaras profesionales, objetivos, trípodes y accesorios para capturar cada momento perfectamente.',
+      icon: Heart,
+      title: 'Montaje de Bodas',
+      description: 'Servicio completo de decoración, iluminación y montaje para tu día especial. Hacemos realidad tu boda de ensueño.',
       features: [
-        'Cámaras DSLR y mirrorless',
-        'Objetivos de todas las focales',
-        'Iluminación de estudio',
-        'Trípodes y estabilizadores'
+        'Decoración personalizada',
+        'Iluminación romántica',
+        'Montaje y desmontaje',
+        'Coordinación de eventos'
       ],
-      image: '📷',
+      image: '💒',
     },
     {
-      icon: Video,
-      title: 'Equipos de Video Profesional',
-      description: 'Todo lo necesario para producción de video de alta calidad, desde cámaras hasta equipos de grabación.',
+      icon: PartyPopper,
+      title: 'Montaje de Eventos Privados',
+      description: 'Organización integral de eventos privados con equipamiento profesional y atención al detalle.',
       features: [
-        'Cámaras de video 4K/8K',
-        'Gimbals y steadicams',
-        'Equipos de grabación de audio',
-        'Monitores profesionales'
+        'Diseño de espacios',
+        'Sistemas de sonido e iluminación',
+        'Decoración temática',
+        'Coordinación técnica completa'
       ],
-      image: '🎥',
+      image: '🎉',
     },
     {
       icon: Music,

@@ -12,11 +12,12 @@ import { getCategoryIcon } from '../../utils/categoryIcons';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isRentalDropdownOpen, setIsRentalDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
   const cartCount = useCartCount();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Fetch categories for menu dropdown
   const { data: categories = [] } = useQuery<any>({
@@ -41,6 +42,11 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleRentalLinkClick = () => {
+    setIsRentalDropdownOpen(false);
+    setIsMenuOpen(false); // Cerrar menú móvil también
   };
 
   return (
@@ -141,10 +147,11 @@ const Header = () => {
             <button
               onClick={() => setIsCartOpen(true)}
               className="relative"
+              title={`Carrito (${cartCount} items)`}
             >
               <ShoppingCart className="w-6 h-6 text-gray-700" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-resona text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-resona text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg">
                   {cartCount}
                 </span>
               )}
@@ -186,15 +193,27 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <ul className="flex flex-col md:flex-row md:items-center md:gap-8 py-2">
             <li className="relative group">
-              <button className="flex items-center gap-1 py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors w-full md:w-auto">
+              <button 
+                onClick={() => setIsRentalDropdownOpen(!isRentalDropdownOpen)}
+                className="flex items-center gap-1 py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors w-full md:w-auto"
+              >
                 Alquiler
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isRentalDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <ul className="md:absolute md:left-0 md:top-full md:bg-white md:shadow-lg md:rounded-lg md:w-56 md:hidden md:group-hover:block md:z-50">
+              <ul className={`${isRentalDropdownOpen ? 'block' : 'hidden'} md:${isRentalDropdownOpen ? 'block' : 'hidden'} md:absolute md:left-0 md:top-full md:bg-white md:shadow-lg md:rounded-lg md:w-56 md:group-hover:block md:z-50`}>
                 <li>
-                  <Link to="/productos" className="block px-4 py-3 hover:bg-resona/10 hover:text-resona transition-colors font-medium border-b border-gray-100">
+                  <Link 
+                    to="/productos" 
+                    onClick={handleRentalLinkClick}
+                    className="block px-4 py-3 hover:bg-resona/10 hover:text-resona transition-colors font-medium border-b border-gray-100"
+                  >
                     📦 Ver Todos los Equipos
                   </Link>
                 </li>
@@ -207,6 +226,7 @@ const Header = () => {
                   <li key={cat.id}>
                     <Link 
                       to={`/productos?category=${cat.slug}`} 
+                      onClick={handleRentalLinkClick}
                       className="block px-4 py-2 hover:bg-resona/10 hover:text-resona transition-colors"
                     >
                       {getCategoryIcon(cat.slug)} {cat.name}

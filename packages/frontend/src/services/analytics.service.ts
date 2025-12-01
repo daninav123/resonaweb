@@ -2,10 +2,27 @@ import { api } from './api';
 
 class AnalyticsService {
   /**
-   * Get dashboard statistics
+   * Get complete dashboard data
+   */
+  async getCompleteDashboard() {
+    try {
+      return await api.get('/analytics/dashboard/complete');
+    } catch (error) {
+      console.error('Error getting complete dashboard:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get dashboard stats
    */
   async getDashboardStats() {
-    return api.get('/analytics/dashboard');
+    try {
+      return await api.get('/analytics/dashboard');
+    } catch (error) {
+      console.error('Error getting dashboard stats:', error);
+      throw error;
+    }
   }
 
   /**
@@ -62,6 +79,13 @@ class AnalyticsService {
    */
   async getPopularRentalPeriods() {
     return api.get('/analytics/rental-periods');
+  }
+
+  /**
+   * Get product amortization data
+   */
+  async getProductAmortization() {
+    return api.get('/analytics/product-amortization');
   }
 }
 

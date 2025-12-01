@@ -6,14 +6,84 @@ interface AddressAutocompleteProps {
   baseAddress?: string;
 }
 
+// Estado global para evitar cargar Google Maps múltiples veces
+let googleMapsLoading = false;
+let googleMapsLoaded = false;
+const loadingPromises: Array<(value: boolean) => void> = [];
+
+const loadGoogleMaps = (apiKey: string): Promise<boolean> => {
+  // Si ya está cargado, retornar inmediatamente
+  if (googleMapsLoaded && window.google?.maps?.places) {
+    return Promise.resolve(true);
+  }
+
+  // Si ya se está cargando, esperar a que termine
+  if (googleMapsLoading) {
+    return new Promise((resolve) => {
+      loadingPromises.push(resolve);
+    });
+  }
+
+  // Iniciar carga
+  googleMapsLoading = true;
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      // Esperar a que Places API esté disponible
+      const checkPlacesReady = setInterval(() => {
+        if (window.google?.maps?.places) {
+          clearInterval(checkPlacesReady);
+          googleMapsLoaded = true;
+          googleMapsLoading = false;
+          
+          console.log('✅ Google Maps Places API cargada correctamente');
+          
+          // Resolver todas las promesas pendientes
+          loadingPromises.forEach(promiseResolve => promiseResolve(true));
+          loadingPromises.length = 0;
+          
+          resolve(true);
+        }
+      }, 100);
+      
+      // Timeout de 10 segundos
+      setTimeout(() => {
+        clearInterval(checkPlacesReady);
+        if (!googleMapsLoaded) {
+          googleMapsLoading = false;
+          reject(new Error('Timeout esperando Places API'));
+        }
+      }, 10000);
+    };
+
+    script.onerror = () => {
+      googleMapsLoading = false;
+      
+      // Rechazar todas las promesas pendientes
+      loadingPromises.forEach(promiseResolve => promiseResolve(false));
+      loadingPromises.length = 0;
+      
+      reject(new Error('Error cargando Google Maps'));
+    };
+
+    document.head.appendChild(script);
+  });
+};
+
 const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' }: AddressAutocompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [mapsReady, setMapsReady] = useState(false);
 
   useEffect(() => {
-    const initAutocomplete = () => {
+    const initAutocomplete = async () => {
       // API Key
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY_HERE';
       
@@ -22,35 +92,38 @@ const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' 
         return;
       }
 
-      // Verificar si Google Maps ya está cargado
-      if (window.google && window.google.maps) {
-        setupAutocomplete();
-        return;
-      }
-
-      // Cargar Google Maps script
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      
-      // Callback global para cuando se carga el script
-      (window as any).initMap = () => {
-        setupAutocomplete();
-      };
-
-      script.onerror = () => {
-        console.error('Error cargando Google Maps');
+      try {
+        console.log('🗺️ Iniciando carga de Google Maps...');
+        // Cargar Google Maps (solo una vez globalmente)
+        await loadGoogleMaps(apiKey);
+        setMapsReady(true);
+        
+        // Esperar un tick para asegurar que el input ref esté listo
+        setTimeout(() => {
+          setupAutocomplete();
+        }, 100);
+      } catch (err) {
+        console.error('❌ Error cargando Google Maps:', err);
         setError('Error cargando Google Maps. Verifica tu API key.');
-      };
-
-      document.head.appendChild(script);
+      }
     };
 
     const setupAutocomplete = () => {
-      if (!inputRef.current || !window.google) return;
+      if (!inputRef.current) {
+        console.warn('⚠️ Input ref no disponible');
+        return;
+      }
+      
+      // Verificar que Google Maps y Places estén cargados
+      if (!window.google?.maps?.places) {
+        console.warn('⚠️ Places API no disponible aún');
+        // Reintentar después de un segundo
+        setTimeout(setupAutocomplete, 1000);
+        return;
+      }
 
       try {
+        console.log('✅ Configurando autocomplete de direcciones...');
         // Configurar autocompletado
         const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
           types: ['address'],
@@ -106,12 +179,13 @@ const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' 
             console.error(err);
           }
         });
-      } catch (err) {
-        console.error('Error configurando autocomplete:', err);
-        setError('Error configurando búsqueda de direcciones');
+      } catch (err: any) {
+        console.warn('⚠️ No se pudo configurar autocomplete:', err.message);
+        // No mostrar error al usuario, el campo funcionará como input manual
       }
     };
 
+    // Iniciar carga de forma asíncrona
     initAutocomplete();
   }, [baseAddress, onAddressSelect]);
 

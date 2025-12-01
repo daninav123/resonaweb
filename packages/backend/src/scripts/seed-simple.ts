@@ -213,7 +213,7 @@ async function main() {
       weight: 1.2,
       isActive: true,
       featured: true,
-      mainImageUrl: 'https://via.placeholder.com/400x300?text=Sony+A7+III',
+      mainImageUrl: 'https://picsum.photos/400/300?random=1',
     },
     {
       categoryId: categorias[0].id,

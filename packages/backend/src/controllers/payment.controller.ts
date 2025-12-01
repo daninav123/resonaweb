@@ -24,23 +24,57 @@ export class PaymentController {
    */
   async createPaymentIntent(req: AuthRequest, res: Response, next: NextFunction) {
     try {
+      console.log('💳 Creando payment intent...');
+      
       if (!req.user) {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { orderId } = req.body;
+      const { orderId, orderData } = req.body;
+      console.log('📦 Datos recibidos:', { orderId: orderId ? 'presente' : 'no', orderData: orderData ? 'presente' : 'no' });
 
-      if (!orderId) {
-        throw new AppError(400, 'Order ID requerido', 'MISSING_DATA');
+      // Si NO hay orderId, es un pago inicial (nuevo flujo)
+      if (!orderId && orderData) {
+        console.log('🔄 Flujo nuevo: Creando payment intent sin orden');
+        // Calcular el total desde orderData
+        const subtotal = orderData.items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
+        const shippingCost = orderData.shippingCost || 0;
+        const taxAmount = (subtotal + shippingCost) * 0.21;
+        const total = subtotal + shippingCost + taxAmount;
+        
+        console.log('💰 Total calculado:', total);
+
+        // Crear Payment Intent directo sin orden
+        const result = await stripeService.createPaymentIntentWithoutOrder(
+          Math.round(total * 100), // convertir a centavos
+          req.user.id,
+          orderData
+        );
+
+        return res.json({
+          message: 'Payment intent creado',
+          ...result,
+        });
       }
 
+      // Flujo normal con orderId
+      if (!orderId) {
+        throw new AppError(400, 'Order ID o Order Data requerido', 'MISSING_DATA');
+      }
+
+      console.log('🔄 Flujo normal: Creando payment intent para orden:', orderId);
       const result = await stripeService.createPaymentIntent(orderId, req.user.id);
 
       res.json({
         message: 'Payment intent creado',
         ...result,
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('❌ Error en createPaymentIntent:', {
+        message: error.message,
+        stack: error.stack,
+        code: error.code
+      });
       next(error);
     }
   }

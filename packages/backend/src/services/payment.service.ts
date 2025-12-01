@@ -64,14 +64,12 @@ export class PaymentService {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(data.amount * 100), // Convert to cents
         currency: data.currency || 'eur',
+        payment_method_types: ['card'],
         customer: stripeCustomerId,
         metadata: {
           orderId: data.orderId,
           orderNumber: order.orderNumber,
           ...data.metadata,
-        },
-        automatic_payment_methods: {
-          enabled: true,
         },
       });
 

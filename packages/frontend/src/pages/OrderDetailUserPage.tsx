@@ -3,11 +3,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { invoiceService } from '../services/invoice.service';
 import { orderModificationService } from '../services/orderModification.service';
-import { Package, Calendar, MapPin, CreditCard, Download, Mail, ArrowLeft, Loader2, Edit, XCircle, FileText } from 'lucide-react';
+import { Package, Calendar, MapPin, CreditCard, Download, ArrowLeft, Loader2, Edit, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { EditOrderModal } from '../components/orders/EditOrderModal';
-import { canDownloadInvoice, getDocumentLabel, getDocumentAction } from '../utils/invoiceHelper';
 
 const OrderDetailUserPage = () => {
   const { id } = useParams();
@@ -35,12 +34,9 @@ const OrderDetailUserPage = () => {
   const handleDownloadInvoice = async () => {
     if (!order) return;
     
-    const docType = getDocumentLabel(order.startDate);
-    const docTypeLower = docType.toLowerCase();
-    
     try {
       setLoadingInvoice(true);
-      const loadingToast = toast.loading(`Generando ${docTypeLower}...`);
+      const loadingToast = toast.loading('Generando factura...');
       
       const response: any = await invoiceService.generateInvoice(id!);
       
@@ -48,7 +44,7 @@ const OrderDetailUserPage = () => {
       const invoice = response?.invoice || response;
       
       if (!invoice || !invoice.id) {
-        throw new Error(`No se pudo generar el ${docTypeLower}`);
+        throw new Error('No se pudo generar la factura');
       }
       
       const blob = await invoiceService.downloadInvoice(invoice.id);
@@ -60,39 +56,20 @@ const OrderDetailUserPage = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${docTypeLower}-${invoice.invoiceNumber || id}.pdf`;
+      link.download = `factura-${invoice.invoiceNumber || id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
       toast.dismiss(loadingToast);
-      toast.success(`${docType} descargado correctamente`);
+      toast.success('Factura descargada correctamente');
     } catch (error: any) {
       toast.dismiss();
-      const errorMessage = error.response?.data?.message || error.message || `Error al descargar el ${docTypeLower}`;
+      const errorMessage = error.response?.data?.message || error.message || 'Error al descargar la factura';
       toast.error(errorMessage);
     } finally {
       setLoadingInvoice(false);
-    }
-  };
-
-  const handleSendInvoiceEmail = async () => {
-    if (!order) return;
-    
-    const docType = getDocumentLabel(order.startDate);
-    const docTypeLower = docType.toLowerCase();
-    
-    try {
-      toast.loading(`Enviando ${docTypeLower} por email...`);
-      const response: any = await invoiceService.generateInvoice(id!);
-      const invoice = response?.invoice || response;
-      await invoiceService.sendInvoiceEmail(invoice.id);
-      toast.dismiss();
-      toast.success(`${docType} enviado por email`);
-    } catch (error) {
-      toast.dismiss();
-      toast.error(`Error al enviar el ${docTypeLower}`);
     }
   };
 
@@ -144,11 +121,7 @@ const OrderDetailUserPage = () => {
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
       PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
-      CONFIRMED: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Confirmado' },
-      PREPARING: { bg: 'bg-resona/10', text: 'text-resona', label: 'Preparando' },
-      READY: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'Listo' },
-      IN_TRANSIT: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'En tránsito' },
-      DELIVERED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Entregado' },
+      IN_PROGRESS: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En Proceso' },
       COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completado' },
       CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
     };
@@ -188,26 +161,11 @@ const OrderDetailUserPage = () => {
 
       {/* Botones de Acción */}
       <div className="flex flex-wrap gap-3 mb-6">
-        {/* Botón de Pagar Ahora - Solo si está PENDING */}
-        {order.paymentStatus === 'PENDING' && order.status !== 'CANCELLED' && (
-          <button
-            onClick={() => navigate('/checkout/stripe', { state: { orderId: order.id } })}
-            className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition shadow-lg hover:shadow-xl"
-          >
-            <CreditCard className="w-5 h-5" />
-            💳 Pagar Ahora
-          </button>
-        )}
-        
-        {/* Botón para descargar factura/presupuesto */}
+        {/* Botón para descargar factura */}
         <button
           onClick={handleDownloadInvoice}
           disabled={loadingInvoice}
-          className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition disabled:opacity-50 ${
-            canDownloadInvoice(order.startDate) 
-              ? 'bg-blue-600 hover:bg-blue-700' 
-              : 'bg-gray-600 hover:bg-gray-700'
-          }`}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50"
         >
           {loadingInvoice ? (
             <>
@@ -216,25 +174,11 @@ const OrderDetailUserPage = () => {
             </>
           ) : (
             <>
-              {canDownloadInvoice(order.startDate) ? (
-                <Download className="w-4 h-4" />
-              ) : (
-                <FileText className="w-4 h-4" />
-              )}
-              {getDocumentAction(order.startDate)}
+              <Download className="w-4 h-4" />
+              Descargar Factura
             </>
           )}
         </button>
-
-        {canDownloadInvoice(order.startDate) && (
-          <button
-            onClick={handleSendInvoiceEmail}
-            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition"
-          >
-            <Mail className="w-4 h-4" />
-            Enviar por Email
-          </button>
-        )}
 
         {/* Botones de Modificación */}
         {modificationCheck?.canModify && order.status !== 'CANCELLED' && (
@@ -322,6 +266,100 @@ const OrderDetailUserPage = () => {
                 <p className="font-bold text-lg text-blue-600">€{Number(order.total || 0).toFixed(2)}</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Resumen de Pago y Fianza */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4">Resumen de Pago</h2>
+          
+          <div className="space-y-3">
+            {/* Subtotal */}
+            <div className="flex justify-between text-gray-700">
+              <span>Subtotal:</span>
+              <span>€{Number(order.subtotal || 0).toFixed(2)}</span>
+            </div>
+
+            {/* Envío */}
+            {order.shippingCost > 0 && (
+              <div className="flex justify-between text-gray-700">
+                <span>Envío/Montaje:</span>
+                <span>€{Number(order.shippingCost || 0).toFixed(2)}</span>
+              </div>
+            )}
+
+            {/* IVA */}
+            <div className="flex justify-between text-gray-700">
+              <span>IVA (21%):</span>
+              <span>€{Number(order.taxAmount || 0).toFixed(2)}</span>
+            </div>
+
+            {/* Total */}
+            <div className="flex justify-between text-lg font-bold text-gray-900 pt-3 border-t">
+              <span>Total:</span>
+              <span className="text-blue-600">€{Number(order.total || 0).toFixed(2)}</span>
+            </div>
+
+            {/* Fianza */}
+            {order.depositAmount > 0 && (
+              <>
+                <div className="border-t pt-3 mt-3">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-semibold text-yellow-700">💰 Fianza (reembolsable):</span>
+                    <span className="font-bold text-yellow-700">€{Number(order.depositAmount).toFixed(2)}</span>
+                  </div>
+                  
+                  {/* Estado de la fianza */}
+                  <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                    {order.depositStatus === 'PENDING' && (
+                      <div className="text-sm text-yellow-800">
+                        <p className="font-medium mb-1">⏳ Fianza Pendiente</p>
+                        <p>La fianza se cobrará antes de la entrega del material.</p>
+                      </div>
+                    )}
+                    {order.depositStatus === 'CAPTURED' && (
+                      <div className="text-sm text-blue-800">
+                        <p className="font-medium mb-1">✓ Fianza Cobrada</p>
+                        <p>Cobrada el {order.depositPaidAt ? new Date(order.depositPaidAt).toLocaleDateString('es-ES') : '-'}</p>
+                        <p className="mt-1 text-xs">Se devolverá en 7 días tras la devolución satisfactoria del material.</p>
+                      </div>
+                    )}
+                    {order.depositStatus === 'RELEASED' && (
+                      <div className="text-sm text-green-800">
+                        <p className="font-medium mb-1">✓ Fianza Devuelta</p>
+                        <p>Devuelta el {order.depositReleasedAt ? new Date(order.depositReleasedAt).toLocaleDateString('es-ES') : '-'}</p>
+                      </div>
+                    )}
+                    {order.depositStatus === 'PARTIALLY_RETAINED' && (
+                      <div className="text-sm text-orange-800">
+                        <p className="font-medium mb-1">⚠️ Fianza Parcialmente Retenida</p>
+                        {order.depositRetainedAmount > 0 && (
+                          <>
+                            <p>Retenido: €{Number(order.depositRetainedAmount).toFixed(2)}</p>
+                            <p>Devuelto: €{(Number(order.depositAmount) - Number(order.depositRetainedAmount)).toFixed(2)}</p>
+                          </>
+                        )}
+                        {order.depositNotes && (
+                          <p className="mt-2 text-xs italic">Motivo: {order.depositNotes}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Información adicional sobre la fianza */}
+                  {(order.depositStatus === 'PENDING' || order.depositStatus === 'CAPTURED') && (
+                    <div className="mt-3 text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                      <p className="font-medium">ℹ️ Sobre la fianza:</p>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>Cubre posibles daños o pérdidas del material</li>
+                        <li>Se devuelve en 7 días hábiles tras la devolución</li>
+                        <li>Si hay daños, se descontará del importe de la fianza</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
 

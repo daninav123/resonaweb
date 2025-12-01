@@ -33,15 +33,10 @@ enum UserLevel {
 }
 
 enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PREPARING
-  READY
-  IN_TRANSIT
-  DELIVERED
-  RETURNED
-  COMPLETED
-  CANCELLED
+  PENDING      // Pendiente - Recién creado, esperando confirmación de pago
+  IN_PROGRESS  // En Proceso - Pago confirmado, preparando pedido
+  COMPLETED    // Completado - Pedido entregado/recogido y finalizado
+  CANCELLED    // Cancelado - Pedido cancelado por el usuario o admin
 }
 
 enum DeliveryType {
@@ -235,6 +230,7 @@ model User {
   userDiscount      UserDiscount?
   billingData       BillingData?
   orderModifications OrderModification[]
+  carts             Cart[]
   
   // Stripe
   stripeCustomerId  String?
@@ -311,11 +307,11 @@ model Product {
   sku                     String    @unique
   name                    String
   slug                    String    @unique
-  description             String    @db.Text
+  description             String?   @db.Text
   
-  // Categoría
-  categoryId              String
-  category                Category  @relation(fields: [categoryId], references: [id])
+  // Categoría (opcional para packs)
+  categoryId              String?
+  category                Category? @relation(fields: [categoryId], references: [id])
   
   // Precios
   pricePerDay             Decimal   @db.Decimal(10, 2)
@@ -375,6 +371,11 @@ model Product {
   supplierPrice           Decimal?  @db.Decimal(10, 2)
   supplierUrl             String?
   
+  // Estadísticas de compra y uso (solo admin)
+  purchasePrice           Decimal?  @db.Decimal(10, 2)
+  purchaseDate            DateTime?
+  timesUsed               Int       @default(0)
+  
   // Estado
   isActive                Boolean   @default(true)
   featured                Boolean   @default(false)
@@ -398,6 +399,7 @@ model Product {
   analytics               ProductDemandAnalytics?
   productSpecs            ProductSpecification?
   coupons                 Coupon[]
+  cartItems               CartItem[]
   
   // Relaciones de Pack (cuando este producto ES un pack)
   components              ProductComponent[] @relation("PackComponents")
@@ -541,6 +543,11 @@ model Order {
   // Estado
   status                  OrderStatus   @default(PENDING)
   reviewRequested         Boolean       @default(false)
+  
+  // Devolución
+  returnedAt              DateTime?
+  returnNotes             String?       @db.Text
+  returnCondition         String?       // PERFECT, GOOD, DAMAGED
   
   // Stripe Payment
   stripePaymentIntentId   String?       @unique
@@ -1417,3 +1424,71 @@ model QuoteRequest {
   @@index([createdAt])
   @@map("quote_requests")
 }
+
+// ============= CARRITO =============
+
+model Cart {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Items del carrito
+  items           CartItem[]
+  
+  // Información del evento (si viene de la calculadora)
+  eventType       String?
+  eventDate       String?
+  eventLocation   String?
+  attendees       Int?
+  duration        Int?
+  durationType    String?   // 'hours' | 'days'
+  
+  // Fechas del alquiler
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Opciones de entrega
+  deliveryOption  String?   // 'pickup' | 'delivery'
+  deliveryDistance Float?
+  includeInstallation Boolean @default(false)
+  
+  // Notas
+  notes           String?   @db.Text
+  
+  // Metadata
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model CartItem {
+  id              String    @id @default(uuid())
+  cartId          String
+  cart            Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id])
+  
+  quantity        Int       @default(1)
+  
+  // Fechas específicas del item (puede diferir del carrito)
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Precio guardado en el momento de agregar
+  pricePerDay     Decimal   @db.Decimal(10, 2)
+  shippingCost    Decimal   @default(0) @db.Decimal(10, 2)
+  installationCost Decimal  @default(0) @db.Decimal(10, 2)
+  
+  // Metadata
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([cartId])
+  @@index([productId])
+}
+
+// Relación en Product
+// Agregar a Product: cartItems CartItem[]

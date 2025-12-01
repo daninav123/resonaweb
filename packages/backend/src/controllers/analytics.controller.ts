@@ -190,6 +190,79 @@ export class AnalyticsController {
       next(error);
     }
   }
+
+  /**
+   * Get complete dashboard data in a single request
+   */
+  async getCompleteDashboard(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      // Fetch all dashboard data in parallel
+      const [
+        stats,
+        metrics,
+        topProducts,
+        topCustomers,
+        upcomingEvents,
+        revenueChart,
+        statusDistribution,
+        inventoryUtilization,
+      ] = await Promise.all([
+        analyticsService.getDashboardStats(),
+        analyticsService.getPerformanceMetrics(),
+        analyticsService.getTopProducts(5),
+        analyticsService.getTopCustomers(5),
+        analyticsService.getUpcomingEventsCalendar(30),
+        analyticsService.getRevenueChart(30),
+        analyticsService.getOrderStatusDistribution(),
+        analyticsService.getInventoryUtilization(),
+      ]);
+
+      // Get recent orders
+      const recentOrders = await analyticsService.getRecentOrders(10);
+
+      res.json({
+        stats,
+        metrics,
+        topProducts,
+        topCustomers,
+        upcomingEvents,
+        revenueChart,
+        statusDistribution,
+        inventoryUtilization,
+        recentOrders,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get product amortization data
+   */
+  async getProductAmortization(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      const amortizationData = await analyticsService.getProductAmortization();
+      res.json(amortizationData);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const analyticsController = new AnalyticsController();

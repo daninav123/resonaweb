@@ -11,6 +11,20 @@ router.post('/:id/cancel', authenticate, (req, res, next) => {
   orderController.cancelOrder.bind(orderController)(req, res, next);
 });
 
+// Mark order as returned (Admin only)
+router.post('/:id/returned', authenticate, authorize('ADMIN', 'SUPERADMIN'), (req, res, next) => {
+  orderController.markAsReturned.bind(orderController)(req, res, next);
+});
+
+// Deposit management (Admin only)
+router.post('/:id/deposit/capture', authenticate, authorize('ADMIN', 'SUPERADMIN'), (req, res, next) => {
+  orderController.captureDeposit.bind(orderController)(req, res, next);
+});
+
+router.post('/:id/deposit/release', authenticate, authorize('ADMIN', 'SUPERADMIN'), (req, res, next) => {
+  orderController.releaseDeposit.bind(orderController)(req, res, next);
+});
+
 // Update order (Edit - Admin only)
 router.put(
   '/:id',

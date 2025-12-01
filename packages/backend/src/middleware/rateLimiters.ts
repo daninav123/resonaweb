@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 // Rate limiter para autenticación (login, register, reset password)
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // 5 intentos
+  max: process.env.NODE_ENV === 'development' ? 1000 : 5, // 1000 en desarrollo, 5 en producción
   message: {
     error: {
       code: 'TOO_MANY_REQUESTS',
@@ -16,6 +16,7 @@ export const authRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'development', // Desactivar en desarrollo
   // Identificar por IP
   keyGenerator: (req) => {
     return req.ip || req.socket.remoteAddress || 'unknown';
@@ -25,7 +26,7 @@ export const authRateLimiter = rateLimit({
 // Rate limiter específico para login
 export const loginRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // 5 intentos de login
+  max: process.env.NODE_ENV === 'development' ? 1000 : 5, // 1000 en desarrollo, 5 en producción
   message: {
     error: {
       code: 'TOO_MANY_LOGIN_ATTEMPTS',
@@ -35,6 +36,7 @@ export const loginRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // No contar requests exitosos
+  skip: (req) => process.env.NODE_ENV === 'development', // Desactivar en desarrollo
 });
 
 // Rate limiter para registro

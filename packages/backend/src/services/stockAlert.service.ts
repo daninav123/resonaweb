@@ -25,32 +25,33 @@ class StockAlertService {
    * - Stock actual vs reservado
    */
   async getStockAlerts(): Promise<{ alerts: StockAlert[]; summary: any }> {
-    logger.info('🔍 Generando alertas de stock...');
+    try {
+      logger.info('🔍 Generando alertas de stock...');
 
-    // Obtener todos los pedidos activos (incluyendo en curso)
-    const activeOrders = await prisma.order.findMany({
-      where: {
-        status: { in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'IN_TRANSIT', 'DELIVERED'] },
-        // Incluir pedidos en curso (que terminan después de hoy)
-        endDate: { gte: new Date() },
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                components: {
-                  include: {
-                    component: true,
+      // Obtener todos los pedidos activos (incluyendo en curso)
+      const activeOrders = await prisma.order.findMany({
+        where: {
+          status: { in: ['PENDING', 'IN_PROGRESS', 'COMPLETED'] },
+          // Incluir pedidos en curso (que terminan después de hoy)
+          endDate: { gte: new Date() },
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  components: {
+                    include: {
+                      component: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-      orderBy: { startDate: 'asc' },
-    });
+        orderBy: { startDate: 'asc' },
+      });
 
     logger.info(`📋 Pedidos activos: ${activeOrders.length}`);
 
@@ -176,36 +177,50 @@ class StockAlertService {
     logger.info(`✅ Alertas generadas: ${alerts.length} (${summary.highPriority} alta, ${summary.mediumPriority} media, ${summary.lowPriority} baja)`);
 
     return { alerts, summary };
+    } catch (error: any) {
+      logger.error('❌ Error generando alertas de stock:', error);
+      return { alerts: [], summary: { totalAlerts: 0, highPriority: 0, mediumPriority: 0, lowPriority: 0, totalDeficit: 0 } };
+    }
   }
 
   /**
    * Obtener alertas por producto específico
    */
   async getAlertsByProduct(productId: string) {
-    const { alerts } = await this.getStockAlerts();
-    return alerts.filter(a => a.productId === productId);
+    try {
+      const { alerts } = await this.getStockAlerts();
+      return alerts.filter(a => a.productId === productId);
+    } catch (error: any) {
+      logger.error('❌ Error obteniendo alertas por producto:', error);
+      return [];
+    }
   }
 
   /**
    * Marcar productos para compra basado en alertas
    */
   async markProductsForPurchase() {
-    const { alerts } = await this.getStockAlerts();
+    try {
+      const { alerts } = await this.getStockAlerts();
 
-    const productIds = [...new Set(alerts.map(a => a.productId))];
+      const productIds = [...new Set(alerts.map(a => a.productId))];
 
-    // Marcar productos con déficit para compra
-    await prisma.product.updateMany({
-      where: { id: { in: productIds } },
-      data: {
-        markedForPurchase: true,
-        purchaseNotes: 'Marcado automáticamente por alerta de stock',
-      },
-    });
+      // Marcar productos con déficit para compra
+      await prisma.product.updateMany({
+        where: { id: { in: productIds } },
+        data: {
+          markedForPurchase: true,
+          purchaseNotes: 'Marcado automáticamente por alerta de stock',
+        },
+      });
 
-    logger.info(`🛒 ${productIds.length} productos marcados para compra`);
+      logger.info(`🛒 ${productIds.length} productos marcados para compra`);
 
-    return productIds.length;
+      return productIds.length;
+    } catch (error: any) {
+      logger.error('❌ Error marcando productos para compra:', error);
+      return 0;
+    }
   }
 }
 

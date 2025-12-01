@@ -38,11 +38,12 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const EventCalculatorPage = lazy(() => import('./pages/EventCalculatorPage'));
-const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
+const AdminDashboard = lazy(() => import('./pages/admin/DashboardEnhanced'));
 const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
 const OrdersManager = lazy(() => import('./pages/admin/OrdersManager'));
 const OrderDetailPage = lazy(() => import('./pages/admin/OrderDetailPage'));
+const RefundsPage = lazy(() => import('./pages/admin/RefundsPage'));
 const ManualInvoicePage = lazy(() => import('./pages/admin/ManualInvoicePage'));
 const InvoicesListPage = lazy(() => import('./pages/admin/InvoicesListPage'));
 const ShippingConfigPage = lazy(() => import('./pages/admin/ShippingConfigPage'));
@@ -59,6 +60,10 @@ const AdminQuoteRequestsPage = lazy(() => import('./pages/AdminQuoteRequestsPage
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
+const POSPage = lazy(() => import('./pages/admin/POSPage'));
+const PacksManager = lazy(() => import('./pages/admin/PacksManager'));
+const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
+const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
@@ -93,11 +98,27 @@ if (typeof window !== 'undefined') {
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
     checkAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo ejecutar al montar
+
+  // Sistema de renovación automática de tokens
+  useEffect(() => {
+    if (isAuthenticated) {
+      import('./utils/tokenRefresh').then(({ startTokenRefresh }) => {
+        startTokenRefresh();
+      });
+      
+      return () => {
+        import('./utils/tokenRefresh').then(({ stopTokenRefresh }) => {
+          stopTokenRefresh();
+        });
+      };
+    }
+  }, [isAuthenticated]);
 
   return (
     <HelmetProvider>
@@ -154,6 +175,11 @@ function App() {
               <Route path="/favoritos" element={<Layout><FavoritesPage /></Layout>} />
             </Route>
             
+            {/* POS Route (sin AdminLayout para fullscreen en móvil) */}
+            <Route element={<PrivateRoute requireAdmin />}>
+              <Route path="/pos/:orderId" element={<POSPage />} />
+            </Route>
+
             {/* Admin Routes */}
             <Route element={<PrivateRoute requireAdmin />}>
               <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
@@ -162,6 +188,7 @@ function App() {
               <Route path="/admin/stock-alerts" element={<AdminLayout><StockAlerts /></AdminLayout>} />
               <Route path="/admin/orders" element={<AdminLayout><OrdersManager /></AdminLayout>} />
               <Route path="/admin/orders/:id" element={<AdminLayout><OrderDetailPage /></AdminLayout>} />
+              <Route path="/admin/refunds" element={<AdminLayout><RefundsPage /></AdminLayout>} />
               <Route path="/admin/invoices" element={<AdminLayout><InvoicesListPage /></AdminLayout>} />
               <Route path="/admin/invoices/manual" element={<AdminLayout><ManualInvoicePage /></AdminLayout>} />
               <Route path="/admin/users" element={<AdminLayout><UsersManager /></AdminLayout>} />
@@ -175,6 +202,9 @@ function App() {
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
+              <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
+              <Route path="/admin/analytics" element={<AdminLayout><AnalyticsPage /></AdminLayout>} />
+              <Route path="/admin/statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
               <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             </Route>
             
@@ -187,7 +217,7 @@ function App() {
         <CookieBanner />
         
         <Toaster
-          position="top-right"
+          position="bottom-right"
           toastOptions={{
             duration: 4000,
             style: {

@@ -35,6 +35,8 @@ import orderExpirationRouter from './routes/orderExpiration.routes';
 import quoteRequestRouter from './routes/quoteRequest.routes';
 import { metricsRouter } from './routes/metrics.routes';
 import backupRouter from './routes/backup.routes';
+import contractRouter from './routes/contract.routes';
+import terminalRouter from './routes/terminal.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -129,6 +131,10 @@ app.use('/uploads/products', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../uploads/products')));
 
+// Stripe webhook - DEBE ir ANTES de express.json() para obtener el body raw
+import stripeWebhookRouter from './routes/stripe-webhook.routes';
+app.use('/api/v1/webhooks', express.raw({ type: 'application/json' }), stripeWebhookRouter);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -170,7 +176,7 @@ app.use('/api/v1/products', productsRouter);
 app.use('/api/v1/orders', ordersRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/cart', cartRouter);
-app.use('/api/v1/payment', paymentRouter);
+app.use('/api/v1/payments', paymentRouter);
 app.use('/api/v1/invoices', invoiceRouter);
 app.use('/api/v1/analytics', analyticsRouter);
 app.use('/api/v1/logistics', logisticsRouter);
@@ -192,6 +198,8 @@ app.use('/api/v1/packs', packRouter);
 app.use('/api/v1/order-expiration', orderExpirationRouter);
 app.use('/api/v1/quote-requests', quoteRequestRouter);
 app.use('/api/v1/admin/backups', backupRouter);
+app.use('/api/v1/contracts', contractRouter);
+app.use('/api/v1/terminal', terminalRouter);
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling

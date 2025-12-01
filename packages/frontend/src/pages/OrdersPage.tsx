@@ -23,8 +23,7 @@ const OrdersPage = () => {
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
       PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
-      CONFIRMED: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Confirmado' },
-      DELIVERED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Entregado' },
+      IN_PROGRESS: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En Proceso' },
       COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completado' },
       CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
     };
@@ -32,28 +31,25 @@ const OrdersPage = () => {
   };
 
   const handleDownloadInvoice = async (order: any) => {
-    const docType = order.startDate && new Date(order.startDate) <= new Date() ? 'Factura' : 'Presupuesto';
-    const docTypeLower = docType.toLowerCase();
-    
     try {
       setLoadingInvoice(order.id);
-      const loadingToast = toast.loading(`Generando ${docTypeLower}...`);
+      const loadingToast = toast.loading('Generando factura...');
       
-      console.log(`📄 Generando ${docTypeLower} para pedido:`, order.id);
+      console.log('📄 Generando factura para pedido:', order.id);
       
       // Generate invoice
       const response: any = await invoiceService.generateInvoice(order.id);
-      console.log(`✅ ${docType} generado:`, response);
+      console.log('✅ Factura generada:', response);
       
       // Extract invoice from response
       const invoice = response?.invoice || response;
       
       if (!invoice || !invoice.id) {
-        throw new Error(`No se pudo generar el ${docTypeLower}`);
+        throw new Error('No se pudo generar la factura');
       }
       
       // Download PDF
-      console.log(`📥 Descargando PDF de ${docTypeLower}:`, invoice.id);
+      console.log('📥 Descargando PDF de factura:', invoice.id);
       const blob = await invoiceService.downloadInvoice(invoice.id);
       console.log('✅ PDF descargado, tamaño:', blob.size);
       
@@ -65,19 +61,19 @@ const OrdersPage = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${docTypeLower}-${invoice.invoiceNumber || order.id}.pdf`;
+      link.download = `factura-${invoice.invoiceNumber || order.id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
       toast.dismiss(loadingToast);
-      toast.success(`${docType} descargado correctamente`);
+      toast.success('Factura descargada correctamente');
     } catch (error: any) {
-      console.error(`❌ Error al descargar el ${docTypeLower}:`, error);
+      console.error('❌ Error al descargar la factura:', error);
       toast.dismiss();
       
-      const errorMessage = error.response?.data?.message || error.message || `Error al descargar el ${docTypeLower}`;
+      const errorMessage = error.response?.data?.message || error.message || 'Error al descargar la factura';
       toast.error(errorMessage, { duration: 5000 });
     } finally {
       setLoadingInvoice(null);

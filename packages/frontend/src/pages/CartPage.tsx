@@ -1,13 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Trash2, Plus, Minus, ShoppingBag, Calendar, ShoppingCart, Package, AlertTriangle, Info, Star, Crown } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, Calendar, ShoppingCart, Package, AlertTriangle, Info, Star, Crown, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
 import { productService } from '../services/product.service';
 import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
+import { CouponInput } from '../components/coupons/CouponInput';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const CartPage = () => {
   const [deliveryOption, setDeliveryOption] = useState<'pickup' | 'delivery'>('pickup'); // pickup = recogida, delivery = envío
   const [orderNotes, setOrderNotes] = useState<string>(''); // Notas del pedido
   const [shippingIncludedInPrice, setShippingIncludedInPrice] = useState(false); // Flag: transporte ya incluido en precio
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null); // Cupón aplicado
   
   // Debug de estado de autenticación (solo en desarrollo)
   // console.log('CartPage - Auth State:', { 
@@ -611,9 +613,6 @@ const CartPage = () => {
 
   // Aplicar fechas globales a todos los items
   const applyGlobalDates = async () => {
-    console.log('🌍 ============ APLICANDO FECHAS GLOBALES ============');
-    console.log('📅 Fechas globales:', globalDates);
-    
     if (!globalDates.start || !globalDates.end) {
       toast.error('Selecciona las fechas globales');
       return;
@@ -622,8 +621,6 @@ const CartPage = () => {
     // Limpiar errores previos al comenzar nueva validación
     setUnavailableItems(new Map());
     
-    console.log('🔍 Validando disponibilidad para cada producto...');
-    
     const newUnavailableItems = new Map<string, string>();
     let availableCount = 0;
     let unavailableCount = 0;
@@ -631,12 +628,8 @@ const CartPage = () => {
     // Validar disponibilidad para cada item
     for (const item of guestCartItems) {
       if (customDatesItems.has(item.id)) {
-        console.log(`⏭️ Item ${item.product.name} tiene fechas personalizadas, saltando...`);
         continue;
       }
-      
-      console.log(`\n📦 Validando: ${item.product.name}`);
-      console.log(`   Cantidad: ${item.quantity}`);
       
       try {
         const response: any = await api.post('/products/check-availability', {
@@ -646,8 +639,6 @@ const CartPage = () => {
           quantity: item.quantity
         });
         
-        console.log(`   📊 Disponibilidad: ${response.available ? '✅ SÍ' : '❌ NO'}`);
-        
         if (!response.available) {
           unavailableCount++;
           // Construir mensaje con fechas y cantidad
@@ -655,12 +646,10 @@ const CartPage = () => {
           const endDateStr = new Date(globalDates.end).toLocaleDateString('es-ES');
           const errorMsg = response.message || `No disponible ${item.quantity > 1 ? `(${item.quantity} unidades)` : ''} para ${startDateStr} - ${endDateStr}`;
           newUnavailableItems.set(item.id, errorMsg);
-          console.log(`   ❌ Error: ${errorMsg}`);
         } else {
           availableCount++;
           // Aplicar fechas si está disponible
           guestCart.updateDates(item.id, globalDates.start, globalDates.end);
-          console.log(`   ✅ Fechas aplicadas`);
         }
       } catch (error: any) {
         console.error(`   ❌ Error al validar ${item.product.name}:`, error);
@@ -675,14 +664,10 @@ const CartPage = () => {
     
     // Mostrar resumen
     if (unavailableCount > 0) {
-      console.log(`\n⚠️ ${unavailableCount} producto(s) no disponibles`);
       toast.error(`${unavailableCount} producto(s) no disponibles para estas fechas`, { duration: 5000 });
     } else {
-      console.log('\n✅ TODOS LOS PRODUCTOS DISPONIBLES');
       toast.success('Todos los productos están disponibles');
     }
-    
-    console.log('🌍 ============ FECHAS GLOBALES APLICADAS ============\n');
   };
 
   // Toggle fechas personalizadas para un item
@@ -749,6 +734,7 @@ const CartPage = () => {
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
+            {/* Columna izquierda: Productos + Notas */}
             <div className="lg:col-span-2 space-y-6">
               {/* Lista de Productos */}
               <div className="bg-white rounded-lg shadow-md p-6">
@@ -817,10 +803,8 @@ const CartPage = () => {
                   ))}
                 </div>
               </div>
-            </div>
 
-            {/* Notas del Pedido - Sección Grande */}
-            <div className="lg:col-span-2">
+              {/* Notas del Pedido */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                   <Package className="w-5 h-5" />
@@ -848,14 +832,15 @@ const CartPage = () => {
               </div>
             </div>
 
+            {/* Columna derecha: Resumen (sticky) */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
                 <h2 className="text-xl font-semibold mb-4">Resumen del pedido</h2>
                 
                 {/* Fechas del Pedido */}
-                <div className="mb-4 pb-4 border-b">
+                <div className="bg-white p-4 rounded-lg shadow mb-4">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-4 h-4 text-blue-600" />
                     Fechas del Pedido
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
@@ -908,36 +893,64 @@ const CartPage = () => {
                   <label className="block text-sm font-medium text-gray-900 mb-3">
                     Método de entrega
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-3">
+                    {/* Opción 1: Recogida en tienda */}
                     <button
                       type="button"
-                      onClick={() => setDeliveryOption('pickup')}
-                      className={`p-4 border-2 rounded-lg transition ${
+                      onClick={() => {
+                        setDeliveryOption('pickup');
+                        setIncludeInstallation(false);
+                      }}
+                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
                         deliveryOption === 'pickup'
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-300 hover:border-gray-400'
                       }`}
                     >
-                      <div className="text-center">
+                      <div>
                         <p className="font-semibold text-gray-900">🏪 Recogida en tienda</p>
                         <p className="text-sm text-gray-600 mt-1">Gratis</p>
-                        <p className="text-xs text-gray-500 mt-1">{shippingConfig?.baseAddress || 'Valencia, España'}</p>
+                        <p className="text-xs text-gray-500 mt-1">{shippingConfig?.baseAddress || 'Madrid, España'}</p>
                       </div>
                     </button>
                     
+                    {/* Opción 2: Transporte (solo envío) */}
                     <button
                       type="button"
-                      onClick={() => setDeliveryOption('delivery')}
-                      className={`p-4 border-2 rounded-lg transition ${
-                        deliveryOption === 'delivery'
+                      onClick={() => {
+                        setDeliveryOption('delivery');
+                        setIncludeInstallation(false);
+                      }}
+                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
+                        deliveryOption === 'delivery' && !includeInstallation
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-300 hover:border-gray-400'
                       }`}
                     >
-                      <div className="text-center">
-                        <p className="font-semibold text-gray-900">🚚 Envío a domicilio</p>
+                      <div>
+                        <p className="font-semibold text-gray-900">📦 Transporte</p>
                         <p className="text-sm text-gray-600 mt-1">Según distancia</p>
                         <p className="text-xs text-gray-500 mt-1">Introduce tu dirección</p>
+                      </div>
+                    </button>
+
+                    {/* Opción 3: Transporte + Instalación */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeliveryOption('delivery');
+                        setIncludeInstallation(true);
+                      }}
+                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
+                        deliveryOption === 'delivery' && includeInstallation
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div>
+                        <p className="font-semibold text-gray-900">🚚 Transporte + Instalación</p>
+                        <p className="text-sm text-gray-600 mt-1">Incluye montaje completo</p>
+                        <p className="text-xs text-gray-500 mt-1">Nuestro equipo montará todo el equipo en tu evento</p>
                       </div>
                     </button>
                   </div>
@@ -999,44 +1012,17 @@ const CartPage = () => {
                   </div>
                 )}
 
-                {/* Checkbox de Instalación */}
-                <div className="mb-4 pb-4 border-b">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={includeInstallation}
-                      onChange={(e) => {
-                        // Si viene de la calculadora, no permitir desmarcar
-                        if (shippingIncludedInPrice) {
-                          toast('El transporte y montaje ya están incluidos en el precio de los productos', {
-                            icon: 'ℹ️',
-                          });
-                          return;
-                        }
-                        setIncludeInstallation(e.target.checked);
-                      }}
-                      disabled={shippingIncludedInPrice}
-                      className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 disabled:opacity-60"
-                    />
-                    <div>
-                      {shippingIncludedInPrice ? (
-                        <>
-                          <span className="text-sm font-medium text-green-700">✓ Transporte y montaje incluidos</span>
-                          <p className="text-xs text-green-600 mt-1">
-                            Ya incluido en el precio de los productos seleccionados
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-sm font-medium text-gray-900">¿Necesitas montaje/instalación?</span>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Nuestro equipo montará todo el equipo en tu evento
-                          </p>
-                        </>
-                      )}
+                {/* Info: Transporte y montaje incluidos desde calculadora */}
+                {shippingIncludedInPrice && (
+                  <div className="mb-4 pb-4 border-b">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-green-700">✓ Transporte y montaje incluidos</p>
+                      <p className="text-xs text-green-600 mt-1">
+                        Ya incluido en el precio de los productos seleccionados
+                      </p>
                     </div>
-                  </label>
-                </div>
+                  </div>
+                )}
 
                 {/* Alerta VIP */}
                 {user && user.userLevel && user.userLevel !== 'STANDARD' && (
@@ -1054,6 +1040,16 @@ const CartPage = () => {
                     </ul>
                   </div>
                 )}
+
+                {/* Cupones */}
+                <div className="mb-4">
+                  <CouponInput
+                    orderAmount={subtotal}
+                    onCouponApplied={(discount) => setAppliedCoupon(discount)}
+                    onCouponRemoved={() => setAppliedCoupon(null)}
+                    appliedCoupon={appliedCoupon?.code}
+                  />
+                </div>
 
                 <div className="space-y-2 mb-4 pb-4 border-b">
                   <div className="flex justify-between">
@@ -1093,6 +1089,17 @@ const CartPage = () => {
                         )}
                       </span>
                       <span className="text-green-600 font-bold">-€{vipDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  {/* Descuento por Cupón */}
+                  {appliedCoupon && (
+                    <div className="flex justify-between text-sm text-green-600 mb-2">
+                      <span className="font-medium flex items-center gap-1">
+                        <Tag className="w-4 h-4" />
+                        Descuento ({appliedCoupon.code})
+                      </span>
+                      <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   

@@ -414,7 +414,6 @@ export class NotificationService {
         <p>Hola ${((invoice.order as any).user?.firstName || '')},</p>
         <p>Adjuntamos tu factura para el pedido #${invoice.order.orderNumber}.</p>
         <p>Total: €${invoice.total}</p>
-        <p>Fecha de vencimiento: ${new Date(invoice.dueDate).toLocaleDateString('es-ES')}</p>
         <p>Gracias por tu confianza.</p>
       `;
 

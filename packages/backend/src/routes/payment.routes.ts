@@ -21,6 +21,12 @@ router.post(
 // Protected routes
 router.post(
   '/create-intent',
+  (req, res, next) => {
+    console.log('🚀 PETICIÓN RECIBIDA EN /api/v1/payments/create-intent');
+    console.log('🚀 Headers:', JSON.stringify(req.headers));
+    console.log('🚀 Body:', JSON.stringify(req.body));
+    next();
+  },
   authenticate,
   paymentController.createPaymentIntent
 );

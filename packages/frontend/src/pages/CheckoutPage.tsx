@@ -400,52 +400,62 @@ const CheckoutPage = () => {
 
     setIsProcessing(true);
 
-    // Crear orden con los items del carrito
-    setTimeout(() => {
-      const orderItems = cartItems.map(item => {
-        const days = calculateDays(item.startDate || '', item.endDate || '');
-        const pricePerUnit = item.product.pricePerDay * days;
-        const totalPrice = pricePerUnit * item.quantity;
-        
-        // Convertir fechas de string "YYYY-MM-DD" a Date ISO string
-        const startDate = item.startDate ? new Date(item.startDate + 'T00:00:00.000Z').toISOString() : new Date().toISOString();
-        const endDate = item.endDate ? new Date(item.endDate + 'T23:59:59.999Z').toISOString() : new Date().toISOString();
-        
-        return {
-          productId: item.productId,
-          quantity: item.quantity,
-          pricePerUnit: pricePerUnit,
-          totalPrice: totalPrice,
-          startDate: startDate,  // ISO Date string
-          endDate: endDate,      // ISO Date string
-        };
-      });
+    // Guardar datos de la orden en sessionStorage para crearla DESPUÉS del pago
+    const orderItems = cartItems.map(item => {
+      const days = calculateDays(item.startDate || '', item.endDate || '');
+      const pricePerUnit = item.product.pricePerDay * days;
+      const totalPrice = pricePerUnit * item.quantity;
       
-      const orderPayload = {
-        // Items
-        items: orderItems,
-        
-        // Tipo de entrega (PICKUP o DELIVERY en mayúsculas)
-        deliveryType: formData.deliveryOption.toUpperCase(),
-        
-        // Dirección de entrega (solo si es delivery)
-        deliveryAddress: formData.deliveryOption === 'delivery' 
-          ? `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}`
-          : undefined,
-        
-        // Notas
-        notes: formData.notes || undefined,
-        
-        // Cupón de descuento
-        couponCode: appliedCoupon?.code || undefined,
-        discountAmount: appliedCoupon?.discountAmount || undefined,
+      // Convertir fechas de string "YYYY-MM-DD" a Date ISO string
+      const startDate = item.startDate ? new Date(item.startDate + 'T00:00:00.000Z').toISOString() : new Date().toISOString();
+      const endDate = item.endDate ? new Date(item.endDate + 'T23:59:59.999Z').toISOString() : new Date().toISOString();
+      
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        pricePerUnit: pricePerUnit,
+        totalPrice: totalPrice,
+        startDate: startDate,  // ISO Date string
+        endDate: endDate,      // ISO Date string
       };
+    });
+    
+    const orderPayload = {
+      // Items
+      items: orderItems,
       
-      console.log('📦 Enviando orden al backend:', orderPayload);
-      console.log('📦 Items detalle:', JSON.stringify(orderPayload.items, null, 2));
+      // Tipo de entrega (PICKUP o DELIVERY en mayúsculas)
+      deliveryType: formData.deliveryOption.toUpperCase(),
       
-      createOrderMutation.mutate(orderPayload);
-    }, 2000);
+      // Dirección de entrega (solo si es delivery)
+      deliveryAddress: formData.deliveryOption === 'delivery' 
+        ? `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}`
+        : undefined,
+      
+      // Información de envío y montaje
+      deliveryDistance: formData.deliveryOption === 'delivery' ? distance : 0,
+      includeInstallation: includeInstallation,
+      shippingCost: calculateShippingCost(),
+      
+      // Notas
+      notes: formData.notes || undefined,
+      
+      // Cupón de descuento
+      couponCode: appliedCoupon?.code || undefined,
+      discountAmount: appliedCoupon?.discountAmount || undefined,
+    };
+    
+    // Guardar en sessionStorage para usar después del pago
+    sessionStorage.setItem('pendingOrderData', JSON.stringify(orderPayload));
+    
+    console.log('📦 Datos de orden guardados para crear después del pago');
+    
+    // Redirigir directamente a Stripe SIN crear la orden aún
+    // El orderId será null, indicando que es un pago inicial
+    toast.success('Redirigiendo a pago seguro...');
+    navigate('/checkout/stripe');
+    
+    setIsProcessing(false);
   };
 
   const updateFormData = (field: string, value: any) => {
@@ -678,42 +688,6 @@ const CheckoutPage = () => {
                     <p className="text-xs text-gray-600">
                       💡 Para modificar la entrega, vuelve al <button type="button" onClick={() => navigate('/carrito')} className="text-blue-600 hover:underline">carrito</button>
                     </p>
-                  </div>
-
-                  {/* Método de Pago - Solo información, no selector */}
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Método de Pago</h3>
-                    <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                      <p className="text-sm text-blue-900 mb-2">
-                        <strong>💳 Aceptamos los siguientes métodos de pago:</strong>
-                      </p>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm text-blue-800">
-                          <span className="text-lg">💳</span>
-                          <div>
-                            <strong>Tarjeta de crédito/débito</strong>
-                            <p className="text-xs text-blue-600">Pago instantáneo</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-blue-800">
-                          <span className="text-lg">🅿️</span>
-                          <div>
-                            <strong>PayPal</strong>
-                            <p className="text-xs text-blue-600">Pago instantáneo</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-blue-800">
-                          <span className="text-lg">🏦</span>
-                          <div>
-                            <strong>Transferencia bancaria SEPA</strong>
-                            <p className="text-xs text-blue-600">Se procesa en 3-5 días • Comisión más baja</p>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-blue-700 mt-3 pt-3 border-t border-blue-200">
-                        Selecciona tu método preferido en la siguiente pantalla de pago seguro
-                      </p>
-                    </div>
                   </div>
 
                   {/* Términos y condiciones */}

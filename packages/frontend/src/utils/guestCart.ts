@@ -22,9 +22,14 @@ export interface GuestCartItem {
 
 const GUEST_CART_KEY = 'guest_cart';
 
-// Helper para disparar evento de actualización
+// Función para disparar evento de actualización
 const dispatchCartUpdate = () => {
   window.dispatchEvent(new Event('cartUpdated'));
+  window.dispatchEvent(
+    new CustomEvent('guestCartChanged', {
+      detail: { items: guestCart.getCart() },
+    })
+  );
 };
 
 export const guestCart = {

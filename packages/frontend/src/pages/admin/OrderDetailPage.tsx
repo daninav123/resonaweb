@@ -5,9 +5,10 @@ import { api } from '../../services/api';
 import { invoiceService } from '../../services/invoice.service';
 import { useAuthStore } from '../../stores/authStore';
 import { OrderNotes } from '../../components/orders/OrderNotes';
-import { Package, User, Calendar, MapPin, CreditCard, Truck, ArrowLeft, Download, Loader2, FileText } from 'lucide-react';
+import { Package, User, Calendar, MapPin, CreditCard, Truck, ArrowLeft, Download, Loader2, FileText, Edit, X, QrCode, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { canDownloadInvoice, getDocumentAction } from '../../utils/invoiceHelper';
+import { QRCodeSVG } from 'qrcode.react';
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -18,9 +19,18 @@ const OrderDetailPage = () => {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [depositAction, setDepositAction] = useState<'capture' | 'release'>('capture');
+  const [depositNotes, setDepositNotes] = useState('');
+  const [depositRetainedAmount, setDepositRetainedAmount] = useState(0);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [paymentLinkQR, setPaymentLinkQR] = useState('');
   const [newStatus, setNewStatus] = useState('');
   const [cancelReason, setCancelReason] = useState('');
   const [editData, setEditData] = useState<any>({});
+  const [returnNotes, setReturnNotes] = useState('');
+  const [returnCondition, setReturnCondition] = useState<'PERFECT' | 'GOOD' | 'DAMAGED'>('GOOD');
 
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['admin-order-detail', id],
@@ -59,28 +69,119 @@ const OrderDetailPage = () => {
     },
   });
 
+  // Mutation para marcar como devuelto
+  const markAsReturnedMutation = useMutation({
+    mutationFn: async () => {
+      return await api.post(`/orders/${id}/returned`, {
+        notes: returnNotes,
+        condition: returnCondition,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
+      toast.success('Pedido marcado como devuelto');
+      setShowReturnModal(false);
+      setReturnNotes('');
+      setReturnCondition('GOOD');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Error al marcar devolución');
+    },
+  });
+
+  // Mutation para gestionar fianza (solo devolver, cobrar se hace desde POS)
+  const depositMutation = useMutation({
+    mutationFn: async () => {
+      if (depositAction === 'capture') {
+        // No llamar al backend, solo mostrar el QR
+        return Promise.resolve({ success: true });
+      } else {
+        return await api.post(`/orders/${id}/deposit/release`, {
+          retainedAmount: depositRetainedAmount,
+          notes: depositNotes,
+        });
+      }
+    },
+    onSuccess: (response: any) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
+      
+      if (depositAction === 'capture') {
+        // Generar URL del POS para Tap to Pay
+        const posURL = `${window.location.origin}/pos/${id}`;
+        
+        // Guardar el link para el QR
+        setPaymentLinkQR(posURL);
+        
+        // Copiar al portapapeles
+        navigator.clipboard.writeText(posURL);
+        
+        // Mostrar modal con QR
+        setShowQRModal(true);
+        
+        toast.success('Terminal de cobro listo');
+      } else if (depositAction === 'release') {
+        toast.success('Fianza devuelta correctamente');
+      }
+      
+      setShowDepositModal(false);
+      setDepositNotes('');
+      setDepositRetainedAmount(0);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Error al gestionar fianza');
+    },
+  });
+
+  const handleDownloadContract = async () => {
+    try {
+      toast.loading('Generando contrato...');
+      const response = await api.get(`/contracts/${id}`, { responseType: 'blob' });
+      
+      // Crear enlace de descarga
+      const url = window.URL.createObjectURL(new Blob([response as any]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `contrato-${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.dismiss();
+      toast.success('Contrato descargado correctamente');
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || 'Error al descargar el contrato');
+    }
+  };
+
+  const handleMarkAsReturned = () => {
+    if (!returnNotes.trim()) {
+      toast.error('Por favor añade notas sobre la devolución');
+      return;
+    }
+    markAsReturnedMutation.mutate();
+  };
+
   const handleDownloadInvoice = async () => {
     if (!order) return;
     
-    const docType = order.startDate && new Date(order.startDate) <= new Date() ? 'Factura' : 'Presupuesto';
-    const docTypeLower = docType.toLowerCase();
-    
     try {
       setLoadingInvoice(true);
-      toast.loading(`Generando ${docTypeLower}...`);
+      toast.loading('Generando factura...');
       
       // Generate invoice
       const response: any = await invoiceService.generateInvoice(id!);
-      console.log(`📄 Respuesta de generar ${docTypeLower}:`, response);
+      console.log('📄 Respuesta de generar factura:', response);
       
       // Extraer el invoice de la respuesta
       const invoice = response?.invoice || response;
       
       if (!invoice || !invoice.id) {
-        throw new Error(`No se pudo generar el ${docTypeLower}`);
+        throw new Error('No se pudo generar la factura');
       }
       
-      console.log(`📄 ${docType} ID:`, invoice.id);
+      console.log('📄 Factura ID:', invoice.id);
       
       // Download PDF
       const blob = await invoiceService.downloadInvoice(invoice.id);
@@ -89,17 +190,17 @@ const OrderDetailPage = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${docTypeLower}-${invoice.invoiceNumber || docTypeLower}.pdf`;
+      link.download = `factura-${invoice.invoiceNumber || invoice.id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
       toast.dismiss();
-      toast.success(`${docType} descargado correctamente`);
+      toast.success('Factura descargada correctamente');
     } catch (error: any) {
       toast.dismiss();
-      toast.error(error?.message || `Error al descargar el ${docTypeLower}`);
+      toast.error(error?.message || 'Error al descargar la factura');
       console.error('Error completo:', error);
     } finally {
       setLoadingInvoice(false);
@@ -205,12 +306,7 @@ const OrderDetailPage = () => {
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
       PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
-      CONFIRMED: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Confirmado' },
-      IN_PREPARATION: { bg: 'bg-resona/10', text: 'text-resona', label: 'En Preparación' },
-      READY: { bg: 'bg-teal-100', text: 'text-teal-800', label: 'Listo' },
-      IN_TRANSIT: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'En Tránsito' },
-      DELIVERED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Entregado' },
-      IN_USE: { bg: 'bg-cyan-100', text: 'text-cyan-800', label: 'En Uso' },
+      IN_PROGRESS: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En Proceso' },
       COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completado' },
       CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
     };
@@ -253,6 +349,14 @@ const OrderDetailPage = () => {
 
   const badge = getStatusBadge(order.status);
 
+  // Debug: Ver el estado de la fianza
+  console.log('🔍 Estado de Fianza:', {
+    depositAmount: order.depositAmount,
+    depositStatus: order.depositStatus,
+    showCobrarButton: order.depositAmount > 0 && (order.depositStatus === 'PENDING' || order.depositStatus === 'AUTHORIZED'),
+    showDevolverButton: order.depositAmount > 0 && (order.depositStatus === 'CAPTURED' || order.depositStatus === 'AUTHORIZED')
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -277,6 +381,112 @@ const OrderDetailPage = () => {
             <span className={`px-4 py-2 rounded-full text-sm font-medium ${badge.bg} ${badge.text}`}>
               {badge.label}
             </span>
+          </div>
+        </div>
+
+        {/* Botones de Acción */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            {/* 1. Estado (Desplegable) */}
+            <select
+              value={order.status}
+              onChange={(e) => {
+                setNewStatus(e.target.value);
+                setShowStatusModal(true);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm font-medium"
+            >
+              <option value={order.status}>Estado: {getStatusBadge(order.status).label}</option>
+              <option value="">──────────</option>
+              <option value="PENDING">Pendiente</option>
+              <option value="IN_PROGRESS">En Proceso</option>
+              <option value="COMPLETED">Completado</option>
+              <option value="CANCELLED">Cancelado</option>
+            </select>
+
+            {/* 2. Descargar Contrato */}
+            <button 
+              onClick={handleDownloadContract}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center justify-center gap-2 text-sm font-medium"
+              title="Descargar Contrato"
+            >
+              <FileText className="w-4 h-4" />
+              Contrato
+            </button>
+
+            {/* 3. Descargar Factura */}
+            <button 
+              onClick={handleDownloadInvoice}
+              disabled={loadingInvoice}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+              title="Descargar Factura"
+            >
+              {loadingInvoice ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <FileText className="w-4 h-4" />
+              )}
+              Factura
+            </button>
+
+            {/* 4. Cobrar Fianza */}
+            {order.depositAmount > 0 && (order.depositStatus === 'PENDING' || order.depositStatus === 'AUTHORIZED') && (
+              <button 
+                onClick={() => {
+                  setDepositAction('capture');
+                  setShowDepositModal(true);
+                }}
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition flex items-center justify-center gap-2 text-sm font-medium"
+                title="Cobrar Fianza"
+              >
+                💰 Cobrar {order.depositStatus === 'AUTHORIZED' && '(Autorizada)'}
+              </button>
+            )}
+
+            {/* 5. Devolver Fianza */}
+            {order.depositAmount > 0 && (order.depositStatus === 'CAPTURED' || order.depositStatus === 'AUTHORIZED') && (
+              <button 
+                onClick={() => {
+                  setDepositAction('release');
+                  setDepositRetainedAmount(0);
+                  setShowDepositModal(true);
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 text-sm font-medium"
+                title="Devolver Fianza"
+              >
+                ↩️ Devolver
+              </button>
+            )}
+
+            {/* 6. Editar Pedido */}
+            <button 
+              onClick={() => {
+                setEditData({
+                  notes: order.notes || '',
+                  internalNotes: order.internalNotes || ''
+                });
+                setShowEditModal(true);
+              }}
+              disabled={order.status === 'COMPLETED'}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+              title="Editar Pedido"
+            >
+              <Edit className="w-4 h-4" />
+              Editar
+            </button>
+
+            {/* 7. Cancelar Pedido */}
+            <button 
+              data-testid="cancel-order"
+              onClick={() => setShowCancelModal(true)}
+              disabled={cancelOrderMutation.isPending || order.status === 'CANCELLED' || order.status === 'COMPLETED'}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+              title="Cancelar Pedido"
+            >
+              <X className="w-4 h-4" />
+              {cancelOrderMutation.isPending ? 'Cancelando...' : 'Cancelar'}
+            </button>
           </div>
         </div>
 
@@ -426,102 +636,39 @@ const OrderDetailPage = () => {
             </div>
 
             {/* Actions */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones</h2>
-              <div className="space-y-2">
-                <button 
-                  onClick={() => setShowStatusModal(true)}
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                >
-                  Cambiar Estado
-                </button>
-                
-                <button 
-                  onClick={handleDownloadInvoice}
-                  disabled={loadingInvoice}
-                  className={`w-full text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                    canDownloadInvoice(order.startDate)
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                      : 'bg-gray-600 hover:bg-gray-700'
-                  }`}
-                >
-                  {loadingInvoice ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Generando...
-                    </>
-                  ) : (
-                    <>
-                      {canDownloadInvoice(order.startDate) ? (
-                        <Download className="w-4 h-4" />
-                      ) : (
-                        <FileText className="w-4 h-4" />
-                      )}
-                      {getDocumentAction(order.startDate)} PDF
-                    </>
+            {/* Resumen de Fianza */}
+            {order.depositAmount > 0 && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Estado de la Fianza</h2>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Monto:</span>
+                    <span className="font-semibold text-lg">€{Number(order.depositAmount).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Estado:</span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      order.depositStatus === 'RELEASED' ? 'bg-green-100 text-green-800' :
+                      order.depositStatus === 'CAPTURED' ? 'bg-yellow-100 text-yellow-800' :
+                      order.depositStatus === 'PENDING' ? 'bg-gray-100 text-gray-800' :
+                      'bg-orange-100 text-orange-800'
+                    }`}>
+                      {order.depositStatus === 'RELEASED' ? 'Devuelta' :
+                       order.depositStatus === 'CAPTURED' ? 'Cobrada' :
+                       order.depositStatus === 'PENDING' ? 'Pendiente' :
+                       order.depositStatus === 'AUTHORIZED' ? 'Autorizada' :
+                       'Parcialmente Retenida'}
+                    </span>
+                  </div>
+                  {order.depositRetainedAmount > 0 && (
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <span className="text-gray-600">Retenido:</span>
+                      <span className="font-semibold text-orange-600">€{Number(order.depositRetainedAmount).toFixed(2)}</span>
+                    </div>
                   )}
-                </button>
-
-                <button 
-                  onClick={handleGenerateFacturae}
-                  disabled={loadingFacturae}
-                  className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loadingFacturae ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Generando...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-4 h-4" />
-                      Generar Facturae XML
-                    </>
-                  )}
-                </button>
-
-                <button 
-                  onClick={handleDownloadFacturae}
-                  disabled={loadingFacturae}
-                  className="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loadingFacturae ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Descargando...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-4 h-4" />
-                      Descargar Facturae XML
-                    </>
-                  )}
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    setEditData({
-                      notes: order.notes || '',
-                      internalNotes: order.internalNotes || ''
-                    });
-                    setShowEditModal(true);
-                  }}
-                  disabled={order.status === 'COMPLETED' || order.status === 'DELIVERED'}
-                  className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Editar Pedido
-                </button>
-
-                <button 
-                  data-testid="cancel-order"
-                  onClick={() => setShowCancelModal(true)}
-                  disabled={cancelOrderMutation.isPending || order.status === 'CANCELLED' || order.status === 'COMPLETED' || order.status === 'DELIVERED'}
-                  className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {cancelOrderMutation.isPending ? 'Cancelando...' : 'Cancelar Pedido'}
-                </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -542,13 +689,9 @@ const OrderDetailPage = () => {
                 >
                   <option value="">Selecciona un estado</option>
                   <option value="PENDING">Pendiente</option>
-                  <option value="CONFIRMED">Confirmado</option>
-                  <option value="IN_PREPARATION">En Preparación</option>
-                  <option value="READY">Listo</option>
-                  <option value="IN_TRANSIT">En Tránsito</option>
-                  <option value="DELIVERED">Entregado</option>
-                  <option value="IN_USE">En Uso</option>
+                  <option value="IN_PROGRESS">En Proceso</option>
                   <option value="COMPLETED">Completado</option>
+                  <option value="CANCELLED">Cancelado</option>
                 </select>
               </div>
 
@@ -669,6 +812,268 @@ const OrderDetailPage = () => {
                   {cancelOrderMutation.isPending ? 'Cancelando...' : 'Confirmar Cancelación'}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal para marcar como devuelto */}
+        {showReturnModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-xl font-bold mb-4 text-teal-600">Marcar Devolución</h3>
+              
+              <div className="mb-6 space-y-4">
+                <p className="text-gray-600">
+                  Confirma la devolución del material. El stock se actualizará automáticamente.
+                </p>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estado del Material <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={returnCondition}
+                    onChange={(e) => setReturnCondition(e.target.value as any)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                  >
+                    <option value="PERFECT">Perfecto Estado</option>
+                    <option value="GOOD">Buen Estado (normal)</option>
+                    <option value="DAMAGED">Dañado</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notas de Devolución <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={returnNotes}
+                    onChange={(e) => setReturnNotes(e.target.value)}
+                    rows={4}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                    placeholder="Describe el estado del material, observaciones, etc..."
+                  />
+                </div>
+
+                {returnCondition === 'DAMAGED' && (
+                  <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                    <p className="text-sm text-red-800">
+                      ⚠️ Material dañado: La fianza podría retenerse parcial o totalmente.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowReturnModal(false);
+                    setReturnNotes('');
+                    setReturnCondition('GOOD');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleMarkAsReturned}
+                  disabled={!returnNotes.trim() || markAsReturnedMutation.isPending}
+                  className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {markAsReturnedMutation.isPending ? 'Procesando...' : 'Confirmar Devolución'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal para gestionar fianza */}
+        {showDepositModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-xl font-bold mb-4 text-yellow-600">
+                {depositAction === 'capture' ? '💰 Cobrar Fianza' : '↩️ Devolver Fianza'}
+              </h3>
+              
+              <div className="mb-6 space-y-4">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                  <p className="text-sm text-blue-800">
+                    <strong>Importe de la fianza:</strong> €{Number(order.depositAmount).toFixed(2)}
+                  </p>
+                </div>
+
+                {depositAction === 'release' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Importe Retenido (opcional)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max={Number(order.depositAmount)}
+                      step="0.01"
+                      value={depositRetainedAmount}
+                      onChange={(e) => setDepositRetainedAmount(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                      placeholder="0.00"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Dejar en 0 para devolver la fianza completa
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notas (opcional)
+                  </label>
+                  <textarea
+                    value={depositNotes}
+                    onChange={(e) => setDepositNotes(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                    placeholder={
+                      depositAction === 'capture' 
+                        ? 'Motivo del cobro de fianza (opcional)...' 
+                        : 'Describe el estado del material, daños si aplica...'
+                    }
+                  />
+                </div>
+
+                {depositAction === 'release' && depositRetainedAmount > 0 && (
+                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded">
+                    <p className="text-sm text-yellow-800">
+                      <strong>⚠️ Retención parcial:</strong><br/>
+                      Retenido: €{depositRetainedAmount.toFixed(2)}<br/>
+                      A devolver: €{(Number(order.depositAmount) - depositRetainedAmount).toFixed(2)}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDepositModal(false);
+                    setDepositNotes('');
+                    setDepositRetainedAmount(0);
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => depositMutation.mutate()}
+                  disabled={depositMutation.isPending}
+                  className={`flex-1 px-4 py-2 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${
+                    depositAction === 'capture' 
+                      ? 'bg-yellow-600 hover:bg-yellow-700' 
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                >
+                  {depositMutation.isPending ? 'Procesando...' : 
+                    depositAction === 'capture' ? 'Generar Terminal de Cobro' : 'Confirmar Devolución'
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Código QR */}
+        {showQRModal && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowQRModal(false)}
+          >
+            <div 
+              className="bg-white rounded-lg max-w-md w-full p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Smartphone className="w-5 h-5" />
+                    Terminal de Cobro
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Escanea para usar Tap to Pay
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowQRModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Código QR */}
+              <div className="flex justify-center items-center bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border-2 border-blue-200">
+                <QRCodeSVG 
+                  value={paymentLinkQR} 
+                  size={280}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+
+              {/* Instrucciones */}
+              <div className="mt-6 space-y-3">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                  <p className="text-sm text-blue-800">
+                    <strong>📱 Paso 1:</strong> Escanea el QR con tu móvil
+                  </p>
+                </div>
+                <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
+                  <p className="text-sm text-green-800">
+                    <strong>🔓 Paso 2:</strong> Inicia sesión si pide
+                  </p>
+                </div>
+                <div className="bg-purple-50 border-l-4 border-purple-500 p-3 rounded">
+                  <p className="text-sm text-purple-800">
+                    <strong>💳 Paso 3:</strong> Tap en "Cobrar con Tap to Pay"
+                  </p>
+                </div>
+                <div className="bg-orange-50 border-l-4 border-orange-500 p-3 rounded">
+                  <p className="text-sm text-orange-800">
+                    <strong>👋 Paso 4:</strong> Cliente acerca su tarjeta → ✅ Cobrado
+                  </p>
+                </div>
+              </div>
+
+              {/* Botón para abrir en el navegador */}
+              <div className="mt-6 flex gap-3">
+                <button
+                  onClick={() => window.open(paymentLinkQR, '_blank')}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                >
+                  Abrir en Nueva Pestaña
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(paymentLinkQR);
+                    toast.success('Link copiado al portapapeles');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+                >
+                  Copiar Link
+                </button>
+              </div>
+
+              {/* Nota sobre Tap to Pay */}
+              <p className="text-xs text-gray-500 mt-4 text-center">
+                💡 Asegúrate de tener NFC activado en tu móvil para usar Tap to Pay
+              </p>
+
+              {/* Botón de cerrar */}
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="w-full mt-4 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         )}

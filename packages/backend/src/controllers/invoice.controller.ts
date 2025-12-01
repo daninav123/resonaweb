@@ -55,13 +55,20 @@ export class InvoiceController {
         throw new AppError(400, 'Order ID requerido', 'MISSING_DATA');
       }
 
+      console.log(`🔍 Controller: Generando factura para pedido ${orderId}`);
       const invoice = await invoiceService.generateInvoice(orderId);
+      console.log(`✅ Controller: Factura generada exitosamente`);
 
       res.status(201).json({
         message: 'Factura generada exitosamente',
         invoice,
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error(`❌ Controller: Error generando factura:`, {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
       next(error);
     }
   }

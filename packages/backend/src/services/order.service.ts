@@ -19,6 +19,9 @@ interface CreateOrderData {
   deliveryType: DeliveryType;
   deliveryAddress?: string;
   deliveryDate?: Date;
+  deliveryDistance?: number;
+  includeInstallation?: boolean;
+  shippingCost?: number;
   notes?: string;
   eventType?: string;
   eventLocation?: string;
@@ -49,15 +52,34 @@ export class OrderService {
   /**
    * Calculate deposit - VIP users don't pay deposit
    */
-  private calculateDeposit(userLevel: string, items: OrderItem[]): number {
+  private async calculateDeposit(userLevel: string, items: OrderItem[]): Promise<number> {
     // VIP and VIP_PLUS don't pay deposit
     if (userLevel === 'VIP' || userLevel === 'VIP_PLUS') {
       return 0;
     }
     
-    // For STANDARD users, calculate deposit (for now, return 0 as per original logic)
-    // TODO: Implement actual deposit calculation based on product.customDeposit
-    return 0;
+    // For STANDARD users, calculate deposit based on products
+    let totalDeposit = 0;
+    
+    for (const item of items) {
+      const product = await prisma.product.findUnique({
+        where: { id: item.productId },
+        select: { customDeposit: true, pricePerDay: true }
+      });
+      
+      if (!product) continue;
+      
+      // Si el producto tiene fianza personalizada, usarla
+      if (product.customDeposit && Number(product.customDeposit) > 0) {
+        totalDeposit += Number(product.customDeposit) * item.quantity;
+      } else {
+        // Si no, calcular 20% del precio total del item
+        const itemTotal = Number(item.totalPrice || 0);
+        totalDeposit += itemTotal * 0.2;
+      }
+    }
+    
+    return totalDeposit;
   }
 
   /**
@@ -113,19 +135,45 @@ export class OrderService {
         throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
       }
 
-      // Calculate totals
-      const totals = await cartService.calculateTotals(
-        data.items,
-        data.deliveryType as any,
-        data.deliveryType === 'DELIVERY' ? 10 : 0 // Default 10km for now
-      );
+      // Calculate totals - usar distancia y costo de envío del frontend si están disponibles
+      let deliveryCost = 0;
+      
+      if (data.deliveryType === 'DELIVERY') {
+        // Si el frontend envía el costo de envío calculado, usarlo directamente
+        if (data.shippingCost !== undefined && data.shippingCost !== null) {
+          deliveryCost = Number(data.shippingCost);
+        } else if (data.deliveryDistance) {
+          // Si no, calcular basado en distancia
+          deliveryCost = data.deliveryDistance * 1.5;
+        } else {
+          // Fallback: 10km por defecto
+          deliveryCost = 10 * 1.5;
+        }
+      }
+      
+      // Calcular subtotal de items
+      let subtotal = 0;
+      for (const item of data.items) {
+        subtotal += Number(item.totalPrice || 0);
+      }
+      
+      // Calcular IVA sobre subtotal + envío
+      const taxRate = 0.21;
+      const tax = (subtotal + deliveryCost) * taxRate;
+      
+      const totals = {
+        subtotal,
+        deliveryCost,
+        tax,
+        total: subtotal + deliveryCost + tax
+      };
 
       // Apply VIP discount
       const vipDiscount = this.calculateVIPDiscount(user.userLevel, totals.subtotal);
       const subtotalAfterDiscount = totals.subtotal - vipDiscount;
 
       // Calculate deposit (VIP users don't pay)
-      const depositAmount = this.calculateDeposit(user.userLevel, data.items);
+      const depositAmount = await this.calculateDeposit(user.userLevel, data.items);
 
       // Recalculate total with VIP discount
       const finalTotal = subtotalAfterDiscount + totals.deliveryCost + totals.tax;
@@ -143,16 +191,31 @@ export class OrderService {
         for (const item of data.items) {
           const product = await tx.product.findUnique({
             where: { id: item.productId },
-            select: { id: true, name: true, stock: true }
+            select: { id: true, name: true, stock: true, realStock: true }
           });
 
           if (!product) {
             throw new AppError(404, `Producto no encontrado: ${item.productId}`, 'PRODUCT_NOT_FOUND');
           }
 
-          if (product.stock < item.quantity) {
+          // Calcular días hasta el evento
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const startDate = new Date(item.startDate);
+          startDate.setHours(0, 0, 0, 0);
+          const daysUntilEvent = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+          // Si la reserva es con más de 30 días de antelación, siempre está disponible
+          if (daysUntilEvent > 30) {
+            logger.info(`Pedido con ${daysUntilEvent} días de antelación - stock no validado (tiempo suficiente para adquirir)`);
+            continue; // Saltar validación de stock
+          }
+
+          // Para reservas con menos de 30 días, validar stock real
+          const currentStock = product.realStock ?? product.stock ?? 0;
+          if (currentStock < item.quantity) {
             throw new AppError(400, 
-              `Stock insuficiente para ${product.name}. Disponible: ${product.stock}, Solicitado: ${item.quantity}`,
+              `Stock insuficiente para ${product.name}. Disponible: ${currentStock}, Solicitado: ${item.quantity}`,
               'INSUFFICIENT_STOCK'
             );
           }
@@ -228,13 +291,16 @@ export class OrderService {
           },
         });
 
-        // Update product stock atomically in same transaction
+        // Update product stock and usage stats atomically in same transaction
         for (const item of data.items) {
           await tx.product.update({
             where: { id: item.productId },
             data: {
               stock: {
                 decrement: item.quantity,
+              },
+              timesUsed: {
+                increment: item.quantity, // Incrementar por la cantidad alquilada
               },
             },
           });
@@ -786,6 +852,178 @@ export class OrderService {
       return events;
     } catch (error) {
       logger.error('Error getting upcoming events:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Marcar pedido como devuelto
+   */
+  async markAsReturned(orderId: string, returnData: {
+    notes?: string;
+    condition?: 'PERFECT' | 'GOOD' | 'DAMAGED';
+    returnedBy: string;
+  }) {
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          items: true,
+        },
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      // Actualizar orden a RETURNED o COMPLETED
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          status: OrderStatus.RETURNED,
+          depositStatus: 'RELEASED', // Liberar fianza
+          returnedAt: new Date(),
+          returnNotes: returnData.notes,
+          returnCondition: returnData.condition || 'GOOD',
+        },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+          },
+          user: true,
+        },
+      });
+
+      // Devolver stock
+      for (const item of order.items) {
+        await prisma.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+
+      logger.info(`Order ${orderId} marked as returned by user ${returnData.returnedBy}`);
+
+      return updatedOrder;
+    } catch (error) {
+      logger.error('Error marking order as returned:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Cobrar fianza - Genera Payment Link para móvil
+   */
+  async captureDeposit(orderId: string, notes?: string) {
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: true,
+        },
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      if (order.depositStatus === 'CAPTURED') {
+        throw new AppError(400, 'La fianza ya ha sido cobrada', 'DEPOSIT_ALREADY_CAPTURED');
+      }
+
+      if (Number(order.depositAmount) <= 0) {
+        throw new AppError(400, 'El pedido no tiene fianza a cobrar', 'NO_DEPOSIT');
+      }
+
+      // Importar stripeService dinámicamente para evitar dependencias circulares
+      const { stripeService } = await import('./stripe.service');
+
+      // Crear Payment Link de Stripe (se puede abrir en móvil y usar Tap to Pay)
+      const paymentLink = await stripeService.createDepositPaymentLink(
+        orderId,
+        Number(order.depositAmount)
+      );
+
+      // Actualizar estado a AUTHORIZED (pendiente de pago)
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          depositStatus: 'AUTHORIZED',
+          depositNotes: notes || `Payment Link creado: ${paymentLink.url}`,
+        },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+          },
+          user: true,
+        },
+      });
+
+      logger.info(`Payment Link created for order ${orderId}: ${paymentLink.url}`);
+
+      // Retornar con el URL del payment link
+      return {
+        ...updatedOrder,
+        depositPaymentLink: paymentLink.url,
+      };
+    } catch (error) {
+      logger.error('Error capturing deposit:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Devolver fianza
+   */
+  async releaseDeposit(orderId: string, retainedAmount?: number, notes?: string) {
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      if (order.depositStatus === 'RELEASED') {
+        throw new AppError(400, 'La fianza ya ha sido devuelta', 'DEPOSIT_ALREADY_RELEASED');
+      }
+
+      const depositStatus = retainedAmount && retainedAmount > 0 
+        ? 'PARTIALLY_RETAINED' 
+        : 'RELEASED';
+
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          depositStatus,
+          depositReleasedAt: new Date(),
+          depositRetainedAmount: retainedAmount || 0,
+          depositNotes: notes || (retainedAmount ? 'Fianza parcialmente retenida' : 'Fianza devuelta completamente'),
+        },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+          },
+          user: true,
+        },
+      });
+
+      logger.info(`Deposit released for order ${orderId}, retained: ${retainedAmount || 0}`);
+
+      return updatedOrder;
+    } catch (error) {
+      logger.error('Error releasing deposit:', error);
       throw error;
     }
   }

@@ -29,37 +29,56 @@ class BackupController {
         fs.mkdirSync(backupDir, { recursive: true });
       }
 
-      const files = fs.readdirSync(backupDir)
-        .filter(f => f.startsWith('backup_') && (f.endsWith('.zip') || f.endsWith('.json')))
-        .map(filename => {
-          const filepath = path.join(backupDir, filename);
-          const stats = fs.statSync(filepath);
-          
-          let data: any = { timestamp: stats.mtime, data: {} };
-          
-          // Si es JSON, leer los datos
-          if (filename.endsWith('.json')) {
-            try {
-              data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-            } catch (e) {
-              // Si falla, usar datos por defecto
+      const files = await Promise.all(
+        fs.readdirSync(backupDir)
+          .filter(f => f.startsWith('backup_') && (f.endsWith('.zip') || f.endsWith('.json')))
+          .map(async filename => {
+            const filepath = path.join(backupDir, filename);
+            const stats = fs.statSync(filepath);
+            
+            let data: any = { timestamp: stats.mtime, data: {} };
+            
+            // Leer datos del backup
+            if (filename.endsWith('.json')) {
+              try {
+                data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+              } catch (e) {
+                console.error('Error leyendo JSON:', e);
+              }
+            } else if (filename.endsWith('.zip')) {
+              try {
+                // Extraer y leer el database.json del ZIP
+                const tempExtractDir = path.join(backupDir, `temp_read_${Date.now()}`);
+                await extract(filepath, { dir: tempExtractDir });
+                
+                const dbJsonPath = path.join(tempExtractDir, 'database.json');
+                if (fs.existsSync(dbJsonPath)) {
+                  data = JSON.parse(fs.readFileSync(dbJsonPath, 'utf8'));
+                }
+                
+                // Limpiar carpeta temporal
+                fs.rmSync(tempExtractDir, { recursive: true, force: true });
+              } catch (e) {
+                console.error('Error leyendo ZIP:', e);
+              }
             }
-          }
 
-          return {
-            filename,
-            date: new Date(data.timestamp || stats.mtime).toLocaleString('es-ES'),
-            size: stats.size >= 1024 * 1024 
-              ? `${(stats.size / 1024 / 1024).toFixed(2)} MB` 
-              : `${(stats.size / 1024).toFixed(2)} KB`,
-            products: data.data?.products?.length || 0,
-            users: data.data?.users?.length || 0,
-            packs: data.data?.packs?.length || 0,
-            timestamp: data.timestamp || stats.mtime,
-            type: filename.endsWith('.zip') ? 'complete' : 'database'
-          };
-        })
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            return {
+              filename,
+              date: new Date(data.timestamp || stats.mtime).toLocaleString('es-ES'),
+              size: stats.size >= 1024 * 1024 
+                ? `${(stats.size / 1024 / 1024).toFixed(2)} MB` 
+                : `${(stats.size / 1024).toFixed(2)} KB`,
+              products: data.data?.products?.length || 0,
+              users: data.data?.users?.length || 0,
+              packs: data.data?.packs?.length || 0,
+              timestamp: data.timestamp || stats.mtime,
+              type: filename.endsWith('.zip') ? 'complete' : 'database'
+            };
+          })
+      );
+
+      const sortedFiles = files.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
       // No cachear esta respuesta
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -67,8 +86,8 @@ class BackupController {
       res.setHeader('Expires', '0');
 
       const response = {
-        backups: files,
-        count: files.length
+        backups: sortedFiles,
+        count: sortedFiles.length
       };
 
       console.log('📋 Enviando lista de backups:', response);
@@ -284,11 +303,22 @@ class BackupController {
         
         // Leer el database.json del ZIP
         const dbJsonPath = path.join(tempExtractDir, 'database.json');
+        if (!fs.existsSync(dbJsonPath)) {
+          throw new AppError(400, 'Archivo database.json no encontrado en el ZIP', 'INVALID_BACKUP');
+        }
         backupData = JSON.parse(fs.readFileSync(dbJsonPath, 'utf8'));
       } else {
         // Es JSON directo (backups antiguos)
         backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
       }
+      
+      console.log('📊 Backup info:', {
+        version: backupData.version,
+        timestamp: backupData.timestamp,
+        products: backupData.data?.products?.length || 0,
+        users: backupData.data?.users?.length || 0,
+        categories: backupData.data?.categories?.length || 0
+      });
       
       const { PrismaClient } = require('@prisma/client');
       const prisma = new PrismaClient();
@@ -343,10 +373,18 @@ class BackupController {
         // Función helper para restaurar sin relaciones
         const restoreSimple = async (modelName: string, dataArray: any[]) => {
           if (!dataArray?.length) return 0;
+          let count = 0;
           for (const item of dataArray) {
-            await (prisma as any)[modelName].create({ data: item });
+            try {
+              await (prisma as any)[modelName].create({ data: item });
+              count++;
+            } catch (error: any) {
+              console.error(`❌ Error restaurando ${modelName}:`, error.message);
+              console.error('Dato problemático:', JSON.stringify(item, null, 2));
+              throw new Error(`Error restaurando ${modelName}: ${error.message}`);
+            }
           }
-          return dataArray.length;
+          return count;
         };
 
         let restored = {
@@ -533,8 +571,112 @@ class BackupController {
         throw new AppError(404, 'Backup no encontrado', 'BACKUP_NOT_FOUND');
       }
 
-      res.download(backupPath, filename);
+      const stats = fs.statSync(backupPath);
+      console.log('📥 Descargando backup:', {
+        filename,
+        size: stats.size,
+        path: backupPath
+      });
+
+      // Configurar headers para descarga
+      res.setHeader('Content-Type', filename.endsWith('.zip') ? 'application/zip' : 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', stats.size);
+
+      // Enviar archivo usando stream
+      const fileStream = fs.createReadStream(backupPath);
+      fileStream.pipe(res);
+
+      fileStream.on('error', (error) => {
+        console.error('❌ Error enviando archivo:', error);
+        next(error);
+      });
+
+      fileStream.on('end', () => {
+        console.log('✅ Archivo enviado correctamente');
+      });
     } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Subir backup desde archivo local
+   */
+  async uploadBackup(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user || req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      console.log('📤 Recibiendo archivo:', {
+        hasFile: !!req.file,
+        originalname: req.file?.originalname,
+        size: req.file?.size,
+        mimetype: req.file?.mimetype,
+        path: req.file?.path
+      });
+
+      if (!req.file) {
+        throw new AppError(400, 'No se proporcionó archivo', 'NO_FILE');
+      }
+
+      // Verificar que el archivo tiene contenido
+      if (req.file.size === 0) {
+        fs.unlinkSync(req.file.path);
+        throw new AppError(400, 'El archivo está vacío', 'EMPTY_FILE');
+      }
+
+      const backupDir = path.join(__dirname, '../../../../backups/database');
+      
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+
+      // Validar que sea JSON o ZIP
+      const filename = req.file.originalname;
+      if (!filename.endsWith('.json') && !filename.endsWith('.zip')) {
+        fs.unlinkSync(req.file.path);
+        throw new AppError(400, 'Solo se aceptan archivos JSON o ZIP', 'INVALID_FORMAT');
+      }
+
+      // Generar nombre único si ya existe
+      let finalFilename = `backup_${Date.now()}_${filename}`;
+      const finalPath = path.join(backupDir, finalFilename);
+
+      // Verificar que el archivo temporal existe y tiene contenido
+      const tempStats = fs.statSync(req.file.path);
+      console.log('📊 Archivo temporal:', {
+        path: req.file.path,
+        size: tempStats.size,
+        exists: fs.existsSync(req.file.path)
+      });
+
+      // Mover archivo a la carpeta de backups
+      fs.renameSync(req.file.path, finalPath);
+
+      // Verificar que se movió correctamente
+      const finalStats = fs.statSync(finalPath);
+      console.log('✅ Backup subido:', {
+        path: finalPath,
+        size: finalStats.size
+      });
+
+      res.json({
+        message: 'Backup subido exitosamente',
+        filename: finalFilename,
+        size: finalStats.size,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      // Limpiar archivo si hay error
+      if (req.file) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (e) {
+          // Ignorar error al limpiar
+        }
+      }
       next(error);
     }
   }

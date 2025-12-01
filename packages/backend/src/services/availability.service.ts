@@ -53,41 +53,18 @@ export class AvailabilityService {
       // Para reservas con menos de 30 días: verificar stock real
 
       // Get all orders that overlap with the requested dates
-      const overlappingOrders = await prisma.item.findMany({
+      const overlappingOrders = await prisma.orderItem.findMany({
         where: {
           productId,
           order: {
             status: {
-              notIn: ['CANCELLED', 'RETURNED'],
+              notIn: ['CANCELLED'],
             },
-          },
-          OR: [
-            {
-              // Order starts within our range
-              startDate: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-            {
-              // Order ends within our range
-              endDate: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-            {
-              // Order completely contains our range
-              AND: [
-                { startDate: { lte: startDate } },
-                { endDate: { gte: endDate } },
-              ],
-            },
-          ],
+            startDate: { lte: endDate },
+            endDate: { gte: startDate }
+          }
         },
-        include: {
-          order: true,
-        },
+        select: { quantity: true }
       });
 
       // Calculate reserved quantity for each day
@@ -130,55 +107,25 @@ export class AvailabilityService {
         throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
       }
 
-      const overlappingOrders = await prisma.item.findMany({
+      const overlappingOrders = await prisma.orderItem.findMany({
         where: {
           productId,
           order: {
             status: {
-              notIn: ['CANCELLED', 'RETURNED'],
+              notIn: ['CANCELLED'],
             },
-          },
-          OR: [
-            {
-              startDate: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-            {
-              endDate: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-            {
-              AND: [
-                { startDate: { lte: startDate } },
-                { endDate: { gte: endDate } },
-              ],
-            },
-          ],
+            startDate: { lte: endDate },
+            endDate: { gte: startDate }
+          }
         },
+        select: { quantity: true }
       });
 
-      // Find the minimum available quantity across all dates
-      const dates = this.getDatesBetween(startDate, endDate);
-      let minAvailable = product.stock;
+      const reservedStock = overlappingOrders.reduce((sum, item) => sum + item.quantity, 0);
+      const currentStock = product.realStock ?? product.stock ?? 0;
+      const availableQuantity = currentStock - reservedStock;
 
-      for (const date of dates) {
-        const reservedOnDate = overlappingOrders
-          .filter(item => {
-            const itemStart = new Date(item.startDate);
-            const itemEnd = new Date(item.endDate);
-            return date >= itemStart && date <= itemEnd;
-          })
-          .reduce((sum, item) => sum + item.quantity, 0);
-
-        const availableOnDate = product.stock - reservedOnDate;
-        minAvailable = Math.min(minAvailable, availableOnDate);
-      }
-
-      return Math.max(0, minAvailable);
+      return Math.max(0, availableQuantity);
     } catch (error) {
       logger.error('Error getting available quantity:', error);
       throw error;
@@ -194,40 +141,25 @@ export class AvailabilityService {
         productId,
         order: {
           status: {
-            notIn: ['CANCELLED', 'RETURNED'],
+            notIn: ['CANCELLED'],
           },
         },
       };
 
       if (startDate && endDate) {
-        where.OR = [
-          {
-            startDate: {
-              gte: startDate,
-              lte: endDate,
-            },
-          },
-          {
-            endDate: {
-              gte: startDate,
-              lte: endDate,
-            },
-          },
-          {
-            AND: [
-              { startDate: { lte: startDate } },
-              { endDate: { gte: endDate } },
-            ],
-          },
-        ];
+        where.order.startDate = { lte: endDate };
+        where.order.endDate = { gte: startDate };
       }
 
-      const bookings = await prisma.item.findMany({ where });
+      const bookings = await prisma.orderItem.findMany({ 
+        where,
+        include: { order: true }
+      });
 
       const bookedDates: Set<string> = new Set();
 
       for (const booking of bookings) {
-        const dates = this.getDatesBetween(booking.startDate, booking.endDate);
+        const dates = this.getDatesBetween(booking.order.startDate, booking.order.endDate);
         dates.forEach(date => {
           bookedDates.add(date.toISOString().split('T')[0]);
         });
@@ -262,35 +194,18 @@ export class AvailabilityService {
       const lastDay = new Date(year, month, 0);
 
       // Get all bookings for the month
-      const bookings = await prisma.item.findMany({
+      const bookings = await prisma.orderItem.findMany({
         where: {
           productId,
           order: {
             status: {
-              notIn: ['CANCELLED', 'RETURNED'],
+              notIn: ['CANCELLED'],
             },
-          },
-          OR: [
-            {
-              startDate: {
-                gte: firstDay,
-                lte: lastDay,
-              },
-            },
-            {
-              endDate: {
-                gte: firstDay,
-                lte: lastDay,
-              },
-            },
-            {
-              AND: [
-                { startDate: { lte: firstDay } },
-                { endDate: { gte: lastDay } },
-              ],
-            },
-          ],
+            startDate: { lte: lastDay },
+            endDate: { gte: firstDay }
+          }
         },
+        include: { order: true }
       });
 
       // Build daily availability
@@ -300,8 +215,8 @@ export class AvailabilityService {
       for (const date of dates) {
         const reservedOnDate = bookings
           .filter(booking => {
-            const bookingStart = new Date(booking.startDate);
-            const bookingEnd = new Date(booking.endDate);
+            const bookingStart = new Date(booking.order.startDate);
+            const bookingEnd = new Date(booking.order.endDate);
             return date >= bookingStart && date <= bookingEnd;
           })
           .reduce((sum, booking) => sum + booking.quantity, 0);

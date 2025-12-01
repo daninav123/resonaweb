@@ -9,6 +9,7 @@ import { DEFAULT_CALCULATOR_CONFIG } from '../types/calculator.types';
 import { productService } from '../services/product.service';
 import { validateEventData, type EventValidation } from '../utils/eventValidation';
 import { guestCart } from '../utils/guestCart';
+import { api } from '../services/api';
 
 
 interface EventData {
@@ -144,7 +145,7 @@ const EventCalculatorPage = () => {
     }
   };
 
-  const handleAddToCartAndCheckout = () => {
+  const handleAddToCartAndCheckout = async () => {
     // 1. Verificar que haya productos seleccionados
     if (!eventData.selectedPack && Object.keys(eventData.selectedExtras).length === 0) {
       alert('❌ Por favor selecciona al menos un pack o producto extra');
@@ -155,84 +156,89 @@ const EventCalculatorPage = () => {
     let totalCalculated = 0;
     let itemCount = 0;
 
-    // 3. Añadir pack al carrito
-    if (eventData.selectedPack) {
-      const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
-      if (pack) {
-        guestCart.addItem(pack, 1);
-        const basePrice = Number(pack.pricePerDay);
-        const shipping = Number(pack.shippingCost || 0);
-        const installation = Number(pack.installationCost || 0);
-        totalCalculated += basePrice + shipping + installation;
-        itemCount += 1;
-      }
-    }
-
-    // 4. Añadir extras al carrito
-    Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
-      if (Number(quantity) > 0) {
-        const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
-        if (product) {
-          guestCart.addItem(product, Number(quantity));
-          const basePrice = Number(product.pricePerDay);
-          const shipping = Number(product.shippingCost || 0);
-          const installation = Number(product.installationCost || 0);
-          totalCalculated += (basePrice + shipping + installation) * Number(quantity);
-          itemCount += Number(quantity);
+    try {
+      // 3. Añadir pack al carrito (SIEMPRE localStorage)
+      if (eventData.selectedPack) {
+        const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+        if (pack) {
+          guestCart.addItem(pack, 1);
+          const basePrice = Number(pack.pricePerDay);
+          const shipping = Number(pack.shippingCost || 0);
+          const installation = Number(pack.installationCost || 0);
+          totalCalculated += basePrice + shipping + installation;
+          itemCount += 1;
         }
       }
-    });
 
-    const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
-    const totalFinal = totalCalculated * days;
+      // 4. Añadir extras al carrito (SIEMPRE localStorage)
+      for (const [productId, quantity] of Object.entries(eventData.selectedExtras)) {
+        if (Number(quantity) > 0) {
+          const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+          if (product) {
+            guestCart.addItem(product, Number(quantity));
+            const basePrice = Number(product.pricePerDay);
+            const shipping = Number(product.shippingCost || 0);
+            const installation = Number(product.installationCost || 0);
+            totalCalculated += (basePrice + shipping + installation) * Number(quantity);
+            itemCount += Number(quantity);
+          }
+        }
+      }
 
-    // 5. Mostrar confirmación
-    alert(
-      `✅ Productos añadidos al carrito!\n\n` +
-      `${itemCount} producto${itemCount > 1 ? 's' : ''} listos para checkout.\n` +
-      `Total estimado: €${totalFinal.toFixed(2)}\n` +
-      `(${days} día${days > 1 ? 's' : ''}, incluye transporte y montaje)\n\n` +
-      `Te redirigiremos al carrito para completar tu pedido.`
-    );
+      const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
+      const totalFinal = totalCalculated * days;
 
-    // 6. Marcar que los productos ya incluyen transporte/montaje
-    localStorage.setItem('cartIncludesShippingInstallation', 'true');
-    localStorage.setItem('cartFromCalculator', 'true');
+      // 5. Mostrar confirmación
+      alert(
+        `✅ Productos añadidos al carrito!\n\n` +
+        `${itemCount} producto${itemCount > 1 ? 's' : ''} listos para checkout.\n` +
+        `Total estimado: €${totalFinal.toFixed(2)}\n` +
+        `(${days} día${days > 1 ? 's' : ''}, incluye transporte y montaje)\n\n` +
+        `Te redirigiremos al carrito para completar tu pedido.`
+      );
 
-    // 7. Guardar fechas del evento para el carrito
-    if (eventData.eventDate) {
-      const eventDate = new Date(eventData.eventDate);
-      const startDate = eventDate.toISOString().split('T')[0];
-      
-      // Calcular fecha de fin según duración
-      const endDate = new Date(eventDate);
-      const daysToAdd = eventData.durationType === 'hours' 
-        ? Math.ceil(eventData.duration / 8) 
-        : eventData.duration;
-      endDate.setDate(endDate.getDate() + daysToAdd - 1); // -1 porque el primer día cuenta
-      
-      localStorage.setItem('cartEventDates', JSON.stringify({
-        start: startDate,
-        end: endDate.toISOString().split('T')[0]
-      }));
+      // 6. Marcar que los productos ya incluyen transporte/montaje
+      localStorage.setItem('cartIncludesShippingInstallation', 'true');
+      localStorage.setItem('cartFromCalculator', 'true');
+
+      // 7. Guardar fechas del evento para el carrito
+      if (eventData.eventDate) {
+        const eventDate = new Date(eventData.eventDate);
+        const startDate = eventDate.toISOString().split('T')[0];
+        
+        // Calcular fecha de fin según duración
+        const endDate = new Date(eventDate);
+        const daysToAdd = eventData.durationType === 'hours' 
+          ? Math.ceil(eventData.duration / 8) 
+          : eventData.duration;
+        endDate.setDate(endDate.getDate() + daysToAdd);
+        
+        localStorage.setItem('cartEventDates', JSON.stringify({
+          start: startDate,
+          end: endDate.toISOString().split('T')[0]
+        }));
+      }
+
+      // 8. Guardar información completa del evento para las notas
+      const eventInfo = {
+        eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
+        attendees: eventData.attendees,
+        duration: eventData.duration,
+        durationType: eventData.durationType,
+        startTime: eventData.startTime,
+        endTime: eventData.endTime,
+        eventDate: eventData.eventDate,
+        eventLocation: eventData.eventLocation,
+        selectedParts: eventData.selectedParts,
+      };
+      localStorage.setItem('cartEventInfo', JSON.stringify(eventInfo));
+
+      // 9. Redirigir al checkout
+      navigate('/checkout');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('❌ Error al añadir productos al carrito');
     }
-
-    // 8. Guardar información completa del evento para las notas
-    const eventInfo = {
-      eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
-      attendees: eventData.attendees,
-      duration: eventData.duration,
-      durationType: eventData.durationType,
-      startTime: eventData.startTime,
-      endTime: eventData.endTime,
-      eventDate: eventData.eventDate,
-      eventLocation: eventData.eventLocation,
-      selectedParts: eventData.selectedParts,
-    };
-    localStorage.setItem('cartEventInfo', JSON.stringify(eventInfo));
-
-    // 9. Redirigir al checkout
-    navigate('/checkout');
   };
 
   const handleRequestQuote = async () => {

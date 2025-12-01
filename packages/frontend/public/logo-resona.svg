@@ -1,6 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-  <circle cx="400" cy="400" r="350" fill="none" stroke="#5ebbff" stroke-width="8"/>
-  <text x="400" y="380" font-family="'Brush Script MT', cursive" font-size="120" fill="#5ebbff" text-anchor="middle" font-style="italic">Resona</text>
-  <text x="400" y="470" font-family="Arial, sans-serif" font-size="60" fill="#5ebbff" text-anchor="middle" letter-spacing="8">EVENTS</text>
-  <path d="M 650 400 L 680 420 L 680 380 Z M 670 400 L 630 400 L 620 420 L 620 380 Z" fill="#5ebbff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Círculo exterior -->
+  <circle cx="200" cy="200" r="180" fill="none" stroke="#5ebbff" stroke-width="6"/>
+  
+  <!-- Texto "Resona" en cursiva -->
+  <text x="200" y="210" font-family="cursive" font-size="70" fill="#5ebbff" text-anchor="middle" font-style="italic" font-weight="300">Resona</text>
+  
+  <!-- Texto "EVENTS" -->
+  <text x="200" y="260" font-family="Arial, sans-serif" font-size="28" fill="#5ebbff" text-anchor="middle" letter-spacing="4" font-weight="400">EVENTS</text>
+  
+  <!-- Micrófono/Cable (icono pequeño a la derecha) -->
+  <g transform="translate(280, 200)">
+    <!-- Cable/conector -->
+    <path d="M 0 -15 L 0 15" stroke="#5ebbff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="-15" r="3" fill="#5ebbff"/>
+    <circle cx="0" cy="15" r="3" fill="#5ebbff"/>
+    <!-- Líneas del conector -->
+    <line x1="-3" y1="-10" x2="3" y2="-10" stroke="#5ebbff" stroke-width="1.5"/>
+    <line x1="-3" y1="-5" x2="3" y2="-5" stroke="#5ebbff" stroke-width="1.5"/>
+    <line x1="-3" y1="0" x2="3" y2="0" stroke="#5ebbff" stroke-width="1.5"/>
+    <line x1="-3" y1="5" x2="3" y2="5" stroke="#5ebbff" stroke-width="1.5"/>
+    <line x1="-3" y1="10" x2="3" y2="10" stroke="#5ebbff" stroke-width="1.5"/>
+  </g>
 </svg>

@@ -8,9 +8,14 @@ interface CheckoutFormProps {
   amount: number;
   onSuccess: () => void;
   onError: (error: string) => void;
+  billingDetails?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
 }
 
-export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError }: CheckoutFormProps) => {
+export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billingDetails }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,6 +34,13 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError }: Check
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/checkout/success`,
+          payment_method_data: {
+            billing_details: {
+              name: billingDetails?.name || 'Cliente',
+              email: billingDetails?.email || undefined,
+              phone: billingDetails?.phone || undefined,
+            }
+          }
         },
         redirect: 'if_required',
       });
@@ -56,6 +68,13 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError }: Check
         <PaymentElement 
           options={{
             layout: 'tabs',
+            fields: {
+              billingDetails: {
+                email: 'never',
+                phone: 'never',
+                name: 'never',
+              }
+            },
           }}
         />
       </div>

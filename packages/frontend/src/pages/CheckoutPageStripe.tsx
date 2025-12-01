@@ -6,28 +6,25 @@ import { paymentService } from '../services/payment.service';
 import { Loader2, Package, MapPin, Calendar, CreditCard } from 'lucide-react';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '../stores/authStore';
 
 const CheckoutPageStripe = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const { user } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<any>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [stripePromise, setStripePromise] = useState<any>(null);
+  const [orderData, setOrderData] = useState<any>(null);
 
   useEffect(() => {
     loadOrderAndPayment();
   }, [orderId]);
 
   const loadOrderAndPayment = async () => {
-    if (!orderId) {
-      toast.error('No se especificó un pedido');
-      navigate('/mis-pedidos');
-      return;
-    }
-
     try {
       setLoading(true);
 
@@ -35,18 +32,63 @@ const CheckoutPageStripe = () => {
       const stripe = await paymentService.getStripe();
       setStripePromise(Promise.resolve(stripe));
 
-      // Obtener información del pedido
-      const orderData = await api.get(`/orders/${orderId}`);
-      setOrder(orderData);
+      // Si hay orderId, es un pago de una orden existente
+      if (orderId) {
+        // Obtener información del pedido
+        const orderDataResponse = await api.get(`/orders/${orderId}`);
+        setOrder(orderDataResponse);
 
-      // Crear Payment Intent
-      const paymentData: any = await paymentService.createPaymentIntent(orderId);
-      setClientSecret(paymentData.clientSecret);
+        // Crear Payment Intent
+        const paymentData: any = await paymentService.createPaymentIntent(orderId);
+        setClientSecret(paymentData.clientSecret);
+      } else {
+        // Es un pago inicial - recuperar datos de la orden desde sessionStorage
+        const pendingOrderData = sessionStorage.getItem('pendingOrderData');
+        if (!pendingOrderData) {
+          toast.error('No hay datos de orden pendiente');
+          navigate('/carrito');
+          return;
+        }
 
+        const parsedOrderData = JSON.parse(pendingOrderData);
+        setOrderData(parsedOrderData);
+
+        // Crear un Payment Intent para pago inicial (sin orderId)
+        const paymentData: any = await api.post('/payments/create-intent', {
+          orderData: parsedOrderData,
+        });
+        setClientSecret(paymentData.clientSecret);
+
+        // Mostrar resumen del pedido
+        const subtotal = parsedOrderData.items.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+        const shipping = parsedOrderData.shippingCost || 0;
+        const tax = (subtotal + shipping) * 0.21;
+        const total = subtotal + shipping + tax;
+
+        setOrder({
+          orderNumber: 'PENDIENTE',
+          startDate: parsedOrderData.items[0]?.startDate,
+          endDate: parsedOrderData.items[parsedOrderData.items.length - 1]?.endDate,
+          deliveryType: parsedOrderData.deliveryType,
+          items: parsedOrderData.items,
+          subtotal,
+          shippingCost: shipping,
+          taxAmount: tax,
+          total,
+        });
+      }
     } catch (error: any) {
       console.error('Error loading checkout:', error);
-      toast.error(error.message || 'Error al cargar el checkout');
-      navigate('/mis-pedidos');
+      
+      // Si es error de autenticación, redirigir a login
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        toast.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente');
+        navigate('/login', { state: { from: '/checkout-stripe' } });
+        return;
+      }
+      
+      toast.error(error.response?.data?.message || error.message || 'Error al cargar el checkout');
+      navigate('/carrito');
     } finally {
       setLoading(false);
     }
@@ -55,10 +97,35 @@ const CheckoutPageStripe = () => {
   const handlePaymentSuccess = async () => {
     toast.success('¡Pago realizado con éxito!');
     
-    // Esperar un momento para que se procese en el backend
-    setTimeout(() => {
-      navigate(`/checkout/success?orderId=${orderId}`);
-    }, 1000);
+    // Si es pago inicial (sin orderId), crear la orden ahora
+    if (!orderId && orderData && user) {
+      try {
+        const response: any = await api.post('/orders', {
+          ...orderData,
+          userId: user.id,
+        });
+        
+        const createdOrder = response?.order || response;
+        const createdOrderId = createdOrder?.id;
+        
+        // Limpiar sessionStorage
+        sessionStorage.removeItem('pendingOrderData');
+        
+        // Redirigir a página de éxito con el nuevo orderId
+        setTimeout(() => {
+          navigate(`/checkout/success?orderId=${createdOrderId}`);
+        }, 1000);
+      } catch (error: any) {
+        console.error('Error creando orden:', error);
+        toast.error('Error al crear la orden');
+        navigate('/carrito');
+      }
+    } else {
+      // Es un pago de una orden existente
+      setTimeout(() => {
+        navigate(`/checkout/success?orderId=${orderId}`);
+      }, 1000);
+    }
   };
 
   const handlePaymentError = (error: string) => {
@@ -94,7 +161,7 @@ const CheckoutPageStripe = () => {
   }
 
   const options: any = {
-    clientSecret,
+    clientSecret: clientSecret || '',
     appearance: {
       theme: 'stripe' as const,
       variables: {
@@ -106,11 +173,10 @@ const CheckoutPageStripe = () => {
         borderRadius: '8px',
       },
     },
-    // Métodos de pago habilitados: Tarjeta, PayPal, Transferencia SEPA
+    // Métodos de pago habilitados: Tarjeta, Transferencia bancaria
     paymentMethodOrder: [
       'card',        // Tarjeta de crédito/débito
-      'paypal',      // PayPal
-      'sepa_debit',  // Transferencia bancaria SEPA
+      'sepa_debit',  // Transferencia bancaria
     ],
   };
 
@@ -163,8 +229,8 @@ const CheckoutPageStripe = () => {
                 <div className="mb-6">
                   <h3 className="font-medium mb-2">Artículos</h3>
                   <div className="space-y-2">
-                    {order.items.map((item: any) => (
-                      <div key={item.id} className="flex justify-between text-sm">
+                    {order.items.map((item: any, index: number) => (
+                      <div key={item.id || `item-${index}`} className="flex justify-between text-sm">
                         <span className="text-gray-600">
                           {item.product?.name || 'Producto'} x{item.quantity}
                         </span>
@@ -217,7 +283,7 @@ const CheckoutPageStripe = () => {
               {/* Mensaje sobre métodos de pago */}
               <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                 <p className="text-sm text-blue-900">
-                  💳 <strong>Aceptamos múltiples métodos de pago:</strong> Tarjeta de crédito/débito, PayPal, Transferencia bancaria (SEPA/Bizum) y más.
+                  💳 <strong>Método de pago:</strong> Tarjeta de crédito/débito
                 </p>
               </div>
 
@@ -227,6 +293,11 @@ const CheckoutPageStripe = () => {
                   amount={Number(order.total)}
                   onSuccess={handlePaymentSuccess}
                   onError={handlePaymentError}
+                  billingDetails={{
+                    name: order.contactPerson || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'Cliente',
+                    email: order.user?.email || user?.email,
+                    phone: order.contactPhone || user?.phone,
+                  }}
                 />
               </Elements>
             </div>

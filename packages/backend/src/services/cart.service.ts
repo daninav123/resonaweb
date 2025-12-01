@@ -74,9 +74,10 @@ export class CartService {
         throw new AppError(400, 'Producto no disponible', 'PRODUCT_INACTIVE');
       }
 
-      if (product.stock < item.quantity) {
-        throw new AppError(400, 'Stock insuficiente', 'INSUFFICIENT_STOCK');
-      }
+      // No validar stock aquí - se validará cuando se asignen fechas
+      // if (product.stock < item.quantity) {
+      //   throw new AppError(400, 'Stock insuficiente', 'INSUFFICIENT_STOCK');
+      // }
 
       // If dates are provided, calculate pricing
       let days = 0;
@@ -96,7 +97,8 @@ export class CartService {
         if (days === 1) {
           pricePerUnit = Number(product.pricePerDay);
         } else if (days === 2 || days === 3) {
-          pricePerUnit = Number(product.pricePerWeekend);
+          // Fin de semana (viernes tarde - lunes mañana) = mismo precio que 1 día
+          pricePerUnit = Number(product.pricePerDay);
         } else if (days >= 7) {
           const weeks = Math.ceil(days / 7);
           pricePerUnit = Number(product.pricePerWeek) * weeks;
@@ -107,7 +109,8 @@ export class CartService {
         totalPrice = pricePerUnit * item.quantity;
       }
 
-      // Return cart item with calculated prices
+      // El carrito se maneja en el frontend (localStorage o estado)
+      // Este endpoint solo valida el producto y retorna información
       return {
         productId: product.id,
         product: {
@@ -257,7 +260,8 @@ export class CartService {
         if (days === 1) {
           pricePerUnit = Number(product.pricePerDay);
         } else if (days === 2 || days === 3) {
-          pricePerUnit = Number(product.pricePerWeekend);
+          // Fin de semana = mismo precio que 1 día
+          pricePerUnit = Number(product.pricePerDay);
         } else if (days >= 7) {
           const weeks = Math.ceil(days / 7);
           pricePerUnit = Number(product.pricePerWeek) * weeks;
@@ -345,7 +349,7 @@ export class CartService {
             where: {
               productId: product.id,
               order: {
-                status: 'CONFIRMED',
+                status: { in: ['PENDING', 'IN_PROGRESS', 'COMPLETED'] },
                 startDate: { lte: endDate },
                 endDate: { gte: startDate }
               }
@@ -389,6 +393,238 @@ export class CartService {
       throw error;
     }
   }
+
+  /**
+   * Get or create user's persistent cart from database
+   */
+  async getPersistentCart(userId: string) {
+    try {
+      let cart = await prisma.cart.findFirst({
+        where: { userId },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  sku: true,
+                  mainImageUrl: true,
+                  category: true,
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // If no cart exists, create one
+      if (!cart) {
+        cart = await prisma.cart.create({
+          data: {
+            userId,
+            items: {
+              create: []
+            }
+          },
+          include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    sku: true,
+                    mainImageUrl: true,
+                    category: true,
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      return cart;
+    } catch (error) {
+      logger.error('Error getting persistent cart:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Add item to persistent cart
+   */
+  async addToPersistentCart(userId: string, productId: string, quantity: number, startDate?: Date, endDate?: Date) {
+    try {
+      // Get or create cart
+      let cart = await prisma.cart.findFirst({
+        where: { userId }
+      });
+
+      if (!cart) {
+        cart = await prisma.cart.create({
+          data: { userId }
+        });
+      }
+
+      // Get product
+      const product = await prisma.product.findUnique({
+        where: { id: productId }
+      });
+
+      if (!product) {
+        throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
+      }
+
+      // Check if item already exists in cart
+      const existingItem = await prisma.cartItem.findFirst({
+        where: {
+          cartId: cart.id,
+          productId
+        }
+      });
+
+      if (existingItem) {
+        // Update quantity
+        await prisma.cartItem.update({
+          where: { id: existingItem.id },
+          data: {
+            quantity: existingItem.quantity + quantity
+          }
+        });
+      } else {
+        // Create new item
+        await prisma.cartItem.create({
+          data: {
+            cartId: cart.id,
+            productId,
+            quantity,
+            startDate,
+            endDate,
+            pricePerDay: product.pricePerDay,
+            shippingCost: product.shippingCost,
+            installationCost: product.installationCost
+          }
+        });
+      }
+
+      logger.info(`Item added to persistent cart for user ${userId}, product ${productId}, quantity ${quantity}`);
+
+      return await this.getPersistentCart(userId);
+    } catch (error) {
+      logger.error('Error adding to persistent cart:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove item from persistent cart
+   */
+  async removeFromPersistentCart(userId: string, cartItemId: string) {
+    try {
+      await prisma.cartItem.delete({
+        where: { id: cartItemId }
+      });
+
+      logger.info(`Item removed from persistent cart for user ${userId}, item ${cartItemId}`);
+
+      return await this.getPersistentCart(userId);
+    } catch (error) {
+      logger.error('Error removing from persistent cart:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update cart item quantity
+   */
+  async updatePersistentCartItemQuantity(userId: string, cartItemId: string, quantity: number) {
+    try {
+      if (quantity <= 0) {
+        return await this.removeFromPersistentCart(userId, cartItemId);
+      }
+
+      await prisma.cartItem.update({
+        where: { id: cartItemId },
+        data: { quantity }
+      });
+
+      logger.info(`Cart item quantity updated for user ${userId}, item ${cartItemId}, quantity ${quantity}`);
+
+      return await this.getPersistentCart(userId);
+    } catch (error) {
+      logger.error('Error updating persistent cart item quantity:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Clear persistent cart
+   */
+  async clearPersistentCart(userId: string) {
+    try {
+      const cart = await prisma.cart.findFirst({
+        where: { userId }
+      });
+
+      if (cart) {
+        await prisma.cartItem.deleteMany({
+          where: { cartId: cart.id }
+        });
+      }
+
+      logger.info(`Persistent cart cleared for user ${userId}`);
+
+      return await this.getPersistentCart(userId);
+    } catch (error) {
+      logger.error('Error clearing persistent cart:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update cart metadata (event info, delivery options, etc)
+   */
+  async updateCartMetadata(userId: string, metadata: {
+    eventType?: string;
+    eventDate?: string;
+    eventLocation?: string;
+    attendees?: number;
+    duration?: number;
+    durationType?: string;
+    startDate?: Date;
+    endDate?: Date;
+    deliveryOption?: string;
+    deliveryDistance?: number;
+    includeInstallation?: boolean;
+    notes?: string;
+  }) {
+    try {
+      let cart = await prisma.cart.findFirst({
+        where: { userId }
+      });
+
+      if (!cart) {
+        cart = await prisma.cart.create({
+          data: { userId }
+        });
+      }
+
+      await prisma.cart.update({
+        where: { id: cart.id },
+        data: metadata
+      });
+
+      logger.info(`Cart metadata updated for user ${userId}`);
+
+      return await this.getPersistentCart(userId);
+    } catch (error) {
+      logger.error('Error updating cart metadata:', error);
+      throw error;
+    }
+  }
 }
 
 export const cartService = new CartService();
+

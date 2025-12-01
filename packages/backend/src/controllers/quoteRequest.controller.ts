@@ -407,6 +407,7 @@ class QuoteRequestController {
           
           // Fianza
           depositAmount: totalAmount * 0.2, // 20% de fianza
+          depositStatus: 'PENDING', // Estado inicial de la fianza
           
           // Estado
           status: 'CONFIRMED',

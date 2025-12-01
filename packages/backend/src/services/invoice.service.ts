@@ -81,13 +81,15 @@ export class InvoiceService {
    */
   async generateInvoice(orderId: string) {
     try {
+      logger.info(`📄 Generando factura para pedido: ${orderId}`);
+      
       // Check if invoice already exists
       const existingInvoice = await prisma.invoice.findUnique({
         where: { orderId },
       });
 
       if (existingInvoice) {
-        logger.info(`Invoice already exists for order ${orderId}`);
+        logger.info(`✅ Factura ya existe para pedido ${orderId}`);
         return existingInvoice;
       }
 
@@ -109,8 +111,11 @@ export class InvoiceService {
       });
 
       if (!order) {
+        logger.error(`❌ Pedido no encontrado: ${orderId}`);
         throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
       }
+      
+      logger.info(`✅ Pedido encontrado: ${orderId}, Items: ${order.items.length}`);
 
       // Generate invoice number
       const invoiceNumber = await this.generateInvoiceNumber();
@@ -127,9 +132,18 @@ export class InvoiceService {
                           `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || 
                           'Cliente';
       
-      const customerAddress = billingData ? 
-        `${billingData.address || ''}, ${billingData.postalCode || ''} ${billingData.city || ''} ${billingData.province || ''}`.trim() :
-        (typeof order.deliveryAddress === 'string' ? order.deliveryAddress : '');
+      // Prepare customer address with fallbacks
+      let customerAddress = '';
+      if (billingData && billingData.address) {
+        customerAddress = `${billingData.address || ''}, ${billingData.postalCode || ''} ${billingData.city || ''} ${billingData.province || ''}`.trim();
+      } else if (order.deliveryAddress && typeof order.deliveryAddress === 'string') {
+        customerAddress = order.deliveryAddress;
+      } else {
+        // Si no hay dirección, usar una dirección por defecto
+        customerAddress = 'Dirección no especificada';
+      }
+      
+      logger.info(`📋 Datos del cliente: ${customerName}, Dirección: ${customerAddress}`);
 
       // Prepare invoice data
       const invoiceData: InvoiceData = {
@@ -138,10 +152,10 @@ export class InvoiceService {
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         customer: {
           name: customerName,
-          email: billingData?.email || user?.email || "",
-          phone: billingData?.phone || user?.phone || "",
+          email: billingData?.email || user?.email || "cliente@example.com",
+          phone: billingData?.phone || user?.phone || "+34 000 000 000",
           address: customerAddress,
-          taxId: billingData?.taxId || user?.taxId || "",
+          taxId: billingData?.taxId || user?.taxId || "No especificado",
         },
         company: {
           name: companySettings.companyName || 'ReSona Events S.L.',
@@ -168,10 +182,7 @@ export class InvoiceService {
         terms: companySettings.termsConditions || 'Gracias por confiar en nosotros.',
       };
 
-      // Generate PDF
-      const pdfBuffer = await this.createPDF(invoiceData);
-
-      // Save invoice to database
+      // Save invoice to database first (without PDF)
       const invoice = await prisma.invoice.create({
         data: {
           orderId,
@@ -187,18 +198,42 @@ export class InvoiceService {
           metadata: invoiceData as any,
         },
       });
+      
+      logger.info(`💾 Factura guardada en BD: ${invoiceNumber}`);
+
+      // Generate PDF using PDFKit
+      logger.info(`📄 Generando PDF con PDFKit...`);
+      const pdfBuffer = await this.generateInvoicePDF(invoice);
 
       // Save PDF to file system
       const invoicesDir = path.join(process.cwd(), 'uploads', 'invoices');
       await fs.mkdir(invoicesDir, { recursive: true });
       await fs.writeFile(path.join(invoicesDir, `${invoiceNumber}.pdf`), pdfBuffer);
+      
+      logger.info(`💾 PDF guardado en: ${invoicesDir}/${invoiceNumber}.pdf`);
 
       logger.info(`Invoice generated for order ${order.orderNumber}: ${invoiceNumber}`);
 
+      logger.info(`✅ Factura generada exitosamente: ${invoiceNumber}`);
       return invoice;
-    } catch (error) {
-      logger.error('Error generating invoice:', error);
-      throw error;
+    } catch (error: any) {
+      logger.error(`❌ Error generando factura para pedido ${orderId}:`, {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+      });
+      
+      // Si es un AppError, re-lanzarlo
+      if (error instanceof AppError) {
+        throw error;
+      }
+      
+      // Si es otro error, envolverlo en AppError
+      throw new AppError(
+        500,
+        `Error generando factura: ${error.message}`,
+        'INVOICE_GENERATION_ERROR'
+      );
     }
   }
 
@@ -430,7 +465,6 @@ export class InvoiceService {
       <div class="invoice-title">
         <div class="invoice-number">{{invoiceNumber}}</div>
         <div class="invoice-date">Fecha: {{formatDate date}}</div>
-        <div class="invoice-date">Vencimiento: {{formatDate dueDate}}</div>
       </div>
     </div>
 
@@ -509,7 +543,6 @@ export class InvoiceService {
 
     <div class="footer">
       <p>Gracias por confiar en {{company.name}}</p>
-      <p>Esta factura se ha generado electrónicamente y es válida sin firma</p>
     </div>
   </div>
 </body>
@@ -817,12 +850,15 @@ export class InvoiceService {
           doc.fontSize(10).fillColor('#ffffff')
              .text('Producción de Eventos Audiovisuales', 50, 60);
           
-          // Número de factura en grande a la derecha (con más ancho)
-          doc.fontSize(20).fillColor('#ffffff')
-             .text(invoiceData.invoiceNumber, 350, 30, { align: 'right', width: 212 });
+          // "FACTURA" en grande a la derecha
+          doc.fontSize(28).fillColor('#ffffff').font('Helvetica-Bold')
+             .text('FACTURA', 350, 20, { align: 'right', width: 212 });
+          
+          // Número de factura a la derecha
+          doc.fontSize(14).fillColor('#ffffff').font('Helvetica')
+             .text(invoiceData.invoiceNumber, 350, 50, { align: 'right', width: 212 });
           doc.fontSize(9)
-             .text(`Fecha: ${invoiceData.date}`, 350, 55, { align: 'right', width: 212 })
-             .text(`Vencimiento: ${invoiceData.dueDate}`, 350, 70, { align: 'right', width: 212 });
+             .text(`Fecha: ${invoiceData.date}`, 350, 70, { align: 'right', width: 212 });
           
           // ==================== DATOS EMISOR ====================
           doc.y = 140;
@@ -832,11 +868,11 @@ export class InvoiceService {
           doc.fontSize(9).fillColor('#666666').text('DATOS DEL EMISOR:', 50, doc.y);
           doc.moveDown(0.5);
           doc.fontSize(11).fillColor('#000000').font('Helvetica-Bold');
-          doc.text(invoiceData.company.ownerName || 'Daniel Navarro Campos');
+          const companyOwner = (invoiceData.company as any).ownerName || invoiceData.company.name || 'Daniel Navarro Campos';
+          doc.text(companyOwner);
           doc.font('Helvetica').fontSize(9);
           if (invoiceData.company.taxId) doc.text(`NIF: ${invoiceData.company.taxId}`);
           doc.text(invoiceData.company.address);
-          doc.text(`${invoiceData.company.city}, ${invoiceData.company.postalCode} (${invoiceData.company.province})`);
           doc.text(`Tel: ${invoiceData.company.phone}`);
           doc.text(`Email: ${invoiceData.company.email}`);
           
@@ -910,7 +946,6 @@ export class InvoiceService {
           doc.fontSize(8).fillColor('#999999');
           const footerY = 750;
           doc.text('Gracias por confiar en ReSona Events', 50, footerY, { align: 'center', width: 512 });
-          doc.text('Esta factura se ha generado electrónicamente y es válida sin firma', 50, footerY + 12, { align: 'center', width: 512 });
           
           // Línea decorativa inferior
           doc.moveTo(50, 770).lineTo(562, 770).stroke('#5ebbff');
@@ -935,13 +970,31 @@ export class InvoiceService {
     const company = await companyService.getForInvoice();
     
     const isManual = !invoice.orderId;
+    
+    // Si no es manual, cargar el pedido con sus items
+    let order = invoice.order;
+    if (!isManual && invoice.orderId && !order) {
+      logger.info(`📦 Cargando pedido ${invoice.orderId} para preparar PDF...`);
+      order = await prisma.order.findUnique({
+        where: { id: invoice.orderId },
+        include: {
+          user: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+    }
+    
     const customerData = isManual 
       ? (invoice.metadata as any)?.customer 
       : {
-          name: `${invoice.order?.user?.firstName || ''} ${invoice.order?.user?.lastName || ''}`.trim(),
-          email: invoice.order?.user?.email,
-          phone: invoice.order?.user?.phone,
-          address: invoice.order?.user?.address,
+          name: `${order?.user?.firstName || ''} ${order?.user?.lastName || ''}`.trim(),
+          email: order?.user?.email,
+          phone: order?.user?.phone,
+          address: order?.user?.address,
         };
 
     const items = isManual
@@ -953,7 +1006,7 @@ export class InvoiceService {
           startDate: null,
           endDate: null,
         }))
-      : invoice.order?.items?.map((item: any) => ({
+      : order?.items?.map((item: any) => ({
           name: item.product?.name,
           quantity: item.quantity,
           unitPrice: parseFloat(item.pricePerUnit),
@@ -961,6 +1014,8 @@ export class InvoiceService {
           startDate: item.startDate,
           endDate: item.endDate,
         })) || [];
+    
+    logger.info(`📋 Items preparados para PDF: ${items.length}`);
 
     return {
       invoiceNumber: invoice.invoiceNumber,

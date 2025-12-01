@@ -51,6 +51,10 @@ export interface Product {
   isActive: boolean;
   featured: boolean;
   tags: string[];
+  // Estadísticas de compra y uso (solo admin)
+  purchasePrice?: number;
+  purchaseDate?: string;
+  timesUsed: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -103,15 +107,10 @@ export interface Order {
 }
 
 export type OrderStatus = 
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'PREPARING'
-  | 'READY'
-  | 'IN_TRANSIT'
-  | 'DELIVERED'
-  | 'RETURNED'
-  | 'COMPLETED'
-  | 'CANCELLED';
+  | 'PENDING'      // Pendiente - Esperando confirmación de pago
+  | 'IN_PROGRESS'  // En Proceso - Pago confirmado, preparando pedido
+  | 'COMPLETED'    // Completado - Pedido finalizado
+  | 'CANCELLED';   // Cancelado
 
 export interface OrderItem {
   id: string;

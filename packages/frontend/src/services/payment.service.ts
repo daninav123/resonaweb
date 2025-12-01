@@ -11,7 +11,7 @@ class PaymentService {
   async initialize() {
     if (!this.stripePromise) {
       try {
-        const config: any = await api.get('/payment/config');
+        const config: any = await api.get('/payments/config');
         this.publishableKey = config.publishableKey;
         
         if (this.publishableKey) {
@@ -40,35 +40,35 @@ class PaymentService {
    * Create payment intent for order
    */
   async createPaymentIntent(orderId: string) {
-    return api.post('/payment/create-intent', { orderId });
+    return api.post('/payments/create-intent', { orderId });
   }
 
   /**
    * Confirm payment
    */
   async confirmPayment(paymentIntentId: string) {
-    return api.post('/payment/confirm', { paymentIntentId });
+    return api.post('/payments/confirm', { paymentIntentId });
   }
 
   /**
    * Cancel payment intent
    */
   async cancelPaymentIntent(paymentIntentId: string) {
-    return api.post('/payment/cancel', { paymentIntentId });
+    return api.post('/payments/cancel', { paymentIntentId });
   }
 
   /**
    * Get payment details
    */
   async getPaymentDetails(paymentIntentId: string) {
-    return api.get(`/payment/details/${paymentIntentId}`);
+    return api.get(`/payments/details/${paymentIntentId}`);
   }
 
   /**
    * Request refund (admin only)
    */
   async requestRefund(orderId: string, amount?: number, reason?: string) {
-    return api.post('/payment/refund', { orderId, amount, reason });
+    return api.post('/payments/refund', { orderId, amount, reason });
   }
 
   /**

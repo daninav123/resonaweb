@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { guestCart } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
+import { cartCountManager } from '../hooks/useCartCount';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -28,6 +29,12 @@ const ProductDetailPage = () => {
     try {
       // Permitir añadir incluso con stock 0
       // La validación de disponibilidad se hará al asignar fechas
+      
+      // SIEMPRE usar localStorage (tanto autenticado como guest)
+      // Incrementar contador INMEDIATAMENTE
+      cartCountManager.increment(quantity);
+      
+      // Añadir a localStorage
       guestCart.addItem(product, quantity);
       toast.success('Producto añadido al carrito. Selecciona las fechas en el carrito.');
     } catch (error: any) {
@@ -187,7 +194,7 @@ const ProductDetailPage = () => {
                 <span className="text-gray-600">por día</span>
               </div>
               <div className="mt-2 text-sm text-gray-600">
-                <p>Fin de semana: €{product.pricePerWeekend}</p>
+                <p>Fin de semana (viernes-lunes): €{product.pricePerDay}</p>
                 <p>Semana completa: €{product.pricePerWeek}</p>
               </div>
             </div>

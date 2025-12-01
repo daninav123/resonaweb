@@ -166,9 +166,9 @@ const CalendarManager = () => {
               <p className="text-2xl font-bold text-gray-900">{events.length}</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <p className="text-sm text-gray-600">Confirmados</p>
-              <p className="text-2xl font-bold text-green-600">
-                {stats.ordersByStatus.CONFIRMED || 0}
+              <p className="text-sm text-gray-600">En Proceso</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {stats.ordersByStatus.IN_PROGRESS || 0}
               </p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
@@ -234,8 +234,8 @@ const CalendarManager = () => {
                         </h3>
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded ${
-                            event.status === 'CONFIRMED'
-                              ? 'bg-green-100 text-green-800'
+                            event.status === 'IN_PROGRESS'
+                              ? 'bg-blue-100 text-blue-800'
                               : event.status === 'PENDING'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-gray-100 text-gray-800'
@@ -307,8 +307,8 @@ const CalendarManager = () => {
                     <p className="text-sm text-gray-600">Estado</p>
                     <span
                       className={`inline-block px-3 py-1 text-sm font-medium rounded mt-1 ${
-                        selectedEvent.resource.status === 'CONFIRMED'
-                          ? 'bg-green-100 text-green-800'
+                        selectedEvent.resource.status === 'IN_PROGRESS'
+                          ? 'bg-blue-100 text-blue-800'
                           : selectedEvent.resource.status === 'PENDING'
                           ? 'bg-yellow-100 text-yellow-800'
                           : selectedEvent.resource.status === 'COMPLETED'

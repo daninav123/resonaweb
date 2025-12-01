@@ -69,6 +69,7 @@ test-results/
 playwright-report/
 **/test-results/
 **/playwright-report/
+.auth/
 
 # Documentation files (pueden ser muchos)
 *.md

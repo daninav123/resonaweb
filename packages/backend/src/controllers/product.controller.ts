@@ -43,7 +43,9 @@ export class ProductController {
       }
 
       // Build where clause
-      let where: any = {};
+      let where: any = {
+        isPack: false, // Excluir packs de la lista de productos
+      };
       
       // Filter by category slug if provided
       if (categorySlug) {
@@ -201,13 +203,20 @@ export class ProductController {
    */
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('📥 Datos recibidos para crear producto:', JSON.stringify(req.body, null, 2));
       const product = await productService.createProduct(req.body);
+      console.log('✅ Producto creado exitosamente:', product.id);
       
       res.status(201).json({
         message: 'Producto creado exitosamente',
         data: product,
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('❌ Error en createProduct controller:');
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      if (error.meta) console.error('Error meta:', error.meta);
       next(error);
     }
   }
@@ -337,7 +346,7 @@ export class ProductController {
         where: {
           productId,
           order: {
-            status: 'CONFIRMED',
+            status: { in: ['PENDING', 'IN_PROGRESS', 'COMPLETED'] },
             startDate: { lte: new Date(endDate) },
             endDate: { gte: new Date(startDate) }
           }

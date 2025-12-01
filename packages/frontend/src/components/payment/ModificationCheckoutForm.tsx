@@ -3,6 +3,7 @@ import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
+import { useAuthStore } from '../../stores/authStore';
 
 interface ModificationCheckoutFormProps {
   orderId: string;
@@ -20,6 +21,7 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,13 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/mis-pedidos/${orderId}?payment=success`,
+          payment_method_data: {
+            billing_details: {
+              name: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Cliente',
+              email: user?.email || undefined,
+              phone: user?.phone || undefined,
+            }
+          }
         },
         redirect: 'if_required',
       });
@@ -58,11 +67,21 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
     <form onSubmit={handleSubmit}>
       <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-900">
-          💳 Aceptamos múltiples métodos de pago: Tarjeta de crédito, PayPal, Bizum y más
+          💳 Método de pago: Tarjeta de crédito/débito
         </p>
       </div>
 
-      <PaymentElement />
+      <PaymentElement 
+        options={{
+          fields: {
+            billingDetails: {
+              email: 'never',
+              phone: 'never',
+              name: 'never',
+            }
+          },
+        }}
+      />
       
       <button
         type="submit"

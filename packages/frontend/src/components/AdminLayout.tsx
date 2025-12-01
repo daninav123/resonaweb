@@ -20,7 +20,10 @@ import {
   Menu,
   X,
   Mail,
-  Database
+  Database,
+  DollarSign,
+  Box,
+  BarChart3
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -37,12 +40,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const menuItems = [
     { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
+    { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
     { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
     { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
     { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
     { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
     { path: '/admin/products', icon: Package, label: 'Productos' },
+    { path: '/admin/packs', icon: Box, label: 'Packs' },
     { path: '/admin/categories', icon: Grid, label: 'Categorías' },
     { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
     { path: '/admin/users', icon: Users, label: 'Usuarios' },
@@ -53,6 +58,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/backups', icon: Database, label: 'Backups' },
     { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
     { path: '/admin/settings', icon: Settings, label: 'Configuración' },
+    { path: '/admin/refunds', icon: DollarSign, label: 'Gestión de Reembolsos' },
   ];
 
   return (

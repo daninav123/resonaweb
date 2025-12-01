@@ -8,7 +8,8 @@ interface DashboardStats {
   totalProducts: number;
   totalUsers: number;
   pendingOrders: number;
-  completedOrders: number;
+  inProgressOrders: number; // Pedidos entregados (alquilados)
+  completedOrders: number; // Pedidos devueltos (finalizados)
   todayOrders: number;
   monthRevenue: number;
 }
@@ -51,14 +52,16 @@ export class AnalyticsService {
         totalProducts,
         totalUsers,
         pendingOrders,
+        inProgressOrders,
         completedOrders,
         todayOrders,
       ] = await Promise.all([
         prisma.order.count(),
-        prisma.product.count({ where: { isActive: true } }),
+        prisma.product.count({ where: { isActive: true, isPack: false } }), // Excluir packs
         prisma.user.count({ where: { role: 'CLIENT' } }),
         prisma.order.count({ where: { status: 'PENDING' } }),
-        prisma.order.count({ where: { status: 'COMPLETED' } }),
+        prisma.order.count({ where: { status: 'IN_PROGRESS' } }), // Entregados (alquilados)
+        prisma.order.count({ where: { status: 'COMPLETED' } }), // Devueltos
         prisma.order.count({
           where: {
             createdAt: {
@@ -68,11 +71,11 @@ export class AnalyticsService {
         }),
       ]);
 
-      // Get revenue stats
+      // Get revenue stats (se paga en PENDING, luego pasa a IN_PROGRESS y COMPLETED)
       const totalRevenueResult = await prisma.order.aggregate({
         where: {
           status: {
-            in: ['COMPLETED', 'DELIVERED'],
+            not: 'CANCELLED', // Todos generan ingresos excepto cancelados
           },
         },
         _sum: {
@@ -86,7 +89,7 @@ export class AnalyticsService {
             gte: startOfMonth,
           },
           status: {
-            in: ['COMPLETED', 'DELIVERED'],
+            not: 'CANCELLED',
           },
         },
         _sum: {
@@ -100,7 +103,8 @@ export class AnalyticsService {
         totalProducts,
         totalUsers,
         pendingOrders,
-        completedOrders,
+        inProgressOrders, // Pedidos entregados (alquilados actualmente)
+        completedOrders, // Pedidos devueltos (finalizados)
         todayOrders,
         monthRevenue: Number(monthRevenueResult._sum.total || 0),
       };
@@ -124,7 +128,7 @@ export class AnalyticsService {
             gte: startDate,
           },
           status: {
-            in: ['COMPLETED', 'DELIVERED'],
+            not: 'CANCELLED', // Todos menos cancelados
           },
         },
         select: {
@@ -237,7 +241,7 @@ export class AnalyticsService {
         },
         where: {
           status: {
-            in: ['COMPLETED', 'DELIVERED'],
+            not: 'CANCELLED', // Todos menos cancelados
           },
         },
         orderBy: {
@@ -314,7 +318,7 @@ export class AnalyticsService {
             lte: endDate,
           },
           status: {
-            notIn: ['CANCELLED', 'RETURNED'],
+            notIn: ['CANCELLED'],
           },
         },
         include: {
@@ -367,13 +371,16 @@ export class AnalyticsService {
   async getInventoryUtilization() {
     try {
       const products = await prisma.product.findMany({
-        where: { isActive: true },
+        where: { 
+          isActive: true,
+          isPack: false, // Excluir packs de estadísticas de inventario
+        },
         include: {
-          items: {
+          orderItems: {
             where: {
               order: {
                 status: {
-                  notIn: ['CANCELLED', 'RETURNED'],
+                  notIn: ['CANCELLED'],
                 },
                 startDate: {
                   lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -386,7 +393,7 @@ export class AnalyticsService {
       });
 
       return products.map(product => {
-        const reserved = product.items.reduce((sum, item) => sum + item.quantity, 0);
+        const reserved = product.orderItems.reduce((sum, item) => sum + item.quantity, 0);
         const utilization = product.stock > 0 ? (reserved / product.stock) * 100 : 0;
 
         return {
@@ -429,14 +436,18 @@ export class AnalyticsService {
         prisma.order.aggregate({
           where: {
             createdAt: { gte: thisMonth },
-            status: { in: ['COMPLETED', 'DELIVERED'] },
+            status: {
+              not: 'CANCELLED',
+            },
           },
           _sum: { total: true },
         }),
         prisma.order.aggregate({
           where: {
             createdAt: { gte: lastMonth, lt: thisMonth },
-            status: { in: ['COMPLETED', 'DELIVERED'] },
+            status: {
+              not: 'CANCELLED',
+            },
           },
           _sum: { total: true },
         }),
@@ -493,7 +504,7 @@ export class AnalyticsService {
         where: {
           order: {
             status: {
-              notIn: ['CANCELLED', 'RETURNED'],
+              notIn: ['CANCELLED'],
             },
           },
         },
@@ -532,6 +543,106 @@ export class AnalyticsService {
       return result;
     } catch (error) {
       logger.error('Error getting popular rental periods:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get recent orders
+   */
+  async getRecentOrders(limit: number = 10) {
+    try {
+      const orders = await prisma.order.findMany({
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return orders;
+    } catch (error) {
+      logger.error('Error getting recent orders:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get product amortization data
+   */
+  async getProductAmortization() {
+    try {
+      // Get all active products with purchase info
+      const products = await prisma.product.findMany({
+        where: {
+          isActive: true,
+          isPack: false,
+          purchasePrice: {
+            not: null,
+          },
+        },
+        include: {
+          orderItems: {
+            where: {
+              order: {
+                status: {
+                  not: 'CANCELLED',
+                },
+              },
+            },
+            select: {
+              totalPrice: true,
+            },
+          },
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      // Calculate amortization for each product
+      const amortizationData = products.map(product => {
+        const purchasePrice = Number(product.purchasePrice || 0);
+        const totalGenerated = product.orderItems.reduce(
+          (sum, item) => sum + Number(item.totalPrice || 0),
+          0
+        );
+        
+        const amortizationPercentage = purchasePrice > 0 
+          ? Math.min((totalGenerated / purchasePrice) * 100, 100)
+          : 0;
+        
+        const remaining = Math.max(purchasePrice - totalGenerated, 0);
+        const isAmortized = totalGenerated >= purchasePrice;
+        const profit = isAmortized ? totalGenerated - purchasePrice : 0;
+
+        return {
+          id: product.id,
+          name: product.name,
+          sku: product.sku,
+          purchasePrice,
+          totalGenerated,
+          amortizationPercentage: Math.round(amortizationPercentage * 100) / 100,
+          remaining,
+          isAmortized,
+          profit,
+          timesRented: product.orderItems.length,
+          purchaseDate: product.purchaseDate,
+        };
+      });
+
+      // Sort by amortization percentage (ascending - less amortized first)
+      return amortizationData.sort((a, b) => a.amortizationPercentage - b.amortizationPercentage);
+    } catch (error) {
+      logger.error('Error getting product amortization:', error);
       throw error;
     }
   }

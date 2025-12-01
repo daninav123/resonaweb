@@ -71,6 +71,7 @@ export class StripeService {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount,
         currency: 'eur',
+        payment_method_types: ['card'],
         metadata: {
           orderId: order.id,
           userId: order.userId,
@@ -78,9 +79,6 @@ export class StripeService {
         },
         description: `Pedido ${order.orderNumber} - ReSona Events`,
         receipt_email: order.user.email,
-        automatic_payment_methods: {
-          enabled: true,
-        },
       });
 
       // Guardar el payment intent ID en el pedido
@@ -99,6 +97,45 @@ export class StripeService {
       };
     } catch (error) {
       logger.error('Error creating payment intent:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Crear Payment Intent SIN orden (nuevo flujo - orden se crea después del pago)
+   */
+  async createPaymentIntentWithoutOrder(amount: number, userId: string, orderData: any) {
+    try {
+      // Obtener datos del usuario
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+      }
+
+      // Crear Payment Intent
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount,
+        currency: 'eur',
+        payment_method_types: ['card'],
+        metadata: {
+          userId: userId,
+          orderDataJson: JSON.stringify(orderData), // Guardar orderData para crear la orden después
+        },
+        description: `Nuevo pedido - ReSona Events`,
+        receipt_email: user.email,
+      });
+
+      logger.info(`Payment Intent created without order: ${paymentIntent.id} for user ${user.email}`);
+
+      return {
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      };
+    } catch (error) {
+      logger.error('Error creating payment intent without order:', error);
       throw error;
     }
   }
@@ -449,6 +486,7 @@ export class StripeService {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: amountInCents,
         currency: 'eur',
+        payment_method_types: ['card'],
         customer: order.stripeCustomerId || undefined,
         description: description || `Cargo adicional - Pedido ${order.orderNumber}`,
         metadata: {
@@ -457,9 +495,6 @@ export class StripeService {
           orderNumber: order.orderNumber,
           type: 'additional_charge',
         },
-        automatic_payment_methods: {
-          enabled: true,
-        },
       });
 
       logger.info(`Additional payment created: ${paymentIntent.id} for €${amount}`);
@@ -467,6 +502,136 @@ export class StripeService {
     } catch (error) {
       logger.error('Error creating additional payment:', error);
       throw new AppError(500, 'Error creando cargo adicional', 'PAYMENT_ERROR');
+    }
+  }
+
+  /**
+   * Crear Payment Link para cobro de fianza
+   */
+  async createDepositPaymentLink(orderId: string, depositAmount: number) {
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: true,
+        },
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
+      }
+
+      // Convertir a centavos
+      const amount = Math.round(depositAmount * 100);
+
+      // Crear un Payment Link
+      const paymentLink = await this.stripe.paymentLinks.create({
+        line_items: [
+          {
+            price_data: {
+              currency: 'eur',
+              product_data: {
+                name: `Fianza - Pedido ${order.orderNumber}`,
+                description: `Cobro de fianza para el pedido ${order.orderNumber}`,
+              },
+              unit_amount: amount,
+            },
+            quantity: 1,
+          },
+        ],
+        after_completion: {
+          type: 'redirect',
+          redirect: {
+            url: `${process.env.APP_URL || 'http://localhost:3000'}/payment-success?orderId=${orderId}&type=deposit`,
+          },
+        },
+        metadata: {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          type: 'deposit',
+          userId: order.userId,
+        },
+        phone_number_collection: {
+          enabled: true,
+        },
+        customer_creation: 'always',
+      });
+
+      logger.info(`Deposit payment link created: ${paymentLink.url} for order ${order.orderNumber}`);
+
+      return {
+        url: paymentLink.url,
+        id: paymentLink.id,
+      };
+    } catch (error) {
+      logger.error('Error creating deposit payment link:', error);
+      throw new AppError(500, 'Error creando link de pago para fianza', 'PAYMENT_LINK_ERROR');
+    }
+  }
+
+  /**
+   * Crear Terminal Connection Token para Tap to Pay
+   */
+  async createTerminalConnectionToken() {
+    try {
+      const connectionToken = await this.stripe.terminal.connectionTokens.create();
+      
+      logger.info('Terminal connection token created');
+      
+      return {
+        secret: connectionToken.secret,
+      };
+    } catch (error) {
+      logger.error('Error creating terminal connection token:', error);
+      throw new AppError(500, 'Error creando token de terminal', 'TERMINAL_TOKEN_ERROR');
+    }
+  }
+
+  /**
+   * Crear Payment Intent para Terminal (Tap to Pay)
+   */
+  async createTerminalPaymentIntent(orderId: string, amount: number, description: string) {
+    try {
+      const amountInCents = Math.round(amount * 100);
+
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: 'eur',
+        payment_method_types: ['card_present'],
+        capture_method: 'automatic',
+        metadata: {
+          orderId,
+          type: 'deposit',
+        },
+        description,
+      });
+
+      logger.info(`Terminal Payment Intent created: ${paymentIntent.id} for order ${orderId}`);
+
+      return {
+        paymentIntentId: paymentIntent.id,
+        clientSecret: paymentIntent.client_secret,
+        amount: amountInCents,
+      };
+    } catch (error) {
+      logger.error('Error creating terminal payment intent:', error);
+      throw new AppError(500, 'Error creando intención de pago para terminal', 'TERMINAL_PAYMENT_ERROR');
+    }
+  }
+
+  /**
+   * Confirmar pago de Terminal
+   */
+  async confirmTerminalPayment(paymentIntentId: string) {
+    try {
+      const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      logger.info(`Terminal payment confirmed: ${paymentIntentId}`);
+      
+      return paymentIntent;
+    } catch (error) {
+      logger.error('Error confirming terminal payment:', error);
+      throw new AppError(500, 'Error confirmando pago de terminal', 'TERMINAL_CONFIRM_ERROR');
     }
   }
 

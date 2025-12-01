@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Ver https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
   
   /* Tiempo máximo por test */
   timeout: 120 * 1000,
@@ -50,30 +50,58 @@ export default defineConfig({
 
   /* Proyectos de test (diferentes navegadores/dispositivos) */
   projects: [
+    // Setup project para autenticación
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    
+    // Tests principales que usan autenticación
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Usar el estado de autenticación guardado
+        storageState: '.auth/admin.json',
+      },
+      dependencies: ['setup'],
     },
 
     // Descomenta para probar en más navegadores
     // {
     //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   use: { 
+    //     ...devices['Desktop Firefox'],
+    //     storageState: '.auth/admin.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
 
     // {
     //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
+    //   use: { 
+    //     ...devices['Desktop Safari'],
+    //     storageState: '.auth/admin.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
 
     /* Tests en mobile */
     // {
     //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
+    //   use: { 
+    //     ...devices['Pixel 5'],
+    //     storageState: '.auth/admin.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
     // {
     //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
+    //   use: { 
+    //     ...devices['iPhone 12'],
+    //     storageState: '.auth/admin.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
   ],
 

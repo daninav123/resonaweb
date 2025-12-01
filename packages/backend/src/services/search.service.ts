@@ -33,6 +33,7 @@ export class SearchService {
     // Construir condiciones WHERE
     const where: Prisma.ProductWhereInput = {
       isActive: true,
+      isPack: false, // Excluir packs de las búsquedas
       AND: []
     };
 
