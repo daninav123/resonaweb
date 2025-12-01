@@ -244,8 +244,14 @@ export class ProductService {
       _avg: { rating: true },
     });
 
-    // Buscar productos relacionados
-    const relatedProducts = await this.getRelatedProducts(product.id, product.categoryId);
+    // Buscar productos relacionados (temporalmente deshabilitado)
+    let relatedProducts: any[] = [];
+    try {
+      relatedProducts = await this.getRelatedProducts(product.id, product.categoryId);
+    } catch (error) {
+      logger.error('Error en getRelatedProducts, continuando sin productos relacionados:', error);
+      relatedProducts = [];
+    }
 
     return {
       ...product,
