@@ -50,18 +50,30 @@ const PacksManager = () => {
   const loadCategories = async () => {
     try {
       const response: any = await api.get('/products/categories');
-      const cats = response?.categories || response || [];
-      setCategories(Array.isArray(cats) ? cats : []);
+      console.log('📂 Respuesta de categorías:', response);
+      
+      // La respuesta puede ser un array directamente o un objeto con categorías
+      let cats = [];
+      if (Array.isArray(response)) {
+        cats = response;
+      } else if (response?.categories && Array.isArray(response.categories)) {
+        cats = response.categories;
+      } else if (response?.data && Array.isArray(response.data)) {
+        cats = response.data;
+      }
+      
+      console.log('📂 Categorías procesadas:', cats);
+      setCategories(cats);
       
       // Buscar categoría "Packs"
       const packsCategory = cats.find((cat: any) => 
-        cat.name.toLowerCase().includes('pack')
+        cat.name && cat.name.toLowerCase().includes('pack')
       );
       if (packsCategory) {
         setPacksCategoryId(packsCategory.id);
-        console.log('✅ Categoría Packs encontrada:', packsCategory.id);
+        console.log('✅ Categoría Packs encontrada:', packsCategory.id, packsCategory.name);
       } else {
-        console.log('⚠️ Categoría Packs no encontrada');
+        console.log('⚠️ Categoría Packs no encontrada. Categorías disponibles:', cats.map((c: any) => c.name));
       }
     } catch (error) {
       console.error('Error cargando categorías:', error);
