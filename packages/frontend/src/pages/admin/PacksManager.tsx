@@ -878,16 +878,6 @@ const PacksManager = () => {
                             Análisis de Rentabilidad
                           </h4>
                           <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-blue-700">Subtotal (precios de venta):</span>
-                              <span className="font-semibold text-blue-900">€{totals.subtotal.toFixed(2)}</span>
-                            </div>
-                            {totals.discountAmount > 0 && (
-                              <div className="flex justify-between text-green-700">
-                                <span>Descuento:</span>
-                                <span className="font-semibold">-€{totals.discountAmount.toFixed(2)}</span>
-                              </div>
-                            )}
                             {/* Costes Detallados */}
                             <div className="border-t border-blue-200 pt-3 mt-2">
                               <div className="text-xs font-bold text-blue-800 mb-2 uppercase">Costes:</div>
