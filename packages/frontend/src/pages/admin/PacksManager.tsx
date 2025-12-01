@@ -214,7 +214,7 @@ const PacksManager = () => {
         return;
       }
 
-      const packData = {
+      const packData: any = {
         name: formData.name,
         description: formData.description,
         discountAmount: formData.discountAmount,
@@ -554,16 +554,24 @@ const PacksManager = () => {
                         <div className="divide-y">
                           {getAvailableProducts().map((product) => {
                             const isAdded = formData.items.some(item => item.productId === product.id);
+                            const isPerson = isPersonalProduct(product);
                             return (
-                              <div key={product.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
+                              <div key={product.id} className={`flex items-center justify-between p-3 border-l-4 ${
+                                isPerson ? 'border-l-purple-500 bg-purple-50 hover:bg-purple-100' : 'border-l-green-500 hover:bg-gray-50'
+                              }`}>
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {product.name}
+                                  <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                    {isPerson ? '👥' : '📦'} {product.name}
+                                    {isPerson ? (
+                                      <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>
+                                    ) : (
+                                      <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>
+                                    )}
                                   </div>
-                                  <div className="text-xs text-gray-600 mt-0.5">
-                                    €{product.pricePerDay}/día
-                                    {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
-                                    {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
+                                  <div className={`text-xs font-medium mt-0.5 ${isPerson ? 'text-purple-700' : 'text-green-700'}`}>
+                                    €{product.pricePerDay}/{isPerson ? 'hora' : 'día'}
+                                    {!isPerson && product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
+                                    {!isPerson && product.installationCost > 0 && ` + €${product.installationCost} instalación`}
                                   </div>
                                 </div>
                                 <button
@@ -572,6 +580,8 @@ const PacksManager = () => {
                                   className={`flex items-center gap-1 px-3 py-1 text-sm rounded transition-colors ${
                                     isAdded 
                                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                      : isPerson
+                                      ? 'bg-purple-600 text-white hover:bg-purple-700'
                                       : 'bg-green-600 text-white hover:bg-green-700'
                                   }`}
                                 >
@@ -614,15 +624,18 @@ const PacksManager = () => {
                           const subtotal = Number(product.pricePerDay) * effectiveQuantity;
                           
                           return (
-                            <div key={index} className="bg-white p-3 rounded-lg border border-green-200">
+                            <div key={index} className={`bg-white p-3 rounded-lg border-2 ${
+                              isPerson ? 'border-purple-300 bg-purple-50' : 'border-green-200'
+                            }`}>
                               <div className="flex items-center gap-3 mb-2">
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {product.name}
-                                    {isPerson && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Personal</span>}
+                                  <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                    {isPerson ? '👥' : '📦'} {product.name}
+                                    {isPerson && <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>}
+                                    {!isPerson && <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>}
                                   </div>
-                                  <div className="text-xs text-gray-600">
-                                    €{product.pricePerDay}/hora × {effectiveQuantity.toFixed(1)}h = €{subtotal.toFixed(2)}
+                                  <div className={`text-xs font-medium ${isPerson ? 'text-purple-700' : 'text-green-700'}`}>
+                                    €{product.pricePerDay}/{isPerson ? 'hora' : 'día'} × {isPerson ? `${effectiveQuantity.toFixed(1)}h` : `${item.quantity} unid.`} = €{subtotal.toFixed(2)}
                                   </div>
                                 </div>
                                 <button
