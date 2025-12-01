@@ -19,6 +19,8 @@ const PacksManager = () => {
     description: '',
     discountAmount: 0, // Cambiado de porcentaje a valor en euros
     customFinalPrice: '',
+    includeShipping: true, // Incluir transporte por defecto
+    includeInstallation: true, // Incluir montaje por defecto
     items: [] as Array<{ productId: string; quantity: number }>
   });
   
@@ -164,6 +166,8 @@ const PacksManager = () => {
       description: '',
       discountAmount: 0,
       customFinalPrice: '',
+      includeShipping: true,
+      includeInstallation: true,
       items: []
     });
     // Resetear filtros
@@ -183,6 +187,8 @@ const PacksManager = () => {
       description: pack.description || '',
       discountAmount: Number(pack.discountAmount || 0),
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
+      includeShipping: pack.includeShipping !== false, // Por defecto true
+      includeInstallation: pack.includeInstallation !== false, // Por defecto true
       items: pack.items?.map((item: any) => ({
         productId: item.productId || item.product?.id,
         quantity: item.quantity
@@ -208,6 +214,8 @@ const PacksManager = () => {
         description: formData.description,
         discountAmount: formData.discountAmount,
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
+        includeShipping: formData.includeShipping,
+        includeInstallation: formData.includeInstallation,
         items: formData.items,
         categoryId: packsCategoryId, // Predeterminar categoría Packs
         autoCalculate: true
@@ -282,8 +290,13 @@ const PacksManager = () => {
       const product = products.find(p => p.id === item.productId);
       if (product) {
         totalPricePerDay += Number(product.pricePerDay || 0) * item.quantity;
-        totalShipping += Number(product.shippingCost || 0) * item.quantity;
-        totalInstallation += Number(product.installationCost || 0) * item.quantity;
+        // Solo sumar si está marcado para incluir
+        if (formData.includeShipping) {
+          totalShipping += Number(product.shippingCost || 0) * item.quantity;
+        }
+        if (formData.includeInstallation) {
+          totalInstallation += Number(product.installationCost || 0) * item.quantity;
+        }
       }
     });
 
@@ -598,6 +611,38 @@ const PacksManager = () => {
                     const totals = calculatePackTotals();
                     return (
                       <div className="space-y-4">
+                        {/* Opciones de Inclusión */}
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3">¿Qué incluye este pack?</h4>
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={formData.includeShipping}
+                                onChange={(e) => setFormData({ ...formData, includeShipping: e.target.checked })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                              />
+                              <span className="text-sm text-gray-700">
+                                <strong>Incluir transporte</strong> en el precio
+                              </span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={formData.includeInstallation}
+                                onChange={(e) => setFormData({ ...formData, includeInstallation: e.target.checked })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                              />
+                              <span className="text-sm text-gray-700">
+                                <strong>Incluir montaje/instalación</strong> en el precio
+                              </span>
+                            </label>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-3">
+                            Desmarca las opciones para packs sin transporte o montaje
+                          </p>
+                        </div>
+
                         {/* Totales Calculados Automáticamente */}
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                           <h4 className="text-sm font-semibold text-gray-700 mb-3">Totales Calculados</h4>
@@ -606,12 +651,18 @@ const PacksManager = () => {
                               <span className="text-gray-600">Total Precio/Día:</span>
                               <span className="font-medium">€{totals.totalPricePerDay.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Total Transporte:</span>
+                            <div className={`flex justify-between text-sm ${!formData.includeShipping ? 'opacity-50 line-through' : ''}`}>
+                              <span className="text-gray-600">
+                                Total Transporte:
+                                {!formData.includeShipping && <span className="ml-2 text-xs text-red-600">(No incluido)</span>}
+                              </span>
                               <span className="font-medium">€{totals.totalShipping.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Total Montaje/Instalación:</span>
+                            <div className={`flex justify-between text-sm ${!formData.includeInstallation ? 'opacity-50 line-through' : ''}`}>
+                              <span className="text-gray-600">
+                                Total Montaje/Instalación:
+                                {!formData.includeInstallation && <span className="ml-2 text-xs text-red-600">(No incluido)</span>}
+                              </span>
                               <span className="font-medium">€{totals.totalInstallation.toFixed(2)}</span>
                             </div>
                             <div className="border-t pt-2 mt-2">
