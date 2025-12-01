@@ -494,11 +494,11 @@ const ProductsManager = () => {
               <p className="text-2xl font-bold text-green-600">
                 €{(products
                   .filter(p => !(p as any).isPack)
-                  .reduce((acc, p) => acc + ((p.purchasePrice || 0) * (p.realStock || p.stock || 0)), 0)
+                  .reduce((acc, p) => acc + ((p.purchasePrice || 0) * (p.realStock || p.stock || 0)), 0) * 1.21
                 ).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Precio compra × Stock
+                Precio compra × Stock (con IVA 21%)
               </p>
             </div>
           </div>
