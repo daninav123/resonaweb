@@ -331,6 +331,9 @@ const PacksManager = () => {
     formData.items.forEach((item, index) => {
       const product = products.find(p => p.id === item.productId);
       if (product) {
+        // Determinar si es personal o material
+        const isPersonal = product.category?.name?.toLowerCase() === 'personal';
+        
         // Calcular cantidad efectiva:
         // - Para personal: numberOfPeople × hoursPerPerson
         // - Para equipamiento: quantity
@@ -338,17 +341,29 @@ const PacksManager = () => {
           ? item.numberOfPeople * item.hoursPerPerson
           : item.quantity;
 
-        const itemCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+        let itemCost = 0;
+        
+        if (isPersonal) {
+          // PERSONAL: coste = purchasePrice × horas (lo que pagas por hora)
+          itemCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+        } else {
+          // MATERIAL: coste = depreciación (10% del precio de compra por día)
+          // La depreciación representa el desgaste del equipo por uso
+          const depreciationRate = 0.10; // 10% de depreciación por uso
+          itemCost = Number(product.purchasePrice || 0) * effectiveQuantity * depreciationRate;
+        }
+        
         const itemPrice = Number(product.pricePerDay || 0) * effectiveQuantity;
 
         console.log(`📦 Item ${index}: ${product.name}`, {
+          isPersonal,
           numberOfPeople: item.numberOfPeople,
           hoursPerPerson: item.hoursPerPerson,
           quantity: item.quantity,
           effectiveQuantity,
           purchasePrice: product.purchasePrice,
           pricePerDay: product.pricePerDay,
-          itemCost,
+          itemCost: isPersonal ? `${itemCost} (personal)` : `${itemCost} (depreciación 10%)`,
           itemPrice
         });
 
@@ -360,7 +375,7 @@ const PacksManager = () => {
         if (formData.includeInstallation) {
           totalInstallation += Number(product.installationCost || 0) * effectiveQuantity;
         }
-        // Nuevo: calcular coste basado en purchasePrice
+        // Calcular coste: personal completo, material solo depreciación
         totalCost += itemCost;
       }
     });
@@ -854,8 +869,11 @@ const PacksManager = () => {
                               <span className="text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between border-t border-blue-200 pt-2 mt-2">
-                              <span className="text-blue-700">Coste Total (lo que cuesta):</span>
+                              <span className="text-blue-700">Coste Total (personal + depreciación):</span>
                               <span className="font-semibold text-blue-900">€{totals.totalCost.toFixed(2)}</span>
+                            </div>
+                            <div className="text-xs text-blue-600 mt-1 italic">
+                              * Material: 10% depreciación | Personal: coste por hora
                             </div>
                             <div className="border-t border-blue-200 pt-2 mt-2">
                               <div className="flex justify-between items-center">
@@ -889,7 +907,11 @@ const PacksManager = () => {
                           {totals.totalCost === 0 && (
                             <div className="mt-3 bg-yellow-100 border border-yellow-300 rounded p-2">
                               <p className="text-xs text-yellow-700 font-medium">
-                                💡 Tip: Añade el "Precio de Compra" a los productos para ver el margen real
+                                💡 Tip: Añade el "Precio de Compra" a los productos para calcular costes:
+                              </p>
+                              <p className="text-xs text-yellow-600 mt-1">
+                                • Personal: Coste por hora trabajada<br/>
+                                • Material: Valor del equipo (se calcula 10% depreciación)
                               </p>
                             </div>
                           )}
