@@ -36,8 +36,9 @@ const PacksManager = () => {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      const response: any = await api.get('/products/packs');
-      console.log('📦 Respuesta de packs:', response);
+      // Usar la misma ruta que para crear: /packs
+      const response: any = await api.get('/packs');
+      console.log('📦 Respuesta de packs desde /packs:', response);
       
       // El backend retorna { packs: [...] }
       const packsData = response?.packs || response || [];
