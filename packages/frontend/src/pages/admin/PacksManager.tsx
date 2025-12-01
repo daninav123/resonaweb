@@ -326,9 +326,12 @@ const PacksManager = () => {
     let totalPricePerDay = 0;
     let totalShipping = 0;
     let totalInstallation = 0;
-    let totalCost = 0; // Coste total: personal + depreciación
-    let totalShippingCost = 0; // Coste del transporte
-    let totalInstallationCost = 0; // Coste del montaje
+    
+    // Costes separados
+    let costMaterial = 0; // Coste directo de material (si lo hubiera)
+    let costPersonal = 0; // Coste de personal (por hora)
+    let costDepreciation = 0; // Amortización del material (10%)
+    let costShippingInstallation = 0; // Envío + Montaje
 
     formData.items.forEach((item, index) => {
       const product = products.find(p => p.id === item.productId);
@@ -343,19 +346,18 @@ const PacksManager = () => {
           ? item.numberOfPeople * item.hoursPerPerson
           : item.quantity;
 
-        let itemCost = 0;
+        const itemPrice = Number(product.pricePerDay || 0) * effectiveQuantity;
         
         if (isPersonal) {
-          // PERSONAL: coste = purchasePrice × horas (lo que pagas por hora)
-          itemCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+          // PERSONAL: coste por hora trabajada
+          const personalCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+          costPersonal += personalCost;
         } else {
-          // MATERIAL: coste = depreciación (10% del precio de compra por día)
-          // La depreciación representa el desgaste del equipo por uso
-          const depreciationRate = 0.10; // 10% de depreciación por uso
-          itemCost = Number(product.purchasePrice || 0) * effectiveQuantity * depreciationRate;
+          // MATERIAL: depreciación (10% del precio de compra por día)
+          const depreciationRate = 0.10;
+          const depreciation = Number(product.purchasePrice || 0) * effectiveQuantity * depreciationRate;
+          costDepreciation += depreciation;
         }
-        
-        const itemPrice = Number(product.pricePerDay || 0) * effectiveQuantity;
 
         console.log(`📦 Item ${index}: ${product.name}`, {
           isPersonal,
@@ -365,28 +367,22 @@ const PacksManager = () => {
           effectiveQuantity,
           purchasePrice: product.purchasePrice,
           pricePerDay: product.pricePerDay,
-          itemCost: isPersonal ? `${itemCost} (personal)` : `${itemCost} (depreciación 10%)`,
           itemPrice
         });
 
         totalPricePerDay += itemPrice;
         
-        // Sumar precios de envío e instalación (lo que cobra al cliente)
+        // Sumar precios y costes de envío e instalación
         if (formData.includeShipping) {
           const shippingPrice = Number(product.shippingCost || 0) * effectiveQuantity;
           totalShipping += shippingPrice;
-          // COSTE del transporte (asumimos que cuesta lo mismo que cobras, o 100%)
-          totalShippingCost += shippingPrice;
+          costShippingInstallation += shippingPrice;
         }
         if (formData.includeInstallation) {
           const installationPrice = Number(product.installationCost || 0) * effectiveQuantity;
           totalInstallation += installationPrice;
-          // COSTE del montaje (asumimos que cuesta lo mismo que cobras, o 100%)
-          totalInstallationCost += installationPrice;
+          costShippingInstallation += installationPrice;
         }
-        
-        // Calcular coste: personal completo, material solo depreciación
-        totalCost += itemCost;
       }
     });
 
@@ -396,22 +392,24 @@ const PacksManager = () => {
       ? Number(formData.customFinalPrice) 
       : Math.max(0, subtotal - discountAmount);
 
-    // Calcular margen de beneficio
-    // Beneficio = Precio Final - (Depreciación + Personal + Transporte + Montaje)
-    const totalRealCost = totalCost + totalShippingCost + totalInstallationCost;
-    const profit = finalPrice - totalRealCost;
+    // Calcular costes totales
+    const totalCost = costMaterial + costPersonal + costShippingInstallation + costDepreciation;
+    
+    // Beneficio = Precio Final - Coste Total
+    const profit = finalPrice - totalCost;
+    
     // Margen % = (Beneficio / Precio Final) × 100
-    // Si el precio final es 0, el margen es 0
     const profitMargin = finalPrice > 0 ? (profit / finalPrice) * 100 : 0;
 
-    console.log('💰 Cálculo de beneficio:', {
-      finalPrice,
-      totalCost: totalCost.toFixed(2) + ' (personal + depreciación)',
-      totalShippingCost: totalShippingCost.toFixed(2),
-      totalInstallationCost: totalInstallationCost.toFixed(2),
-      totalRealCost: totalRealCost.toFixed(2),
-      profit: profit.toFixed(2),
-      profitMargin: profitMargin.toFixed(1) + '%'
+    console.log('💰 Análisis de Rentabilidad:', {
+      'Precio Venta': finalPrice.toFixed(2),
+      'Coste Material': costMaterial.toFixed(2),
+      'Coste Personal': costPersonal.toFixed(2),
+      'Coste Envío+Montaje': costShippingInstallation.toFixed(2),
+      'Coste Amortización': costDepreciation.toFixed(2),
+      'Coste Total': totalCost.toFixed(2),
+      'Beneficio': profit.toFixed(2),
+      'Margen': profitMargin.toFixed(1) + '%'
     });
 
     return {
@@ -421,10 +419,12 @@ const PacksManager = () => {
       subtotal,
       discountAmount,
       finalPrice,
-      totalCost, // Personal + Depreciación
-      totalShippingCost, // Coste del transporte
-      totalInstallationCost, // Coste del montaje
-      totalRealCost, // Coste total real
+      // Costes detallados
+      costMaterial,
+      costPersonal,
+      costShippingInstallation,
+      costDepreciation,
+      totalCost,
       profit,
       profitMargin
     };
@@ -888,36 +888,48 @@ const PacksManager = () => {
                                 <span className="font-semibold">-€{totals.discountAmount.toFixed(2)}</span>
                               </div>
                             )}
-                            <div className="flex justify-between border-t border-blue-200 pt-2 mt-2 font-semibold">
-                              <span className="text-blue-800">Precio Final (lo que cobra):</span>
-                              <span className="text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
-                            </div>
-                            <div className="border-t border-blue-200 pt-2 mt-2">
-                              <div className="text-xs font-semibold text-blue-800 mb-2">Desglose de Costes:</div>
-                              <div className="space-y-1 text-xs">
-                                <div className="flex justify-between">
-                                  <span className="text-blue-700">• Personal + Depreciación:</span>
-                                  <span className="font-medium text-blue-900">€{totals.totalCost.toFixed(2)}</span>
-                                </div>
-                                {totals.totalShippingCost > 0 && (
+                            {/* Costes Detallados */}
+                            <div className="border-t border-blue-200 pt-3 mt-2">
+                              <div className="text-xs font-bold text-blue-800 mb-2 uppercase">Costes:</div>
+                              <div className="space-y-1.5 text-sm">
+                                {totals.costMaterial > 0 && (
                                   <div className="flex justify-between">
-                                    <span className="text-blue-700">• Transporte:</span>
-                                    <span className="font-medium text-blue-900">€{totals.totalShippingCost.toFixed(2)}</span>
+                                    <span className="text-blue-700">Total costes material:</span>
+                                    <span className="font-medium text-blue-900">€{totals.costMaterial.toFixed(2)}</span>
                                   </div>
                                 )}
-                                {totals.totalInstallationCost > 0 && (
+                                {totals.costPersonal > 0 && (
                                   <div className="flex justify-between">
-                                    <span className="text-blue-700">• Montaje:</span>
-                                    <span className="font-medium text-blue-900">€{totals.totalInstallationCost.toFixed(2)}</span>
+                                    <span className="text-blue-700">Total costes personal:</span>
+                                    <span className="font-medium text-blue-900">€{totals.costPersonal.toFixed(2)}</span>
                                   </div>
                                 )}
-                                <div className="flex justify-between border-t border-blue-200 pt-1 mt-1 font-semibold">
-                                  <span className="text-blue-800">Coste Total:</span>
-                                  <span className="text-blue-900">€{totals.totalRealCost.toFixed(2)}</span>
+                                {totals.costShippingInstallation > 0 && (
+                                  <div className="flex justify-between">
+                                    <span className="text-blue-700">Total coste envío+montaje:</span>
+                                    <span className="font-medium text-blue-900">€{totals.costShippingInstallation.toFixed(2)}</span>
+                                  </div>
+                                )}
+                                {totals.costDepreciation > 0 && (
+                                  <div className="flex justify-between">
+                                    <span className="text-blue-700">Total coste amortización:</span>
+                                    <span className="font-medium text-blue-900">€{totals.costDepreciation.toFixed(2)}</span>
+                                  </div>
+                                )}
+                                
+                                <div className="border-t-2 border-blue-300 pt-2 mt-2">
+                                  <div className="flex justify-between font-semibold">
+                                    <span className="text-blue-800">Coste Total:</span>
+                                    <span className="text-blue-900">€{totals.totalCost.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between font-semibold mt-2">
+                                    <span className="text-blue-800">Precio Venta:</span>
+                                    <span className="text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
+                                  </div>
                                 </div>
                               </div>
                               <div className="text-xs text-blue-600 mt-2 italic">
-                                * Material: 10% depreciación | Personal: coste por hora
+                                * Amortización: 10% del valor | Personal: coste/hora
                               </div>
                             </div>
                             <div className="border-t border-blue-200 pt-2 mt-2">
@@ -938,7 +950,7 @@ const PacksManager = () => {
                           {totals.profit < 0 && (
                             <div className="mt-3 bg-red-100 border border-red-300 rounded p-2">
                               <p className="text-xs text-red-700 font-medium">
-                                ⚠️ Beneficio negativo: El precio de venta (€{totals.finalPrice.toFixed(2)}) es menor que los costes totales (€{totals.totalRealCost.toFixed(2)}). 
+                                ⚠️ Beneficio negativo: El precio de venta (€{totals.finalPrice.toFixed(2)}) es menor que los costes totales (€{totals.totalCost.toFixed(2)}). 
                                 Aumenta el precio final o reduce costes.
                               </p>
                             </div>
