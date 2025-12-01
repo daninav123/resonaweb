@@ -264,7 +264,7 @@ const PacksManager = () => {
     }
     
     try {
-      await api.delete(`/products/${pack.id}`);
+      await api.delete(`/packs/${pack.id}`);
       toast.success('Pack eliminado');
       loadPacks();
     } catch (error: any) {
