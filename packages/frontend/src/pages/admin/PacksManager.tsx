@@ -49,7 +49,7 @@ const PacksManager = () => {
 
   const loadCategories = async () => {
     try {
-      const response: any = await api.get('/categories');
+      const response: any = await api.get('/products/categories');
       const cats = response?.categories || response || [];
       setCategories(Array.isArray(cats) ? cats : []);
       
@@ -59,6 +59,9 @@ const PacksManager = () => {
       );
       if (packsCategory) {
         setPacksCategoryId(packsCategory.id);
+        console.log('✅ Categoría Packs encontrada:', packsCategory.id);
+      } else {
+        console.log('⚠️ Categoría Packs no encontrada');
       }
     } catch (error) {
       console.error('Error cargando categorías:', error);
