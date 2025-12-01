@@ -358,8 +358,11 @@ const PacksManager = () => {
       : Math.max(0, subtotal - discountAmount);
 
     // Calcular margen de beneficio
+    // Beneficio = Precio Final (lo que cobra al cliente) - Coste Total (lo que te cuesta)
     const profit = finalPrice - totalCost;
-    const profitMargin = totalCost > 0 ? (profit / finalPrice) * 100 : 0;
+    // Margen % = (Beneficio / Precio Final) × 100
+    // Si el precio final es 0, el margen es 0
+    const profitMargin = finalPrice > 0 ? (profit / finalPrice) * 100 : 0;
 
     return {
       totalPricePerDay,
@@ -821,33 +824,50 @@ const PacksManager = () => {
                             <Calculator className="w-4 h-4" />
                             Análisis de Rentabilidad
                           </h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-blue-700">Coste Total (purchasePrice):</span>
-                              <span className="font-semibold text-blue-900">€{totals.totalCost.toFixed(2)}</span>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-blue-700">Subtotal (precios de venta):</span>
+                              <span className="font-semibold text-blue-900">€{totals.subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-blue-700">Precio de Venta:</span>
-                              <span className="font-semibold text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
+                            {totals.discountAmount > 0 && (
+                              <div className="flex justify-between text-green-700">
+                                <span>Descuento:</span>
+                                <span className="font-semibold">-€{totals.discountAmount.toFixed(2)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between border-t border-blue-200 pt-2 mt-2 font-semibold">
+                              <span className="text-blue-800">Precio Final (lo que cobra):</span>
+                              <span className="text-blue-900">€{totals.finalPrice.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between border-t border-blue-200 pt-2 mt-2">
+                              <span className="text-blue-700">Coste Total (lo que cuesta):</span>
+                              <span className="font-semibold text-blue-900">€{totals.totalCost.toFixed(2)}</span>
                             </div>
                             <div className="border-t border-blue-200 pt-2 mt-2">
                               <div className="flex justify-between items-center">
-                                <span className="text-sm font-semibold text-blue-800">Beneficio:</span>
+                                <span className="font-semibold text-blue-800">Beneficio:</span>
                                 <span className={`text-lg font-bold ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                   €{totals.profit.toFixed(2)}
                                 </span>
                               </div>
-                              <div className="flex justify-between items-center mt-1">
-                                <span className="text-sm font-semibold text-blue-800">Margen:</span>
+                              <div className="flex justify-between items-center mt-2">
+                                <span className="font-semibold text-blue-800">Margen:</span>
                                 <span className={`text-lg font-bold ${totals.profitMargin >= 30 ? 'text-green-600' : totals.profitMargin >= 15 ? 'text-yellow-600' : 'text-red-600'}`}>
                                   {totals.profitMargin.toFixed(1)}%
                                 </span>
                               </div>
                             </div>
                           </div>
-                          {totals.profitMargin < 15 && totals.totalCost > 0 && (
+                          {totals.profit < 0 && (
                             <div className="mt-3 bg-red-100 border border-red-300 rounded p-2">
                               <p className="text-xs text-red-700 font-medium">
+                                ⚠️ Beneficio negativo: El precio de venta es menor que el coste. Aumenta el precio final.
+                              </p>
+                            </div>
+                          )}
+                          {totals.profit >= 0 && totals.profitMargin < 15 && totals.totalCost > 0 && (
+                            <div className="mt-3 bg-yellow-100 border border-yellow-300 rounded p-2">
+                              <p className="text-xs text-yellow-700 font-medium">
                                 ⚠️ Margen bajo: considera aumentar el precio o reducir costes
                               </p>
                             </div>
