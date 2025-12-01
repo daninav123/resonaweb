@@ -91,30 +91,20 @@ export default function BackupManager() {
     try {
       console.log('📥 Iniciando descarga de:', filename);
       
-      const response = await api.get(`/admin/backups/download/${filename}`, {
+      // IMPORTANTE: api.get() ya devuelve response.data, así que blob es directamente el resultado
+      const blob = await api.get<Blob>(`/admin/backups/download/${filename}`, {
         responseType: 'blob'
       });
       
-      console.log('📦 Respuesta completa:', {
-        data: response.data,
-        dataType: typeof response.data,
-        headers: response.headers,
-        status: response.status
-      });
-      
-      if (!response.data) {
-        throw new Error('No se recibió contenido del servidor');
-      }
-      
-      // response.data ya es un Blob cuando usamos responseType: 'blob'
-      const blob = response.data;
-      
-      console.log('📊 Archivo recibido:', {
+      console.log('📦 Blob recibido:', {
         size: blob.size,
         type: blob.type,
-        isBlob: blob instanceof Blob,
-        contentType: response.headers['content-type']
+        isBlob: blob instanceof Blob
       });
+      
+      if (!blob) {
+        throw new Error('No se recibió contenido del servidor');
+      }
       
       // Verificar que el blob tiene contenido
       if (!blob.size || blob.size === 0) {
