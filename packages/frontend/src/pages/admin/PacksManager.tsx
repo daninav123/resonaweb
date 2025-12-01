@@ -17,7 +17,7 @@ const PacksManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    discountPercentage: 0,
+    discountAmount: 0, // Cambiado de porcentaje a valor en euros
     customFinalPrice: '',
     items: [] as Array<{ productId: string; quantity: number }>
   });
@@ -162,7 +162,7 @@ const PacksManager = () => {
     setFormData({
       name: '',
       description: '',
-      discountPercentage: 0,
+      discountAmount: 0,
       customFinalPrice: '',
       items: []
     });
@@ -181,7 +181,7 @@ const PacksManager = () => {
     setFormData({
       name: pack.name || '',
       description: pack.description || '',
-      discountPercentage: Number(pack.discountPercentage || 0),
+      discountAmount: Number(pack.discountAmount || 0),
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
       items: pack.items?.map((item: any) => ({
         productId: item.productId || item.product?.id,
@@ -206,7 +206,7 @@ const PacksManager = () => {
       const packData = {
         name: formData.name,
         description: formData.description,
-        discountPercentage: formData.discountPercentage,
+        discountAmount: formData.discountAmount,
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         items: formData.items,
         categoryId: packsCategoryId, // Predeterminar categoría Packs
@@ -270,6 +270,37 @@ const PacksManager = () => {
     const newItems = [...formData.items];
     newItems[index].quantity = quantity;
     setFormData({ ...formData, items: newItems });
+  };
+
+  // Calcular todos los totales del pack
+  const calculatePackTotals = () => {
+    let totalPricePerDay = 0;
+    let totalShipping = 0;
+    let totalInstallation = 0;
+
+    formData.items.forEach(item => {
+      const product = products.find(p => p.id === item.productId);
+      if (product) {
+        totalPricePerDay += Number(product.pricePerDay || 0) * item.quantity;
+        totalShipping += Number(product.shippingCost || 0) * item.quantity;
+        totalInstallation += Number(product.installationCost || 0) * item.quantity;
+      }
+    });
+
+    const subtotal = totalPricePerDay + totalShipping + totalInstallation;
+    const discountAmount = Number(formData.discountAmount || 0);
+    const finalPrice = formData.customFinalPrice 
+      ? Number(formData.customFinalPrice) 
+      : Math.max(0, subtotal - discountAmount);
+
+    return {
+      totalPricePerDay,
+      totalShipping,
+      totalInstallation,
+      subtotal,
+      discountAmount,
+      finalPrice
+    };
   };
 
   if (loading) {
@@ -554,70 +585,106 @@ const PacksManager = () => {
                 <div className="border-t pt-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Calculator className="w-5 h-5 text-resona" />
-                    <h3 className="text-lg font-semibold">Sistema de Precios</h3>
+                    <h3 className="text-lg font-semibold">Cálculo de Precios</h3>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-blue-800 mb-2">
-                      <strong>El precio se calcula automáticamente:</strong>
-                    </p>
-                    <ul className="text-sm text-blue-700 space-y-1 ml-4">
-                      <li>• Suma de precio/día de todos los productos</li>
-                      <li>• + Suma de costes de envío</li>
-                      <li>• + Suma de costes de instalación</li>
-                      <li>• - Descuento aplicado (si hay)</li>
-                    </ul>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Descuento del Pack (%)
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.1"
-                        value={formData.discountPercentage}
-                        onChange={(e) => setFormData({ ...formData, discountPercentage: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        placeholder="0"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Se aplicará sobre el total calculado
+                  {formData.items.length === 0 ? (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                      <p className="text-gray-500 text-sm">
+                        Añade productos al pack para ver el cálculo de precios
                       </p>
                     </div>
+                  ) : (() => {
+                    const totals = calculatePackTotals();
+                    return (
+                      <div className="space-y-4">
+                        {/* Totales Calculados Automáticamente */}
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3">Totales Calculados</h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Total Precio/Día:</span>
+                              <span className="font-medium">€{totals.totalPricePerDay.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Total Transporte:</span>
+                              <span className="font-medium">€{totals.totalShipping.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Total Montaje/Instalación:</span>
+                              <span className="font-medium">€{totals.totalInstallation.toFixed(2)}</span>
+                            </div>
+                            <div className="border-t pt-2 mt-2">
+                              <div className="flex justify-between text-base font-semibold">
+                                <span>Subtotal:</span>
+                                <span className="text-resona">€{totals.subtotal.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Precio Final Personalizado (€)
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={formData.customFinalPrice}
-                        onChange={(e) => setFormData({ ...formData, customFinalPrice: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        placeholder="Dejar vacío para cálculo automático"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Opcional: establece un precio fijo manualmente
-                      </p>
-                    </div>
-                  </div>
+                        {/* Campo Editable: Descuento */}
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Descuento del Pack (€)
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.discountAmount}
+                            onChange={(e) => setFormData({ ...formData, discountAmount: parseFloat(e.target.value) || 0 })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                            placeholder="0.00"
+                          />
+                          <p className="text-xs text-gray-600 mt-1">
+                            Introduce el descuento que quieres aplicar en euros
+                          </p>
+                        </div>
 
-                  {formData.items.length > 0 && (
-                    <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-sm text-green-800">
-                        <strong>Vista previa:</strong> El cliente verá cuánto ahorra con el pack
-                      </p>
-                      <p className="text-xs text-green-700 mt-1">
-                        Ejemplo: "¡Ahorras €50 (15%)!" se calculará automáticamente
-                      </p>
-                    </div>
-                  )}
+                        {/* Precio Final */}
+                        <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h4 className="text-lg font-bold text-green-800">Precio Final</h4>
+                              {totals.discountAmount > 0 && (
+                                <p className="text-xs text-green-700 mt-1">
+                                  Ahorro: €{totals.discountAmount.toFixed(2)}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <div className="text-3xl font-bold text-green-600">
+                                €{totals.finalPrice.toFixed(2)}
+                              </div>
+                              <p className="text-xs text-green-700 mt-1">por día</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Opción: Precio Personalizado */}
+                        <details className="bg-blue-50 border border-blue-200 rounded-lg">
+                          <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-blue-800 hover:bg-blue-100 rounded-lg">
+                            Establecer Precio Final Personalizado (opcional)
+                          </summary>
+                          <div className="p-4 pt-2">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={formData.customFinalPrice}
+                              onChange={(e) => setFormData({ ...formData, customFinalPrice: e.target.value })}
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              placeholder="Dejar vacío para usar cálculo automático"
+                            />
+                            <p className="text-xs text-gray-600 mt-2">
+                              Si introduces un valor aquí, se ignorará el cálculo automático y el descuento.
+                            </p>
+                          </div>
+                        </details>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Botones */}
