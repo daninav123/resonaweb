@@ -221,9 +221,17 @@ const PacksManager = () => {
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
-        items: formData.items,
+        items: formData.items.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          // IMPORTANTE: Asegurar que numberOfPeople y hoursPerPerson se envíen
+          ...(item.numberOfPeople !== undefined && { numberOfPeople: item.numberOfPeople }),
+          ...(item.hoursPerPerson !== undefined && { hoursPerPerson: item.hoursPerPerson })
+        })),
         autoCalculate: true
       };
+      
+      console.log('📦 Items a guardar:', packData.items);
 
       // Solo agregar categoryId si es un pack nuevo
       if (!editingPack) {
@@ -319,6 +327,44 @@ const PacksManager = () => {
     newItems[index].numberOfPeople = numberOfPeople;
     newItems[index].hoursPerPerson = hoursPerPerson;
     setFormData({ ...formData, items: newItems });
+  };
+
+  // Calcular costes y beneficios para un pack (usado en la tabla)
+  const calculatePackCostsAndProfit = (pack: any) => {
+    let costPersonal = 0;
+    let costDepreciation = 0;
+    let costShippingInstallation = 0;
+    let finalPrice = Number(pack.finalPrice || pack.calculatedTotalPrice || 0);
+
+    if (pack.items) {
+      pack.items.forEach((item: any) => {
+        const product = products.find(p => p.id === item.productId);
+        if (product) {
+          const isPersonal = product.category?.name?.toLowerCase() === 'personal';
+          const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
+            ? item.numberOfPeople * item.hoursPerPerson
+            : item.quantity;
+
+          if (isPersonal) {
+            costPersonal += Number(product.purchasePrice || 0) * effectiveQuantity;
+          } else {
+            costDepreciation += Number(product.purchasePrice || 0) * effectiveQuantity * 0.10;
+          }
+
+          if (pack.includeShipping !== false) {
+            costShippingInstallation += Number(product.shippingCost || 0) * effectiveQuantity;
+          }
+          if (pack.includeInstallation !== false) {
+            costShippingInstallation += Number(product.installationCost || 0) * effectiveQuantity;
+          }
+        }
+      });
+    }
+
+    const totalCost = costPersonal + costDepreciation + costShippingInstallation;
+    const profit = finalPrice - totalCost;
+
+    return { totalCost, profit };
   };
 
   // Calcular todos los totales del pack
@@ -472,16 +518,24 @@ const PacksManager = () => {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nombre</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Descripción</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Precio/Día</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Gastos Esperados</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Beneficio Esperado</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {packs.map((pack) => (
-                <tr key={pack.id} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm space-x-2">
+              {packs.map((pack) => {
+                const { totalCost, profit } = calculatePackCostsAndProfit(pack);
+                const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600';
+                
+                return (
+                  <tr key={pack.id} className="border-b hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">€{totalCost.toFixed(2)}</td>
+                    <td className={`px-6 py-4 text-sm font-semibold ${profitColor}`}>€{profit.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm space-x-2">
                     <button 
                       onClick={() => handleEdit(pack)}
                       className="text-blue-600 hover:text-blue-800"
@@ -498,7 +552,8 @@ const PacksManager = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>
