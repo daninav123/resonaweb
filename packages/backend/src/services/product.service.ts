@@ -627,13 +627,34 @@ export class ProductService {
     // Limpiar campos de fecha vacíos o inválidos
     const cleanData: any = { ...data };
     
-    // Lista de campos de fecha que pueden venir vacíos del frontend
+    // Lista de campos de fecha que pueden venir vacíos o en formato incorrecto del frontend
     const dateFields = ['purchaseDate', 'createdAt', 'updatedAt'];
     dateFields.forEach(field => {
       if (field in cleanData) {
-        // Si es string vacío, null, o undefined, eliminarlo del objeto
-        if (!cleanData[field] || cleanData[field] === '' || cleanData[field] === 'null') {
+        const value = cleanData[field];
+        
+        // Si es string vacío, null, undefined o 'null', eliminarlo
+        if (!value || value === '' || value === 'null') {
           delete cleanData[field];
+        } 
+        // Si es una fecha en formato YYYY-MM-DD (solo fecha), convertir a ISO-8601 DateTime
+        else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+          // Convertir a DateTime ISO-8601 (medianoche UTC)
+          cleanData[field] = new Date(value + 'T00:00:00.000Z').toISOString();
+        }
+        // Si es una fecha válida en otro formato string, intentar convertir
+        else if (typeof value === 'string') {
+          try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+              cleanData[field] = date.toISOString();
+            } else {
+              // Si no es una fecha válida, eliminar el campo
+              delete cleanData[field];
+            }
+          } catch {
+            delete cleanData[field];
+          }
         }
       }
     });
