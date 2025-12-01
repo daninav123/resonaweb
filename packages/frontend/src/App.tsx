@@ -62,6 +62,7 @@ const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
 const POSPage = lazy(() => import('./pages/admin/POSPage'));
 const PacksManager = lazy(() => import('./pages/admin/PacksManager'));
+const PersonalManager = lazy(() => import('./pages/admin/PersonalManager'));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
@@ -203,6 +204,7 @@ function App() {
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
               <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
+              <Route path="/admin/personal" element={<AdminLayout><PersonalManager /></AdminLayout>} />
               <Route path="/admin/analytics" element={<AdminLayout><AnalyticsPage /></AdminLayout>} />
               <Route path="/admin/statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
               <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
