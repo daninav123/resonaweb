@@ -21,6 +21,11 @@ const PacksManager = () => {
     customFinalPrice: '',
     items: [] as Array<{ productId: string; quantity: number }>
   });
+  
+  const [productFilter, setProductFilter] = useState({
+    categoryId: '',
+    search: ''
+  });
 
   useEffect(() => {
     loadPacks();
@@ -83,11 +88,44 @@ const PacksManager = () => {
   const loadProducts = async () => {
     try {
       const response: any = await api.get('/products');
-      const prods = response?.products || response || [];
-      setProducts(Array.isArray(prods) ? prods : []);
+      console.log('📦 Respuesta de productos:', response);
+      
+      let prods = [];
+      if (Array.isArray(response)) {
+        prods = response;
+      } else if (response?.products && Array.isArray(response.products)) {
+        prods = response.products;
+      } else if (response?.data && Array.isArray(response.data)) {
+        prods = response.data;
+      }
+      
+      console.log('📦 Productos procesados:', prods.length, 'productos');
+      setProducts(prods);
     } catch (error) {
       console.error('Error cargando productos:', error);
     }
+  };
+
+  // Filtrar productos disponibles para agregar al pack
+  const getAvailableProducts = () => {
+    let filtered = products.filter(p => !p.isPack);
+    
+    // Filtrar por categoría si hay una seleccionada
+    if (productFilter.categoryId) {
+      filtered = filtered.filter(p => p.categoryId === productFilter.categoryId);
+    }
+    
+    // Filtrar por búsqueda
+    if (productFilter.search.trim()) {
+      const search = productFilter.search.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.name?.toLowerCase().includes(search) ||
+        p.sku?.toLowerCase().includes(search)
+      );
+    }
+    
+    console.log('📦 Productos disponibles después de filtros:', filtered.length);
+    return filtered;
   };
 
   const handleCreate = () => {
@@ -338,6 +376,39 @@ const PacksManager = () => {
                     </button>
                   </div>
 
+                  {/* Filtros de productos */}
+                  {formData.items.length > 0 && (
+                    <div className="mb-4 grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Filtrar por categoría
+                        </label>
+                        <select
+                          value={productFilter.categoryId}
+                          onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                        >
+                          <option value="">Todas las categorías</option>
+                          {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Buscar producto
+                        </label>
+                        <input
+                          type="text"
+                          value={productFilter.search}
+                          onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                          placeholder="Nombre o SKU..."
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {formData.items.length === 0 ? (
                     <div className="text-center py-8 bg-gray-50 rounded-lg">
                       <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
@@ -351,50 +422,57 @@ const PacksManager = () => {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {formData.items.map((item, index) => (
-                        <div key={index} className="flex gap-3 items-end bg-gray-50 p-3 rounded">
-                          <div className="flex-1">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Producto
-                            </label>
-                            <select
-                              value={item.productId}
-                              onChange={(e) => updateProduct(index, 'productId', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                      {formData.items.map((item, index) => {
+                        const availableProducts = getAvailableProducts();
+                        return (
+                          <div key={index} className="flex gap-3 items-end bg-gray-50 p-3 rounded">
+                            <div className="flex-1">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Producto {availableProducts.length > 0 && `(${availableProducts.length} disponibles)`}
+                              </label>
+                              <select
+                                value={item.productId}
+                                onChange={(e) => updateProduct(index, 'productId', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                              >
+                                <option value="">Seleccionar producto...</option>
+                                {availableProducts.length === 0 ? (
+                                  <option value="" disabled>No hay productos disponibles con estos filtros</option>
+                                ) : (
+                                  availableProducts.map((product) => (
+                                    <option key={product.id} value={product.id}>
+                                      {product.name} - €{product.pricePerDay}/día
+                                      {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
+                                      {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
+                                    </option>
+                                  ))
+                                )}
+                              </select>
+                            </div>
+
+                            <div className="w-24">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Cantidad
+                              </label>
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => updateProduct(index, 'quantity', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                              />
+                            </div>
+
+                            <button
+                              onClick={() => removeProduct(index)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded"
+                              title="Eliminar"
                             >
-                              <option value="">Seleccionar producto...</option>
-                              {products.filter(p => !p.isPack).map((product) => (
-                                <option key={product.id} value={product.id}>
-                                  {product.name} - €{product.pricePerDay}/día
-                                  {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
-                                  {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
-                                </option>
-                              ))}
-                            </select>
+                              <Trash2 className="w-5 h-5" />
+                            </button>
                           </div>
-
-                          <div className="w-24">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Cantidad
-                            </label>
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.quantity}
-                              onChange={(e) => updateProduct(index, 'quantity', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                            />
-                          </div>
-
-                          <button
-                            onClick={() => removeProduct(index)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded"
-                            title="Eliminar"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
