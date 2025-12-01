@@ -21,7 +21,12 @@ const PacksManager = () => {
     customFinalPrice: '',
     includeShipping: true, // Incluir transporte por defecto
     includeInstallation: true, // Incluir montaje por defecto
-    items: [] as Array<{ productId: string; quantity: number }>
+    items: [] as Array<{ 
+      productId: string; 
+      quantity: number;
+      numberOfPeople?: number; // Para productos de personal
+      hoursPerPerson?: number; // Para productos de personal
+    }>
   });
   
   const [productFilter, setProductFilter] = useState({
@@ -268,6 +273,11 @@ const PacksManager = () => {
     }
   };
 
+  // Detectar si un producto es de la categoría Personal
+  const isPersonalProduct = (product: any) => {
+    return product?.category?.name?.toLowerCase() === 'personal';
+  };
+
   const addProductToList = (productId: string) => {
     // Verificar si ya está en la lista
     const existing = formData.items.find(item => item.productId === productId);
@@ -276,9 +286,17 @@ const PacksManager = () => {
       return;
     }
     
+    const product = products.find(p => p.id === productId);
+    const isPerson = product && isPersonalProduct(product);
+    
     setFormData({
       ...formData,
-      items: [...formData.items, { productId, quantity: 1 }]
+      items: [...formData.items, { 
+        productId, 
+        quantity: 1,
+        // Si es personal, inicializar con valores por defecto
+        ...(isPerson && { numberOfPeople: 1, hoursPerPerson: 1 })
+      }]
     });
     toast.success('Producto añadido al pack');
   };
@@ -296,6 +314,13 @@ const PacksManager = () => {
     setFormData({ ...formData, items: newItems });
   };
 
+  const updatePersonalDetails = (index: number, numberOfPeople: number, hoursPerPerson: number) => {
+    const newItems = [...formData.items];
+    newItems[index].numberOfPeople = numberOfPeople;
+    newItems[index].hoursPerPerson = hoursPerPerson;
+    setFormData({ ...formData, items: newItems });
+  };
+
   // Calcular todos los totales del pack
   const calculatePackTotals = () => {
     let totalPricePerDay = 0;
@@ -306,16 +331,23 @@ const PacksManager = () => {
     formData.items.forEach(item => {
       const product = products.find(p => p.id === item.productId);
       if (product) {
-        totalPricePerDay += Number(product.pricePerDay || 0) * item.quantity;
+        // Calcular cantidad efectiva:
+        // - Para personal: numberOfPeople × hoursPerPerson
+        // - Para equipamiento: quantity
+        const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
+          ? item.numberOfPeople * item.hoursPerPerson
+          : item.quantity;
+
+        totalPricePerDay += Number(product.pricePerDay || 0) * effectiveQuantity;
         // Solo sumar si está marcado para incluir
         if (formData.includeShipping) {
-          totalShipping += Number(product.shippingCost || 0) * item.quantity;
+          totalShipping += Number(product.shippingCost || 0) * effectiveQuantity;
         }
         if (formData.includeInstallation) {
-          totalInstallation += Number(product.installationCost || 0) * item.quantity;
+          totalInstallation += Number(product.installationCost || 0) * effectiveQuantity;
         }
         // Nuevo: calcular coste basado en purchasePrice
-        totalCost += Number(product.purchasePrice || 0) * item.quantity;
+        totalCost += Number(product.purchasePrice || 0) * effectiveQuantity;
       }
     });
 
@@ -575,35 +607,74 @@ const PacksManager = () => {
                           const product = products.find(p => p.id === item.productId);
                           if (!product) return null;
                           
-                          const subtotal = Number(product.pricePerDay) * item.quantity;
+                          const isPerson = isPersonalProduct(product);
+                          const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
+                            ? item.numberOfPeople * item.hoursPerPerson
+                            : item.quantity;
+                          const subtotal = Number(product.pricePerDay) * effectiveQuantity;
                           
                           return (
-                            <div key={index} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-green-200">
-                              <div className="flex-1">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {product.name}
+                            <div key={index} className="bg-white p-3 rounded-lg border border-green-200">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {product.name}
+                                    {isPerson && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Personal</span>}
+                                  </div>
+                                  <div className="text-xs text-gray-600">
+                                    €{product.pricePerDay}/hora × {effectiveQuantity.toFixed(1)}h = €{subtotal.toFixed(2)}
+                                  </div>
                                 </div>
-                                <div className="text-xs text-gray-600">
-                                  €{product.pricePerDay}/día × {item.quantity} = €{subtotal.toFixed(2)}
+                                <button
+                                  onClick={() => removeProduct(index)}
+                                  className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              
+                              {isPerson ? (
+                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                  <div>
+                                    <label className="text-xs text-gray-600 block mb-1">Personas:</label>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      value={item.numberOfPeople || 1}
+                                      onChange={(e) => updatePersonalDetails(index, parseInt(e.target.value) || 1, item.hoursPerPerson || 1)}
+                                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-gray-600 block mb-1">Horas c/u:</label>
+                                    <input
+                                      type="number"
+                                      min="0.5"
+                                      step="0.5"
+                                      value={item.hoursPerPerson || 1}
+                                      onChange={(e) => updatePersonalDetails(index, item.numberOfPeople || 1, parseFloat(e.target.value) || 1)}
+                                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
+                                    />
+                                  </div>
+                                  <div className="col-span-2 text-xs text-purple-700 font-medium">
+                                    = {item.numberOfPeople || 1} persona{(item.numberOfPeople || 1) > 1 ? 's' : ''} × {item.hoursPerPerson || 1}h = {effectiveQuantity.toFixed(1)}h totales
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <label className="text-xs text-gray-600">Cantidad:</label>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value={item.quantity}
-                                  onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
-                                  className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500"
-                                />
-                              </div>
-                              <button
-                                onClick={() => removeProduct(index)}
-                                className="p-1 text-red-600 hover:bg-red-50 rounded"
-                                title="Eliminar"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              ) : (
+                                <div className="mt-2">
+                                  <div className="flex items-center gap-2">
+                                    <label className="text-xs text-gray-600">Cantidad:</label>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      value={item.quantity}
+                                      onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
+                                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500"
+                                    />
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           );
                         })}

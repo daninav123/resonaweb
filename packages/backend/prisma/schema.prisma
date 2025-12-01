@@ -487,6 +487,10 @@ model PackItem {
   
   quantity  Int     @default(1)
   
+  // Campos específicos para personal (montadores, DJs, técnicos, etc.)
+  numberOfPeople Int?    // Número de personas (ej: 2 montadores)
+  hoursPerPerson Decimal? @db.Decimal(8, 2) // Horas por persona (ej: 3 horas)
+  
   @@unique([packId, productId])
 }
 
