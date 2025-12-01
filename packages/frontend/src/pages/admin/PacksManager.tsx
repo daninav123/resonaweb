@@ -243,11 +243,19 @@ const PacksManager = () => {
     }
   };
 
-  const addProduct = () => {
+  const addProductToList = (productId: string) => {
+    // Verificar si ya está en la lista
+    const existing = formData.items.find(item => item.productId === productId);
+    if (existing) {
+      toast.error('Este producto ya está en el pack');
+      return;
+    }
+    
     setFormData({
       ...formData,
-      items: [...formData.items, { productId: '', quantity: 1 }]
+      items: [...formData.items, { productId, quantity: 1 }]
     });
+    toast.success('Producto añadido al pack');
   };
 
   const removeProduct = (index: number) => {
@@ -257,13 +265,9 @@ const PacksManager = () => {
     });
   };
 
-  const updateProduct = (index: number, field: 'productId' | 'quantity', value: any) => {
+  const updateQuantity = (index: number, quantity: number) => {
     const newItems = [...formData.items];
-    if (field === 'quantity') {
-      newItems[index].quantity = parseInt(value) || 1;
-    } else {
-      newItems[index].productId = value;
-    }
+    newItems[index].quantity = quantity;
     setFormData({ ...formData, items: newItems });
   };
 
@@ -399,85 +403,137 @@ const PacksManager = () => {
                 </div>
 
                 {/* Productos del Pack */}
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Productos del Pack</h3>
-                    <button
-                      onClick={addProduct}
-                      className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Agregar Producto
-                    </button>
+                <div className="space-y-6">
+                  {/* Sección: Buscar y Agregar Productos */}
+                  <div className="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                      <Package className="w-5 h-5 text-blue-600" />
+                      Buscar y Agregar Productos
+                    </h3>
+
+                    {/* Filtros */}
+                    <div className="mb-3 grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Filtrar por categoría
+                        </label>
+                        <select
+                          value={productFilter.categoryId}
+                          onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white"
+                        >
+                          <option value="">Todas las categorías</option>
+                          {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Buscar producto
+                        </label>
+                        <input
+                          type="text"
+                          value={productFilter.search}
+                          onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                          placeholder="Nombre o SKU..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Lista de productos disponibles */}
+                    <div className="bg-white border border-gray-300 rounded-lg max-h-64 overflow-y-auto">
+                      {getAvailableProducts().length === 0 ? (
+                        <div className="p-8 text-center text-gray-500">
+                          <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm">No hay productos disponibles con estos filtros</p>
+                          <button
+                            onClick={() => setProductFilter({ categoryId: '', search: '' })}
+                            className="mt-2 text-xs text-blue-600 hover:underline"
+                          >
+                            Limpiar filtros
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="divide-y">
+                          {getAvailableProducts().map((product) => {
+                            const isAdded = formData.items.some(item => item.productId === product.id);
+                            return (
+                              <div key={product.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {product.name}
+                                  </div>
+                                  <div className="text-xs text-gray-600 mt-0.5">
+                                    €{product.pricePerDay}/día
+                                    {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
+                                    {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => addProductToList(product.id)}
+                                  disabled={isAdded}
+                                  className={`flex items-center gap-1 px-3 py-1 text-sm rounded transition-colors ${
+                                    isAdded 
+                                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                      : 'bg-green-600 text-white hover:bg-green-700'
+                                  }`}
+                                >
+                                  {isAdded ? (
+                                    <>✓ Añadido</>
+                                  ) : (
+                                    <><Plus className="w-4 h-4" /> Añadir</>
+                                  )}
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Filtros de productos - Siempre visibles */}
-                  <div className="mb-4 grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Filtrar por categoría (Actual: {productFilter.categoryId ? 'Filtrado' : 'Todas'})
-                      </label>
-                      <select
-                        value={productFilter.categoryId}
-                        onChange={(e) => {
-                          console.log('📂 Cambiando filtro categoría de', productFilter.categoryId, 'a:', e.target.value);
-                          setProductFilter({ ...productFilter, categoryId: e.target.value });
-                        }}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                        autoComplete="off"
-                      >
-                        <option value="">Todas las categorías</option>
-                        {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                      </select>
-                      <button
-                        onClick={() => {
-                          console.log('🔄 Limpiando filtros');
-                          setProductFilter({ categoryId: '', search: '' });
-                        }}
-                        className="mt-1 text-xs text-blue-600 hover:underline"
-                      >
-                        Limpiar filtros
-                      </button>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Buscar producto
-                      </label>
-                      <input
-                        type="text"
-                        value={productFilter.search}
-                        onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                        placeholder="Nombre o SKU..."
-                      />
-                    </div>
-                  </div>
+                  {/* Sección: Productos en el Pack */}
+                  <div className="border-2 border-green-200 rounded-lg p-4 bg-green-50">
+                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                      <Package className="w-5 h-5 text-green-600" />
+                      Productos en el Pack ({formData.items.length})
+                    </h3>
 
-                  {formData.items.length === 0 ? (
-                    <div className="text-center py-8 bg-gray-50 rounded-lg">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500">No hay productos agregados</p>
-                      <button
-                        onClick={addProduct}
-                        className="mt-4 px-4 py-2 bg-resona text-white rounded hover:bg-resona-dark"
-                      >
-                        Agregar Primer Producto
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {formData.items.map((item, index) => {
-                        const availableProducts = getAvailableProducts();
-                        const selectedProduct = availableProducts.find(p => p.id === item.productId);
-                        
-                        return (
-                          <div key={index} className="bg-gray-50 p-3 rounded">
-                            <div className="flex justify-between items-center mb-2">
-                              <label className="block text-sm font-medium text-gray-700">
-                                Producto {index + 1} {availableProducts.length > 0 && `(${availableProducts.length} disponibles)`}
-                              </label>
+                    {formData.items.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <p className="text-sm">No hay productos en el pack aún</p>
+                        <p className="text-xs mt-1">Usa el buscador de arriba para añadir productos</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {formData.items.map((item, index) => {
+                          const product = products.find(p => p.id === item.productId);
+                          if (!product) return null;
+                          
+                          const subtotal = Number(product.pricePerDay) * item.quantity;
+                          
+                          return (
+                            <div key={index} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-green-200">
+                              <div className="flex-1">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {product.name}
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                  €{product.pricePerDay}/día × {item.quantity} = €{subtotal.toFixed(2)}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <label className="text-xs text-gray-600">Cantidad:</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.quantity}
+                                  onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
+                                  className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500"
+                                />
+                              </div>
                               <button
                                 onClick={() => removeProduct(index)}
                                 className="p-1 text-red-600 hover:bg-red-50 rounded"
@@ -486,68 +542,11 @@ const PacksManager = () => {
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
-
-                            <div className="flex gap-3 items-start">
-                              {/* Lista de productos con scroll */}
-                              <div className="flex-1">
-                                {selectedProduct && (
-                                  <div className="mb-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
-                                    <strong>Seleccionado:</strong> {selectedProduct.name} - €{selectedProduct.pricePerDay}/día
-                                  </div>
-                                )}
-                                
-                                <div className="border border-gray-300 rounded max-h-48 overflow-y-auto bg-white">
-                                  {availableProducts.length === 0 ? (
-                                    <div className="p-4 text-center text-gray-500 text-sm">
-                                      No hay productos disponibles con estos filtros
-                                    </div>
-                                  ) : (
-                                    <div className="divide-y">
-                                      {availableProducts.map((product) => (
-                                        <button
-                                          key={product.id}
-                                          type="button"
-                                          onClick={() => updateProduct(index, 'productId', product.id)}
-                                          className={`w-full text-left px-3 py-2 hover:bg-blue-50 transition-colors ${
-                                            item.productId === product.id 
-                                              ? 'bg-blue-100 border-l-4 border-blue-500' 
-                                              : ''
-                                          }`}
-                                        >
-                                          <div className="text-sm font-medium text-gray-900">
-                                            {product.name}
-                                          </div>
-                                          <div className="text-xs text-gray-600 mt-0.5">
-                                            €{product.pricePerDay}/día
-                                            {product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
-                                            {product.installationCost > 0 && ` + €${product.installationCost} instalación`}
-                                          </div>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Campo de cantidad */}
-                              <div className="w-24 flex-shrink-0">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Cantidad
-                                </label>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value={item.quantity}
-                                  onChange={(e) => updateProduct(index, 'quantity', e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Sistema de Precios */}
