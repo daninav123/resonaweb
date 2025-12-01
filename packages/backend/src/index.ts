@@ -83,7 +83,46 @@ app.use(securityHeaders);
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'", // Necesario para algunos scripts inline (revisar en futuro)
+        "https://js.stripe.com",
+        "https://www.google-analytics.com",
+        "https://www.googletagmanager.com"
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'", // Necesario para TailwindCSS y estilos inline
+        "https://fonts.googleapis.com"
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https:",
+        "blob:"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.stripe.com",
+        "https://www.google-analytics.com"
+      ],
+      frameSrc: [
+        "https://js.stripe.com",
+        "https://hooks.stripe.com"
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com"
+      ],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      manifestSrc: ["'self'"],
+      workerSrc: ["'self'", "blob:"],
+    }
+  },
 }));
 app.use(cors({
   origin: (origin, callback) => {

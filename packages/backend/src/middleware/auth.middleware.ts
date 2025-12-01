@@ -3,6 +3,7 @@ import { verifyAccessToken } from '../utils/jwt.utils';
 import { prisma } from '../index';
 import { AppError } from './error.middleware';
 import { tokenBlacklistService } from '../services/tokenBlacklist.service';
+import { secureLog } from '../utils/secureLogger';
 
 /**
  * Middleware to authenticate JWT tokens
@@ -13,32 +14,32 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    console.log('🔐 Auth middleware - Verificando autenticación...');
+    secureLog.debug('Auth middleware - Verificando autenticación...');
     
     // Get token from header
     const authHeader = req.headers.authorization;
-    console.log('📝 Auth header presente:', authHeader ? 'Sí' : 'No');
+    secureLog.debug('Auth header presente:', authHeader ? 'Sí' : 'No');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ No hay token o formato incorrecto');
+      secureLog.debug('No hay token o formato incorrecto');
       throw new AppError(401, 'Token de autenticación no proporcionado', 'NO_TOKEN');
     }
 
     // Extract token
     const token = authHeader.substring(7);
-    console.log('🎟️ Token extraído:', token.substring(0, 20) + '...');
+    secureLog.debug('Token extraído (masked)');
 
     // Check if token is blacklisted
     const isBlacklisted = await tokenBlacklistService.isBlacklisted(token);
     if (isBlacklisted) {
-      console.log('❌ Token en blacklist');
+      secureLog.warn('Token en blacklist');
       throw new AppError(401, 'Token inválido', 'TOKEN_BLACKLISTED');
     }
 
     // Verify token
-    console.log('🔍 Verificando token...');
+    secureLog.debug('Verificando token...');
     const payload = verifyAccessToken(token);
-    console.log('✅ Token verificado, userId:', payload.userId);
+    secureLog.auth('Token verificado', { userId: payload.userId });
 
     // Get user from database
     const user = await prisma.user.findUnique({
@@ -46,11 +47,11 @@ export const authenticate = async (
     });
 
     if (!user || !user.isActive) {
-      console.log('❌ Usuario no encontrado o inactivo');
+      secureLog.warn('Usuario no encontrado o inactivo');
       throw new AppError(401, 'Usuario no encontrado o inactivo', 'USER_NOT_FOUND');
     }
 
-    console.log('✅ Usuario autenticado:', user.email);
+    secureLog.auth('Usuario autenticado', { userId: user.id, role: user.role });
     
     // Attach user to request
     req.user = user;
@@ -58,11 +59,7 @@ export const authenticate = async (
 
     next();
   } catch (error: any) {
-    console.error('❌ Error en auth middleware:', {
-      message: error.message,
-      code: error.code,
-      name: error.name
-    });
+    secureLog.error('Error en auth middleware', error);
     
     if (error instanceof AppError) {
       next(error);

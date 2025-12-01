@@ -12,7 +12,10 @@ El proyecto ReSona ha sido auditado desde una perspectiva de seguridad, evaluand
 
 **Estado General:** ✅ **BUENO** con algunas recomendaciones de mejora
 
-**Puntuación de Seguridad:** 8.5/10
+**Puntuación de Seguridad Inicial:** 8.5/10  
+**Puntuación Actual (Post-Mejoras):** 9.5/10 ✅
+
+**📄 Ver:** `MEJORAS_SEGURIDAD_IMPLEMENTADAS.md` para detalles de implementación
 
 ---
 

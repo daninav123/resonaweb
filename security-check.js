@@ -74,8 +74,10 @@ if (indexFile.includes('sanitizeInputs')) {
 // 4. Verificar CSP
 if (indexFile.includes('contentSecurityPolicy: false')) {
   warnings.push('⚠️  CSP está DESHABILITADA (recomendado habilitar)');
+} else if (indexFile.includes('contentSecurityPolicy:') && indexFile.includes('defaultSrc')) {
+  passed.push('✅ CSP configurada correctamente');
 } else if (indexFile.includes('contentSecurityPolicy:')) {
-  passed.push('✅ CSP configurada');
+  warnings.push('⚠️  CSP configurada pero verificar directivas');
 } else {
   warnings.push('⚠️  CSP no configurada');
 }
@@ -150,6 +152,43 @@ if (authMiddleware.includes('isBlacklisted')) {
   passed.push('✅ Blacklist de tokens implementada');
 } else {
   warnings.push('⚠️  Blacklist de tokens no encontrada');
+}
+
+// 10. Verificar secure logging
+console.log('9️⃣ Verificando secure logging...');
+try {
+  const secureLoggerFile = fs.readFileSync('packages/backend/src/utils/secureLogger.ts', 'utf8');
+  
+  if (secureLoggerFile.includes('maskSensitiveData')) {
+    passed.push('✅ Secure logger implementado con masking de datos');
+  }
+  
+  if (authMiddleware.includes('secureLog')) {
+    passed.push('✅ Auth middleware usa secure logger');
+  } else {
+    warnings.push('⚠️  Auth middleware no usa secure logger');
+  }
+} catch (e) {
+  warnings.push('⚠️  Secure logger no encontrado');
+}
+
+// 11. Verificar CSRF protection
+console.log('🔟 Verificando CSRF protection...');
+try {
+  const csrfMiddleware = fs.readFileSync('packages/backend/src/middleware/csrf.middleware.ts', 'utf8');
+  
+  if (csrfMiddleware.includes('customHeaderProtection')) {
+    passed.push('✅ CSRF protection implementada');
+  }
+  
+  const apiClient = fs.readFileSync('packages/frontend/src/services/api.ts', 'utf8');
+  if (apiClient.includes('X-Requested-With')) {
+    passed.push('✅ Frontend incluye header CSRF');
+  } else {
+    warnings.push('⚠️  Frontend sin header CSRF');
+  }
+} catch (e) {
+  warnings.push('⚠️  CSRF middleware no encontrado');
 }
 
 // RESUMEN

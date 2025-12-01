@@ -15,6 +15,7 @@ class ApiClient {
       baseURL: this.baseURL,
       headers: {
         'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest', // CSRF protection header
       },
     });
 
