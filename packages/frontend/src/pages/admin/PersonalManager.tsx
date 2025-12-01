@@ -65,8 +65,15 @@ const PersonalManager = () => {
     try {
       setLoading(true);
       const response: any = await api.get(`/products?categoryId=${personalCategoryId}&limit=100`);
-      const products = response.data || [];
-      
+      let products = response.data || [];
+
+      // Filtrar para SOLO mostrar productos de categoría "Personal"
+      products = products.filter((product: any) => {
+        const categoryName = product.category?.name?.toLowerCase() || '';
+        return categoryName === 'personal';
+      });
+
+      console.log(`👥 Personal cargado: ${products.length} personas`);
       setPersonal(products);
     } catch (error) {
       console.error('Error cargando personal:', error);
