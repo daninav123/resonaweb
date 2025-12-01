@@ -12,6 +12,7 @@ interface Category {
   imageUrl?: string | null;
   parentId?: string | null;
   isActive: boolean;
+  isHidden?: boolean;
   createdAt: string;
   _count?: {
     products: number;
@@ -30,6 +31,7 @@ const CategoriesManager = () => {
     imageUrl: '',
     parentId: null as string | null,
     isActive: true,
+    isHidden: false,
   });
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -40,7 +42,7 @@ const CategoriesManager = () => {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const response: any = await api.get('/products/categories?includeInactive=true');
+      const response: any = await api.get('/products/categories?includeInactive=true&includeHidden=true');
       setCategories(response.data || []);
     } catch (error: any) {
       console.error('Error cargando categorías:', error);
@@ -79,7 +81,7 @@ const CategoriesManager = () => {
       await api.post('/products/categories', formData);
       toast.success('Categoría creada exitosamente');
       setShowCreateForm(false);
-      setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true });
+      setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false });
       loadCategories();
     } catch (error: any) {
       console.error('Error creando categoría:', error);
@@ -129,12 +131,13 @@ const CategoriesManager = () => {
       imageUrl: category.imageUrl || '',
       parentId: category.parentId,
       isActive: category.isActive,
+      isHidden: category.isHidden || false,
     });
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true });
+    setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false });
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -346,6 +349,15 @@ const CategoriesManager = () => {
                 />
                 <label className="ml-2 text-sm text-gray-700">Categoría activa</label>
               </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.isHidden}
+                  onChange={(e) => setFormData({ ...formData, isHidden: e.target.checked })}
+                  className="w-4 h-4 text-purple-600 focus:ring-purple-600 border-gray-300 rounded"
+                />
+                <label className="ml-2 text-sm text-gray-700">Categoría oculta (solo admin)</label>
+              </div>
             </div>
             <div className="mt-6 flex gap-2 justify-end">
               <button
@@ -383,6 +395,9 @@ const CategoriesManager = () => {
                   Productos
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Tipo
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -393,7 +408,7 @@ const CategoriesManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {categories.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     No hay categorías. Crea la primera categoría.
                   </td>
                 </tr>
@@ -433,6 +448,15 @@ const CategoriesManager = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {category._count?.products || 0}
+                        </td>
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            checked={formData.isHidden}
+                            onChange={(e) => setFormData({ ...formData, isHidden: e.target.checked })}
+                            className="w-4 h-4 text-purple-600 focus:ring-purple-600 border-gray-300 rounded"
+                            title="Categoría oculta"
+                          />
                         </td>
                         <td className="px-6 py-4">
                           <input
@@ -485,6 +509,15 @@ const CategoriesManager = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {category._count?.products || 0} productos
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                            category.isHidden
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {category.isHidden ? '🔒 Oculta' : '👁️ Pública'}
+                          </span>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
