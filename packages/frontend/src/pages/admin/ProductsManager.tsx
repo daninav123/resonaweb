@@ -130,7 +130,16 @@ const ProductsManager = () => {
       // Solicitar TODOS los productos sin límite de paginación
       const response: any = await api.get('/products?limit=1000');
       console.log(`📦 Productos cargados: ${response.data?.length || 0}`);
-      setProducts(response.data || []);
+      
+      // Filtrar para EXCLUIR productos de la categoría "Personal"
+      const allProducts = response.data || [];
+      const filteredProducts = allProducts.filter((product: any) => {
+        const categoryName = product.category?.name?.toLowerCase() || '';
+        return categoryName !== 'personal';
+      });
+      
+      console.log(`📦 Productos filtrados (sin Personal): ${filteredProducts.length}`);
+      setProducts(filteredProducts);
     } catch (error: any) {
       console.error('Error cargando productos:', error);
       toast.error('Error al cargar productos');
@@ -144,7 +153,10 @@ const ProductsManager = () => {
     try {
       const response: any = await api.get('/products/categories');
       const cats = response.data || [];
-      setCategories(cats);
+      
+      // Filtrar para EXCLUIR la categoría "Personal"
+      const filteredCategories = cats.filter((cat: any) => cat.name.toLowerCase() !== 'personal');
+      setCategories(filteredCategories);
       
       // Buscar y guardar el ID de la categoría "Packs"
       const packsCategory = cats.find((cat: any) => cat.slug === 'packs' || cat.name.toLowerCase() === 'packs');
