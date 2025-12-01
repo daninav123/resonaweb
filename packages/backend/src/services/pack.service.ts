@@ -282,11 +282,12 @@ class PackService {
     autoCalculate?: boolean;
     includeShipping?: boolean;
     includeInstallation?: boolean;
-    items: Array<{ productId: string; quantity: number }>;
+    items: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     imageUrl?: string;
     featured?: boolean;
   }) {
     console.log('🆕 Creando nuevo pack:', { name: data.name, discountAmount: data.discountAmount });
+    console.log('📦 Items recibidos para crear:', data.items);
 
     const slug = data.name
       .toLowerCase()
@@ -316,6 +317,8 @@ class PackService {
           create: data.items.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
+            ...(item.numberOfPeople !== undefined && { numberOfPeople: item.numberOfPeople }),
+            ...(item.hoursPerPerson !== undefined && { hoursPerPerson: item.hoursPerPerson }),
           })),
         },
       },
@@ -368,11 +371,12 @@ class PackService {
       isActive?: boolean;
       includeShipping?: boolean;
       includeInstallation?: boolean;
-      items?: Array<{ productId: string; quantity: number }>;
+      items?: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     }
   ) {
     try {
-      console.log('🔄 Actualizando pack:', { packId, data });
+      console.log('🔄 Actualizando pack:', { packId, name: data.name });
+      console.log('📦 Items recibidos para actualizar:', data.items);
 
       // Si se actualizan los items, eliminar los existentes y crear los nuevos
       if (data.items) {
@@ -410,6 +414,8 @@ class PackService {
           create: data.items.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
+            ...(item.numberOfPeople !== undefined && { numberOfPeople: item.numberOfPeople }),
+            ...(item.hoursPerPerson !== undefined && { hoursPerPerson: item.hoursPerPerson }),
           })),
         };
       }
