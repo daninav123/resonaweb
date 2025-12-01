@@ -318,25 +318,53 @@ const ProductDetailPage = () => {
         {/* Related Products */}
         {product.relatedProducts && product.relatedProducts.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Productos relacionados</h2>
-            <div className="grid md:grid-cols-4 gap-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Productos relacionados
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {product.relatedProducts.map((related: any) => (
                 <div
                   key={related.id}
-                  onClick={() => navigate(`/productos/${related.slug}`)}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer"
+                  onClick={() => {
+                    if (related.isPack) {
+                      navigate(`/packs/${related.slug}`);
+                    } else {
+                      navigate(`/productos/${related.slug}`);
+                    }
+                  }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
                 >
-                  <img
-                    src={getImageUrl(related.mainImageUrl) || placeholderImage}
-                    alt={related.name}
-                    className="w-full h-48 object-contain bg-white"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = placeholderImage;
-                    }}
-                  />
+                  <div className="relative">
+                    <img
+                      src={getImageUrl(related.mainImageUrl) || placeholderImage}
+                      alt={related.name}
+                      className="w-full h-48 object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = placeholderImage;
+                      }}
+                    />
+                    {related.isPack && (
+                      <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+                        <Package className="w-3 h-3" />
+                        Pack
+                      </div>
+                    )}
+                  </div>
                   <div className="p-4">
-                    <h3 className="font-semibold mb-2 line-clamp-2">{related.name}</h3>
-                    <p className="text-xl font-bold text-blue-600">€{related.pricePerDay}/día</p>
+                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {related.name}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xl font-bold text-blue-600">
+                        €{Number(related.pricePerDay).toFixed(2)}
+                        <span className="text-sm text-gray-500 font-normal">/día</span>
+                      </p>
+                      {related.isPack && (
+                        <span className="text-xs text-purple-600 font-medium">
+                          Ver pack →
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

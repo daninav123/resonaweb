@@ -244,10 +244,93 @@ export class ProductService {
       _avg: { rating: true },
     });
 
+    // Buscar productos relacionados
+    const relatedProducts = await this.getRelatedProducts(product.id, product.categoryId);
+
     return {
       ...product,
       averageRating: avgRating._avg.rating || 0,
+      relatedProducts,
     };
+  }
+
+  /**
+   * Obtener productos relacionados
+   * Prioridad:
+   * 1. Packs que contengan el producto (mínimo 2 si existen)
+   * 2. Productos de la misma categoría
+   */
+  async getRelatedProducts(productId: string, categoryId: string) {
+    const relatedProducts: any[] = [];
+
+    // 1. Buscar packs que incluyan este producto
+    const packsWithProduct = await prisma.pack.findMany({
+      where: {
+        status: 'ACTIVE',
+        items: {
+          some: {
+            productId: productId
+          }
+        }
+      },
+      take: 6, // Buscar más de lo necesario por si algunos están inactivos
+      orderBy: {
+        createdAt: 'desc'
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        imageUrl: true,
+        price: true,
+        status: true,
+      }
+    });
+
+    // Convertir packs a formato de producto con campo especial
+    const packProducts = packsWithProduct.slice(0, 3).map(pack => ({
+      id: pack.id,
+      name: pack.name,
+      slug: pack.slug,
+      description: pack.description,
+      mainImageUrl: pack.imageUrl,
+      pricePerDay: pack.price,
+      isPack: true, // Identificador especial
+    }));
+
+    relatedProducts.push(...packProducts);
+
+    // 2. Si no tenemos suficientes relacionados, agregar productos de la misma categoría
+    const remainingSlots = 6 - relatedProducts.length;
+    
+    if (remainingSlots > 0) {
+      const sameCategory = await prisma.product.findMany({
+        where: {
+          categoryId: categoryId,
+          id: { not: productId }, // Excluir el producto actual
+          status: ProductStatus.ACTIVE,
+        },
+        take: remainingSlots,
+        orderBy: [
+          { viewCount: 'desc' }, // Productos más vistos primero
+          { createdAt: 'desc' }
+        ],
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          mainImageUrl: true,
+          pricePerDay: true,
+          sku: true,
+        }
+      });
+
+      relatedProducts.push(...sameCategory);
+    }
+
+    return relatedProducts;
   }
 
   /**
