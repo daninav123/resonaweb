@@ -659,8 +659,14 @@ class BackupController {
       const finalStats = fs.statSync(finalPath);
       console.log('✅ Backup subido:', {
         path: finalPath,
-        size: finalStats.size
+        size: finalStats.size,
+        exists: fs.existsSync(finalPath)
       });
+
+      // Verificar que el archivo está en la carpeta correcta
+      const filesInDir = fs.readdirSync(backupDir);
+      console.log('📁 Archivos en carpeta de backups:', filesInDir);
+      console.log('🔍 Archivo subido está en la lista:', filesInDir.includes(finalFilename));
 
       res.json({
         message: 'Backup subido exitosamente',

@@ -150,16 +150,26 @@ export default function BackupManager() {
       const formData = new FormData();
       formData.append('file', file);
 
-      await api.post('/admin/backups/upload', formData, {
+      console.log('📤 Iniciando carga de backup:', file.name);
+      const response = await api.post('/admin/backups/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
+      console.log('✅ Respuesta del servidor:', response);
       toast.success('Backup subido exitosamente');
-      loadBackups();
+      
+      // Esperar un poco más para que el servidor procese el archivo
+      console.log('⏳ Esperando antes de recargar lista...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('🔄 Recargando lista de backups...');
+      await loadBackups();
+      console.log('✅ Lista de backups recargada');
     } catch (error: any) {
-      console.error('Upload error:', error);
+      console.error('❌ Upload error:', error);
+      console.error('   Response:', error.response?.data);
       toast.error(error.response?.data?.message || 'Error al subir backup');
     } finally {
       setUploading(false);
