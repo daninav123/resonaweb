@@ -247,15 +247,15 @@ export class ProductService {
     // Buscar productos relacionados
     let relatedProducts: any[] = [];
     try {
-      logger.info('🚀 Iniciando búsqueda de productos relacionados', { 
+      console.log('🚀 Iniciando búsqueda de productos relacionados', { 
         productId: product.id, 
         productName: product.name,
         categoryId: product.categoryId 
       });
       relatedProducts = await this.getRelatedProducts(product.id, product.categoryId);
-      logger.info('✅ Productos relacionados encontrados:', relatedProducts.length);
+      console.log('✅ Productos relacionados encontrados:', relatedProducts.length);
     } catch (error) {
-      logger.error('❌ Error en getRelatedProducts, continuando sin productos relacionados:', error);
+      console.error('❌ Error en getRelatedProducts:', error);
       relatedProducts = [];
     }
 
@@ -276,7 +276,7 @@ export class ProductService {
     const relatedProducts: any[] = [];
 
     try {
-      logger.info('🔍 Buscando productos relacionados', { productId, categoryId });
+      console.log('🔍 Buscando productos relacionados', { productId, categoryId });
 
       // 1. Buscar packs que incluyan este producto
       const packsWithProduct = await prisma.pack.findMany({
@@ -303,7 +303,7 @@ export class ProductService {
         }
       });
 
-      logger.info(`📦 Packs encontrados: ${packsWithProduct.length}`);
+      console.log(`📦 Packs encontrados: ${packsWithProduct.length}`);
 
       // Convertir packs a formato de producto con campo especial
       const packProducts = packsWithProduct.slice(0, 3).map(pack => ({
@@ -321,7 +321,7 @@ export class ProductService {
       // 2. Si no tenemos suficientes relacionados, agregar productos de la misma categoría
       const remainingSlots = 6 - relatedProducts.length;
       
-      logger.info(`🎯 Slots restantes: ${remainingSlots}, categoryId: ${categoryId}`);
+      console.log(`🎯 Slots restantes: ${remainingSlots}, categoryId: ${categoryId}`);
       
       if (remainingSlots > 0 && categoryId) {
         const sameCategory = await prisma.product.findMany({
@@ -346,13 +346,13 @@ export class ProductService {
           }
         });
 
-        logger.info(`🏷️  Productos de la misma categoría encontrados: ${sameCategory.length}`);
+        console.log(`🏷️  Productos de la misma categoría encontrados: ${sameCategory.length}`);
         relatedProducts.push(...sameCategory);
       }
 
-      logger.info(`✅ Total productos relacionados: ${relatedProducts.length}`);
+      console.log(`✅ Total productos relacionados: ${relatedProducts.length}`);
     } catch (error) {
-      logger.error('❌ Error fetching related products:', error);
+      console.error('❌ Error fetching related products:', error);
       // Retornar array vacío en caso de error para no romper la página
     }
 
@@ -893,54 +893,6 @@ export class ProductService {
     });
   }
 
-  /**
-   * Get related products
-   */
-  async getRelatedProducts(productId: string, limit: number = 4) {
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      select: {
-        categoryId: true,
-        tags: true,
-      },
-    });
-
-    if (!product) {
-      throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
-    }
-
-    // Find products in same category or with similar tags
-    const relatedProducts = await prisma.product.findMany({
-      where: {
-        AND: [
-          { id: { not: productId } },
-          { isActive: true },
-          { isPack: false }, // Excluir packs de productos relacionados
-          { stock: { gt: 0 } },
-          {
-            OR: [
-              { categoryId: product.categoryId },
-              { tags: { hasSome: product.tags } },
-            ],
-          },
-        ],
-      },
-      take: limit,
-      orderBy: { viewCount: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        mainImageUrl: true,
-        pricePerDay: true,
-        pricePerWeekend: true,
-        pricePerWeek: true,
-        stock: true,
-      },
-    });
-
-    return relatedProducts;
-  }
 }
 
 export const productService = new ProductService();
