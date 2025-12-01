@@ -2,22 +2,23 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// URLs de imágenes profesionales de Unsplash (gratuitas, sin atribución requerida)
+// URLs de imágenes de productos sobre fondo blanco
+// Usando Pexels y Pixabay (gratuitas, sin atribución requerida)
 const categoryImages = {
-  'sonido': 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&h=800&fit=crop&q=80', // Altavoz profesional
-  'iluminacion': 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=800&fit=crop&q=80', // Luces de escenario
-  'fx': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=800&fit=crop&q=80', // Máquina de humo
-  'microfonia': 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=800&fit=crop&q=80', // Micrófono profesional
-  'estructuras': 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=800&h=800&fit=crop&q=80', // Estructura de truss
-  'cableado': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=800&fit=crop&q=80', // Cables profesionales
-  'control-sonido': 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&h=800&fit=crop&q=80', // Mesa de mezclas
-  'control-iluminacion': 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=800&h=800&fit=crop&q=80', // Controlador DMX
-  'generacion-y-distribucion': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&h=800&fit=crop&q=80', // Generador
-  'elementos-escenario': 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=800&fit=crop&q=80', // Escenario
-  'elementos-decorativos': 'https://images.unsplash.com/photo-1519167758481-83f29da8013a?w=800&h=800&fit=crop&q=80', // Letras luminosas
-  'equipamiento-dj': 'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=800&h=800&fit=crop&q=80', // Mesa DJ
-  'pantallas-y-proyeccion': 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&h=800&fit=crop&q=80', // Proyector
-  'packs': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=800&fit=crop&q=80', // Conjunto de equipos
+  'sonido': 'https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Altavoz negro sobre fondo blanco
+  'iluminacion': 'https://images.pexels.com/photos/114820/pexels-photo-114820.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Bombilla/luz sobre fondo blanco
+  'fx': 'https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Humo sobre fondo blanco
+  'microfonia': 'https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Micrófono sobre fondo blanco
+  'estructuras': 'https://images.pexels.com/photos/159358/construction-site-build-construction-work-159358.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Estructura metálica
+  'cableado': 'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Cables sobre fondo blanco
+  'control-sonido': 'https://images.pexels.com/photos/164821/pexels-photo-164821.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Mesa de mezclas
+  'control-iluminacion': 'https://images.pexels.com/photos/274937/pexels-photo-274937.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Controlador de luces
+  'generacion-y-distribucion': 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Equipamiento eléctrico
+  'elementos-escenario': 'https://images.pexels.com/photos/265129/pexels-photo-265129.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Mesa/mobiliario
+  'elementos-decorativos': 'https://images.pexels.com/photos/1292241/pexels-photo-1292241.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Letras decorativas
+  'equipamiento-dj': 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Equipo DJ
+  'pantallas-y-proyeccion': 'https://images.pexels.com/photos/4144179/pexels-photo-4144179.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Proyector
+  'packs': 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&fit=crop', // Conjunto de productos
 };
 
 async function setupCategoryImages() {
