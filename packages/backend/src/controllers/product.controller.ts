@@ -78,6 +78,62 @@ export class ProductController {
       }
 
       console.log('📦 Where clause para productos:', where);
+      
+      // Si es la categoría de packs, obtener de la tabla Pack en lugar de Product
+      if (isPacksCategory) {
+        console.log('📦 Obteniendo packs de la tabla Pack...');
+        const packs = await prisma.pack.findMany({
+          where: { isActive: true },
+          skip,
+          take: limit,
+          orderBy: orderBy === 'createdAt' ? { createdAt: 'desc' } : orderBy,
+          include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    mainImageUrl: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        
+        // Convertir packs a formato de producto para que el frontend los muestre
+        const packsAsProducts = packs.map(pack => ({
+          id: pack.id,
+          name: pack.name,
+          slug: pack.slug,
+          description: pack.description,
+          pricePerDay: pack.finalPrice || pack.calculatedTotalPrice,
+          pricePerWeekend: pack.finalPrice || pack.calculatedTotalPrice,
+          pricePerWeek: pack.finalPrice || pack.calculatedTotalPrice,
+          mainImageUrl: pack.imageUrl,
+          isActive: pack.isActive,
+          featured: pack.featured,
+          isPack: true,
+          stock: 999, // Packs siempre disponibles (su stock depende de componentes)
+          realStock: 999,
+          category: null,
+        }));
+        
+        console.log(`✅ Packs convertidos a productos: ${packsAsProducts.length}`);
+        
+        res.json({
+          data: packsAsProducts,
+          pagination: {
+            page,
+            limit,
+            total: packsAsProducts.length,
+            totalPages: Math.ceil(packsAsProducts.length / limit),
+          },
+        });
+        return;
+      }
+      
       const result = await productService.getAllProducts({
         skip,
         take: limit,
