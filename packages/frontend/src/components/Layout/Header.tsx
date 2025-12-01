@@ -246,6 +246,15 @@ const Header = () => {
             </li>
             <li>
               <Link
+                to="/productos?category=packs"
+                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors flex items-center gap-1"
+              >
+                <Package className="w-4 h-4" />
+                Packs
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/servicios"
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
