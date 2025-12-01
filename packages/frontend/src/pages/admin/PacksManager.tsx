@@ -217,22 +217,38 @@ const PacksManager = () => {
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
         items: formData.items,
-        categoryId: packsCategoryId, // Predeterminar categoría Packs
         autoCalculate: true
       };
 
+      // Solo agregar categoryId si es un pack nuevo
+      if (!editingPack) {
+        packData.categoryId = packsCategoryId;
+      }
+
+      console.log('📦 Guardando pack:', {
+        isNew: !editingPack,
+        packId: editingPack?.id,
+        data: packData
+      });
+
       if (editingPack) {
-        await api.put(`/packs/${editingPack.id}`, packData);
-        toast.success('Pack actualizado');
+        console.log(`🔄 Actualizando pack ${editingPack.id}...`);
+        const response = await api.put(`/packs/${editingPack.id}`, packData);
+        console.log('✅ Pack actualizado:', response);
+        toast.success('Pack actualizado correctamente');
       } else {
-        await api.post('/packs', packData);
-        toast.success('Pack creado');
+        console.log('🆕 Creando nuevo pack...');
+        const response = await api.post('/packs', packData);
+        console.log('✅ Pack creado:', response);
+        toast.success('Pack creado correctamente');
       }
 
       setShowModal(false);
-      loadPacks();
+      await loadPacks();
     } catch (error: any) {
-      console.error('Error guardando pack:', error);
+      console.error('❌ Error guardando pack:', error);
+      console.error('   Response:', error.response?.data);
+      console.error('   Status:', error.response?.status);
       toast.error(error.response?.data?.message || 'Error al guardar el pack');
     }
   };
