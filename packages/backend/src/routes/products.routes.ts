@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { categoryController } from '../controllers/category.controller';
 import { ProductController } from '../controllers/product.controller';
-import { authenticate, authorize } from '../middleware/auth.middleware';
+import { authenticate, authorize, optionalAuthenticate } from '../middleware/auth.middleware';
 
 const router = Router();
 const productController = new ProductController();
 
 // ===== PUBLIC ROUTES - CATEGORIES =====
-router.get('/categories', categoryController.getAllCategories);
-router.get('/categories/tree', categoryController.getCategoryTree);
+router.get('/categories', optionalAuthenticate, categoryController.getAllCategories);
+router.get('/categories/tree', optionalAuthenticate, categoryController.getCategoryTree);
 // Rutas específicas ANTES de las genéricas
 router.get('/categories/slug/:slug', categoryController.getCategoryBySlug);
 router.get('/categories/:id', categoryController.getCategoryById);
