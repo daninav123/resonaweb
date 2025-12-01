@@ -37,6 +37,7 @@ import { metricsRouter } from './routes/metrics.routes';
 import backupRouter from './routes/backup.routes';
 import contractRouter from './routes/contract.routes';
 import terminalRouter from './routes/terminal.routes';
+import sitemapRouter from './routes/sitemap.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -207,6 +208,10 @@ app.get('/health', (_req, res) => {
 
 // Metrics endpoint (para Prometheus) - ANTES del rate limiting
 app.use('/metrics', metricsRouter);
+
+// Sitemap y RSS (públicos, sin rate limiting)
+app.use('/', sitemapRouter);
+logger.info('📄 Sitemap y RSS disponibles en /sitemap.xml y /rss');
 
 // API Routes
 logger.info('🌐 Registrando rutas API...');

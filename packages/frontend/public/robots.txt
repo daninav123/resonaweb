@@ -5,7 +5,10 @@ Allow: /
 
 # Páginas importantes para crawlear
 Allow: /productos
+Allow: /blog
+Allow: /packs
 Allow: /calculadora-evento
+Allow: /servicios
 Allow: /sobre-nosotros
 Allow: /contacto
 
@@ -19,8 +22,11 @@ Disallow: /carrito
 # No indexar APIs
 Disallow: /api/
 
-# Sitemap
-Sitemap: https://resona.com/sitemap.xml
+# Sitemap Dinámico (generado automáticamente con productos y blog)
+Sitemap: https://api.resona.com/sitemap.xml
+
+# RSS Feed del Blog
+# https://api.resona.com/rss
 
 # Crawl-delay para proteger el servidor
 Crawl-delay: 1

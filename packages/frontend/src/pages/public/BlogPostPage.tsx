@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { blogService } from '../../services/blog.service';
 import SEOHead from '../../components/SEO/SEOHead';
 import { Calendar, User, ArrowLeft, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
@@ -103,12 +104,48 @@ const BlogPostPage = () => {
 
   const imageUrl = getImageUrl(post.featuredImage);
 
+  // Schema.org Article para SEO
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": imageUrl || "https://resona.com/og-image.jpg",
+    "datePublished": post.publishedAt,
+    "dateModified": post.publishedAt,
+    "author": {
+      "@type": "Person",
+      "name": `${post.author.firstName} ${post.author.lastName}`
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "ReSona Events",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://resona.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://resona.com/blog/${post.slug}`
+    },
+    "articleSection": post.category.name,
+    "keywords": post.metaKeywords || post.tags?.map(t => t.name).join(', ') || '',
+  };
+
   return (
     <>
       <SEOHead
         title={post.metaTitle || post.title}
         description={post.metaDescription || post.excerpt}
       />
+      
+      {/* Schema.org JSON-LD para Google */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(articleSchema)}
+        </script>
+      </Helmet>
 
       <article className="min-h-screen bg-gray-50">
         {/* Header */}
