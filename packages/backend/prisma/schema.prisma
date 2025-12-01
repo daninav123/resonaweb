@@ -481,7 +481,7 @@ model Pack {
 model PackItem {
   id        String  @id @default(uuid())
   packId    String
-  pack      Pack    @relation(fields: [packId], references: [id])
+  pack      Pack    @relation(fields: [packId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation(fields: [productId], references: [id])
   
