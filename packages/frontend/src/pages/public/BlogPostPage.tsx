@@ -110,7 +110,7 @@ const BlogPostPage = () => {
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
-    "image": imageUrl || "https://resona.com/og-image.jpg",
+    "image": imageUrl || "https://resonaevents.com/og-image.jpg",
     "datePublished": post.publishedAt,
     "dateModified": post.publishedAt,
     "author": {
@@ -122,12 +122,12 @@ const BlogPostPage = () => {
       "name": "ReSona Events",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://resona.com/logo.png"
+        "url": "https://resonaevents.com/logo.png"
       }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://resona.com/blog/${post.slug}`
+      "@id": `https://resonaevents.com/blog/${post.slug}`
     },
     "articleSection": post.category.name,
     "keywords": post.metaKeywords || post.tags?.map(t => t.name).join(', ') || '',

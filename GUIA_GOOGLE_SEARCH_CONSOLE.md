@@ -1,4 +1,4 @@
-# 🎯 Guía Paso a Paso: Google Search Console
+﻿# 🎯 Guía Paso a Paso: Google Search Console
 
 ## ⏰ Tiempo Total: 10-15 minutos
 
@@ -277,3 +277,4 @@ Una vez completados estos pasos:
 ---
 
 **Próximo paso:** ¡Publicar tu primer artículo optimizado para SEO! 🚀
+

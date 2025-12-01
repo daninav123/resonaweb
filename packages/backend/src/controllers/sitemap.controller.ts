@@ -7,7 +7,7 @@ export class SitemapController {
    */
   async generateSitemap(req: Request, res: Response) {
     try {
-      const baseUrl = process.env.FRONTEND_URL || 'https://resona.com';
+      const baseUrl = process.env.FRONTEND_URL || 'https://resonaevents.com';
       const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
       
       // Obtener todos los posts publicados
@@ -194,7 +194,7 @@ export class SitemapController {
    */
   async generateRSS(req: Request, res: Response) {
     try {
-      const baseUrl = process.env.FRONTEND_URL || 'https://resona.com';
+      const baseUrl = process.env.FRONTEND_URL || 'https://resonaevents.com';
       const now = new Date().toISOString();
       
       const posts = await prisma.blogPost.findMany({

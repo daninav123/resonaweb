@@ -1,4 +1,4 @@
-# 🚀 Configuración SEO para Google - ReSona Blog
+﻿# 🚀 Configuración SEO para Google - ReSona Blog
 
 ## ✅ **LO QUE YA ESTÁ IMPLEMENTADO**
 
@@ -309,3 +309,4 @@ Con esta configuración, tus artículos del blog:
 ---
 
 ¿Necesitas ayuda con algún paso específico? Todo está automatizado y listo para funcionar. 🚀
+
