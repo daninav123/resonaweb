@@ -108,23 +108,37 @@ const PacksManager = () => {
 
   // Filtrar productos disponibles para agregar al pack
   const getAvailableProducts = () => {
+    console.log('🔍 Total productos:', products.length);
+    console.log('🔍 Productos con isPack:', products.filter(p => p.isPack).length);
+    console.log('🔍 Productos SIN isPack:', products.filter(p => !p.isPack).length);
+    
     let filtered = products.filter(p => !p.isPack);
+    console.log('🔍 Después de filtrar packs:', filtered.length);
     
     // Filtrar por categoría si hay una seleccionada
     if (productFilter.categoryId) {
+      console.log('🔍 Filtrando por categoría:', productFilter.categoryId);
+      const beforeCatFilter = filtered.length;
       filtered = filtered.filter(p => p.categoryId === productFilter.categoryId);
+      console.log(`🔍 Después de filtro categoría: ${beforeCatFilter} -> ${filtered.length}`);
     }
     
     // Filtrar por búsqueda
     if (productFilter.search.trim()) {
+      console.log('🔍 Filtrando por búsqueda:', productFilter.search);
+      const beforeSearch = filtered.length;
       const search = productFilter.search.toLowerCase();
       filtered = filtered.filter(p => 
         p.name?.toLowerCase().includes(search) ||
         p.sku?.toLowerCase().includes(search)
       );
+      console.log(`🔍 Después de búsqueda: ${beforeSearch} -> ${filtered.length}`);
     }
     
-    console.log('📦 Productos disponibles después de filtros:', filtered.length);
+    console.log('✅ Productos finales disponibles:', filtered.length);
+    if (filtered.length > 0) {
+      console.log('📋 Primeros 3 productos:', filtered.slice(0, 3).map(p => ({ id: p.id, name: p.name, isPack: p.isPack, categoryId: p.categoryId })));
+    }
     return filtered;
   };
 
@@ -136,6 +150,11 @@ const PacksManager = () => {
       discountPercentage: 0,
       customFinalPrice: '',
       items: []
+    });
+    // Resetear filtros
+    setProductFilter({
+      categoryId: '',
+      search: ''
     });
     setShowModal(true);
   };
@@ -376,38 +395,39 @@ const PacksManager = () => {
                     </button>
                   </div>
 
-                  {/* Filtros de productos */}
-                  {formData.items.length > 0 && (
-                    <div className="mb-4 grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Filtrar por categoría
-                        </label>
-                        <select
-                          value={productFilter.categoryId}
-                          onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                        >
-                          <option value="">Todas las categorías</option>
-                          {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Buscar producto
-                        </label>
-                        <input
-                          type="text"
-                          value={productFilter.search}
-                          onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
-                          placeholder="Nombre o SKU..."
-                        />
-                      </div>
+                  {/* Filtros de productos - Siempre visibles */}
+                  <div className="mb-4 grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Filtrar por categoría
+                      </label>
+                      <select
+                        value={productFilter.categoryId}
+                        onChange={(e) => {
+                          console.log('📂 Cambiando filtro categoría a:', e.target.value);
+                          setProductFilter({ ...productFilter, categoryId: e.target.value });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                      >
+                        <option value="">Todas las categorías</option>
+                        {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </select>
                     </div>
-                  )}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Buscar producto
+                      </label>
+                      <input
+                        type="text"
+                        value={productFilter.search}
+                        onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                        placeholder="Nombre o SKU..."
+                      />
+                    </div>
+                  </div>
 
                   {formData.items.length === 0 ? (
                     <div className="text-center py-8 bg-gray-50 rounded-lg">
