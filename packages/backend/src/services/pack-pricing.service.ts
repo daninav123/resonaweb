@@ -67,28 +67,45 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
   }, 0);
 
   // Calcular suma de costes de envío de todos los productos
-  const baseShippingCost = pack.items.reduce((sum, item) => {
+  let baseShippingCost = pack.items.reduce((sum, item) => {
     const shippingCost = Number(item.product.shippingCost) || 0;
     return sum + (shippingCost * item.quantity);
   }, 0);
+  
+  // Si no incluye envío, no sumar el coste
+  if (!pack.includeShipping) {
+    baseShippingCost = 0;
+  }
 
   // Calcular suma de costes de instalación de todos los productos
-  const baseInstallationCost = pack.items.reduce((sum, item) => {
+  let baseInstallationCost = pack.items.reduce((sum, item) => {
     const installationCost = Number(item.product.installationCost) || 0;
     return sum + (installationCost * item.quantity);
   }, 0);
+  
+  // Si no incluye instalación, no sumar el coste
+  if (!pack.includeInstallation) {
+    baseInstallationCost = 0;
+  }
 
   // Precio total calculado (sin descuento)
   const calculatedTotalPrice = basePricePerDay + baseShippingCost + baseInstallationCost;
 
-  // Obtener porcentaje de descuento
-  const discountPercentage = Number(pack.discountPercentage) || 0;
-
-  // Calcular cantidad de descuento en euros
-  const discountAmount = calculatedTotalPrice * (discountPercentage / 100);
+  // Obtener descuento: si hay discountAmount en euros, usarlo; si no, calcular desde porcentaje
+  let discountAmount = Number(pack.discountAmount) || 0;
+  let discountPercentage = Number(pack.discountPercentage) || 0;
+  
+  // Si hay descuento en euros pero no porcentaje, calcular el porcentaje
+  if (discountAmount > 0 && discountPercentage === 0 && calculatedTotalPrice > 0) {
+    discountPercentage = (discountAmount / calculatedTotalPrice) * 100;
+  }
+  // Si hay porcentaje pero no descuento en euros, calcular el descuento
+  else if (discountPercentage > 0 && discountAmount === 0) {
+    discountAmount = calculatedTotalPrice * (discountPercentage / 100);
+  }
 
   // Precio después de descuento
-  const priceAfterDiscount = calculatedTotalPrice - discountAmount;
+  const priceAfterDiscount = Math.max(0, calculatedTotalPrice - discountAmount);
 
   // Determinar precio final
   let finalPrice: number;
