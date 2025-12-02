@@ -10,6 +10,7 @@ interface PackSelectorProps {
 const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, onChange }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'packs' | 'products'>('all');
 
   // Obtener categorías únicas
   const categories = useMemo(() => {
@@ -17,14 +18,17 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
     return Array.from(cats).sort();
   }, [allPacks]);
 
-  // Filtrar packs según categoría y búsqueda
+  // Filtrar packs según categoría, búsqueda y tipo
   const filteredPacks = useMemo(() => {
     return allPacks.filter(pack => {
       const categoryMatch = !selectedCategory || pack.category?.name === selectedCategory || (selectedCategory === 'Sin categoría' && !pack.category);
       const searchMatch = pack.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return categoryMatch && searchMatch;
+      const typeMatch = typeFilter === 'all' || 
+                       (typeFilter === 'packs' && pack.isPack) || 
+                       (typeFilter === 'products' && !pack.isPack);
+      return categoryMatch && searchMatch && typeMatch;
     });
-  }, [allPacks, selectedCategory, searchTerm]);
+  }, [allPacks, selectedCategory, searchTerm, typeFilter]);
 
   const togglePack = (packId: string) => {
     if (selectedPacks.includes(packId)) {
@@ -44,8 +48,57 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
     onChange(selectedPacks.filter(id => !filteredIds.has(id)));
   };
 
+  const packsCount = allPacks.filter(p => p.isPack).length;
+  const productsCount = allPacks.filter(p => !p.isPack).length;
+
   return (
     <div className="space-y-4">
+      {/* Info de tipos y filtros */}
+      <div className="space-y-2">
+        <div className="flex gap-2 text-xs">
+          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+            📦 {packsCount} Packs
+          </span>
+          <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
+            📋 {productsCount} Productos
+          </span>
+        </div>
+        
+        {/* Filtro por tipo */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setTypeFilter('all')}
+            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
+              typeFilter === 'all'
+                ? 'bg-gray-800 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setTypeFilter('packs')}
+            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
+              typeFilter === 'packs'
+                ? 'bg-blue-600 text-white'
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            }`}
+          >
+            Solo Packs
+          </button>
+          <button
+            onClick={() => setTypeFilter('products')}
+            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
+              typeFilter === 'products'
+                ? 'bg-green-600 text-white'
+                : 'bg-green-100 text-green-700 hover:bg-green-200'
+            }`}
+          >
+            Solo Productos
+          </button>
+        </div>
+      </div>
+
       {/* Búsqueda */}
       <div>
         <input
@@ -149,7 +202,14 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
                 />
               )}
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 truncate">{pack.name}</div>
+                <div className="font-medium text-gray-900 truncate flex items-center gap-2">
+                  {pack.name}
+                  {pack.isPack && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-semibold">
+                      PACK
+                    </span>
+                  )}
+                </div>
                 <div className="text-sm text-gray-500 flex items-center gap-2">
                   <span>€{pack.pricePerDay}/día</span>
                   {pack.realStock !== undefined && (
