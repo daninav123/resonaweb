@@ -28,15 +28,16 @@ const CalculatorManagerNew = () => {
     selectedEvent,
   } = useCalculatorConfig();
 
-  // Cargar packs (incluir inactivos para que el admin los vea)
+  // Cargar packs y productos para la calculadora
   const { data: catalogProducts = [] } = useQuery({
-    queryKey: ['calculator-packs-admin'],
+    queryKey: ['calculator-packs-and-products-admin'],
     queryFn: async () => {
-      const response: any = await api.get('/packs?includeInactive=true');
-      const packsData = response?.packs || response || [];
+      // Cargar packs
+      const packsResponse: any = await api.get('/packs?includeInactive=true');
+      const packsData = packsResponse?.packs || packsResponse || [];
       console.log('📦 Packs cargados en calculadora:', packsData);
       
-      // Mapear packs al formato esperado por PackSelector
+      // Mapear packs al formato esperado
       const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => ({
         id: pack.id,
         name: pack.name,
@@ -44,13 +45,21 @@ const CalculatorManagerNew = () => {
         description: pack.description,
         mainImageUrl: pack.imageUrl,
         pricePerDay: Number(pack.finalPrice || pack.calculatedTotalPrice || 0),
-        realStock: 999, // Los packs no tienen stock directo
-        category: { name: 'Packs' }, // Categoria ficticia para agrupar
+        realStock: 999,
+        category: { name: 'Packs' },
         isActive: pack.isActive !== false,
+        isPack: true, // Marcar como pack
       })) : [];
       
-      console.log('📦 Packs mapeados:', mappedPacks);
-      return mappedPacks;
+      // Cargar productos normales
+      const productsResult = await productService.getProducts({ limit: 200 });
+      const productsData = productsResult?.data || [];
+      console.log('📦 Productos cargados en calculadora:', productsData);
+      
+      // Combinar packs y productos
+      const allItems = [...mappedPacks, ...productsData];
+      console.log('📦 Total items:', allItems.length, '(Packs:', mappedPacks.length, '+ Productos:', productsData.length, ')');
+      return allItems;
     },
   });
 
@@ -409,7 +418,7 @@ const CalculatorManagerNew = () => {
                         </p>
                       </div>
                       <PackSelector
-                        allPacks={catalogProducts.filter((p: any) => !p.isPack && p.isActive)}
+                        allPacks={catalogProducts.filter((p: any) => !p.isPack)}
                         selectedPacks={selectedEvent.availableExtras || []}
                         onChange={(extras) => updateEventType(selectedEventIndex, 'availableExtras', extras)}
                       />
