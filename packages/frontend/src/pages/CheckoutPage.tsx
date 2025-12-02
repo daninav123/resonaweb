@@ -868,12 +868,50 @@ const CheckoutPage = () => {
               )}
               
               <div className="space-y-3 mb-4">
-                {cartItems.map((item: any) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-gray-600">{item.product.name} x{item.quantity}</span>
-                    <span className="font-medium">€{(item.product.pricePerDay * item.quantity).toFixed(2)}</span>
-                  </div>
-                ))}
+                {cartItems.map((item: any) => {
+                  // Items de eventos: mostrar desglose detallado
+                  if (item.eventMetadata) {
+                    const packPrice = Number(item.product.pricePerDay) || 0;
+                    const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
+                    const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
+                    const itemTotal = packPrice + partsTotal + extrasTotal;
+                    
+                    return (
+                      <div key={item.id} className="border-l-4 border-blue-500 pl-3 pb-2">
+                        <div className="flex justify-between text-sm font-semibold mb-1">
+                          <span className="text-gray-900">{item.product.name}</span>
+                          <span className="text-blue-600">€{itemTotal.toFixed(2)}</span>
+                        </div>
+                        <div className="text-xs text-gray-600 space-y-1 ml-2">
+                          <div className="flex justify-between">
+                            <span>• Pack base</span>
+                            <span>€{packPrice.toFixed(2)}</span>
+                          </div>
+                          {partsTotal > 0 && (
+                            <div className="flex justify-between">
+                              <span>• Partes del evento</span>
+                              <span>€{partsTotal.toFixed(2)}</span>
+                            </div>
+                          )}
+                          {extrasTotal > 0 && (
+                            <div className="flex justify-between">
+                              <span>• Extras</span>
+                              <span>€{extrasTotal.toFixed(2)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  // Items normales
+                  return (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="text-gray-600">{item.product.name} x{item.quantity}</span>
+                      <span className="font-medium">€{(item.product.pricePerDay * item.quantity).toFixed(2)}</span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="border-t pt-4 my-4">
