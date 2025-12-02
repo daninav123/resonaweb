@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCalculatorConfig } from '../../hooks/useCalculatorConfig';
 import { SERVICE_LEVEL_LABELS, ServiceLevel } from '../../types/calculator.types';
 import { productService } from '../../services/product.service';
+import { api } from '../../services/api';
 import PackSelector from '../../components/admin/PackSelector';
 import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
 
@@ -27,13 +28,29 @@ const CalculatorManagerNew = () => {
     selectedEvent,
   } = useCalculatorConfig();
 
-  // Cargar productos (packs)
+  // Cargar packs (incluir inactivos para que el admin los vea)
   const { data: catalogProducts = [] } = useQuery({
-    queryKey: ['catalog-products-admin'],
+    queryKey: ['calculator-packs-admin'],
     queryFn: async () => {
-      const result = await productService.getProducts({ limit: 200 });
-      // El servicio ahora devuelve { data: [...], pagination: {...} }
-      return result?.data || [];
+      const response: any = await api.get('/packs?includeInactive=true');
+      const packsData = response?.packs || response || [];
+      console.log('📦 Packs cargados en calculadora:', packsData);
+      
+      // Mapear packs al formato esperado por PackSelector
+      const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => ({
+        id: pack.id,
+        name: pack.name,
+        slug: pack.slug,
+        description: pack.description,
+        mainImageUrl: pack.imageUrl,
+        pricePerDay: Number(pack.finalPrice || pack.calculatedTotalPrice || 0),
+        realStock: 999, // Los packs no tienen stock directo
+        category: { name: 'Packs' }, // Categoria ficticia para agrupar
+        isActive: pack.isActive !== false,
+      })) : [];
+      
+      console.log('📦 Packs mapeados:', mappedPacks);
+      return mappedPacks;
     },
   });
 
