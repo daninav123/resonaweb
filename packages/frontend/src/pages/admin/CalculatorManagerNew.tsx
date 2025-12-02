@@ -191,37 +191,53 @@ const CalculatorManagerNew = () => {
               <div key={`event-${selectedEvent.id}-${selectedEventIndex}`} className="space-y-6">
                 {/* Event Header */}
                 <div className="bg-white rounded-lg shadow p-6">
-                  <div className="mb-6 pb-4 border-b">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-                      <span className="text-3xl">{selectedEvent.icon}</span>
-                      Configuración: {selectedEvent.name}
-                    </h2>
-                    <p className="text-sm text-gray-500 mt-2">
-                      ID: {selectedEvent.id} • Índice: {selectedEventIndex} • {selectedEvent.parts.length} partes definidas
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Icono</label>
-                      <input
-                        type="text"
-                        value={selectedEvent.icon}
-                        onChange={(e) => updateEventType(selectedEventIndex, 'icon', e.target.value)}
-                        className="w-full text-center text-3xl px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-                      <input
-                        type="text"
-                        value={selectedEvent.name}
-                        onChange={(e) => updateEventType(selectedEventIndex, 'name', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                      />
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                    <span className="text-3xl">{selectedEvent.icon}</span>
+                    {selectedEvent.name}
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-2">
+                    {selectedEvent.parts.length} partes • {selectedEvent.availablePacks?.length || 0} packs • {selectedEvent.availableExtras?.length || 0} extras
+                  </p>
+                </div>
+
+                {/* Tabs */}
+                <div className="bg-white rounded-lg shadow sticky top-4 z-10">
+                  <nav className="flex border-b border-gray-200 overflow-x-auto">
+                    <button onClick={() => setActiveTab('general')} className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'general' ? 'border-resona text-resona bg-resona/5' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                      <Info className="w-4 h-4" />General
+                    </button>
+                    <button onClick={() => setActiveTab('parts')} className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'parts' ? 'border-resona text-resona bg-resona/5' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                      <List className="w-4 h-4" />Partes ({selectedEvent.parts.length})
+                    </button>
+                    <button onClick={() => setActiveTab('packs')} className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'packs' ? 'border-resona text-resona bg-resona/5' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                      <Package className="w-4 h-4" />Packs ({selectedEvent.availablePacks?.length || 0})
+                    </button>
+                    <button onClick={() => setActiveTab('extras')} className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'extras' ? 'border-resona text-resona bg-resona/5' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                      <Sparkles className="w-4 h-4" />Extras ({selectedEvent.availableExtras?.length || 0})
+                    </button>
+                  </nav>
+                </div>
+
+                {/* General Tab */}
+                <div className={activeTab !== 'general' ? 'hidden' : ''}>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold mb-4">Información Básica</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Icono/Emoji</label>
+                        <input type="text" value={selectedEvent.icon} onChange={(e) => updateEventType(selectedEventIndex, 'icon', e.target.value)} className="w-full text-center text-3xl px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona" />
+                        <p className="text-xs text-gray-500 mt-1 text-center">Win + . o Cmd + Ctrl + Space</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Evento</label>
+                        <input type="text" value={selectedEvent.name} onChange={(e) => updateEventType(selectedEventIndex, 'name', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona" placeholder="Ej: Boda, Cumpleaños..." />
+                      </div>
                     </div>
                   </div>
                 </div>
 
+                {/* Parts Tab */}
+                <div className={activeTab !== 'parts' ? 'hidden' : ''}>
                 {/* Parts List */}
                 <div className="bg-white rounded-lg shadow">
                   <div className="p-6 border-b flex items-center justify-between">
@@ -330,7 +346,10 @@ const CalculatorManagerNew = () => {
                     )}
                   </div>
                 </div>
+                </div>
 
+                {/* Packs Tab */}
+                <div className={activeTab !== 'packs' ? 'hidden' : ''}>
                 {/* Packs Configuration */}
                 <div className="bg-white rounded-lg shadow">
                   <div className="p-6 border-b">
@@ -380,7 +399,10 @@ const CalculatorManagerNew = () => {
                     </div>
                   </div>
                 </div>
+                </div>
 
+                {/* Extras Tab */}
+                <div className={activeTab !== 'extras' ? 'hidden' : ''}>
                 {/* Extras Configuration */}
                 <div className="bg-white rounded-lg shadow mt-6">
                   <div className="p-6 border-b">
@@ -410,6 +432,7 @@ const CalculatorManagerNew = () => {
                       />
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
             )}
