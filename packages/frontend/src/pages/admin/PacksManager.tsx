@@ -43,8 +43,8 @@ const PacksManager = () => {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      // Usar la misma ruta que para crear: /packs
-      const response: any = await api.get('/packs');
+      // Incluir packs inactivos en el admin
+      const response: any = await api.get('/packs?includeInactive=true');
       console.log('📦 Respuesta de packs desde /packs:', response);
       
       // El backend retorna { packs: [...] }

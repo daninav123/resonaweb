@@ -8,16 +8,19 @@ interface AuthRequest extends Request {
 
 class PackController {
   /**
-   * Obtener todos los packs activos
+   * Obtener todos los packs activos (o todos si includeInactive=true)
    */
   async getPacks(req: Request, res: Response, next: NextFunction) {
     try {
-      const { startDate, endDate } = req.query;
+      const { startDate, endDate, includeInactive } = req.query;
 
       const start = startDate ? new Date(startDate as string) : undefined;
       const end = endDate ? new Date(endDate as string) : undefined;
+      const includeAll = includeInactive === 'true';
 
-      const packs = await packService.getActivePacks(start, end);
+      const packs = includeAll 
+        ? await packService.getAllPacks(start, end)
+        : await packService.getActivePacks(start, end);
       
       res.json({ packs });
     } catch (error) {

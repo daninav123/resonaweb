@@ -164,6 +164,57 @@ class PackService {
   }
 
   /**
+   * Obtener TODOS los packs (incluyendo inactivos) - para admin
+   */
+  async getAllPacks(startDate?: Date, endDate?: Date) {
+    const packs = await prisma.pack.findMany({
+      // No filtramos por isActive, mostramos todos
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                mainImageUrl: true,
+                realStock: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        featured: 'desc',
+      },
+    });
+
+    // Si se proporcionan fechas, verificar disponibilidad
+    if (startDate && endDate) {
+      const packsWithAvailability = await Promise.all(
+        packs.map(async (pack) => {
+          const availability = await this.checkAvailability(
+            pack.id,
+            startDate,
+            endDate,
+            1
+          );
+
+          return {
+            ...pack,
+            available: availability.available,
+            availabilityDetails: availability,
+          };
+        })
+      );
+
+      return packsWithAvailability;
+    }
+
+    return packs;
+  }
+
+  /**
    * Obtener pack por ID con información detallada
    */
   async getPackById(packId: string) {
