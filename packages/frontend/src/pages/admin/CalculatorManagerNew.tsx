@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Calculator, Save, Plus, Trash2, ChevronDown, ChevronUp, RotateCcw, Info, List, Package, Sparkles, DollarSign } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCalculatorConfig } from '../../hooks/useCalculatorConfig';
