@@ -318,25 +318,43 @@ const CartPage = () => {
           // Si el producto no tiene stock definido, actualizar desde la API
           if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
             try {
-              const response: any = await api.get(`/products/${item.productId}`);
-              const productData = response.data.data || response.data;
+              // Detectar si es un pack o producto regular
+              const isPack = item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0;
+              const endpoint = isPack ? `/packs/${item.productId}` : `/products/${item.productId}`;
+              
+              const response: any = await api.get(endpoint);
+              const productData = response.data || response;
               
               // Actualizar el producto en el item con los datos completos
               item.product = {
                 ...item.product,
-                stock: productData.stock,
-                realStock: productData.realStock,
+                stock: productData.stock || 999, // Packs tienen stock ilimitado
+                realStock: productData.realStock || productData.stock || 999,
               };
               needsUpdate = true;
             } catch (error: any) {
-              // Si es 404, el producto fue eliminado - solo advertencia silenciosa
+              // Si es 404, intentar con el otro endpoint
               if (error?.response?.status === 404) {
-                console.warn(`⚠️ Producto no encontrado (puede haber sido eliminado): ${item.product.name}`);
+                try {
+                  // Intentar con el endpoint alternativo
+                  const altEndpoint = item.product.category?.name === 'Packs' || item.eventMetadata 
+                    ? `/packs/${item.productId}` 
+                    : `/products/${item.productId}`;
+                  const response: any = await api.get(altEndpoint);
+                  const productData = response.data || response;
+                  
+                  item.product = {
+                    ...item.product,
+                    stock: productData.stock || 999,
+                    realStock: productData.realStock || productData.stock || 999,
+                  };
+                  needsUpdate = true;
+                } catch (retryError) {
+                  console.warn(`⚠️ Producto/Pack no encontrado: ${item.product.name}`);
+                }
               } else {
-                // Otros errores sí son importantes
-                console.error(`❌ Error actualizando producto ${item.productId}:`, error);
+                console.error(`❌ Error actualizando ${item.productId}:`, error);
               }
-              // Mantener el producto en el carrito aunque de error
             }
           }
           return item;
