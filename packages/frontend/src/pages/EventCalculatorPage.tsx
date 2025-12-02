@@ -1070,10 +1070,28 @@ const EventCalculatorPage = () => {
                           partPrice = applicableRange ? applicableRange.price : 0;
                         }
                         
+                        // Verificar si esta parte es "Disco/Fiesta" y mostrar el pack aquí
+                        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                        const selectedPackData = eventData.selectedPack 
+                          ? catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack)
+                          : null;
+                        
                         return (
-                          <div key={partId} className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
-                            <span className="text-sm font-semibold text-purple-600">€{partPrice.toFixed(2)}</span>
+                          <div key={partId}>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
+                              <span className="text-sm font-semibold text-purple-600">€{partPrice.toFixed(2)}</span>
+                            </div>
+                            
+                            {/* Si es la parte de fiesta, mostrar el pack debajo */}
+                            {isPartyPart && selectedPackData && (
+                              <div className="ml-4 mt-2 p-2 bg-white/50 rounded border border-purple-200">
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-gray-600">📦 {selectedPackData.name}</span>
+                                  <span className="font-semibold text-gray-700">€{Number(selectedPackData.pricePerDay).toFixed(2)}/día</span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -1081,8 +1099,17 @@ const EventCalculatorPage = () => {
                   </div>
                 )}
 
-                {/* Pack Seleccionado */}
+                {/* Pack Seleccionado (solo si NO hay parte de fiesta) */}
                 {eventData.selectedPack && (() => {
+                  // Verificar si hay alguna parte de fiesta seleccionada
+                  const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+                    const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+                    return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                  });
+                  
+                  // Solo mostrar esta sección si NO hay parte de fiesta
+                  if (hasPartyPart) return null;
+                  
                   const selectedPackData = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                   return selectedPackData ? (
                     <div className="p-4 bg-resona/10 rounded-lg border border-resona/30">
