@@ -66,8 +66,17 @@ const OrderDetailUserPage = () => {
       toast.success('Factura descargada correctamente');
     } catch (error: any) {
       toast.dismiss();
-      const errorMessage = error.response?.data?.message || error.message || 'Error al descargar la factura';
-      toast.error(errorMessage);
+      
+      // Manejar caso especial: sistema de facturas no disponible
+      if (error.response?.status === 423 || error.response?.data?.code === 'INVOICE_SYSTEM_NOT_AVAILABLE') {
+        toast.error(
+          'Facturas automáticas disponibles desde el 1 de enero de 2026. Recibirás tu factura por email.',
+          { duration: 6000 }
+        );
+      } else {
+        const errorMessage = error.response?.data?.message || error.message || 'Error al descargar la factura';
+        toast.error(errorMessage);
+      }
     } finally {
       setLoadingInvoice(false);
     }

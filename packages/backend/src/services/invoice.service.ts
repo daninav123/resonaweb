@@ -83,6 +83,19 @@ export class InvoiceService {
     try {
       logger.info(`📄 Generando factura para pedido: ${orderId}`);
       
+      // ⚠️ VALIDACIÓN: Facturas automáticas solo disponibles desde el 1 de enero de 2026
+      const currentDate = new Date();
+      const invoiceAvailableDate = new Date('2026-01-01T00:00:00Z');
+      
+      if (currentDate < invoiceAvailableDate) {
+        logger.warn(`⚠️ Sistema de facturas automáticas no disponible hasta el 1 de enero de 2026`);
+        throw new AppError(
+          423, // HTTP 423 Locked - Resource is locked
+          'El sistema de facturación automática estará disponible a partir del 1 de enero de 2026. Recibirás tu factura de forma manual por email.',
+          'INVOICE_SYSTEM_NOT_AVAILABLE'
+        );
+      }
+      
       // Check if invoice already exists
       const existingInvoice = await prisma.invoice.findUnique({
         where: { orderId },
