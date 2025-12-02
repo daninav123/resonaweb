@@ -334,8 +334,9 @@ class PackService {
     autoCalculate?: boolean;
     includeShipping?: boolean;
     includeInstallation?: boolean;
-    partsPricing?: Record<string, { percentage: number; included: boolean }> | null;
+    partsPricing?: Record<string, { price: number; included: boolean }> | null;
     enablePartsPricing?: boolean;
+    basePrice?: number;
     items: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     imageUrl?: string;
     featured?: boolean;
@@ -370,6 +371,7 @@ class PackService {
         includeInstallation: data.includeInstallation !== false, // Por defecto true
         partsPricing: data.partsPricing || null,
         enablePartsPricing: data.enablePartsPricing || false,
+        basePrice: data.basePrice ? new Prisma.Decimal(data.basePrice) : null,
         items: {
           create: data.items.map(item => ({
             productId: item.productId,
@@ -459,8 +461,9 @@ class PackService {
       isActive?: boolean;
       includeShipping?: boolean;
       includeInstallation?: boolean;
-      partsPricing?: Record<string, { percentage: number; included: boolean }> | null;
+      partsPricing?: Record<string, { price: number; included: boolean }> | null;
       enablePartsPricing?: boolean;
+      basePrice?: number;
       items?: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     }
   ) {
@@ -501,6 +504,7 @@ class PackService {
       if (data.category !== undefined) updateData.category = data.category;
       if (data.partsPricing !== undefined) updateData.partsPricing = data.partsPricing;
       if (data.enablePartsPricing !== undefined) updateData.enablePartsPricing = data.enablePartsPricing;
+      if (data.basePrice !== undefined) updateData.basePrice = data.basePrice ? new Prisma.Decimal(data.basePrice) : null;
       
       if (data.items) {
         updateData.items = {

@@ -482,8 +482,9 @@ model Pack {
   includeInstallation     Boolean   @default(true)                  // Si incluye montaje en el precio
   
   // Precio variable por partes del evento
-  partsPricing            Json?                                     // { "partId": { "percentage": 25, "included": true } }
+  partsPricing            Json?                                     // { "partId": { "price": 150, "included": true } }
   enablePartsPricing      Boolean   @default(false)                 // Si el precio varía según partes seleccionadas
+  basePrice               Decimal?  @db.Decimal(10, 2)              // Precio base del pack (antes de sumar partes)
   
   // Categoría del pack
   category                PackCategory @default(OTROS)              // Categoría del pack

@@ -24,8 +24,9 @@ const PacksManager = () => {
     customFinalPrice: '',
     includeShipping: true, // Incluir transporte por defecto
     includeInstallation: true, // Incluir montaje por defecto
-    partsPricing: null as Record<string, { percentage: number; included: boolean }> | null,
+    partsPricing: null as Record<string, { price: number; included: boolean }> | null,
     enablePartsPricing: false,
+    basePrice: 0,
     items: [] as Array<{ 
       productId: string; 
       quantity: number;
@@ -193,6 +194,7 @@ const PacksManager = () => {
       includeInstallation: true,
       partsPricing: null,
       enablePartsPricing: false,
+      basePrice: 0,
       items: [],
     });
     const newFilters = {
@@ -215,6 +217,7 @@ const PacksManager = () => {
       includeInstallation: pack.includeInstallation !== false, // Por defecto true
       partsPricing: pack.partsPricing || null,
       enablePartsPricing: pack.enablePartsPricing || false,
+      basePrice: Number(pack.basePrice || 0),
       items: pack.items?.map((item: any) => ({
         productId: item.productId || item.product?.id,
         quantity: item.quantity,
@@ -270,6 +273,7 @@ const PacksManager = () => {
         includeInstallation: formData.includeInstallation,
         partsPricing: formData.partsPricing,
         enablePartsPricing: formData.enablePartsPricing,
+        basePrice: formData.basePrice,
         items: formData.items.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -1170,13 +1174,14 @@ const PacksManager = () => {
                               return eventType?.parts?.length > 0 ? (
                                 <PartsPricingEditor
                                   eventParts={eventType.parts}
-                                  packFinalPrice={totals.finalPrice}
+                                  packBasePrice={formData.basePrice || 0}
                                   partsPricing={formData.partsPricing}
                                   enablePartsPricing={formData.enablePartsPricing}
                                   onChange={(data) => setFormData({ 
                                     ...formData, 
                                     partsPricing: data.partsPricing,
-                                    enablePartsPricing: data.enablePartsPricing
+                                    enablePartsPricing: data.enablePartsPricing,
+                                    basePrice: data.basePrice
                                   })}
                                 />
                               ) : (

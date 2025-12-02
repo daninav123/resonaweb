@@ -3,65 +3,69 @@ import { Calculator, AlertCircle } from 'lucide-react';
 
 interface PartsPricingEditorProps {
   eventParts: any[]; // Partes del tipo de evento
-  packFinalPrice: number; // Precio final del pack
-  partsPricing: Record<string, { percentage: number; included: boolean }> | null;
+  packBasePrice: number; // Precio BASE del pack (sin partes)
+  partsPricing: Record<string, { price: number; included: boolean }> | null;
   enablePartsPricing: boolean;
-  onChange: (data: { partsPricing: Record<string, { percentage: number; included: boolean }>; enablePartsPricing: boolean }) => void;
+  onChange: (data: { partsPricing: Record<string, { price: number; included: boolean }>; enablePartsPricing: boolean; basePrice: number }) => void;
 }
 
 const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
   eventParts,
-  packFinalPrice,
+  packBasePrice: initialBasePrice,
   partsPricing: initialPartsPricing,
   enablePartsPricing: initialEnabled,
   onChange
 }) => {
   const [enabled, setEnabled] = useState(initialEnabled);
-  const [pricing, setPricing] = useState<Record<string, { percentage: number; included: boolean }>>(
+  const [basePrice, setBasePrice] = useState(initialBasePrice);
+  const [pricing, setPricing] = useState<Record<string, { price: number; included: boolean }>>(
     initialPartsPricing || {}
   );
 
-  // Calcular porcentaje total
-  const totalPercentage = Object.values(pricing).reduce((sum, part) => 
-    part.included ? sum + part.percentage : sum, 0
+  // Calcular precio total de partes
+  const totalPartsPrice = Object.values(pricing).reduce((sum, part) => 
+    part.included ? sum + part.price : sum, 0
   );
 
-  // Inicializar con distribución equitativa si está vacío
+  // Precio final = base + partes
+  const totalPrice = basePrice + totalPartsPrice;
+
+  // Inicializar con precios vacíos si está vacío
   useEffect(() => {
     if (enabled && eventParts.length > 0 && Object.keys(pricing).length === 0) {
-      const equalPercentage = Math.floor(100 / eventParts.length);
-      const newPricing: Record<string, { percentage: number; included: boolean }> = {};
+      const newPricing: Record<string, { price: number; included: boolean }> = {};
       
-      eventParts.forEach((part, index) => {
-        // Ajustar el último para que sume exactamente 100%
-        const percentage = index === eventParts.length - 1 
-          ? 100 - (equalPercentage * (eventParts.length - 1))
-          : equalPercentage;
-        
+      eventParts.forEach((part) => {
         newPricing[part.id] = {
-          percentage,
-          included: true
+          price: 0,
+          included: false
         };
       });
       
       setPricing(newPricing);
-      onChange({ partsPricing: newPricing, enablePartsPricing: true });
+      onChange({ partsPricing: newPricing, enablePartsPricing: true, basePrice });
     }
   }, [enabled, eventParts]);
 
   const handleToggleEnable = () => {
     const newEnabled = !enabled;
     setEnabled(newEnabled);
-    onChange({ partsPricing: pricing, enablePartsPricing: newEnabled });
+    onChange({ partsPricing: pricing, enablePartsPricing: newEnabled, basePrice });
   };
 
-  const handlePercentageChange = (partId: string, percentage: number) => {
+  const handlePriceChange = (partId: string, price: number) => {
     const newPricing = {
       ...pricing,
-      [partId]: { ...pricing[partId], percentage: Math.max(0, Math.min(100, percentage)) }
+      [partId]: { ...pricing[partId], price: Math.max(0, price) }
     };
     setPricing(newPricing);
-    onChange({ partsPricing: newPricing, enablePartsPricing: enabled });
+    onChange({ partsPricing: newPricing, enablePartsPricing: enabled, basePrice });
+  };
+
+  const handleBasePriceChange = (price: number) => {
+    const newBasePrice = Math.max(0, price);
+    setBasePrice(newBasePrice);
+    onChange({ partsPricing: pricing, enablePartsPricing: enabled, basePrice: newBasePrice });
   };
 
   const handleToggleIncluded = (partId: string) => {
@@ -70,29 +74,29 @@ const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
       [partId]: { ...pricing[partId], included: !pricing[partId]?.included }
     };
     setPricing(newPricing);
-    onChange({ partsPricing: newPricing, enablePartsPricing: enabled });
+    onChange({ partsPricing: newPricing, enablePartsPricing: enabled, basePrice });
   };
 
   const distributeEqually = () => {
     const includedParts = eventParts.filter(part => pricing[part.id]?.included !== false);
     if (includedParts.length === 0) return;
 
-    const equalPercentage = Math.floor(100 / includedParts.length);
+    const pricePerPart = Math.floor(basePrice / includedParts.length);
     const newPricing = { ...pricing };
     
     includedParts.forEach((part, index) => {
-      const percentage = index === includedParts.length - 1 
-        ? 100 - (equalPercentage * (includedParts.length - 1))
-        : equalPercentage;
+      const price = index === includedParts.length - 1 
+        ? basePrice - (pricePerPart * (includedParts.length - 1))
+        : pricePerPart;
       
       newPricing[part.id] = {
         ...newPricing[part.id],
-        percentage
+        price
       };
     });
     
     setPricing(newPricing);
-    onChange({ partsPricing: newPricing, enablePartsPricing: enabled });
+    onChange({ partsPricing: newPricing, enablePartsPricing: enabled, basePrice });
   };
 
   if (eventParts.length === 0) {
@@ -139,22 +143,44 @@ const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
       {/* Configuración de Partes */}
       {enabled && (
         <div className="space-y-4">
+          {/* Precio Base */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Precio Base del Pack (sin partes)
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">€</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={basePrice}
+                onChange={(e) => handleBasePriceChange(parseFloat(e.target.value) || 0)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg font-semibold"
+                placeholder="300.00"
+              />
+            </div>
+            <p className="text-xs text-gray-600 mt-2">
+              Este es el precio base. Cada parte que el cliente seleccione sumará su precio individual.
+            </p>
+          </div>
+
           {/* Botón distribución equitativa */}
           <div className="flex items-center justify-between">
-            <h5 className="text-sm font-medium text-gray-700">Distribución de Precio por Parte</h5>
+            <h5 className="text-sm font-medium text-gray-700">Precio de Cada Parte</h5>
             <button
               onClick={distributeEqually}
               className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
             >
-              Distribuir Equitativamente
+              Distribuir Base Equitativamente
             </button>
           </div>
 
           {/* Lista de partes */}
           <div className="space-y-2">
             {eventParts.map((part) => {
-              const partData = pricing[part.id] || { percentage: 0, included: true };
-              const partPrice = (packFinalPrice * partData.percentage) / 100;
+              const partData = pricing[part.id] || { price: 0, included: false };
+              const partPrice = partData.price;
 
               return (
                 <div
@@ -183,30 +209,19 @@ const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
                       <p className="text-xs text-gray-600 mt-0.5">{part.description}</p>
                     </div>
 
-                    {/* Control de porcentaje */}
+                    {/* Control de precio */}
                     {partData.included && (
                       <div className="flex items-center gap-2">
+                        <span className="text-gray-600">€</span>
                         <input
                           type="number"
                           min="0"
-                          max="100"
-                          value={partData.percentage}
-                          onChange={(e) => handlePercentageChange(part.id, parseFloat(e.target.value) || 0)}
-                          className="w-16 px-2 py-1.5 text-center border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+                          step="0.01"
+                          value={partData.price}
+                          onChange={(e) => handlePriceChange(part.id, parseFloat(e.target.value) || 0)}
+                          className="w-24 px-2 py-1.5 text-center border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+                          placeholder="0.00"
                         />
-                        <span className="text-sm font-medium text-gray-700">%</span>
-                      </div>
-                    )}
-
-                    {/* Precio calculado */}
-                    {partData.included && (
-                      <div className="text-right min-w-[80px]">
-                        <div className="text-sm font-bold text-gray-900">
-                          €{partPrice.toFixed(2)}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {partData.percentage}%
-                        </div>
                       </div>
                     )}
                   </div>
@@ -216,28 +231,20 @@ const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
           </div>
 
           {/* Resumen */}
-          <div className={`border-2 rounded-lg p-4 ${
-            Math.abs(totalPercentage - 100) < 0.01
-              ? 'border-green-500 bg-green-50'
-              : 'border-red-500 bg-red-50'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-semibold text-gray-900">Total</div>
-                <div className="text-xs text-gray-600 mt-0.5">
-                  {Math.abs(totalPercentage - 100) < 0.01
-                    ? '✓ La suma es correcta'
-                    : '⚠️ La suma debe ser 100%'}
-                </div>
+          <div className="border-2 border-blue-500 bg-blue-50 rounded-lg p-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-700">Precio Base:</span>
+                <span className="font-semibold text-gray-900">€{basePrice.toFixed(2)}</span>
               </div>
-              <div className="text-right">
-                <div className={`text-2xl font-bold ${
-                  Math.abs(totalPercentage - 100) < 0.01 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {totalPercentage.toFixed(0)}%
-                </div>
-                <div className="text-sm text-gray-700 font-medium">
-                  €{packFinalPrice.toFixed(2)}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-700">Suma de Partes Incluidas:</span>
+                <span className="font-semibold text-gray-900">+€{totalPartsPrice.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-blue-200 pt-2 mt-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-blue-900">Precio Total:</span>
+                  <span className="text-2xl font-bold text-blue-600">€{totalPrice.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -246,9 +253,9 @@ const PartsPricingEditor: React.FC<PartsPricingEditorProps> = ({
           {/* Información adicional */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-xs text-blue-800">
-              <strong>¿Cómo funciona?</strong> En la calculadora, el precio se calculará sumando solo los porcentajes
-              de las partes que el cliente seleccione. Por ejemplo, si el cliente solo selecciona 2 de 4 partes,
-              pagará solo el porcentaje correspondiente a esas 2 partes.
+              <strong>¿Cómo funciona?</strong> En la calculadora, el precio se calculará sumando el precio base (€{basePrice.toFixed(2)}) 
+              más el precio de cada parte que el cliente seleccione. Por ejemplo, si marca Cóctel (€150) y Banquete (€150), 
+              pagará: €{basePrice.toFixed(2)} + €150 + €150 = €{(basePrice + 300).toFixed(2)}.
             </p>
           </div>
         </div>
