@@ -231,16 +231,28 @@ const CheckoutPage = () => {
       return;
     }
     
-    // Verificar que todos los items tienen fechas
-    const itemsWithoutDates = items.filter(item => !item.startDate || !item.endDate);
+    // Verificar que todos los items tienen fechas (excepto items de eventos que tienen su propia fecha)
+    const itemsWithoutDates = items.filter(item => {
+      // Items de eventos ya tienen su fecha en eventMetadata
+      const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+      if (isEventItem) return false; // No requieren startDate/endDate
+      
+      // Items normales sí requieren fechas
+      return !item.startDate || !item.endDate;
+    });
+    
     if (itemsWithoutDates.length > 0) {
       toast.error('Debes asignar fechas a todos los productos en el carrito');
       navigate('/carrito');
       return;
     }
     
-    // Verificar que no hay productos con fechas inválidas
+    // Verificar que no hay productos con fechas inválidas (excepto items de eventos)
     const invalidItems = items.filter(item => {
+      // Items de eventos tienen disponibilidad garantizada
+      const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+      if (isEventItem) return false;
+      
       const productStock = item.product?.stock ?? 0;
       if (productStock === 0 && item.startDate) {
         const today = new Date();
