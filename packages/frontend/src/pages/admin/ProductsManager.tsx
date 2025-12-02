@@ -48,8 +48,8 @@ const ProductsManager = () => {
     description: '',
     categoryId: '',
     pricePerDay: 0,
-    stock: 1,
-    realStock: 1,
+    stock: 0,
+    realStock: 0,
     stockStatus: 'IN_STOCK',
     leadTimeDays: 0,
     shippingCost: 0,
@@ -58,6 +58,8 @@ const ProductsManager = () => {
     requiresInstallation: false,
     installationComplexity: 1,
     isPack: false,
+    isConsumable: false,
+    pricePerUnit: 0,
     purchasePrice: 0,
     purchaseDate: '',
   });
@@ -407,6 +409,8 @@ const ProductsManager = () => {
       requiresInstallation: false,
       installationComplexity: 1,
       isPack: false,
+      isConsumable: false,
+      pricePerUnit: 0,
       purchasePrice: 0,
       purchaseDate: '',
     });
