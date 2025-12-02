@@ -46,6 +46,7 @@ const PartPricingEditor: React.FC<PartPricingEditorProps> = ({
       {/* Configuración de Rangos de Precio */}
       <PricingRangesEditor
         ranges={pricingRanges}
+        allProducts={allProducts}
         onChange={handlePricingRangesChange}
       />
 

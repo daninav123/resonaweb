@@ -4,6 +4,7 @@ export interface PricingRange {
   minAttendees: number; // Mínimo de invitados (ej: 0)
   maxAttendees: number; // Máximo de invitados (ej: 50)
   price: number; // Precio para este rango
+  recommendedProducts?: string[]; // IDs de productos recomendados para este rango
 }
 
 export interface EventPart {
