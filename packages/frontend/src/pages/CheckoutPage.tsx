@@ -436,9 +436,11 @@ const CheckoutPage = () => {
     let notesWithDetails = formData.notes || '';
     
     // Agregar información de packs y extras de items de eventos
-    const eventItems = cartItems.filter((item: any) => 
-      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
-    );
+    const eventItems = cartItems.filter((item: any) => item.eventMetadata);
+    
+    console.log('📝 Event Items encontrados:', eventItems.length);
+    console.log('📝 Event Items:', eventItems);
+    console.log('📝 Todos los items del carrito:', cartItems);
     
     if (eventItems.length > 0) {
       if (notesWithDetails) {
@@ -450,33 +452,65 @@ const CheckoutPage = () => {
       eventItems.forEach((item: any, index: number) => {
         notesWithDetails += `\n${index + 1}. ${item.product.name}\n`;
         
+        console.log(`📝 Item ${index + 1} metadata:`, item.eventMetadata);
+        
+        // Información del evento
+        if (item.eventMetadata.eventType) {
+          notesWithDetails += `   🎉 Tipo: ${item.eventMetadata.eventType}\n`;
+        }
+        if (item.eventMetadata.attendees) {
+          notesWithDetails += `   👥 Asistentes: ${item.eventMetadata.attendees}\n`;
+        }
+        if (item.eventMetadata.eventDate) {
+          notesWithDetails += `   📅 Fecha: ${new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}\n`;
+        }
+        if (item.eventMetadata.eventLocation) {
+          notesWithDetails += `   📍 Ubicación: ${item.eventMetadata.eventLocation}\n`;
+        }
+        
+        notesWithDetails += '\n';
+        
         // Packs seleccionados (Partes del Evento)
-        if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+        if (item.eventMetadata.selectedParts && Array.isArray(item.eventMetadata.selectedParts) && item.eventMetadata.selectedParts.length > 0) {
           notesWithDetails += '   📦 Partes del Evento:\n';
           item.eventMetadata.selectedParts.forEach((part: any) => {
-            notesWithDetails += `      • ${part.name}${part.price ? ` (€${Number(part.price).toFixed(2)})` : ''}\n`;
+            const price = part.price || part.pricePerDay || 0;
+            notesWithDetails += `      • ${part.name}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
           });
+          notesWithDetails += '\n';
         }
         
         // Extras seleccionados
-        if (item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0) {
+        if (item.eventMetadata.selectedExtras && Array.isArray(item.eventMetadata.selectedExtras) && item.eventMetadata.selectedExtras.length > 0) {
           notesWithDetails += '   ✨ Extras:\n';
           item.eventMetadata.selectedExtras.forEach((extra: any) => {
-            notesWithDetails += `      • ${extra.name}${extra.price ? ` (€${Number(extra.price).toFixed(2)})` : ''}\n`;
+            const price = extra.total || extra.price || extra.pricePerDay || 0;
+            const qty = extra.quantity || 1;
+            notesWithDetails += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
           });
+          notesWithDetails += '\n';
         }
         
         // Mostrar total de partes y extras
-        if (item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) {
-          notesWithDetails += `   💰 Subtotal:\n`;
-          if (item.eventMetadata.partsTotal) {
+        const hasPartsTotal = item.eventMetadata.partsTotal && Number(item.eventMetadata.partsTotal) > 0;
+        const hasExtrasTotal = item.eventMetadata.extrasTotal && Number(item.eventMetadata.extrasTotal) > 0;
+        
+        if (hasPartsTotal || hasExtrasTotal) {
+          notesWithDetails += '   💰 Subtotales:\n';
+          if (hasPartsTotal) {
             notesWithDetails += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
           }
-          if (item.eventMetadata.extrasTotal) {
+          if (hasExtrasTotal) {
             notesWithDetails += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+          }
+          if (hasPartsTotal && hasExtrasTotal) {
+            const total = Number(item.eventMetadata.partsTotal) + Number(item.eventMetadata.extrasTotal);
+            notesWithDetails += `      • TOTAL: €${total.toFixed(2)}\n`;
           }
         }
       });
+      
+      console.log('📝 Notas finales construidas:', notesWithDetails);
     }
     
     const orderPayload = {
