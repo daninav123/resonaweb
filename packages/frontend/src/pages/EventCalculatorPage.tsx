@@ -180,15 +180,56 @@ const EventCalculatorPage = () => {
     let itemCount = 0;
 
     try {
-      // 3. Añadir pack al carrito (SIEMPRE localStorage)
+      // Preparar metadata del evento con partes y sus precios
+      const selectedPartsWithPrices: Array<{id: string; name: string; icon: string; price: number}> = [];
+      let partsTotal = 0;
+      
+      if (eventData.selectedParts && eventData.selectedParts.length > 0 && selectedEventType) {
+        eventData.selectedParts.forEach((partId) => {
+          const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+          if (part) {
+            // Calcular precio de la parte según rangos de invitados
+            let partPrice = 0;
+            if (part.pricingRanges && part.pricingRanges.length > 0) {
+              const applicableRange = part.pricingRanges.find((range: any) => 
+                eventData.attendees >= range.minAttendees && 
+                eventData.attendees <= range.maxAttendees
+              );
+              partPrice = applicableRange ? applicableRange.price : 0;
+            }
+            
+            selectedPartsWithPrices.push({
+              id: part.id,
+              name: part.name,
+              icon: part.icon,
+              price: partPrice
+            });
+            partsTotal += partPrice;
+          }
+        });
+      }
+      
+      const eventMetadata = {
+        eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
+        attendees: eventData.attendees,
+        duration: eventData.duration,
+        durationType: eventData.durationType,
+        startTime: eventData.startTime,
+        eventDate: eventData.eventDate,
+        eventLocation: eventData.eventLocation,
+        selectedParts: selectedPartsWithPrices,
+        partsTotal: partsTotal
+      };
+
+      // 3. Añadir pack al carrito con metadata del evento (SIEMPRE localStorage)
       if (eventData.selectedPack) {
         const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
         if (pack) {
-          guestCart.addItem(pack, 1);
+          guestCart.addItem(pack, 1, eventMetadata);
           const basePrice = Number(pack.pricePerDay);
           const shipping = Number(pack.shippingCost || 0);
           const installation = Number(pack.installationCost || 0);
-          totalCalculated += basePrice + shipping + installation;
+          totalCalculated += basePrice + shipping + installation + partsTotal;
           itemCount += 1;
         }
       }

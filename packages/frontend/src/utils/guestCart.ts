@@ -18,6 +18,22 @@ export interface GuestCartItem {
   quantity: number;
   startDate?: string;
   endDate?: string;
+  eventMetadata?: {
+    eventType?: string;
+    attendees?: number;
+    duration?: number;
+    durationType?: string;
+    startTime?: string;
+    eventDate?: string;
+    eventLocation?: string;
+    selectedParts?: Array<{
+      id: string;
+      name: string;
+      icon: string;
+      price: number;
+    }>;
+    partsTotal?: number;
+  };
 }
 
 const GUEST_CART_KEY = 'guest_cart';
@@ -67,7 +83,7 @@ export const guestCart = {
   },
 
   // Añadir item
-  addItem(product: any, quantity: number): GuestCartItem {
+  addItem(product: any, quantity: number, eventMetadata?: any): GuestCartItem {
     const cart = this.getCart();
     
     // Verificar si ya existe
@@ -76,6 +92,10 @@ export const guestCart = {
     if (existingIndex >= 0) {
       // Actualizar cantidad si ya existe
       cart[existingIndex].quantity += quantity;
+      // Actualizar eventMetadata si se proporciona
+      if (eventMetadata) {
+        cart[existingIndex].eventMetadata = eventMetadata;
+      }
       localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
       dispatchCartUpdate();
       return cart[existingIndex];
@@ -97,6 +117,7 @@ export const guestCart = {
         category: product.category,
       },
       quantity,
+      ...(eventMetadata && { eventMetadata }),
     };
 
     // Añadir nuevo
