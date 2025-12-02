@@ -432,6 +432,53 @@ const CheckoutPage = () => {
       };
     });
     
+    // Construir notas con información de packs y extras
+    let notesWithDetails = formData.notes || '';
+    
+    // Agregar información de packs y extras de items de eventos
+    const eventItems = cartItems.filter((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+    
+    if (eventItems.length > 0) {
+      if (notesWithDetails) {
+        notesWithDetails += '\n\n---\n\n';
+      }
+      
+      notesWithDetails += '📋 DETALLES DEL EVENTO:\n';
+      
+      eventItems.forEach((item: any, index: number) => {
+        notesWithDetails += `\n${index + 1}. ${item.product.name}\n`;
+        
+        // Packs seleccionados (Partes del Evento)
+        if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+          notesWithDetails += '   📦 Partes del Evento:\n';
+          item.eventMetadata.selectedParts.forEach((part: any) => {
+            notesWithDetails += `      • ${part.name}${part.price ? ` (€${Number(part.price).toFixed(2)})` : ''}\n`;
+          });
+        }
+        
+        // Extras seleccionados
+        if (item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0) {
+          notesWithDetails += '   ✨ Extras:\n';
+          item.eventMetadata.selectedExtras.forEach((extra: any) => {
+            notesWithDetails += `      • ${extra.name}${extra.price ? ` (€${Number(extra.price).toFixed(2)})` : ''}\n`;
+          });
+        }
+        
+        // Mostrar total de partes y extras
+        if (item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) {
+          notesWithDetails += `   💰 Subtotal:\n`;
+          if (item.eventMetadata.partsTotal) {
+            notesWithDetails += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
+          }
+          if (item.eventMetadata.extrasTotal) {
+            notesWithDetails += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+          }
+        }
+      });
+    }
+    
     const orderPayload = {
       // Items
       items: orderItems,
@@ -449,8 +496,8 @@ const CheckoutPage = () => {
       includeInstallation: includeInstallation,
       shippingCost: calculateShippingCost(),
       
-      // Notas
-      notes: formData.notes || undefined,
+      // Notas con detalles de packs y extras
+      notes: notesWithDetails || undefined,
       
       // Cupón de descuento
       couponCode: appliedCoupon?.code || undefined,
