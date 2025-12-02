@@ -307,8 +307,8 @@ const EventCalculatorPage = () => {
       };
       localStorage.setItem('cartEventInfo', JSON.stringify(eventInfo));
 
-      // 9. Redirigir al checkout
-      navigate('/checkout');
+      // 9. Redirigir al carrito para que el usuario pueda revisar antes de pagar
+      navigate('/carrito');
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('❌ Error al añadir productos al carrito');
