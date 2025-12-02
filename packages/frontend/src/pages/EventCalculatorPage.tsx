@@ -234,12 +234,12 @@ const EventCalculatorPage = () => {
         }
       }
 
-      // 4. Añadir extras al carrito (SIEMPRE localStorage)
+      // 4. Añadir extras al carrito con metadata del evento (SIEMPRE localStorage)
       for (const [productId, quantity] of Object.entries(eventData.selectedExtras)) {
         if (Number(quantity) > 0) {
           const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
           if (product) {
-            guestCart.addItem(product, Number(quantity));
+            guestCart.addItem(product, Number(quantity), eventMetadata);
             const basePrice = Number(product.pricePerDay);
             const shipping = Number(product.shippingCost || 0);
             const installation = Number(product.installationCost || 0);
