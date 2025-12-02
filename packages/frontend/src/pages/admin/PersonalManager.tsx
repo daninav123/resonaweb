@@ -360,8 +360,6 @@ const PersonalManager = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Puesto</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Descripción</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Coste/h</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Precio/h</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Margen</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Disponibles</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Estado</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-purple-900 uppercase">Acciones</th>
@@ -370,7 +368,7 @@ const PersonalManager = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {personal.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                   No hay personal registrado. Crea el primero.
                 </td>
               </tr>
@@ -403,18 +401,6 @@ const PersonalManager = () => {
                           onChange={(e) => setFormData({ ...formData, purchasePrice: parseFloat(e.target.value) || 0 })}
                           className="w-20 px-2 py-1 border rounded"
                         />
-                      </td>
-                      <td className="px-6 py-4">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={formData.pricePerDay}
-                          onChange={(e) => setFormData({ ...formData, pricePerDay: parseFloat(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 border rounded"
-                        />
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {calculateMargin(formData.purchasePrice, formData.pricePerDay)}%
                       </td>
                       <td className="px-6 py-4">
                         <input
@@ -463,20 +449,6 @@ const PersonalManager = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         €{Number(item.purchasePrice).toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                        €{Number(item.pricePerDay).toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          Number(calculateMargin(Number(item.purchasePrice), Number(item.pricePerDay))) >= 30
-                            ? 'bg-green-100 text-green-800'
-                            : Number(calculateMargin(Number(item.purchasePrice), Number(item.pricePerDay))) >= 15
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {calculateMargin(Number(item.purchasePrice), Number(item.pricePerDay))}%
-                        </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {item.stock} persona{item.stock > 1 ? 's' : ''}
