@@ -501,20 +501,43 @@ const CartPage = () => {
   };
 
   const allItemsHaveDates = () => {
-    // Verificar que haya fechas globales O que cada item tenga fechas personalizadas
-    if (!globalDates.start || !globalDates.end) {
-      if (guestCartItems.length === 0) return false;
-      // Todos los items deben tener fechas personalizadas
-      return guestCartItems.every((item: any) => 
-        customDatesItems.has(item.id) && item.startDate && item.endDate
-      );
+    if (guestCartItems.length === 0) return false;
+    
+    // Items de eventos tienen su propia fecha en eventMetadata
+    const allEventItems = guestCartItems.every((item: any) => 
+      item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0
+    );
+    
+    // Si TODOS los items son de eventos, no necesitan fechas globales
+    if (allEventItems) {
+      return true;
     }
+    
+    // Si hay mix o solo items normales, verificar fechas globales
+    if (!globalDates.start || !globalDates.end) {
+      // Todos los items normales deben tener fechas personalizadas
+      return guestCartItems.every((item: any) => {
+        // Items de eventos no necesitan validación
+        const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+        if (isEventItem) return true;
+        
+        // Items normales necesitan fechas
+        return customDatesItems.has(item.id) && item.startDate && item.endDate;
+      });
+    }
+    
     return true; // Si hay fechas globales, está ok
   };
 
   const hasInvalidDates = () => {
-    // Verificar si hay productos no disponibles marcados
-    return unavailableItems.size > 0;
+    // Los items de eventos nunca tienen fechas inválidas
+    const hasNonEventInvalidItems = Array.from(unavailableItems.keys()).some(itemId => {
+      const item = guestCartItems.find(i => i.id === itemId);
+      const isEventItem = item?.eventMetadata?.eventDate && item?.eventMetadata?.selectedParts?.length > 0;
+      return !isEventItem; // Solo contar items no-eventos como inválidos
+    });
+    
+    return hasNonEventInvalidItems;
   };
 
   const getInvalidItemsCount = () => {
@@ -715,7 +738,15 @@ const CartPage = () => {
     
     // Validar disponibilidad para cada item
     for (const item of guestCartItems) {
+      // Saltar items con fechas personalizadas
       if (customDatesItems.has(item.id)) {
+        continue;
+      }
+      
+      // Saltar items de eventos (ya tienen su propia fecha y disponibilidad garantizada)
+      const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+      if (isEventItem) {
+        availableCount++;
         continue;
       }
       
