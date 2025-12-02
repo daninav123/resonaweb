@@ -71,13 +71,38 @@ const EventCalculatorPage = () => {
     parts: et.parts || [],
   }));
 
-  // Cargar productos del catálogo
+  // Cargar productos y packs del catálogo
   const { data: catalogProducts = [] } = useQuery({
-    queryKey: ['catalog-products'],
+    queryKey: ['catalog-products-and-packs'],
     queryFn: async () => {
-      const result = await productService.getProducts({ limit: 100 });
-      // El servicio ahora devuelve { data: [...], pagination: {...} }
-      return result?.data || [];
+      // Cargar packs activos
+      const packsResponse: any = await api.get('/packs');
+      const packsData = packsResponse?.packs || packsResponse || [];
+      console.log('📦 Packs cargados en calculadora pública:', packsData);
+      
+      // Mapear packs al formato esperado
+      const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => ({
+        id: pack.id,
+        name: pack.name,
+        slug: pack.slug,
+        description: pack.description,
+        mainImageUrl: pack.imageUrl,
+        pricePerDay: Number(pack.finalPrice || pack.calculatedTotalPrice || 0),
+        realStock: 999,
+        category: { name: 'Packs' },
+        isActive: pack.isActive !== false,
+        isPack: true, // Marcar como pack
+      })) : [];
+      
+      // Cargar productos normales
+      const productsResult = await productService.getProducts({ limit: 100 });
+      const productsData = productsResult?.data || [];
+      console.log('📦 Productos cargados en calculadora:', productsData);
+      
+      // Combinar packs y productos
+      const allItems = [...mappedPacks, ...productsData];
+      console.log('📦 Total items en calculadora:', allItems.length, '(Packs:', mappedPacks.length, '+ Productos:', productsData.length, ')');
+      return allItems;
     },
   });
 
