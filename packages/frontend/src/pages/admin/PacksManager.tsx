@@ -477,6 +477,11 @@ const PacksManager = () => {
       }
     });
 
+    // Al ser un pack, los costes de envío y montaje son la mitad (optimización)
+    totalShipping = totalShipping / 2;
+    totalInstallation = totalInstallation / 2;
+    costShippingInstallation = costShippingInstallation / 2;
+
     const subtotal = totalPricePerDay + totalShipping + totalInstallation;
     const discountAmount = Number(formData.discountAmount || 0);
     const finalPrice = formData.customFinalPrice 
