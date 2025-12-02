@@ -189,6 +189,30 @@ const CartPage = () => {
     }
   }, []);
 
+  // Autocompletar fechas para items de eventos
+  useEffect(() => {
+    // Si ya hay fechas establecidas manualmente, no autocompletar
+    if (globalDates.start && globalDates.end) {
+      return;
+    }
+
+    // Buscar items de eventos con fecha
+    const eventItems = guestCartItems.filter((item: any) => 
+      item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0
+    );
+
+    if (eventItems.length > 0) {
+      // Usar la fecha del primer evento encontrado
+      const firstEventDate = eventItems[0].eventMetadata.eventDate;
+      
+      // Los eventos son siempre de 1 día (inicio = fin)
+      setGlobalDates({
+        start: firstEventDate,
+        end: firstEventDate
+      });
+    }
+  }, [guestCartItems, globalDates.start, globalDates.end]);
+
   // Handler para cuando se selecciona una dirección
   const handleAddressSelect = (address: string, calculatedDistance: number) => {
     setDeliveryAddress(address);
@@ -943,41 +967,76 @@ const CartPage = () => {
                     <Calendar className="w-4 h-4 text-blue-600" />
                     Fechas del Pedido
                   </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Inicio
-                      </label>
-                      <input
-                        type="date"
-                        data-testid="global-start-date"
-                        value={globalDates.start}
-                        onChange={(e) => setGlobalDates({ ...globalDates, start: e.target.value })}
-                        className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        min={new Date().toISOString().split('T')[0]}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Fin
-                      </label>
-                      <input
-                        type="date"
-                        data-testid="global-end-date"
-                        value={globalDates.end}
-                        onChange={(e) => setGlobalDates({ ...globalDates, end: e.target.value })}
-                        className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        min={globalDates.start || new Date().toISOString().split('T')[0]}
-                      />
-                    </div>
-                  </div>
                   
-                  {/* Validación automática - sin botón necesario */}
-                  {globalDates.start && globalDates.end && (
-                    <div className="mt-3 text-center text-xs text-gray-500">
-                      ✓ Validando disponibilidad automáticamente...
-                    </div>
-                  )}
+                  {(() => {
+                    // Verificar si hay items de eventos
+                    const hasEventItems = guestCartItems.some((item: any) => 
+                      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+                    );
+                    
+                    if (hasEventItems) {
+                      // Mostrar fecha del evento (solo lectura)
+                      const eventDate = globalDates.start || new Date().toISOString().split('T')[0];
+                      const formattedDate = new Date(eventDate).toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      
+                      return (
+                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="w-5 h-5 text-blue-600" />
+                            <span className="text-sm font-semibold text-blue-900">Fecha del Evento</span>
+                          </div>
+                          <p className="text-blue-700 text-sm capitalize">{formattedDate}</p>
+                          <p className="text-xs text-blue-600 mt-2">📅 Duración: 1 día (incluye transporte y montaje)</p>
+                        </div>
+                      );
+                    }
+                    
+                    // Para items normales, mostrar campos de fecha editables
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Inicio
+                            </label>
+                            <input
+                              type="date"
+                              data-testid="global-start-date"
+                              value={globalDates.start}
+                              onChange={(e) => setGlobalDates({ ...globalDates, start: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                              min={new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Fin
+                            </label>
+                            <input
+                              type="date"
+                              data-testid="global-end-date"
+                              value={globalDates.end}
+                              onChange={(e) => setGlobalDates({ ...globalDates, end: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                              min={globalDates.start || new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Validación automática - sin botón necesario */}
+                        {globalDates.start && globalDates.end && (
+                          <div className="mt-3 text-center text-xs text-gray-500">
+                            ✓ Validando disponibilidad automáticamente...
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {!allItemsHaveDates() && (
