@@ -351,29 +351,48 @@ const CartPage = () => {
   };
 
   const calculateItemPrice = (item: any) => {
-    const dates = getEffectiveDates(item);
-    const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
-    
-    // Calcular precio de las partes, considerando que el pack se muestra en Disco/Fiesta
-    let partsPrice = 0;
+    // Si el item tiene eventMetadata (viene de la calculadora), es siempre 1 día
+    // y ya incluye transporte y montaje
     if (item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+      // Calcular precio de las partes, considerando que el pack se muestra en Disco/Fiesta
+      let partsPrice = 0;
       item.eventMetadata.selectedParts.forEach((part: any) => {
         const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
         const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
         partsPrice += displayPrice;
       });
+      
+      // Añadir precio de extras
+      const extrasPrice = item.eventMetadata?.extrasTotal || 0;
+      
+      // Items de eventos son SIEMPRE 1 día (no multiplicar por días)
+      return (partsPrice + extrasPrice) * item.quantity;
     }
     
-    // Añadir precio de extras
-    const extrasPrice = item.eventMetadata?.extrasTotal || 0;
-    
-    return (partsPrice + extrasPrice) * days * item.quantity;
+    // Para items normales (no eventos), calcular con días
+    const dates = getEffectiveDates(item);
+    const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
+    return Number(item.product.pricePerDay) * days * item.quantity;
   };
 
   const calculateShippingCost = () => {
     // Si es recogida en tienda, sin coste de envío
     if (deliveryOption === 'pickup') {
       return 0;
+    }
+    
+    // Verificar si hay items de eventos (transporte incluido)
+    const hasEventItems = guestCartItems.some((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+    
+    // Si TODOS los items son de eventos, transporte ya incluido
+    const allItemsAreEvents = guestCartItems.every((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+    
+    if (allItemsAreEvents) {
+      return 0; // Transporte incluido en eventos
     }
     
     // Usar el cálculo del backend si está disponible
@@ -383,8 +402,8 @@ const CartPage = () => {
         : Number(calculatedShipping.totalShippingCost || 0);
     }
     
-    // Fallback: mínimo default
-    return 20;
+    // Fallback: mínimo default (solo para items no-eventos)
+    return hasEventItems ? 0 : 20;
   };
 
   const calculateInstallationCost = () => {
@@ -841,6 +860,16 @@ const CartPage = () => {
                                     </div>
                                   </div>
                                 )}
+                                
+                                {/* Badge informativo para eventos */}
+                                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                                  <p className="text-xs text-green-700 flex items-center gap-1">
+                                    ✅ <span className="font-semibold">Transporte y montaje incluidos</span>
+                                  </p>
+                                  <p className="text-xs text-green-600 mt-1">
+                                    📅 Duración: 1 día (fecha del evento: {item.eventMetadata.eventDate || 'Por confirmar'})
+                                  </p>
+                                </div>
                               </>
                             );
                           })()}
@@ -1143,8 +1172,8 @@ const CartPage = () => {
                       <span className="text-gray-600">
                         {includeInstallation ? '🚚 + 🔧 Envío + instalación' : '🚚 Coste de envío'}
                       </span>
-                      <span className="font-semibold">
-                        €{shippingCost.toFixed(2)}
+                      <span className={`font-semibold ${shippingCost === 0 ? 'text-green-600' : ''}`}>
+                        {shippingCost === 0 ? '✅ Incluido' : `€${shippingCost.toFixed(2)}`}
                       </span>
                     </div>
                   )}
