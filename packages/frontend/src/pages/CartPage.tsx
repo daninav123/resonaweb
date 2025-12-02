@@ -289,36 +289,56 @@ const CartPage = () => {
       
       // MIGRACIÓN AUTOMÁTICA: Actualizar productos sin stock con datos actuales
       let needsUpdate = false;
-      const updatedCart = await Promise.all(
-        cart.map(async (item) => {
-          // Si el producto no tiene stock definido, actualizar desde la API
-          if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
-            try {
-              console.log(`🔄 Actualizando producto sin stock: ${item.product.name}`);
-              const response: any = await api.get(`/products/${item.productId}`);
-              const productData = response.data.data || response.data;
-              
-              // Actualizar el producto en el item con los datos completos
-              item.product = {
-                ...item.product,
-                stock: productData.stock,
-                realStock: productData.realStock,
-              };
+      let productsRemoved = 0;
+      const updatedCart = [];
+      
+      for (const item of cart) {
+        // Si el producto no tiene stock definido, actualizar desde la API
+        if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
+          try {
+            console.log(`🔄 Actualizando producto sin stock: ${item.product.name}`);
+            const response: any = await api.get(`/products/${item.productId}`);
+            const productData = response.data.data || response.data;
+            
+            // Actualizar el producto en el item con los datos completos
+            item.product = {
+              ...item.product,
+              stock: productData.stock,
+              realStock: productData.realStock,
+            };
+            needsUpdate = true;
+            console.log(`✅ Stock actualizado: ${item.product.name} -> stock: ${productData.stock}`);
+            updatedCart.push(item);
+          } catch (error: any) {
+            console.error(`❌ Error actualizando producto ${item.productId}:`, error);
+            
+            // Si el producto no existe (404), eliminarlo del carrito
+            if (error.response?.status === 404) {
+              console.log(`🗑️  Eliminando producto inexistente del carrito: ${item.product.name}`);
+              productsRemoved++;
               needsUpdate = true;
-              console.log(`✅ Stock actualizado: ${item.product.name} -> stock: ${productData.stock}`);
-            } catch (error) {
-              console.error(`❌ Error actualizando producto ${item.productId}:`, error);
+              // No lo añadimos a updatedCart (lo eliminamos)
+            } else {
+              // Para otros errores, mantener el producto en el carrito
+              updatedCart.push(item);
             }
           }
-          return item;
-        })
-      );
+        } else {
+          updatedCart.push(item);
+        }
+      }
       
       // Si hubo actualizaciones, guardar el carrito actualizado
       if (needsUpdate) {
         localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
         console.log('✅ Carrito actualizado con información de stock');
-        toast.success('Carrito actualizado con información de stock actual', { duration: 3000 });
+        
+        if (productsRemoved > 0) {
+          toast.warning(`${productsRemoved} producto(s) eliminado(s) del carrito (ya no existen)`, { duration: 4000 });
+        } else {
+          toast.success('Carrito actualizado con información de stock actual', { duration: 3000 });
+        }
+        
         window.dispatchEvent(new Event('cartUpdated'));
       }
       
