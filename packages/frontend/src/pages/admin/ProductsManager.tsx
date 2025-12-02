@@ -261,16 +261,27 @@ const ProductsManager = () => {
     if (!selectedProduct) return;
 
     try {
-      // Calcular precios automáticamente
-      const productData = {
+      // Preparar datos del producto
+      const productData: any = {
         ...formData,
-        pricePerWeekend: formData.pricePerDay, // Fin de semana = mismo precio que 1 día
-        pricePerWeek: formData.pricePerDay * 5,
       };
+
+      // Solo calcular precios de alquiler si NO es consumible
+      if (!formData.isConsumable) {
+        productData.pricePerWeekend = formData.pricePerDay; // Fin de semana = mismo precio que 1 día
+        productData.pricePerWeek = formData.pricePerDay * 5; // 5x para semana completa
+      } else {
+        // Para consumibles, asegurar que los campos de alquiler estén en 0
+        productData.pricePerDay = 0;
+        productData.pricePerWeekend = 0;
+        productData.pricePerWeek = 0;
+      }
       
       console.log('📤 Enviando actualización de producto:', {
         id: selectedProduct.id,
         name: productData.name,
+        isConsumable: productData.isConsumable,
+        pricePerUnit: productData.pricePerUnit,
         stock: productData.stock,
         realStock: productData.realStock,
       });
