@@ -17,7 +17,6 @@ const PacksManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    discountAmount: 0, // Cambiado de porcentaje a valor en euros
     customFinalPrice: '',
     includeShipping: true, // Incluir transporte por defecto
     includeInstallation: true, // Incluir montaje por defecto
@@ -163,22 +162,20 @@ const PacksManager = () => {
   };
 
   const handleCreate = () => {
-    console.log('🆕 Abriendo modal de crear pack');
-    console.log('🔄 Estado actual de filtros ANTES de resetear:', productFilter);
+    console.log('Abriendo modal de crear pack');
+    console.log('Estado actual de filtros ANTES de resetear:', productFilter);
     setEditingPack(null);
     setFormData({
       name: '',
       description: '',
-      discountAmount: 0,
       customFinalPrice: '',
       includeShipping: true,
       includeInstallation: true,
-      items: []
+      items: [],
     });
-    // Resetear filtros
     const newFilters = {
       categoryId: '',
-      search: ''
+      search: '',
     };
     setProductFilter(newFilters);
     console.log('✅ Filtros reseteados a:', newFilters);
@@ -190,7 +187,6 @@ const PacksManager = () => {
     setFormData({
       name: pack.name || '',
       description: pack.description || '',
-      discountAmount: Number(pack.discountAmount || 0),
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
       includeShipping: pack.includeShipping !== false, // Por defecto true
       includeInstallation: pack.includeInstallation !== false, // Por defecto true
@@ -243,7 +239,6 @@ const PacksManager = () => {
       const packData: any = {
         name: formData.name,
         description: formData.description,
-        discountAmount: formData.discountAmount,
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
@@ -503,10 +498,9 @@ const PacksManager = () => {
     costShippingInstallation = costShippingInstallation / 2;
 
     const subtotal = totalPricePerDay + totalShipping + totalInstallation;
-    const discountAmount = Number(formData.discountAmount || 0);
     const finalPrice = formData.customFinalPrice 
       ? Number(formData.customFinalPrice) 
-      : Math.max(0, subtotal - discountAmount);
+      : subtotal;
 
     // Calcular costes totales
     const totalCost = costMaterial + costPersonal + costShippingInstallation + costDepreciation;
@@ -533,7 +527,6 @@ const PacksManager = () => {
       totalShipping,
       totalInstallation,
       subtotal,
-      discountAmount,
       finalPrice,
       // Costes detallados
       costMaterial,
@@ -970,36 +963,11 @@ const PacksManager = () => {
                           </p>
                         </div>
 
-
-                        {/* Campo Editable: Descuento */}
-                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Descuento del Pack (€)
-                          </label>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={formData.discountAmount}
-                            onChange={(e) => setFormData({ ...formData, discountAmount: parseFloat(e.target.value) || 0 })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                            placeholder="0.00"
-                          />
-                          <p className="text-xs text-gray-600 mt-1">
-                            Introduce el descuento que quieres aplicar en euros
-                          </p>
-                        </div>
-
                         {/* Precio Final */}
                         <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
                           <div className="flex justify-between items-center">
                             <div>
                               <h4 className="text-lg font-bold text-green-800">Precio Final</h4>
-                              {totals.discountAmount > 0 && (
-                                <p className="text-xs text-green-700 mt-1">
-                                  Ahorro: €{totals.discountAmount.toFixed(2)}
-                                </p>
-                              )}
                             </div>
                             <div className="text-right">
                               <div className="text-3xl font-bold text-green-600">
