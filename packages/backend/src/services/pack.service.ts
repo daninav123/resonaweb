@@ -350,6 +350,36 @@ class PackService {
       },
     });
 
+    // Crear un producto "proxy" para que el pack sea visible en el catálogo público
+    console.log('📦 Creando producto proxy para el pack...');
+    const packsCategoryId = (await prisma.category.findFirst({
+      where: { name: 'PACKS' }
+    }))?.id;
+
+    if (packsCategoryId) {
+      const finalPrice = updatedPack!.finalPrice || new Prisma.Decimal(0);
+      const finalPriceNum = Number(finalPrice);
+      await prisma.product.create({
+        data: {
+          name: data.name,
+          sku: `PACK-${pack.id.substring(0, 8).toUpperCase()}`,
+          slug: `pack-${slug}`,
+          description: data.description,
+          categoryId: packsCategoryId,
+          isPack: true,
+          pricePerDay: new Prisma.Decimal(finalPriceNum),
+          pricePerWeekend: new Prisma.Decimal(finalPriceNum),
+          pricePerWeek: new Prisma.Decimal(finalPriceNum * 5),
+          mainImageUrl: data.imageUrl,
+          featured: data.featured || false,
+          isActive: true,
+          stock: 999,
+          realStock: 999,
+        }
+      });
+      console.log('✅ Producto proxy creado para el pack');
+    }
+
     logger.info(`Pack created: ${updatedPack!.name} with ${updatedPack!.items.length} products`);
     return updatedPack;
   }
@@ -457,6 +487,27 @@ class PackService {
           },
         },
       });
+
+      // Actualizar el producto proxy si existe
+      if (updatedPack && (data.name || data.description || data.imageUrl || data.featured)) {
+        const slug = data.name 
+          ? data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          : undefined;
+
+        await prisma.product.updateMany({
+          where: { 
+            slug: `pack-${updatedPack.slug}`,
+            isPack: true
+          },
+          data: {
+            ...(data.name && { name: data.name }),
+            ...(data.description && { description: data.description }),
+            ...(data.imageUrl && { mainImageUrl: data.imageUrl }),
+            ...(data.featured !== undefined && { featured: data.featured }),
+            ...(slug && { slug: `pack-${slug}` }),
+          }
+        });
+      }
 
       logger.info(`Pack updated: ${updatedPack!.name}`);
       return updatedPack;
