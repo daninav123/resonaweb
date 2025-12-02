@@ -672,50 +672,61 @@ const EventCalculatorPage = () => {
               </p>
               
               {(() => {
-                // Filtrar packs según asistentes y partes del evento
+                // Obtener configuración del tipo de evento seleccionado
+                const eventConfig = calculatorConfig.eventTypes.find((et: any) => et.id === eventData.eventType);
+                const configuredPacks = eventConfig?.availablePacks || [];
+                const recommendedPacksRules = eventConfig?.recommendedPacks || [];
+                
+                console.log('📦 Packs configurados para', eventConfig?.name, ':', configuredPacks);
+                console.log('📊 Reglas de recomendación:', recommendedPacksRules);
+                
+                // Filtrar packs según la configuración del admin
                 const availablePacks = catalogProducts.filter((p: any) => {
                   if (!p.isPack || !p.isActive) return false;
                   
-                  // Si el producto tiene especificaciones, filtrar por asistentes y partes
-                  if (p.specifications) {
-                    const specs = typeof p.specifications === 'string' 
-                      ? JSON.parse(p.specifications) 
-                      : p.specifications;
-                    
-                    // Filtrar por número de asistentes
-                    if (specs.minAttendees !== undefined && eventData.attendees < specs.minAttendees) {
-                      return false;
-                    }
-                    if (specs.maxAttendees !== undefined && eventData.attendees > specs.maxAttendees) {
-                      return false;
-                    }
-                    
-                    // Filtrar por partes del evento (si el pack tiene partes específicas)
-                    if (specs.eventParts && Array.isArray(specs.eventParts) && specs.eventParts.length > 0) {
-                      // Si el evento tiene partes seleccionadas, al menos una debe coincidir
-                      if (eventData.selectedParts.length > 0) {
-                        const hasMatchingPart = eventData.selectedParts.some((partId: string) => 
-                          specs.eventParts.includes(partId)
-                        );
-                        if (!hasMatchingPart) return false;
-                      }
-                    }
+                  // REGLA 1: El pack debe estar en la lista de packs disponibles para este tipo de evento
+                  if (configuredPacks.length > 0 && !configuredPacks.includes(p.id)) {
+                    console.log('❌ Pack no configurado:', p.name);
+                    return false;
                   }
                   
                   return true;
                 });
                 
+                // Aplicar reglas de recomendación para ordenar y destacar
+                const packsWithRecommendation = availablePacks.map((pack: any) => {
+                  // Buscar si hay una regla de recomendación que aplique
+                  const rule = recommendedPacksRules.find((r: any) => 
+                    r.packId === pack.id &&
+                    eventData.attendees >= r.minAttendees &&
+                    eventData.attendees <= r.maxAttendees
+                  );
+                  
+                  return {
+                    ...pack,
+                    isRecommended: !!rule,
+                    priority: rule?.priority || 999
+                  };
+                });
+                
+                // Ordenar: primero recomendados (por prioridad), luego el resto
+                const sortedPacks = packsWithRecommendation.sort((a: any, b: any) => {
+                  if (a.isRecommended && !b.isRecommended) return -1;
+                  if (!a.isRecommended && b.isRecommended) return 1;
+                  return a.priority - b.priority;
+                });
+                
                 return (
                   <>
                     {/* Packs Disponibles */}
-                    {availablePacks.length > 0 ? (
+                    {sortedPacks.length > 0 ? (
                       <div className="mb-8">
                         <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                           <span>📦</span>
                           <span>Packs Disponibles</span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {availablePacks.map((pack: any) => {
+                          {sortedPacks.map((pack: any) => {
                             const isSelected = eventData.selectedPack === pack.id;
                             
                             return (
@@ -744,7 +755,14 @@ const EventCalculatorPage = () => {
                                   )}
                                   <div className="flex-1">
                                     <div className="flex items-start justify-between">
-                                      <h4 className="font-bold text-gray-900 text-lg">{pack.name}</h4>
+                                      <div>
+                                        <h4 className="font-bold text-gray-900 text-lg">{pack.name}</h4>
+                                        {pack.isRecommended && (
+                                          <span className="inline-block mt-1 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                            ✨ Recomendado para ti
+                                          </span>
+                                        )}
+                                      </div>
                                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                                         isSelected
                                           ? 'border-resona bg-resona'
