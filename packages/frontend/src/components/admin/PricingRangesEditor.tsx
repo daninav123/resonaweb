@@ -133,9 +133,9 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
             className="bg-white border border-gray-200 rounded-lg overflow-hidden"
           >
             {/* Header del rango */}
-            <button
+            <div
               onClick={() => setExpandedRange(expandedRange === index ? null : index)}
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3 flex-1 text-left">
                 <Users className="w-5 h-5 text-blue-600" />
@@ -155,22 +155,22 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
               </div>
               <div className="flex items-center gap-2">
                 {localRanges.length > 1 && (
-                  <button
+                  <div
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemoveRange(index);
                     }}
-                    className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50"
+                    className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 cursor-pointer"
                     title="Eliminar rango"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </div>
                 )}
                 <div className="text-gray-400">
                   {expandedRange === index ? '▼' : '▶'}
                 </div>
               </div>
-            </button>
+            </div>
 
             {/* Contenido expandido */}
             {expandedRange === index && (
