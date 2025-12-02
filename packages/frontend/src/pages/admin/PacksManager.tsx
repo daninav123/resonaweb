@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Package, X, Save, Calculator } from 'lucide-react';
+import { Plus, Trash2, Edit2, Package, X, Save, Calculator, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
@@ -317,6 +317,18 @@ const PacksManager = () => {
     }
   };
 
+  const toggleActive = async (pack: any) => {
+    try {
+      const newStatus = !pack.isActive;
+      await api.put(`/packs/${pack.id}`, { isActive: newStatus });
+      toast.success(newStatus ? 'Pack activado' : 'Pack ocultado');
+      loadPacks();
+    } catch (error: any) {
+      console.error('Error cambiando estado del pack:', error);
+      toast.error(error.response?.data?.message || 'Error al cambiar estado del pack');
+    }
+  };
+
   // Detectar si un producto es de la categoría Personal
   const isPersonalProduct = (product: any) => {
     return product?.category?.name?.toLowerCase() === 'personal';
@@ -578,6 +590,7 @@ const PacksManager = () => {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Precio/Día</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Gastos Esperados</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Beneficio Esperado</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Estado</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Acciones</th>
               </tr>
             </thead>
@@ -585,15 +598,42 @@ const PacksManager = () => {
               {packs.map((pack) => {
                 const { totalCost, profit } = calculatePackCostsAndProfit(pack);
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600';
+                const isActive = pack.isActive !== false; // Por defecto true si no existe el campo
                 
                 return (
-                  <tr key={pack.id} className="border-b hover:bg-gray-50">
+                  <tr key={pack.id} className={`border-b hover:bg-gray-50 ${!isActive ? 'opacity-50' : ''}`}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">€{totalCost.toFixed(2)}</td>
                     <td className={`px-6 py-4 text-sm font-semibold ${profitColor}`}>€{profit.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        isActive 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {isActive ? (
+                          <>
+                            <Eye className="w-3 h-3" />
+                            Visible
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="w-3 h-3" />
+                            Oculto
+                          </>
+                        )}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-sm space-x-2">
+                    <button 
+                      onClick={() => toggleActive(pack)}
+                      className={`${isActive ? 'text-gray-600 hover:text-gray-800' : 'text-green-600 hover:text-green-800'}`}
+                      title={isActive ? 'Ocultar pack' : 'Mostrar pack'}
+                    >
+                      {isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                     <button 
                       onClick={() => handleEdit(pack)}
                       className="text-blue-600 hover:text-blue-800"
