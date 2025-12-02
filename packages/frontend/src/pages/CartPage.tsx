@@ -117,12 +117,11 @@ const CartPage = () => {
         notesText += `Tipo de evento: ${info.eventType}\n`;
         notesText += `Número de asistentes: ${info.attendees} personas\n`;
         
-        // Mostrar horario si está disponible
-        if (info.startTime && info.endTime) {
-          notesText += `Horario: ${info.startTime} - ${info.endTime} (${info.duration} horas)\n`;
-        } else {
-          notesText += `Duración: ${info.duration} ${info.durationType === 'hours' ? 'horas' : 'días'}\n`;
+        // Mostrar hora de inicio
+        if (info.startTime) {
+          notesText += `Hora de inicio: ${info.startTime}\n`;
         }
+        notesText += `Duración: ${info.duration} ${info.durationType === 'hours' ? 'horas' : 'días'}\n`;
         
         if (info.eventDate) {
           const date = new Date(info.eventDate);

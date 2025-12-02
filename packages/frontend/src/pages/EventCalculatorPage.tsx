@@ -17,8 +17,7 @@ interface EventData {
   attendees: number;
   duration: number;
   durationType: 'hours' | 'days';
-  startTime: string; // Hora de inicio (formato HH:mm)
-  endTime: string; // Hora de fin (formato HH:mm)
+  startTime: string; // Hora de inicio (formato HH:00 o HH:30)
   eventDate: string;
   eventLocation: string; // Dirección del evento
   // Partes seleccionadas (IDs de las partes que el cliente quiere)
@@ -41,7 +40,6 @@ const EventCalculatorPage = () => {
     duration: 4,
     durationType: 'hours',
     startTime: '10:00',
-    endTime: '14:00',
     eventDate: '',
     eventLocation: '',
     selectedParts: [],
@@ -251,7 +249,6 @@ const EventCalculatorPage = () => {
         duration: eventData.duration,
         durationType: eventData.durationType,
         startTime: eventData.startTime,
-        endTime: eventData.endTime,
         eventDate: eventData.eventDate,
         eventLocation: eventData.eventLocation,
         selectedParts: eventData.selectedParts,
@@ -496,72 +493,28 @@ const EventCalculatorPage = () => {
                   </div>
                 </div>
 
-                {/* Horario del Evento */}
+                {/* Hora de inicio del Evento */}
                 <div>
                   <label className="flex items-center gap-2 text-gray-700 font-medium mb-2">
                     <Clock className="w-5 h-5 text-resona" />
-                    Horario del Evento
+                    Hora de Inicio
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
-                      <input
-                        type="time"
-                        value={eventData.startTime}
-                        onChange={(e) => {
-                          const newStartTime = e.target.value;
-                          setEventData({ ...eventData, startTime: newStartTime });
-                          
-                          // Calcular duración automáticamente
-                          if (newStartTime && eventData.endTime) {
-                            const [startH, startM] = newStartTime.split(':').map(Number);
-                            const [endH, endM] = eventData.endTime.split(':').map(Number);
-                            const startMinutes = startH * 60 + startM;
-                            const endMinutes = endH * 60 + endM;
-                            let durationMinutes = endMinutes - startMinutes;
-                            
-                            // Si la hora de fin es menor, asumimos que es al día siguiente
-                            if (durationMinutes < 0) {
-                              durationMinutes += 24 * 60;
-                            }
-                            
-                            const hours = Math.round(durationMinutes / 60 * 10) / 10; // Redondear a 1 decimal
-                            setEventData(prev => ({ ...prev, duration: hours, durationType: 'hours' }));
-                          }
-                        }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
-                      <input
-                        type="time"
-                        value={eventData.endTime}
-                        onChange={(e) => {
-                          const newEndTime = e.target.value;
-                          setEventData({ ...eventData, endTime: newEndTime });
-                          
-                          // Calcular duración automáticamente
-                          if (eventData.startTime && newEndTime) {
-                            const [startH, startM] = eventData.startTime.split(':').map(Number);
-                            const [endH, endM] = newEndTime.split(':').map(Number);
-                            const startMinutes = startH * 60 + startM;
-                            const endMinutes = endH * 60 + endM;
-                            let durationMinutes = endMinutes - startMinutes;
-                            
-                            // Si la hora de fin es menor, asumimos que es al día siguiente
-                            if (durationMinutes < 0) {
-                              durationMinutes += 24 * 60;
-                            }
-                            
-                            const hours = Math.round(durationMinutes / 60 * 10) / 10; // Redondear a 1 decimal
-                            setEventData(prev => ({ ...prev, duration: hours, durationType: 'hours' }));
-                          }
-                        }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
-                      />
-                    </div>
-                  </div>
+                  <select
+                    value={eventData.startTime}
+                    onChange={(e) => setEventData({ ...eventData, startTime: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  >
+                    {Array.from({ length: 24 }, (_, i) => {
+                      const hour = String(i).padStart(2, '0');
+                      return (
+                        <optgroup key={i} label={`${hour}:00 - ${hour}:30`}>
+                          <option value={`${hour}:00`}>{hour}:00</option>
+                          <option value={`${hour}:30`}>{hour}:30</option>
+                        </optgroup>
+                      );
+                    })}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">Solo horas en punto y media</p>
                 </div>
 
                 {/* Event Date */}
