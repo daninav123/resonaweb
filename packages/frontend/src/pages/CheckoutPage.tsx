@@ -224,6 +224,12 @@ const CheckoutPage = () => {
     }
     if (savedInstallation) setIncludeInstallation(savedInstallation === 'true');
     
+    // Cargar notas del pedido desde localStorage
+    const savedNotes = localStorage.getItem('checkoutOrderNotes');
+    if (savedNotes) {
+      setFormData(prev => ({ ...prev, notes: savedNotes }));
+    }
+    
     // Verificar que hay items y tienen fechas
     if (items.length === 0) {
       toast.error('Tu carrito está vacío');
@@ -340,12 +346,25 @@ const CheckoutPage = () => {
   const calculateSubtotal = () => {
     if (!cartItems || cartItems.length === 0) return 0;
     return cartItems.reduce((total: number, item: GuestCartItem) => {
+      // Items de eventos: precio incluye partes + extras (ya calculado)
+      if (item.eventMetadata) {
+        const packPrice = Number(item.product.pricePerDay) || 0;
+        const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
+        const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
+        return total + packPrice + partsTotal + extrasTotal;
+      }
+      
+      // Items normales: precio por día * días
       const days = calculateDays(item.startDate || '', item.endDate || '');
       return total + (item.product.pricePerDay * days * item.quantity);
     }, 0);
   };
 
   const calculateShippingCost = () => {
+    // Items de eventos ya incluyen transporte y montaje
+    const hasEventItems = cartItems.some((item: any) => item.eventMetadata);
+    if (hasEventItems) return 0;
+    
     if (formData.deliveryOption !== 'delivery') return 0;
     
     if (calculatedShipping) {

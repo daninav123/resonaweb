@@ -189,29 +189,86 @@ const CartPage = () => {
     }
   }, []);
 
-  // Autocompletar fechas para items de eventos
+  // Autocompletar fechas y notas para items de eventos
   useEffect(() => {
-    // Si ya hay fechas establecidas manualmente, no autocompletar
-    if (globalDates.start && globalDates.end) {
-      return;
-    }
+    // Buscar items de eventos
+    const eventItems = guestCartItems.filter((item: any) => item.eventMetadata);
 
-    // Buscar items de eventos con fecha
-    const eventItems = guestCartItems.filter((item: any) => 
-      item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0
-    );
+    if (eventItems.length === 0) return;
 
-    if (eventItems.length > 0) {
-      // Usar la fecha del primer evento encontrado
+    // Autocompletar fechas si no hay fechas establecidas
+    if (!globalDates.start && !globalDates.end && eventItems[0].eventMetadata?.eventDate) {
       const firstEventDate = eventItems[0].eventMetadata.eventDate;
-      
-      // Los eventos son siempre de 1 día (inicio = fin)
       setGlobalDates({
         start: firstEventDate,
         end: firstEventDate
       });
     }
-  }, [guestCartItems, globalDates.start, globalDates.end]);
+
+    // Construir notas automáticas con detalles de packs y extras
+    let autoNotes = '📋 DETALLES DEL EVENTO:\n\n';
+    
+    eventItems.forEach((item: any, index: number) => {
+      autoNotes += `${index + 1}. ${item.product.name}\n`;
+      
+      // Información del evento
+      if (item.eventMetadata.eventType) {
+        autoNotes += `   🎉 Tipo: ${item.eventMetadata.eventType}\n`;
+      }
+      if (item.eventMetadata.attendees) {
+        autoNotes += `   👥 Asistentes: ${item.eventMetadata.attendees}\n`;
+      }
+      if (item.eventMetadata.eventDate) {
+        autoNotes += `   📅 Fecha: ${new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}\n`;
+      }
+      if (item.eventMetadata.eventLocation) {
+        autoNotes += `   📍 Ubicación: ${item.eventMetadata.eventLocation}\n`;
+      }
+      
+      autoNotes += '\n';
+      
+      // Partes del Evento
+      if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+        autoNotes += '   📦 Partes del Evento:\n';
+        item.eventMetadata.selectedParts.forEach((part: any) => {
+          const price = part.price || 0;
+          autoNotes += `      • ${part.name}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+        });
+        autoNotes += '\n';
+      }
+      
+      // Extras
+      if (item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0) {
+        autoNotes += '   ✨ Extras:\n';
+        item.eventMetadata.selectedExtras.forEach((extra: any) => {
+          const price = extra.total || extra.price || 0;
+          const qty = extra.quantity || 1;
+          autoNotes += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+        });
+        autoNotes += '\n';
+      }
+      
+      // Subtotales
+      if (item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) {
+        autoNotes += '   💰 Subtotales:\n';
+        if (item.eventMetadata.partsTotal) {
+          autoNotes += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
+        }
+        if (item.eventMetadata.extrasTotal) {
+          autoNotes += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+        }
+      }
+      
+      autoNotes += '\n';
+    });
+    
+    autoNotes += '---\n\n💬 Notas adicionales:\n';
+    
+    // Solo actualizar si las notas están vacías o solo tienen el formato antiguo
+    if (!orderNotes || orderNotes.includes('cartEventInfo')) {
+      setOrderNotes(autoNotes);
+    }
+  }, [guestCartItems, globalDates.start, globalDates.end, orderNotes]);
 
   // Automarcar transporte + instalación para items de eventos (ya incluido en precio)
   useEffect(() => {
