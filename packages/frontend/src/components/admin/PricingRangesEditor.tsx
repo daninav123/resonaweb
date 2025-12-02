@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DollarSign, Plus, Trash2, Users, Package, X } from 'lucide-react';
-import { PricingRange } from '../../types/calculator.types';
+import { PricingRange, RangeProduct } from '../../types/calculator.types';
 
 interface PricingRangesEditorProps {
   ranges: PricingRange[];
@@ -48,10 +48,10 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
   const handleAddProduct = (rangeIndex: number, productId: string) => {
     const updated = [...localRanges];
     const products = updated[rangeIndex].recommendedProducts || [];
-    if (!products.includes(productId)) {
+    if (!products.find(p => p.productId === productId)) {
       updated[rangeIndex] = {
         ...updated[rangeIndex],
-        recommendedProducts: [...products, productId]
+        recommendedProducts: [...products, { productId, quantity: 1 }]
       };
       setLocalRanges(updated);
       onChange(updated);
@@ -63,7 +63,20 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
     const products = updated[rangeIndex].recommendedProducts || [];
     updated[rangeIndex] = {
       ...updated[rangeIndex],
-      recommendedProducts: products.filter(id => id !== productId)
+      recommendedProducts: products.filter(p => p.productId !== productId)
+    };
+    setLocalRanges(updated);
+    onChange(updated);
+  };
+
+  const handleUpdateProductQuantity = (rangeIndex: number, productId: string, quantity: number) => {
+    const updated = [...localRanges];
+    const products = updated[rangeIndex].recommendedProducts || [];
+    updated[rangeIndex] = {
+      ...updated[rangeIndex],
+      recommendedProducts: products.map(p =>
+        p.productId === productId ? { ...p, quantity } : p
+      )
     };
     setLocalRanges(updated);
     onChange(updated);
@@ -208,7 +221,7 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
                   >
                     <option value="">+ Añadir producto...</option>
                     {allProducts
-                      .filter(p => !(range.recommendedProducts || []).includes(p.id))
+                      .filter(p => !(range.recommendedProducts || []).find(rp => rp.productId === p.id))
                       .map(product => (
                         <option key={product.id} value={product.id}>
                           {product.name} - €{Number(product.pricePerDay || 0).toFixed(2)}/día
@@ -219,22 +232,34 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
                   {/* Lista de productos */}
                   {range.recommendedProducts && range.recommendedProducts.length > 0 ? (
                     <div className="space-y-2">
-                      {range.recommendedProducts.map(productId => {
-                        const product = allProducts.find(p => p.id === productId);
+                      {range.recommendedProducts.map(rangeProduct => {
+                        const product = allProducts.find(p => p.id === rangeProduct.productId);
                         if (!product) return null;
                         return (
                           <div
-                            key={productId}
-                            className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-2"
+                            key={rangeProduct.productId}
+                            className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-3"
                           >
-                            <div className="text-sm">
-                              <div className="font-medium text-gray-900">{product.name}</div>
+                            <div className="flex-1">
+                              <div className="font-medium text-sm text-gray-900">{product.name}</div>
                               <div className="text-xs text-gray-600">
                                 €{Number(product.pricePerDay || 0).toFixed(2)}/día
                               </div>
                             </div>
+                            <div className="flex items-center gap-2">
+                              <label className="text-xs font-medium text-gray-700">Cantidad:</label>
+                              <input
+                                type="number"
+                                min="1"
+                                value={rangeProduct.quantity}
+                                onChange={(e) =>
+                                  handleUpdateProductQuantity(index, rangeProduct.productId, parseInt(e.target.value) || 1)
+                                }
+                                className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-resona"
+                              />
+                            </div>
                             <button
-                              onClick={() => handleRemoveProduct(index, productId)}
+                              onClick={() => handleRemoveProduct(index, rangeProduct.productId)}
                               className="text-red-600 hover:text-red-800 p-1"
                             >
                               <X className="w-4 h-4" />

@@ -1,10 +1,15 @@
 export type ServiceLevel = 'none' | 'basic' | 'intermediate' | 'professional' | 'premium';
 
+export interface RangeProduct {
+  productId: string; // ID del producto
+  quantity: number; // Cantidad de este producto
+}
+
 export interface PricingRange {
   minAttendees: number; // Mínimo de invitados (ej: 0)
   maxAttendees: number; // Máximo de invitados (ej: 50)
   price: number; // Precio para este rango
-  recommendedProducts?: string[]; // IDs de productos recomendados para este rango
+  recommendedProducts?: RangeProduct[]; // Productos con cantidades para este rango
 }
 
 export interface EventPart {
