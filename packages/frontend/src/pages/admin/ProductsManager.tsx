@@ -186,19 +186,37 @@ const ProductsManager = () => {
       return;
     }
 
-    // Validar que el precio sea mayor a 0
-    if (!formData.pricePerDay || formData.pricePerDay <= 0) {
-      toast.error('El precio por día debe ser mayor a 0');
-      return;
+    // Validar precios según el tipo de producto
+    if (formData.isConsumable) {
+      // Para consumibles: validar precio por unidad
+      if (!formData.pricePerUnit || formData.pricePerUnit <= 0) {
+        toast.error('El precio por unidad debe ser mayor a 0');
+        return;
+      }
+    } else {
+      // Para productos normales: validar precio por día
+      if (!formData.pricePerDay || formData.pricePerDay <= 0) {
+        toast.error('El precio por día debe ser mayor a 0');
+        return;
+      }
     }
 
     try {
-      // Calcular precios automáticamente
+      // Preparar datos del producto
       const productData: any = {
         ...formData,
-        pricePerWeekend: formData.pricePerDay, // Fin de semana = mismo precio que 1 día
-        pricePerWeek: formData.pricePerDay * 5, // 5x para semana completa
       };
+
+      // Solo calcular precios de alquiler si NO es consumible
+      if (!formData.isConsumable) {
+        productData.pricePerWeekend = formData.pricePerDay; // Fin de semana = mismo precio que 1 día
+        productData.pricePerWeek = formData.pricePerDay * 5; // 5x para semana completa
+      } else {
+        // Para consumibles, asegurar que los campos de alquiler estén en 0
+        productData.pricePerDay = 0;
+        productData.pricePerWeekend = 0;
+        productData.pricePerWeek = 0;
+      }
       
       // Limpiar campos opcionales vacíos que causan problemas con Prisma
       if (!productData.purchaseDate || productData.purchaseDate === '') {
