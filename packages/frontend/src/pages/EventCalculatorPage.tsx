@@ -682,8 +682,9 @@ const EventCalculatorPage = () => {
                 const configuredPacks = eventConfig?.availablePacks || [];
                 const recommendedPacksRules = eventConfig?.recommendedPacks || [];
                 
-                console.log('📦 Packs configurados para', eventConfig?.name, ':', configuredPacks);
-                console.log('📊 Reglas de recomendación:', recommendedPacksRules);
+                // Solo en desarrollo si es necesario
+                // console.log('📦 Packs configurados para', eventConfig?.name, ':', configuredPacks);
+                // console.log('📊 Reglas de recomendación:', recommendedPacksRules);
                 
                 // Filtrar packs según la configuración del admin
                 const availablePacks = catalogProducts.filter((p: any) => {
@@ -691,7 +692,6 @@ const EventCalculatorPage = () => {
                   
                   // REGLA 1: El pack debe estar en la lista de packs disponibles para este tipo de evento
                   if (configuredPacks.length > 0 && !configuredPacks.includes(p.id)) {
-                    console.log('❌ Pack no configurado:', p.name);
                     return false;
                   }
                   
@@ -882,7 +882,8 @@ const EventCalculatorPage = () => {
                 const eventConfig = calculatorConfig.eventTypes.find((et: any) => et.id === eventData.eventType);
                 const availableExtras = eventConfig?.availableExtras || [];
                 
-                console.log('✨ Extras configurados para', eventConfig?.name, ':', availableExtras);
+                // Solo en desarrollo si es necesario
+                // console.log('✨ Extras configurados para', eventConfig?.name, ':', availableExtras);
                 
                 // Filtrar productos/packs extras
                 const extrasProducts = catalogProducts.filter((p: any) => {
@@ -890,18 +891,15 @@ const EventCalculatorPage = () => {
                   
                   // Si hay extras configurados, mostrar SOLO esos (productos O packs)
                   if (availableExtras.length > 0) {
-                    const isConfigured = availableExtras.includes(p.id);
-                    if (!isConfigured) {
-                      console.log('❌ Extra no configurado:', p.name, 'isPack:', p.isPack);
-                    }
-                    return isConfigured;
+                    return availableExtras.includes(p.id);
                   }
                   
                   // Si no hay configuración, mostrar todos los productos (NO packs)
                   return !p.isPack;
                 });
                 
-                console.log('📦 Extras encontrados:', extrasProducts.length, 'de', availableExtras.length, 'configurados');
+                // Solo en desarrollo si es necesario
+                // console.log('📦 Extras encontrados:', extrasProducts.length, 'de', availableExtras.length, 'configurados');
                 
                 // Agrupar productos por categoría
                 const productsByCategory: Record<string, any[]> = {};

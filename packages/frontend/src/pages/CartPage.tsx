@@ -318,7 +318,6 @@ const CartPage = () => {
           // Si el producto no tiene stock definido, actualizar desde la API
           if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
             try {
-              console.log(`🔄 Actualizando producto sin stock: ${item.product.name}`);
               const response: any = await api.get(`/products/${item.productId}`);
               const productData = response.data.data || response.data;
               
@@ -329,11 +328,15 @@ const CartPage = () => {
                 realStock: productData.realStock,
               };
               needsUpdate = true;
-              console.log(`✅ Stock actualizado: ${item.product.name} -> stock: ${productData.stock}`);
-            } catch (error) {
-              console.error(`❌ Error actualizando producto ${item.productId}:`, error);
+            } catch (error: any) {
+              // Si es 404, el producto fue eliminado - solo advertencia silenciosa
+              if (error?.response?.status === 404) {
+                console.warn(`⚠️ Producto no encontrado (puede haber sido eliminado): ${item.product.name}`);
+              } else {
+                // Otros errores sí son importantes
+                console.error(`❌ Error actualizando producto ${item.productId}:`, error);
+              }
               // Mantener el producto en el carrito aunque de error
-              // Puede ser un producto recién configurado que aún no existe en DB
             }
           }
           return item;
