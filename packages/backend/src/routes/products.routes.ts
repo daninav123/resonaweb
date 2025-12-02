@@ -48,14 +48,15 @@ router.get('/featured', productController.getFeaturedProducts);
 router.get('/search', productController.searchProducts);
 router.get('/category/:categoryId', productController.getProductsByCategory);
 
+// Check availability endpoint (BEFORE :id routes to avoid conflicts)
+router.post('/check-availability', productController.checkAvailability);
+
 // Pack routes (BEFORE generic :id routes)
 router.get('/packs', productController.getAllPacks);
 router.get('/:id/pack-details', productController.getPackWithComponents);
 router.post('/:id/check-pack-availability', productController.checkPackAvailability);
 router.get('/:id/max-pack-availability', productController.getPackMaxAvailability);
 
-// Check availability endpoint
-router.post('/check-availability', productController.checkAvailability);
 // Rutas específicas ANTES de las genéricas
 router.get('/slug/:slug', productController.getProductBySlug);
 router.get('/:id/related', productController.getRelatedProducts);
