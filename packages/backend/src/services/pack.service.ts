@@ -333,6 +333,8 @@ class PackService {
     autoCalculate?: boolean;
     includeShipping?: boolean;
     includeInstallation?: boolean;
+    partsPricing?: Record<string, { percentage: number; included: boolean }> | null;
+    enablePartsPricing?: boolean;
     items: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     imageUrl?: string;
     featured?: boolean;
@@ -364,6 +366,8 @@ class PackService {
         featured: data.featured || false,
         includeShipping: data.includeShipping !== false, // Por defecto true
         includeInstallation: data.includeInstallation !== false, // Por defecto true
+        partsPricing: data.partsPricing || null,
+        enablePartsPricing: data.enablePartsPricing || false,
         items: {
           create: data.items.map(item => ({
             productId: item.productId,
@@ -452,6 +456,8 @@ class PackService {
       isActive?: boolean;
       includeShipping?: boolean;
       includeInstallation?: boolean;
+      partsPricing?: Record<string, { percentage: number; included: boolean }> | null;
+      enablePartsPricing?: boolean;
       items?: Array<{ productId: string; quantity: number; numberOfPeople?: number; hoursPerPerson?: number }>;
     }
   ) {
@@ -489,6 +495,8 @@ class PackService {
       if (data.isActive !== undefined) updateData.isActive = data.isActive;
       if (data.includeShipping !== undefined) updateData.includeShipping = data.includeShipping;
       if (data.includeInstallation !== undefined) updateData.includeInstallation = data.includeInstallation;
+      if (data.partsPricing !== undefined) updateData.partsPricing = data.partsPricing;
+      if (data.enablePartsPricing !== undefined) updateData.enablePartsPricing = data.enablePartsPricing;
       
       if (data.items) {
         updateData.items = {

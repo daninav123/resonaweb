@@ -471,6 +471,10 @@ model Pack {
   includeShipping         Boolean   @default(true)                  // Si incluye transporte en el precio
   includeInstallation     Boolean   @default(true)                  // Si incluye montaje en el precio
   
+  // Precio variable por partes del evento
+  partsPricing            Json?                                     // { "partId": { "percentage": 25, "included": true } }
+  enablePartsPricing      Boolean   @default(false)                 // Si el precio varía según partes seleccionadas
+  
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)
   

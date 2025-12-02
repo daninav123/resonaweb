@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit2, Package, X, Save, Calculator, Eye, EyeOff } from '
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
+import PartsPricingEditor from '../../components/admin/PartsPricingEditor';
 
 const PacksManager = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const PacksManager = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [packsCategoryId, setPacksCategoryId] = useState<string>('');
+  const [calculatorConfig, setCalculatorConfig] = useState<any>(null);
+  const [selectedEventType, setSelectedEventType] = useState<string>('');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +23,8 @@ const PacksManager = () => {
     customFinalPrice: '',
     includeShipping: true, // Incluir transporte por defecto
     includeInstallation: true, // Incluir montaje por defecto
+    partsPricing: null as Record<string, { percentage: number; included: boolean }> | null,
+    enablePartsPricing: false,
     items: [] as Array<{ 
       productId: string; 
       quantity: number;
@@ -37,7 +42,20 @@ const PacksManager = () => {
     loadPacks();
     loadCategories();
     loadProducts();
+    loadCalculatorConfig();
   }, []);
+
+  const loadCalculatorConfig = () => {
+    try {
+      const saved = localStorage.getItem('advancedCalculatorConfig');
+      if (saved) {
+        const config = JSON.parse(saved);
+        setCalculatorConfig(config);
+      }
+    } catch (e) {
+      console.error('Error cargando configuración de calculadora:', e);
+    }
+  };
 
   const loadPacks = async () => {
     try {
@@ -171,6 +189,8 @@ const PacksManager = () => {
       customFinalPrice: '',
       includeShipping: true,
       includeInstallation: true,
+      partsPricing: null,
+      enablePartsPricing: false,
       items: [],
     });
     const newFilters = {
@@ -190,6 +210,8 @@ const PacksManager = () => {
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
       includeShipping: pack.includeShipping !== false, // Por defecto true
       includeInstallation: pack.includeInstallation !== false, // Por defecto true
+      partsPricing: pack.partsPricing || null,
+      enablePartsPricing: pack.enablePartsPricing || false,
       items: pack.items?.map((item: any) => ({
         productId: item.productId || item.product?.id,
         quantity: item.quantity,
@@ -242,6 +264,8 @@ const PacksManager = () => {
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
+        partsPricing: formData.partsPricing,
+        enablePartsPricing: formData.enablePartsPricing,
         items: formData.items.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -1092,6 +1116,55 @@ const PacksManager = () => {
                             </p>
                           </div>
                         </details>
+
+                        {/* Precio Variable por Partes */}
+                        {calculatorConfig && (
+                          <div className="mt-6">
+                            <div className="mb-3">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Evento (para precio variable)
+                              </label>
+                              <select
+                                value={selectedEventType}
+                                onChange={(e) => setSelectedEventType(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Sin asociar a tipo de evento</option>
+                                {calculatorConfig.eventTypes?.map((eventType: any) => (
+                                  <option key={eventType.id} value={eventType.id}>
+                                    {eventType.icon} {eventType.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Selecciona un tipo de evento para habilitar precio variable por partes
+                              </p>
+                            </div>
+
+                            {selectedEventType && (() => {
+                              const eventType = calculatorConfig.eventTypes?.find((et: any) => et.id === selectedEventType);
+                              const totals = calculatePackTotals();
+                              
+                              return eventType?.parts?.length > 0 ? (
+                                <PartsPricingEditor
+                                  eventParts={eventType.parts}
+                                  packFinalPrice={totals.finalPrice}
+                                  partsPricing={formData.partsPricing}
+                                  enablePartsPricing={formData.enablePartsPricing}
+                                  onChange={(data) => setFormData({ 
+                                    ...formData, 
+                                    partsPricing: data.partsPricing,
+                                    enablePartsPricing: data.enablePartsPricing
+                                  })}
+                                />
+                              ) : (
+                                <div className="text-sm text-gray-500 italic p-3 bg-gray-50 rounded">
+                                  Este tipo de evento no tiene partes configuradas
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
                       </div>
                     );
                   })()}
