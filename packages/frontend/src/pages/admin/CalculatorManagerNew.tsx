@@ -414,11 +414,11 @@ const CalculatorManagerNew = () => {
                           Extras Disponibles para este Evento
                         </label>
                         <p className="text-xs text-gray-500">
-                          Solo estos productos se mostrarán como extras en la calculadora para este tipo de evento
+                          Productos individuales y packs que se mostrarán como extras en la calculadora
                         </p>
                       </div>
                       <PackSelector
-                        allPacks={catalogProducts.filter((p: any) => !p.isPack)}
+                        allPacks={catalogProducts}
                         selectedPacks={selectedEvent.availableExtras || []}
                         onChange={(extras) => updateEventType(selectedEventIndex, 'availableExtras', extras)}
                       />
