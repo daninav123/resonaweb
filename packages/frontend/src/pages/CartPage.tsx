@@ -334,7 +334,7 @@ const CartPage = () => {
         console.log('✅ Carrito actualizado con información de stock');
         
         if (productsRemoved > 0) {
-          toast.warning(`${productsRemoved} producto(s) eliminado(s) del carrito (ya no existen)`, { duration: 4000 });
+          toast.error(`${productsRemoved} producto(s) eliminado(s) del carrito (ya no existen)`, { duration: 4000 });
         } else {
           toast.success('Carrito actualizado con información de stock actual', { duration: 3000 });
         }
