@@ -209,6 +209,30 @@ const EventCalculatorPage = () => {
         });
       }
       
+      // Preparar extras seleccionados
+      const selectedExtrasWithPrices: Array<{id: string; name: string; quantity: number; pricePerDay: number; total: number}> = [];
+      let extrasTotal = 0;
+      
+      for (const [productId, quantity] of Object.entries(eventData.selectedExtras)) {
+        if (Number(quantity) > 0) {
+          const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+          if (product) {
+            const basePrice = Number(product.pricePerDay);
+            const total = basePrice * Number(quantity);
+            selectedExtrasWithPrices.push({
+              id: product.id,
+              name: product.name,
+              quantity: Number(quantity),
+              pricePerDay: basePrice,
+              total: total
+            });
+            extrasTotal += total;
+            totalCalculated += total;
+            itemCount += Number(quantity);
+          }
+        }
+      }
+      
       const eventMetadata = {
         eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
         attendees: eventData.attendees,
@@ -218,10 +242,12 @@ const EventCalculatorPage = () => {
         eventDate: eventData.eventDate,
         eventLocation: eventData.eventLocation,
         selectedParts: selectedPartsWithPrices,
-        partsTotal: partsTotal
+        partsTotal: partsTotal,
+        selectedExtras: selectedExtrasWithPrices,
+        extrasTotal: extrasTotal
       };
 
-      // 3. Añadir pack al carrito con metadata del evento (SIEMPRE localStorage)
+      // 3. Añadir SOLO el pack al carrito con todo el metadata (partes + extras)
       if (eventData.selectedPack) {
         const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
         if (pack) {
@@ -230,22 +256,7 @@ const EventCalculatorPage = () => {
           const shipping = Number(pack.shippingCost || 0);
           const installation = Number(pack.installationCost || 0);
           totalCalculated += basePrice + shipping + installation + partsTotal;
-          itemCount += 1;
-        }
-      }
-
-      // 4. Añadir extras al carrito con metadata del evento (SIEMPRE localStorage)
-      for (const [productId, quantity] of Object.entries(eventData.selectedExtras)) {
-        if (Number(quantity) > 0) {
-          const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
-          if (product) {
-            guestCart.addItem(product, Number(quantity), eventMetadata);
-            const basePrice = Number(product.pricePerDay);
-            const shipping = Number(product.shippingCost || 0);
-            const installation = Number(product.installationCost || 0);
-            totalCalculated += (basePrice + shipping + installation) * Number(quantity);
-            itemCount += Number(quantity);
-          }
+          itemCount = 1; // Solo el pack como un item
         }
       }
 

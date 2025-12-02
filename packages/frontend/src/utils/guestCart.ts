@@ -33,6 +33,14 @@ export interface GuestCartItem {
       price: number;
     }>;
     partsTotal?: number;
+    selectedExtras?: Array<{
+      id: string;
+      name: string;
+      quantity: number;
+      pricePerDay: number;
+      total: number;
+    }>;
+    extrasTotal?: number;
   };
 }
 
