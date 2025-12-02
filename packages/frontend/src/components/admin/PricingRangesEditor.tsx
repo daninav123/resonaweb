@@ -11,17 +11,24 @@ interface PricingRangesEditorProps {
 const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allProducts, onChange }) => {
   // Normalizar los rangos para asegurar que recommendedProducts es siempre RangeProduct[]
   const normalizeRanges = (rangesData: any[]): PricingRange[] => {
-    return rangesData.map(range => ({
-      ...range,
-      recommendedProducts: (range.recommendedProducts || []).map((product: any) => {
-        // Si es un string (ID), convertir a RangeProduct con cantidad 1
-        if (typeof product === 'string') {
-          return { productId: product, quantity: 1 };
-        }
-        // Si ya es un RangeProduct, mantenerlo
-        return product;
-      })
-    }));
+    return rangesData.map(range => {
+      const products = range.recommendedProducts || [];
+      const normalizedProducts = Array.isArray(products) 
+        ? products.map((product: any) => {
+            // Si es un string (ID), convertir a RangeProduct con cantidad 1
+            if (typeof product === 'string') {
+              return { productId: product, quantity: 1 };
+            }
+            // Si ya es un RangeProduct, mantenerlo
+            return product || { productId: '', quantity: 1 };
+          })
+        : [];
+      
+      return {
+        ...range,
+        recommendedProducts: normalizedProducts
+      };
+    });
   };
 
   const [localRanges, setLocalRanges] = useState<PricingRange[]>(
@@ -122,7 +129,7 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
       <div className="space-y-3">
         {localRanges.map((range, index) => (
           <div
-            key={index}
+            key={`range-${index}-${range.minAttendees}-${range.maxAttendees}`}
             className="bg-white border border-gray-200 rounded-lg overflow-hidden"
           >
             {/* Header del rango */}
@@ -235,13 +242,18 @@ const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allPr
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona text-sm mb-3"
                   >
                     <option value="">+ Añadir producto...</option>
-                    {allProducts
-                      .filter(p => !(range.recommendedProducts || []).find(rp => rp.productId === p.id))
-                      .map(product => (
-                        <option key={product.id} value={product.id}>
-                          {product.name} - €{Number(product.pricePerDay || 0).toFixed(2)}/día
-                        </option>
-                      ))}
+                    {allProducts && allProducts.length > 0
+                      ? allProducts
+                          .filter(p => {
+                            const assignedProducts = range.recommendedProducts || [];
+                            return !assignedProducts.find(rp => rp && rp.productId === p.id);
+                          })
+                          .map(product => (
+                            <option key={product.id} value={product.id}>
+                              {product.name} - €{Number(product.pricePerDay || 0).toFixed(2)}/día
+                            </option>
+                          ))
+                      : null}
                   </select>
 
                   {/* Lista de productos */}
