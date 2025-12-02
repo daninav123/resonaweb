@@ -874,7 +874,7 @@ const EventCalculatorPage = () => {
                 console.log('✨ Extras configurados para', eventConfig?.name, ':', availableExtras);
                 
                 // Filtrar productos/packs extras
-                let extrasProducts = catalogProducts.filter((p: any) => {
+                const extrasProducts = catalogProducts.filter((p: any) => {
                   if (!p.isActive) return false;
                   
                   // Si hay extras configurados, mostrar SOLO esos (productos O packs)
@@ -890,11 +890,7 @@ const EventCalculatorPage = () => {
                   return !p.isPack;
                 });
                 
-                // Si no se encontró ningún extra configurado, mostrar todos los productos (no packs)
-                if (availableExtras.length > 0 && extrasProducts.length === 0) {
-                  console.log('⚠️ No se encontraron extras configurados, mostrando todos los productos');
-                  extrasProducts = catalogProducts.filter((p: any) => p.isActive && !p.isPack);
-                }
+                console.log('📦 Extras encontrados:', extrasProducts.length, 'de', availableExtras.length, 'configurados');
                 
                 // Agrupar productos por categoría
                 const productsByCategory: Record<string, any[]> = {};
