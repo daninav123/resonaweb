@@ -354,19 +354,17 @@ const CartPage = () => {
     const dates = getEffectiveDates(item);
     const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
     
-    // Calcular precio de las partes (sin incluir el pack)
+    // Calcular precio de las partes, considerando que el pack se muestra en Disco/Fiesta
     let partsPrice = 0;
     if (item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0) {
       item.eventMetadata.selectedParts.forEach((part: any) => {
-        partsPrice += part.price;
+        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+        const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+        partsPrice += displayPrice;
       });
     }
     
-    // Sumar el precio del pack como extra
-    const packPrice = Number(item.product.pricePerDay);
-    const totalPrice = partsPrice + packPrice;
-    
-    return totalPrice * days * item.quantity;
+    return partsPrice * days * item.quantity;
   };
 
   const calculateShippingCost = () => {
@@ -786,46 +784,40 @@ const CartPage = () => {
                           
                           {/* Partes del evento si existen */}
                           {item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0 && (() => {
-                            // Calcular total de partes (sin el pack)
-                            let totalPartsOnly = 0;
+                            // Calcular el total real considerando el precio del pack en la parte de fiesta
+                            let totalPartsDisplay = 0;
                             
                             return (
-                              <>
-                                <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                  <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
-                                  <div className="space-y-1">
-                                    {item.eventMetadata.selectedParts.map((part: any) => {
-                                      totalPartsOnly += part.price;
-                                      
-                                      return (
-                                        <div key={part.id} className="flex justify-between items-center text-xs">
+                              <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
+                                <div className="space-y-1">
+                                  {item.eventMetadata.selectedParts.map((part: any) => {
+                                    // Si es la parte de Disco/Fiesta, mostrar el precio del pack
+                                    const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                                    const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+                                    totalPartsDisplay += displayPrice;
+                                    
+                                    return (
+                                      <div key={part.id}>
+                                        <div className="flex justify-between items-center text-xs">
                                           <span className="text-purple-600">{part.icon} {part.name}</span>
-                                          <span className="font-semibold text-purple-700">€{part.price.toFixed(2)}</span>
+                                          <span className="font-semibold text-purple-700">€{displayPrice.toFixed(2)}</span>
                                         </div>
-                                      );
-                                    })}
-                                    <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
-                                      <span className="font-semibold text-purple-700">Total Partes:</span>
-                                      <span className="font-bold text-purple-800">€{totalPartsOnly.toFixed(2)}</span>
-                                    </div>
+                                        {/* Si es parte de fiesta, mostrar el nombre del pack debajo */}
+                                        {isPartyPart && (
+                                          <div className="ml-4 mt-1">
+                                            <span className="text-xs text-gray-600">📦 {item.product.name}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                  <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
+                                    <span className="font-semibold text-purple-700">Total Partes:</span>
+                                    <span className="font-bold text-purple-800">€{totalPartsDisplay.toFixed(2)}</span>
                                   </div>
                                 </div>
-                                
-                                {/* Extras (pack) */}
-                                <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                  <p className="text-xs font-semibold text-blue-700 mb-2">✨ Extras</p>
-                                  <div className="space-y-1">
-                                    <div className="flex justify-between items-center text-xs">
-                                      <span className="text-blue-600">📦 {item.product.name}</span>
-                                      <span className="font-semibold text-blue-700">€{Number(item.product.pricePerDay).toFixed(2)}</span>
-                                    </div>
-                                    <div className="border-t border-blue-300 mt-2 pt-2 flex justify-between items-center">
-                                      <span className="font-semibold text-blue-700">Total Extras:</span>
-                                      <span className="font-bold text-blue-800">€{Number(item.product.pricePerDay).toFixed(2)}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </>
+                              </div>
                             );
                           })()}
                         </div>
