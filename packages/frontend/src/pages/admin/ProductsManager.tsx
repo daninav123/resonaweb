@@ -1059,20 +1059,55 @@ const ProductsManager = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Precio por Día (€)
-                    </label>
+                {/* Checkbox de Consumible */}
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                  <label className="flex items-center cursor-pointer">
                     <input
-                      type="number"
-                      value={formData.pricePerDay}
-                      onChange={(e) => setFormData({...formData, pricePerDay: Number(e.target.value)})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                      min="0"
-                      step="0.01"
+                      type="checkbox"
+                      checked={formData.isConsumable}
+                      onChange={(e) => setFormData({...formData, isConsumable: e.target.checked})}
+                      className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
                     />
-                  </div>
+                    <span className="ml-3">
+                      <span className="text-sm font-semibold text-orange-900">🛒 Es un producto consumible</span>
+                      <span className="block text-xs text-orange-700 mt-1">Se vende por unidades (no se alquila por días)</span>
+                    </span>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {!formData.isConsumable ? (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Precio por Día (€) *
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.pricePerDay}
+                        onChange={(e) => setFormData({...formData, pricePerDay: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Precio por Unidad (€) *
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.pricePerUnit || 0}
+                        onChange={(e) => setFormData({...formData, pricePerUnit: Number(e.target.value)})}
+                        className="w-full px-4 py-2 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                      <p className="text-xs text-orange-600 mt-1">💰 Precio de venta por unidad</p>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
