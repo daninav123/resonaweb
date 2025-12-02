@@ -601,7 +601,7 @@ const PacksManager = () => {
                 const isActive = pack.isActive !== false; // Por defecto true si no existe el campo
                 
                 return (
-                  <tr key={pack.id} className={`border-b hover:bg-gray-50 ${!isActive ? 'opacity-50' : ''}`}>
+                  <tr key={pack.id} className="border-b hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
