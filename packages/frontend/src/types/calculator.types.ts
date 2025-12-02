@@ -14,6 +14,7 @@ export interface PackRecommendationRule {
   packId: string; // ID del producto pack
   minAttendees?: number; // Mínimo de asistentes
   maxAttendees?: number; // Máximo de asistentes
+  requiredParts?: string[]; // IDs de partes del evento que deben estar seleccionadas (opcional)
   priority: number; // 1 = más alta prioridad para recomendar
   reason?: string; // Razón de la recomendación (opcional)
 }

@@ -394,6 +394,7 @@ const CalculatorManagerNew = () => {
                         rules={selectedEvent.recommendedPacks || []}
                         availablePacks={selectedEvent.availablePacks || []}
                         allPacks={catalogProducts.filter((p: any) => p.isPack)}
+                        eventParts={selectedEvent.parts || []}
                         onChange={(rules) => updateEventType(selectedEventIndex, 'recommendedPacks', rules)}
                       />
                     </div>

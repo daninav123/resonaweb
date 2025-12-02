@@ -6,6 +6,7 @@ interface PackRecommendationEditorProps {
   rules: PackRecommendationRule[];
   availablePacks: string[];
   allPacks: any[];
+  eventParts: any[]; // Partes del evento
   onChange: (rules: PackRecommendationRule[]) => void;
 }
 
@@ -13,6 +14,7 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
   rules,
   availablePacks,
   allPacks,
+  eventParts = [],
   onChange
 }) => {
   const [expandedRules, setExpandedRules] = useState<Set<number>>(new Set());
@@ -33,6 +35,7 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
       priority: rules.length + 1,
       minAttendees: 0,
       maxAttendees: 1000,
+      requiredParts: [],
       reason: ''
     }]);
   };
@@ -210,6 +213,42 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
                         />
                       </div>
                     </div>
+
+                    {/* Required Parts */}
+                    {eventParts.length > 0 && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Partes Requeridas
+                          <span className="text-xs text-gray-500 ml-2">(opcional, el cliente debe tener al menos una)</span>
+                        </label>
+                        <div className="space-y-2">
+                          {eventParts.map((part: any) => {
+                            const isChecked = (rule.requiredParts || []).includes(part.id);
+                            return (
+                              <label key={part.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    const currentParts = rule.requiredParts || [];
+                                    const newParts = e.target.checked
+                                      ? [...currentParts, part.id]
+                                      : currentParts.filter((p: string) => p !== part.id);
+                                    updateRule(index, 'requiredParts', newParts);
+                                  }}
+                                  className="w-4 h-4 text-resona border-gray-300 rounded focus:ring-resona"
+                                />
+                                <span className="text-2xl">{part.icon}</span>
+                                <span className="text-sm text-gray-700">{part.name}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Si seleccionas partes, el pack solo se recomendará si el cliente ha seleccionado al menos una de estas partes.
+                        </p>
+                      </div>
+                    )}
 
                     {/* Priority */}
                     <div>

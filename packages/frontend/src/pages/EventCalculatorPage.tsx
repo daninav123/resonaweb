@@ -696,16 +696,32 @@ const EventCalculatorPage = () => {
                 // Aplicar reglas de recomendación para ordenar y destacar
                 const packsWithRecommendation = availablePacks.map((pack: any) => {
                   // Buscar si hay una regla de recomendación que aplique
-                  const rule = recommendedPacksRules.find((r: any) => 
-                    r.packId === pack.id &&
-                    eventData.attendees >= r.minAttendees &&
-                    eventData.attendees <= r.maxAttendees
-                  );
+                  const rule = recommendedPacksRules.find((r: any) => {
+                    // Verificar si el pack coincide
+                    if (r.packId !== pack.id) return false;
+                    
+                    // Verificar rango de asistentes
+                    if (eventData.attendees < r.minAttendees || eventData.attendees > r.maxAttendees) {
+                      return false;
+                    }
+                    
+                    // Verificar partes requeridas (si las hay)
+                    if (r.requiredParts && r.requiredParts.length > 0) {
+                      // El cliente debe tener al menos una de las partes requeridas
+                      const hasRequiredPart = r.requiredParts.some((partId: string) => 
+                        eventData.selectedParts.includes(partId)
+                      );
+                      if (!hasRequiredPart) return false;
+                    }
+                    
+                    return true;
+                  });
                   
                   return {
                     ...pack,
                     isRecommended: !!rule,
-                    priority: rule?.priority || 999
+                    priority: rule?.priority || 999,
+                    recommendationReason: rule?.reason
                   };
                 });
                 
@@ -858,21 +874,26 @@ const EventCalculatorPage = () => {
               
               {(() => {
                 // Filtrar extras según la configuración del evento
-                const selectedEventType = eventTypes.find(t => t.id === eventData.eventType);
-                const availableExtras = selectedEventType?.availableExtras || [];
+                const eventConfig = calculatorConfig.eventTypes.find((et: any) => et.id === eventData.eventType);
+                const availableExtras = eventConfig?.availableExtras || [];
                 
-                // Si el evento tiene extras configurados, mostrar solo esos
-                // Si no tiene configuración, mostrar todos (comportamiento por defecto)
+                console.log('✨ Extras configurados para', eventConfig?.name, ':', availableExtras);
+                
+                // Filtrar productos/packs extras
                 const extrasProducts = catalogProducts.filter((p: any) => {
-                  if (!p.isActive || p.isPack) return false;
+                  if (!p.isActive) return false;
                   
-                  // Si hay extras configurados, filtrar por ellos
+                  // Si hay extras configurados, mostrar SOLO esos (productos O packs)
                   if (availableExtras.length > 0) {
-                    return availableExtras.includes(p.id);
+                    const isConfigured = availableExtras.includes(p.id);
+                    if (!isConfigured) {
+                      console.log('❌ Extra no configurado:', p.name, 'isPack:', p.isPack);
+                    }
+                    return isConfigured;
                   }
                   
-                  // Si no hay configuración, mostrar todos
-                  return true;
+                  // Si no hay configuración, mostrar todos los productos (NO packs)
+                  return !p.isPack;
                 });
                 
                 // Agrupar productos por categoría
