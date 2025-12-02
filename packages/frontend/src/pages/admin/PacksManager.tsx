@@ -40,6 +40,8 @@ const PacksManager = () => {
     search: ''
   });
 
+  const [packCategoryFilter, setPackCategoryFilter] = useState<string>('');
+
   useEffect(() => {
     loadPacks();
     loadCategories();
@@ -579,6 +581,21 @@ const PacksManager = () => {
     );
   }
 
+  // Mapeo de categorías a información visual
+  const categoryInfo: Record<string, { emoji: string; label: string; color: string }> = {
+    BODAS: { emoji: '💒', label: 'Bodas', color: 'bg-pink-100 text-pink-800' },
+    EVENTOS_PRIVADOS: { emoji: '🎉', label: 'Eventos Privados', color: 'bg-purple-100 text-purple-800' },
+    CONCIERTOS: { emoji: '🎵', label: 'Conciertos', color: 'bg-blue-100 text-blue-800' },
+    EVENTOS_CORPORATIVOS: { emoji: '💼', label: 'Eventos Corporativos', color: 'bg-gray-100 text-gray-800' },
+    CONFERENCIAS: { emoji: '🎤', label: 'Conferencias', color: 'bg-indigo-100 text-indigo-800' },
+    OTROS: { emoji: '📅', label: 'Otros', color: 'bg-amber-100 text-amber-800' }
+  };
+
+  // Filtrar packs por categoría
+  const filteredPacks = packCategoryFilter 
+    ? packs.filter(pack => pack.category === packCategoryFilter)
+    : packs;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -593,10 +610,57 @@ const PacksManager = () => {
         </button>
       </div>
 
-      {packs.length === 0 ? (
+      {/* Estadísticas por categoría */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {Object.entries(categoryInfo).map(([key, info]) => {
+          const count = packs.filter(p => p.category === key).length;
+          const isSelected = packCategoryFilter === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setPackCategoryFilter(isSelected ? '' : key)}
+              className={`p-4 rounded-lg border-2 transition-all ${
+                isSelected 
+                  ? 'border-resona bg-resona/5 shadow-md' 
+                  : 'border-gray-200 hover:border-resona/50 hover:shadow'
+              }`}
+            >
+              <div className="text-3xl mb-2">{info.emoji}</div>
+              <div className="text-2xl font-bold text-gray-900">{count}</div>
+              <div className="text-xs text-gray-600 mt-1">{info.label}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Filtro por categoría */}
+      {packCategoryFilter && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-blue-900">
+                Mostrando: {categoryInfo[packCategoryFilter].emoji} {categoryInfo[packCategoryFilter].label}
+              </span>
+              <span className="px-2 py-1 bg-blue-200 text-blue-900 rounded-full text-xs font-semibold">
+                {filteredPacks.length} {filteredPacks.length === 1 ? 'pack' : 'packs'}
+              </span>
+            </div>
+            <button
+              onClick={() => setPackCategoryFilter('')}
+              className="text-sm text-blue-700 hover:text-blue-900 font-medium underline"
+            >
+              Ver todos los packs
+            </button>
+          </div>
+        </div>
+      )}
+
+      {filteredPacks.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 mb-4">No hay packs creados</p>
+          <p className="text-gray-500 mb-4">
+            {packCategoryFilter ? `No hay packs en la categoría seleccionada` : 'No hay packs creados'}
+          </p>
           <button
             data-testid="create-first-pack"
             onClick={handleCreate}
@@ -611,6 +675,7 @@ const PacksManager = () => {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nombre</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoría</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Descripción</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Precio/Día</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Gastos Esperados</th>
@@ -620,14 +685,23 @@ const PacksManager = () => {
               </tr>
             </thead>
             <tbody>
-              {packs.map((pack) => {
+              {filteredPacks.map((pack) => {
                 const { totalCost, profit } = calculatePackCostsAndProfit(pack);
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600';
                 const isActive = pack.isActive !== false; // Por defecto true si no existe el campo
                 
+                const category = pack.category || 'OTROS';
+                const catInfo = categoryInfo[category] || categoryInfo.OTROS;
+                
                 return (
                   <tr key={pack.id} className="border-b hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{pack.name}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${catInfo.color}`}>
+                        <span>{catInfo.emoji}</span>
+                        {catInfo.label}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{pack.description || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 font-semibold">€{Number(pack.finalPrice || pack.calculatedTotalPrice || 0).toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">€{totalCost.toFixed(2)}</td>
