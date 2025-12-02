@@ -1076,20 +1076,22 @@ const EventCalculatorPage = () => {
                           ? catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack)
                           : null;
                         
+                        // Si es parte de fiesta y hay pack, mostrar el precio del pack en lugar del precio de la parte
+                        const displayPrice = isPartyPart && selectedPackData 
+                          ? Number(selectedPackData.pricePerDay) 
+                          : partPrice;
+                        
                         return (
                           <div key={partId}>
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
-                              <span className="text-sm font-semibold text-purple-600">€{partPrice.toFixed(2)}</span>
+                              <span className="text-sm font-semibold text-purple-600">€{displayPrice.toFixed(2)}</span>
                             </div>
                             
-                            {/* Si es la parte de fiesta, mostrar el pack debajo */}
+                            {/* Si es la parte de fiesta, mostrar el pack debajo SIN precio */}
                             {isPartyPart && selectedPackData && (
                               <div className="ml-4 mt-2 p-2 bg-white/50 rounded border border-purple-200">
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-gray-600">📦 {selectedPackData.name}</span>
-                                  <span className="font-semibold text-gray-700">€{Number(selectedPackData.pricePerDay).toFixed(2)}/día</span>
-                                </div>
+                                <span className="text-xs text-gray-600">📦 {selectedPackData.name}</span>
                               </div>
                             )}
                           </div>
