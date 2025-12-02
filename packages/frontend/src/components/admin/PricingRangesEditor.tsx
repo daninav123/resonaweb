@@ -9,9 +9,24 @@ interface PricingRangesEditorProps {
 }
 
 const PricingRangesEditor: React.FC<PricingRangesEditorProps> = ({ ranges, allProducts, onChange }) => {
+  // Normalizar los rangos para asegurar que recommendedProducts es siempre RangeProduct[]
+  const normalizeRanges = (rangesData: any[]): PricingRange[] => {
+    return rangesData.map(range => ({
+      ...range,
+      recommendedProducts: (range.recommendedProducts || []).map((product: any) => {
+        // Si es un string (ID), convertir a RangeProduct con cantidad 1
+        if (typeof product === 'string') {
+          return { productId: product, quantity: 1 };
+        }
+        // Si ya es un RangeProduct, mantenerlo
+        return product;
+      })
+    }));
+  };
+
   const [localRanges, setLocalRanges] = useState<PricingRange[]>(
     ranges && ranges.length > 0 
-      ? ranges 
+      ? normalizeRanges(ranges)
       : [{ minAttendees: 0, maxAttendees: 50, price: 0, recommendedProducts: [] }]
   );
   const [expandedRange, setExpandedRange] = useState<number | null>(0);
