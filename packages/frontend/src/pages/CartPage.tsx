@@ -264,11 +264,9 @@ const CartPage = () => {
     
     autoNotes += '---\n\n💬 Notas adicionales:\n';
     
-    // Solo actualizar si las notas están vacías o solo tienen el formato antiguo
-    if (!orderNotes || orderNotes.includes('cartEventInfo')) {
-      setOrderNotes(autoNotes);
-    }
-  }, [guestCartItems, globalDates.start, globalDates.end, orderNotes]);
+    // Siempre actualizar las notas para items de eventos
+    setOrderNotes(autoNotes);
+  }, [guestCartItems, globalDates.start, globalDates.end]);
 
   // Automarcar transporte + instalación para items de eventos (ya incluido en precio)
   useEffect(() => {
