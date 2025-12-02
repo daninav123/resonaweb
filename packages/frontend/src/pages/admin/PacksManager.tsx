@@ -917,36 +917,6 @@ const PacksManager = () => {
                           </p>
                         </div>
 
-                        {/* Totales Calculados Automáticamente */}
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-3">Totales Calculados</h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Total Precio/Día:</span>
-                              <span className="font-medium">€{totals.totalPricePerDay.toFixed(2)}</span>
-                            </div>
-                            <div className={`flex justify-between text-sm ${!formData.includeShipping ? 'opacity-50 line-through' : ''}`}>
-                              <span className="text-gray-600">
-                                Total Transporte:
-                                {!formData.includeShipping && <span className="ml-2 text-xs text-red-600">(No incluido)</span>}
-                              </span>
-                              <span className="font-medium">€{totals.totalShipping.toFixed(2)}</span>
-                            </div>
-                            <div className={`flex justify-between text-sm ${!formData.includeInstallation ? 'opacity-50 line-through' : ''}`}>
-                              <span className="text-gray-600">
-                                Total Montaje/Instalación:
-                                {!formData.includeInstallation && <span className="ml-2 text-xs text-red-600">(No incluido)</span>}
-                              </span>
-                              <span className="font-medium">€{totals.totalInstallation.toFixed(2)}</span>
-                            </div>
-                            <div className="border-t pt-2 mt-2">
-                              <div className="flex justify-between text-base font-semibold">
-                                <span>Subtotal:</span>
-                                <span className="text-resona">€{totals.subtotal.toFixed(2)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
 
                         {/* Campo Editable: Descuento */}
                         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
