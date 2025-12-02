@@ -1,4 +1,5 @@
-import { Plus, Trash2, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { PackRecommendationRule } from '../../types/calculator.types';
 
 interface PackRecommendationEditorProps {
@@ -14,6 +15,17 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
   allPacks,
   onChange
 }) => {
+  const [expandedRules, setExpandedRules] = useState<Set<number>>(new Set());
+
+  const toggleRuleExpanded = (index: number) => {
+    const newExpanded = new Set(expandedRules);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedRules(newExpanded);
+  };
   const addRule = () => {
     const firstAvailablePack = availablePacks[0] || '';
     onChange([...rules, {
@@ -71,31 +83,74 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
           {rules.map((rule, index) => {
             const pack = allPacks.find(p => p.id === rule.packId);
             const isPackAvailable = availablePacks.includes(rule.packId);
+            const isExpanded = expandedRules.has(index);
             
             return (
               <div 
                 key={index} 
-                className={`border rounded-lg p-4 ${
+                className={`border rounded-lg ${
                   isPackAvailable 
                     ? 'border-gray-200 bg-white' 
                     : 'border-red-200 bg-red-50'
                 }`}
               >
-                <div className="flex items-start gap-4">
+                {/* Header - Always Visible */}
+                <div 
+                  className="p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-50"
+                  onClick={() => toggleRuleExpanded(index)}
+                >
                   {/* Pack Image */}
                   {pack?.mainImageUrl && (
                     <img 
                       src={pack.mainImageUrl} 
                       alt={pack.name} 
-                      className="w-20 h-20 object-cover rounded flex-shrink-0"
+                      className="w-16 h-16 object-cover rounded flex-shrink-0"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
                   )}
                   
-                  {/* Form Fields */}
-                  <div className="flex-1 space-y-3">
+                  {/* Summary */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-gray-900 truncate">{pack?.name || 'Pack desconocido'}</span>
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                        Prioridad {rule.priority}
+                      </span>
+                      {!isPackAvailable && (
+                        <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium">
+                          ⚠️ No disponible
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {rule.minAttendees || 0} - {rule.maxAttendees || '∞'} asistentes
+                      {rule.reason && <span className="ml-2 text-gray-500">• {rule.reason}</span>}
+                    </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeRule(index);
+                      }}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                      title="Eliminar regla"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                  </div>
+                </div>
+
+                {/* Expanded Content */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-2 border-t border-gray-200 space-y-3" onClick={(e) => e.stopPropagation()}>
+                    {/* Form Fields */}
+                    <div className="space-y-3">
                     {/* Pack Selection */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -185,36 +240,28 @@ const PackRecommendationEditor: React.FC<PackRecommendationEditorProps> = ({
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
                       />
                     </div>
-                  </div>
+                    </div>
 
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => removeRule(index)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors flex-shrink-0"
-                    title="Eliminar regla"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Preview */}
-                <div className="mt-3 pt-3 border-t border-gray-200 text-sm">
-                  <div className="flex items-start gap-2 text-gray-600">
-                    <span className="text-blue-500">📋</span>
-                    <div>
-                      <span className="font-medium">Se recomendará:</span> "{pack?.name || 'Pack desconocido'}" 
-                      <span className="mx-1">para eventos con</span>
-                      <span className="font-semibold text-gray-900">
-                        {rule.minAttendees || 0} a {rule.maxAttendees || '∞'} asistentes
-                      </span>
-                      {rule.reason && (
-                        <div className="mt-1 text-gray-500 italic">
-                          Motivo: "{rule.reason}"
+                    {/* Preview */}
+                    <div className="mt-3 pt-3 border-t border-gray-200 text-sm">
+                      <div className="flex items-start gap-2 text-gray-600">
+                        <span className="text-blue-500">📋</span>
+                        <div>
+                          <span className="font-medium">Se recomendará:</span> "{pack?.name || 'Pack desconocido'}" 
+                          <span className="mx-1">para eventos con</span>
+                          <span className="font-semibold text-gray-900">
+                            {rule.minAttendees || 0} a {rule.maxAttendees || '∞'} asistentes
+                          </span>
+                          {rule.reason && (
+                            <div className="mt-1 text-gray-500 italic">
+                              Motivo: "{rule.reason}"
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
