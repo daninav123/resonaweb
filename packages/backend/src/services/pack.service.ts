@@ -327,6 +327,7 @@ class PackService {
   async createPack(data: {
     name: string;
     description: string;
+    category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'OTROS';
     discountPercentage?: number;
     discountAmount?: number;
     customFinalPrice?: number;
@@ -353,6 +354,7 @@ class PackService {
         name: data.name,
         slug,
         description: data.description,
+        category: data.category || 'OTROS',
         discountPercentage: new Prisma.Decimal(data.discountPercentage || 0),
         discountAmount: new Prisma.Decimal(data.discountAmount || 0),
         autoCalculate: data.autoCalculate !== false, // Por defecto true
@@ -447,6 +449,7 @@ class PackService {
     data: {
       name?: string;
       description?: string;
+      category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'OTROS';
       discountPercentage?: number;
       discountAmount?: number;
       customFinalPrice?: number;
@@ -495,6 +498,7 @@ class PackService {
       if (data.isActive !== undefined) updateData.isActive = data.isActive;
       if (data.includeShipping !== undefined) updateData.includeShipping = data.includeShipping;
       if (data.includeInstallation !== undefined) updateData.includeInstallation = data.includeInstallation;
+      if (data.category !== undefined) updateData.category = data.category;
       if (data.partsPricing !== undefined) updateData.partsPricing = data.partsPricing;
       if (data.enablePartsPricing !== undefined) updateData.enablePartsPricing = data.enablePartsPricing;
       

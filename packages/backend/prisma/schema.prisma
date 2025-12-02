@@ -178,7 +178,17 @@ enum PriceType {
   FIXED
   PER_HOUR
   PER_ITEM
-  PERCENTAGE
+  PER_AREA
+  CUSTOM
+}
+
+enum PackCategory {
+  BODAS
+  EVENTOS_PRIVADOS
+  CONCIERTOS
+  EVENTOS_CORPORATIVOS
+  CONFERENCIAS
+  OTROS
 }
 
 // ============= MODELS =============
@@ -474,6 +484,9 @@ model Pack {
   // Precio variable por partes del evento
   partsPricing            Json?                                     // { "partId": { "percentage": 25, "included": true } }
   enablePartsPricing      Boolean   @default(false)                 // Si el precio varía según partes seleccionadas
+  
+  // Categoría del pack
+  category                PackCategory @default(OTROS)              // Categoría del pack
   
   isActive    Boolean   @default(true)
   featured    Boolean   @default(false)

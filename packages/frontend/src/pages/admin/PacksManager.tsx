@@ -20,6 +20,7 @@ const PacksManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    category: 'OTROS' as 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'OTROS',
     customFinalPrice: '',
     includeShipping: true, // Incluir transporte por defecto
     includeInstallation: true, // Incluir montaje por defecto
@@ -186,6 +187,7 @@ const PacksManager = () => {
     setFormData({
       name: '',
       description: '',
+      category: 'OTROS',
       customFinalPrice: '',
       includeShipping: true,
       includeInstallation: true,
@@ -207,6 +209,7 @@ const PacksManager = () => {
     setFormData({
       name: pack.name || '',
       description: pack.description || '',
+      category: pack.category || 'OTROS',
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
       includeShipping: pack.includeShipping !== false, // Por defecto true
       includeInstallation: pack.includeInstallation !== false, // Por defecto true
@@ -261,6 +264,7 @@ const PacksManager = () => {
       const packData: any = {
         name: formData.name,
         description: formData.description,
+        category: formData.category,
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
@@ -719,6 +723,24 @@ const PacksManager = () => {
                         rows={3}
                         placeholder="Describe qué incluye este pack..."
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Categoría *
+                      </label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                      >
+                        <option value="BODAS">💒 Bodas</option>
+                        <option value="EVENTOS_PRIVADOS">🎉 Eventos Privados</option>
+                        <option value="CONCIERTOS">🎵 Conciertos</option>
+                        <option value="EVENTOS_CORPORATIVOS">💼 Eventos Corporativos</option>
+                        <option value="CONFERENCIAS">🎤 Conferencias</option>
+                        <option value="OTROS">📅 Otros</option>
+                      </select>
                     </div>
                   </div>
                 </div>
