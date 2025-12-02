@@ -8,6 +8,7 @@ import { productService } from '../../services/product.service';
 import { api } from '../../services/api';
 import PackSelector from '../../components/admin/PackSelector';
 import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
+import PartPricingEditor from '../../components/admin/PartPricingEditor';
 
 const CalculatorManagerNew = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -337,6 +338,19 @@ const CalculatorManagerNew = () => {
                                   value={part.defaultDuration}
                                   onChange={(e) => updateEventPart(selectedEventIndex, partIndex, 'defaultDuration', parseFloat(e.target.value) || 0)}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                                />
+                              </div>
+
+                              {/* Configuración de Precio y Materiales */}
+                              <div className="border-t pt-4 mt-4">
+                                <PartPricingEditor
+                                  part={part}
+                                  allProducts={catalogProducts}
+                                  onChange={(updatedPart) => {
+                                    const newParts = [...selectedEvent.parts];
+                                    newParts[partIndex] = updatedPart;
+                                    updateEventType(selectedEventIndex, 'parts', newParts);
+                                  }}
                                 />
                               </div>
                             </div>

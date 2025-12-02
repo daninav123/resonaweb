@@ -8,6 +8,15 @@ export interface EventPart {
   defaultDuration: number; // en horas
   soundLevel: ServiceLevel;
   lightingLevel: ServiceLevel;
+  // Precio variable según asistentes
+  pricing?: {
+    basePrice: number; // Precio base fijo
+    pricePerPerson?: number; // Precio adicional por persona (opcional)
+    minAttendees?: number; // A partir de cuántos invitados aplica
+    maxAttendees?: number; // Hasta cuántos invitados
+  };
+  // Productos/materiales recomendados para esta parte
+  recommendedProducts?: string[]; // IDs de productos
 }
 
 export interface PackRecommendationRule {
