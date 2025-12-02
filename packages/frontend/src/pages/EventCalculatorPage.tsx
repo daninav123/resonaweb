@@ -504,17 +504,17 @@ const EventCalculatorPage = () => {
                     onChange={(e) => setEventData({ ...eventData, startTime: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
                   >
-                    {Array.from({ length: 24 }, (_, i) => {
-                      const hour = String(i).padStart(2, '0');
+                    {Array.from({ length: 48 }, (_, i) => {
+                      const hour = String(Math.floor(i / 2)).padStart(2, '0');
+                      const minute = i % 2 === 0 ? '00' : '30';
+                      const time = `${hour}:${minute}`;
                       return (
-                        <optgroup key={i} label={`${hour}:00 - ${hour}:30`}>
-                          <option value={`${hour}:00`}>{hour}:00</option>
-                          <option value={`${hour}:30`}>{hour}:30</option>
-                        </optgroup>
+                        <option key={i} value={time}>
+                          {time}
+                        </option>
                       );
                     })}
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">Solo horas en punto y media</p>
                 </div>
 
                 {/* Event Date */}
