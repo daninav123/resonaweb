@@ -1,5 +1,11 @@
 export type ServiceLevel = 'none' | 'basic' | 'intermediate' | 'professional' | 'premium';
 
+export interface PricingRange {
+  minAttendees: number; // Mínimo de invitados (ej: 0)
+  maxAttendees: number; // Máximo de invitados (ej: 50)
+  price: number; // Precio para este rango
+}
+
 export interface EventPart {
   id: string;
   name: string;
@@ -8,13 +14,8 @@ export interface EventPart {
   defaultDuration: number; // en horas
   soundLevel: ServiceLevel;
   lightingLevel: ServiceLevel;
-  // Precio variable según asistentes
-  pricing?: {
-    basePrice: number; // Precio base fijo
-    pricePerPerson?: number; // Precio adicional por persona (opcional)
-    minAttendees?: number; // A partir de cuántos invitados aplica
-    maxAttendees?: number; // Hasta cuántos invitados
-  };
+  // Precio variable según rangos de asistentes
+  pricingRanges?: PricingRange[]; // Array de rangos de precio
   // Productos/materiales recomendados para esta parte
   recommendedProducts?: string[]; // IDs de productos
 }

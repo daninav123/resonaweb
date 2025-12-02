@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { DollarSign, Users, Package, X } from 'lucide-react';
+import { DollarSign, Package, X } from 'lucide-react';
+import PricingRangesEditor from './PricingRangesEditor';
+import { PricingRange } from '../../types/calculator.types';
 
 interface PartPricingEditorProps {
   part: any;
@@ -12,21 +14,17 @@ const PartPricingEditor: React.FC<PartPricingEditorProps> = ({
   allProducts,
   onChange
 }) => {
-  const [pricing, setPricing] = useState(part.pricing || {
-    basePrice: 0,
-    pricePerPerson: 0,
-    minAttendees: 0,
-    maxAttendees: 1000
-  });
+  const [pricingRanges, setPricingRanges] = useState<PricingRange[]>(
+    part.pricingRanges || [{ minAttendees: 0, maxAttendees: 50, price: 0 }]
+  );
 
   const [recommendedProducts, setRecommendedProducts] = useState<string[]>(
     part.recommendedProducts || []
   );
 
-  const handlePricingChange = (field: string, value: number) => {
-    const newPricing = { ...pricing, [field]: value };
-    setPricing(newPricing);
-    onChange({ ...part, pricing: newPricing });
+  const handlePricingRangesChange = (ranges: PricingRange[]) => {
+    setPricingRanges(ranges);
+    onChange({ ...part, pricingRanges: ranges });
   };
 
   const handleAddProduct = (productId: string) => {
@@ -43,80 +41,13 @@ const PartPricingEditor: React.FC<PartPricingEditorProps> = ({
     onChange({ ...part, recommendedProducts: newProducts });
   };
 
-  // Calcular precio ejemplo
-  const calculateExamplePrice = (attendees: number) => {
-    return pricing.basePrice + (pricing.pricePerPerson || 0) * attendees;
-  };
-
   return (
     <div className="space-y-6 bg-gray-50 rounded-lg p-6">
-      {/* Configuración de Precio */}
-      <div>
-        <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-green-600" />
-          Configuración de Precio
-        </h4>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Precio Base (€)
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={pricing.basePrice}
-              onChange={(e) => handlePricingChange('basePrice', parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-              placeholder="150.00"
-            />
-            <p className="text-xs text-gray-500 mt-1">Precio fijo de esta parte</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Precio por Persona (€)
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={pricing.pricePerPerson || 0}
-              onChange={(e) => handlePricingChange('pricePerPerson', parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-              placeholder="2.50"
-            />
-            <p className="text-xs text-gray-500 mt-1">Coste adicional por invitado</p>
-          </div>
-        </div>
-
-        {/* Ejemplo de cálculo */}
-        {(pricing.basePrice > 0 || pricing.pricePerPerson > 0) && (
-          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-900 mb-2">💡 Ejemplo de cálculo:</p>
-            <div className="space-y-1 text-sm text-blue-800">
-              <div className="flex justify-between">
-                <span>50 invitados:</span>
-                <span className="font-semibold">€{calculateExamplePrice(50).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>100 invitados:</span>
-                <span className="font-semibold">€{calculateExamplePrice(100).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>200 invitados:</span>
-                <span className="font-semibold">€{calculateExamplePrice(200).toFixed(2)}</span>
-              </div>
-            </div>
-            {pricing.pricePerPerson > 0 && (
-              <p className="text-xs text-blue-700 mt-2">
-                Fórmula: €{pricing.basePrice} + (€{pricing.pricePerPerson} × número de invitados)
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      {/* Configuración de Rangos de Precio */}
+      <PricingRangesEditor
+        ranges={pricingRanges}
+        onChange={handlePricingRangesChange}
+      />
 
       {/* Productos Recomendados */}
       <div>
