@@ -25,6 +25,10 @@ interface Product {
   requiresInstallation?: boolean;
   installationComplexity?: number;
   isPack?: boolean;
+  isConsumable?: boolean;
+  pricePerUnit?: number;
+  purchasePrice?: number;
+  purchaseDate?: string;
 }
 
 const ProductsManager = () => {
@@ -407,6 +411,8 @@ const ProductsManager = () => {
       requiresInstallation: product.requiresInstallation || false,
       installationComplexity: product.installationComplexity || 1,
       isPack: (product as any).isPack || false,
+      isConsumable: (product as any).isConsumable || false,
+      pricePerUnit: (product as any).pricePerUnit || 0,
       purchasePrice: product.purchasePrice || 0,
       purchaseDate: product.purchaseDate ? product.purchaseDate.split('T')[0] : '',
     });
