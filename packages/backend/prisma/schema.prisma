@@ -385,6 +385,10 @@ model Product {
   // Pack
   isPack                  Boolean   @default(false)
   
+  // Consumible (productos que se venden, no se alquilan)
+  isConsumable            Boolean   @default(false)
+  pricePerUnit            Decimal?  @db.Decimal(10, 2) // Precio por unidad para consumibles
+  
   // Metadatos
   tags                    String[]
   
@@ -412,6 +416,7 @@ model Product {
   @@index([stockStatus])
   @@index([isActive, featured])
   @@index([isPack])
+  @@index([isConsumable])
 }
 
 // Componentes de un pack (qué productos incluye cada pack)
