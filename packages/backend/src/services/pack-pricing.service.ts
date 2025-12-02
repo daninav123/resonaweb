@@ -72,6 +72,9 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
     return sum + (shippingCost * item.quantity);
   }, 0);
   
+  // Al ser un pack, el coste de envío es la mitad (optimización de envíos)
+  baseShippingCost = baseShippingCost / 2;
+  
   // Si no incluye envío, no sumar el coste
   if (!pack.includeShipping) {
     baseShippingCost = 0;
@@ -82,6 +85,9 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
     const installationCost = Number(item.product.installationCost) || 0;
     return sum + (installationCost * item.quantity);
   }, 0);
+  
+  // Al ser un pack, el coste de montaje es la mitad (optimización de montaje)
+  baseInstallationCost = baseInstallationCost / 2;
   
   // Si no incluye instalación, no sumar el coste
   if (!pack.includeInstallation) {
