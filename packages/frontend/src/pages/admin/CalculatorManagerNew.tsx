@@ -441,7 +441,12 @@ const CalculatorManagerNew = () => {
                         </p>
                       </div>
                       <PackSelector
-                        allPacks={catalogProducts}
+                        allPacks={(() => {
+                          const packs = catalogProducts.filter((p: any) => p.isPack);
+                          const products = catalogProducts.filter((p: any) => !p.isPack);
+                          console.log('📦 Extras disponibles - Packs:', packs.length, 'Productos:', products.length);
+                          return catalogProducts;
+                        })()}
                         selectedPacks={selectedEvent.availableExtras || []}
                         onChange={(extras) => updateEventType(selectedEventIndex, 'availableExtras', extras)}
                       />
