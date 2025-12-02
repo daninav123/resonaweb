@@ -352,16 +352,19 @@ const CartPage = () => {
 
   const calculateItemPrice = (item: any) => {
     const dates = getEffectiveDates(item);
-    // Si no hay fechas, mostrar precio de mínimo 1 día
-    if (!dates.start || !dates.end) {
-      const basePrice = item.product.pricePerDay * 1 * item.quantity;
-      const partsPrice = item.eventMetadata?.partsTotal || 0;
-      return basePrice + partsPrice;
+    const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
+    
+    // Calcular precio de las partes, considerando que el pack se muestra en Disco/Fiesta
+    let partsPrice = 0;
+    if (item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+      item.eventMetadata.selectedParts.forEach((part: any) => {
+        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+        const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+        partsPrice += displayPrice;
+      });
     }
-    const days = calculateDays(dates.start, dates.end);
-    const basePrice = item.product.pricePerDay * days * item.quantity;
-    const partsPrice = item.eventMetadata?.partsTotal || 0;
-    return basePrice + partsPrice;
+    
+    return partsPrice * days * item.quantity;
   };
 
   const calculateShippingCost = () => {
@@ -780,37 +783,43 @@ const CartPage = () => {
                           </p>
                           
                           {/* Partes del evento si existen */}
-                          {item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
-                            <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                              <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
-                              <div className="space-y-1">
-                                {item.eventMetadata.selectedParts.map((part: any) => {
-                                  // Si es la parte de Disco/Fiesta, mostrar el precio del pack
-                                  const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
-                                  const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
-                                  
-                                  return (
-                                    <div key={part.id}>
-                                      <div className="flex justify-between items-center text-xs">
-                                        <span className="text-purple-600">{part.icon} {part.name}</span>
-                                        <span className="font-semibold text-purple-700">€{displayPrice.toFixed(2)}</span>
-                                      </div>
-                                      {/* Si es parte de fiesta, mostrar el nombre del pack debajo */}
-                                      {isPartyPart && (
-                                        <div className="ml-4 mt-1">
-                                          <span className="text-xs text-gray-600">📦 {item.product.name}</span>
+                          {item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0 && (() => {
+                            // Calcular el total real considerando el precio del pack en la parte de fiesta
+                            let totalPartsDisplay = 0;
+                            
+                            return (
+                              <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
+                                <div className="space-y-1">
+                                  {item.eventMetadata.selectedParts.map((part: any) => {
+                                    // Si es la parte de Disco/Fiesta, mostrar el precio del pack
+                                    const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                                    const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+                                    totalPartsDisplay += displayPrice;
+                                    
+                                    return (
+                                      <div key={part.id}>
+                                        <div className="flex justify-between items-center text-xs">
+                                          <span className="text-purple-600">{part.icon} {part.name}</span>
+                                          <span className="font-semibold text-purple-700">€{displayPrice.toFixed(2)}</span>
                                         </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                                <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
-                                  <span className="font-semibold text-purple-700">Total Partes:</span>
-                                  <span className="font-bold text-purple-800">€{item.eventMetadata.partsTotal.toFixed(2)}</span>
+                                        {/* Si es parte de fiesta, mostrar el nombre del pack debajo */}
+                                        {isPartyPart && (
+                                          <div className="ml-4 mt-1">
+                                            <span className="text-xs text-gray-600">📦 {item.product.name}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                  <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
+                                    <span className="font-semibold text-purple-700">Total Partes:</span>
+                                    <span className="font-bold text-purple-800">€{totalPartsDisplay.toFixed(2)}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            );
+                          })()}
                         </div>
                         <div className="flex items-center gap-2">
                           <button
