@@ -428,12 +428,21 @@ const PacksManager = () => {
           ? item.numberOfPeople * item.hoursPerPerson
           : item.quantity;
 
-        const itemPrice = Number(product.pricePerDay || 0) * effectiveQuantity;
+        // Detectar si es consumible para usar el precio correcto
+        const isConsumable = (product as any).isConsumable;
+        const unitPrice = isConsumable 
+          ? Number((product as any).pricePerUnit || 0)
+          : Number(product.pricePerDay || 0);
+        const itemPrice = unitPrice * effectiveQuantity;
         
         if (isPersonal) {
           // PERSONAL: coste por hora trabajada
           const personalCost = Number(product.purchasePrice || 0) * effectiveQuantity;
           costPersonal += personalCost;
+        } else if (isConsumable) {
+          // CONSUMIBLE: coste por unidad vendida (se pierde el producto)
+          const consumableCost = Number(product.purchasePrice || 0) * effectiveQuantity;
+          costDepreciation += consumableCost;
         } else {
           // MATERIAL: depreciación (5% del precio de compra por día)
           const depreciationRate = 0.05;
@@ -702,21 +711,32 @@ const PacksManager = () => {
                           {getAvailableProducts().map((product) => {
                             const isAdded = formData.items.some(item => item.productId === product.id);
                             const isPerson = isPersonalProduct(product);
+                            const isConsumable = (product as any).isConsumable;
                             return (
                               <div key={product.id} className={`flex items-center justify-between p-3 border-l-4 ${
-                                isPerson ? 'border-l-purple-500 bg-purple-50 hover:bg-purple-100' : 'border-l-green-500 hover:bg-gray-50'
+                                isPerson ? 'border-l-purple-500 bg-purple-50 hover:bg-purple-100' : isConsumable ? 'border-l-orange-500 bg-orange-50 hover:bg-orange-100' : 'border-l-green-500 hover:bg-gray-50'
                               }`}>
                                 <div className="flex-1">
                                   <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
                                     {isPerson ? '👥' : '📦'} {product.name}
-                                    {isPerson ? (
-                                      <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>
-                                    ) : (
-                                      <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>
-                                    )}
+                                    {(() => {
+                                      const isConsumable = (product as any).isConsumable;
+                                      if (isPerson) {
+                                        return <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>;
+                                      } else if (isConsumable) {
+                                        return <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">CONSUMIBLE</span>;
+                                      } else {
+                                        return <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>;
+                                      }
+                                    })()}
                                   </div>
-                                  <div className={`text-xs font-medium mt-0.5 ${isPerson ? 'text-purple-700' : 'text-green-700'}`}>
-                                    €{product.pricePerDay}/{isPerson ? 'hora' : 'día'}
+                                  <div className={`text-xs font-medium mt-0.5 ${isPerson ? 'text-purple-700' : (product as any).isConsumable ? 'text-orange-700' : 'text-green-700'}`}>
+                                    {(() => {
+                                      const isConsumable = (product as any).isConsumable;
+                                      const price = isConsumable ? (product as any).pricePerUnit : product.pricePerDay;
+                                      const unit = isPerson ? 'hora' : isConsumable ? 'unidad' : 'día';
+                                      return `€${price}/${unit}`;
+                                    })()}
                                     {!isPerson && product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
                                     {!isPerson && product.installationCost > 0 && ` + €${product.installationCost} instalación`}
                                   </div>
@@ -765,24 +785,29 @@ const PacksManager = () => {
                           if (!product) return null;
                           
                           const isPerson = isPersonalProduct(product);
+                          const isConsumable = (product as any).isConsumable;
                           const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
                             ? item.numberOfPeople * item.hoursPerPerson
                             : item.quantity;
-                          const subtotal = Number(product.pricePerDay) * effectiveQuantity;
+                          const unitPrice = isConsumable 
+                            ? Number((product as any).pricePerUnit || 0)
+                            : Number(product.pricePerDay || 0);
+                          const subtotal = unitPrice * effectiveQuantity;
                           
                           return (
                             <div key={index} className={`bg-white p-3 rounded-lg border-2 ${
-                              isPerson ? 'border-purple-300 bg-purple-50' : 'border-green-200'
+                              isPerson ? 'border-purple-300 bg-purple-50' : isConsumable ? 'border-orange-300 bg-orange-50' : 'border-green-200'
                             }`}>
                               <div className="flex items-center gap-3 mb-2">
                                 <div className="flex-1">
                                   <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
                                     {isPerson ? '👥' : '📦'} {product.name}
                                     {isPerson && <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>}
-                                    {!isPerson && <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>}
+                                    {!isPerson && !isConsumable && <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>}
+                                    {isConsumable && <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">CONSUMIBLE</span>}
                                   </div>
-                                  <div className={`text-xs font-medium ${isPerson ? 'text-purple-700' : 'text-green-700'}`}>
-                                    €{product.pricePerDay}/{isPerson ? 'hora' : 'día'} × {isPerson ? `${effectiveQuantity.toFixed(1)}h` : `${item.quantity} unid.`} = €{subtotal.toFixed(2)}
+                                  <div className={`text-xs font-medium ${isPerson ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'}`}>
+                                    €{unitPrice}/{isPerson ? 'hora' : isConsumable ? 'unidad' : 'día'} × {isPerson ? `${effectiveQuantity.toFixed(1)}h` : `${item.quantity} unid.`} = €{subtotal.toFixed(2)}
                                   </div>
                                 </div>
                                 <button
