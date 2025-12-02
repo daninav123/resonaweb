@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Calculator, Save, Plus, Trash2, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import { Calculator, Save, Plus, Trash2, ChevronDown, ChevronUp, RotateCcw, Info, List, Package, Sparkles, DollarSign } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCalculatorConfig } from '../../hooks/useCalculatorConfig';
 import { SERVICE_LEVEL_LABELS, ServiceLevel } from '../../types/calculator.types';
@@ -9,6 +10,8 @@ import PackSelector from '../../components/admin/PackSelector';
 import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
 
 const CalculatorManagerNew = () => {
+  const [activeTab, setActiveTab] = useState('general');
+  
   const {
     config,
     selectedEventIndex,
