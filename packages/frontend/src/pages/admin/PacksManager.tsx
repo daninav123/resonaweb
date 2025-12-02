@@ -377,13 +377,18 @@ const PacksManager = () => {
         const product = products.find(p => p.id === item.productId);
         if (product) {
           const isPersonal = product.category?.name?.toLowerCase() === 'personal';
+          const isConsumable = (product as any).isConsumable;
           const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
             ? item.numberOfPeople * item.hoursPerPerson
             : item.quantity;
 
           if (isPersonal) {
             costPersonal += Number(product.purchasePrice || 0) * effectiveQuantity;
+          } else if (isConsumable) {
+            // Consumible: coste total (se pierde el producto)
+            costDepreciation += Number(product.purchasePrice || 0) * effectiveQuantity;
           } else {
+            // Material: depreciación 5%
             costDepreciation += Number(product.purchasePrice || 0) * effectiveQuantity * 0.05;
           }
 
@@ -396,6 +401,9 @@ const PacksManager = () => {
         }
       });
     }
+
+    // Al ser un pack, los costes de envío y montaje son la mitad (optimización)
+    costShippingInstallation = costShippingInstallation / 2;
 
     const totalCost = costPersonal + costDepreciation + costShippingInstallation;
     const profit = finalPrice - totalCost;
