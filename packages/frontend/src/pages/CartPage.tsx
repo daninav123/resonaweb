@@ -213,6 +213,19 @@ const CartPage = () => {
     }
   }, [guestCartItems, globalDates.start, globalDates.end]);
 
+  // Automarcar transporte + instalación para items de eventos (ya incluido en precio)
+  useEffect(() => {
+    const hasEventItems = guestCartItems.some((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+
+    if (hasEventItems) {
+      // Marcar automáticamente delivery con instalación incluida
+      setDeliveryOption('delivery');
+      setIncludeInstallation(true);
+    }
+  }, [guestCartItems]);
+
   // Handler para cuando se selecciona una dirección
   const handleAddressSelect = (address: string, calculatedDistance: number) => {
     setDeliveryAddress(address);
@@ -1073,67 +1086,95 @@ const CartPage = () => {
                   <label className="block text-sm font-medium text-gray-900 mb-3">
                     Método de entrega
                   </label>
-                  <div className="space-y-3">
-                    {/* Opción 1: Recogida en tienda */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDeliveryOption('pickup');
-                        setIncludeInstallation(false);
-                      }}
-                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                        deliveryOption === 'pickup'
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-semibold text-gray-900">🏪 Recogida en tienda</p>
-                        <p className="text-sm text-gray-600 mt-1">Gratis</p>
-                        <p className="text-xs text-gray-500 mt-1">{shippingConfig?.baseAddress || 'Madrid, España'}</p>
-                      </div>
-                    </button>
-                    
-                    {/* Opción 2: Transporte (solo envío) */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDeliveryOption('delivery');
-                        setIncludeInstallation(false);
-                      }}
-                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                        deliveryOption === 'delivery' && !includeInstallation
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-semibold text-gray-900">📦 Transporte</p>
-                        <p className="text-sm text-gray-600 mt-1">Según distancia</p>
-                        <p className="text-xs text-gray-500 mt-1">Introduce tu dirección</p>
-                      </div>
-                    </button>
+                  
+                  {(() => {
+                    const hasEventItems = guestCartItems.some((item: any) => 
+                      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+                    );
 
-                    {/* Opción 3: Transporte + Instalación */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDeliveryOption('delivery');
-                        setIncludeInstallation(true);
-                      }}
-                      className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                        deliveryOption === 'delivery' && includeInstallation
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-semibold text-gray-900">🚚 Transporte + Instalación</p>
-                        <p className="text-sm text-gray-600 mt-1">Incluye montaje completo</p>
-                        <p className="text-xs text-gray-500 mt-1">Nuestro equipo montará todo el equipo en tu evento</p>
+                    if (hasEventItems) {
+                      // Mostrar solo la opción de transporte + instalación (bloqueada)
+                      return (
+                        <>
+                          <div className="w-full p-4 border-2 border-green-500 bg-green-50 rounded-lg">
+                            <div>
+                              <p className="font-semibold text-green-900">🚚 Transporte + Instalación</p>
+                              <p className="text-sm text-green-700 mt-1">✅ Ya incluido en el precio del evento</p>
+                              <p className="text-xs text-green-600 mt-1">Nuestro equipo se encargará de todo</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2 italic">
+                            * El transporte y montaje ya están incluidos para eventos
+                          </p>
+                        </>
+                      );
+                    }
+
+                    // Para items normales, mostrar todas las opciones
+                    return (
+                      <div className="space-y-3">
+                        {/* Opción 1: Recogida en tienda */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeliveryOption('pickup');
+                            setIncludeInstallation(false);
+                          }}
+                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
+                            deliveryOption === 'pickup'
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <div>
+                            <p className="font-semibold text-gray-900">🏪 Recogida en tienda</p>
+                            <p className="text-sm text-gray-600 mt-1">Gratis</p>
+                            <p className="text-xs text-gray-500 mt-1">{shippingConfig?.baseAddress || 'Madrid, España'}</p>
+                          </div>
+                        </button>
+                        
+                        {/* Opción 2: Transporte (solo envío) */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeliveryOption('delivery');
+                            setIncludeInstallation(false);
+                          }}
+                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
+                            deliveryOption === 'delivery' && !includeInstallation
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <div>
+                            <p className="font-semibold text-gray-900">📦 Transporte</p>
+                            <p className="text-sm text-gray-600 mt-1">Según distancia</p>
+                            <p className="text-xs text-gray-500 mt-1">Introduce tu dirección</p>
+                          </div>
+                        </button>
+
+                        {/* Opción 3: Transporte + Instalación */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeliveryOption('delivery');
+                            setIncludeInstallation(true);
+                          }}
+                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
+                            deliveryOption === 'delivery' && includeInstallation
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <div>
+                            <p className="font-semibold text-gray-900">🚚 Transporte + Instalación</p>
+                            <p className="text-sm text-gray-600 mt-1">Incluye montaje completo</p>
+                            <p className="text-xs text-gray-500 mt-1">Nuestro equipo montará todo el equipo en tu evento</p>
+                          </div>
+                        </button>
                       </div>
-                    </button>
-                  </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Dirección y Distancia - Solo si es envío */}
