@@ -1010,6 +1010,36 @@ const EventCalculatorPage = () => {
                   </div>
                 )}
 
+                {/* Partes Seleccionadas */}
+                {eventData.selectedParts.length > 0 && selectedEventType && (
+                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <p className="text-sm text-purple-600 font-medium mb-3">🎭 Partes del Evento</p>
+                    <div className="space-y-2">
+                      {eventData.selectedParts.map((partId) => {
+                        const part = selectedEventType.parts.find((p: any) => p.id === partId);
+                        if (!part) return null;
+                        
+                        // Calcular el precio de la parte según el número de invitados
+                        let partPrice = 0;
+                        if (part.pricingRanges && part.pricingRanges.length > 0) {
+                          const applicableRange = part.pricingRanges.find((range: any) => 
+                            eventData.attendees >= range.minAttendees && 
+                            eventData.attendees <= range.maxAttendees
+                          );
+                          partPrice = applicableRange ? applicableRange.price : 0;
+                        }
+                        
+                        return (
+                          <div key={partId} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
+                            <span className="text-sm font-semibold text-purple-600">€{partPrice.toFixed(2)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Pack Seleccionado */}
                 {eventData.selectedPack && (() => {
                   const selectedPackData = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
@@ -1052,6 +1082,22 @@ const EventCalculatorPage = () => {
                 {/* Precio Total */}
                 {(() => {
                   let total = 0;
+                  
+                  // Añadir precio de las partes seleccionadas
+                  if (eventData.selectedParts.length > 0 && selectedEventType) {
+                    eventData.selectedParts.forEach((partId) => {
+                      const part = selectedEventType.parts.find((p: any) => p.id === partId);
+                      if (part && part.pricingRanges && part.pricingRanges.length > 0) {
+                        const applicableRange = part.pricingRanges.find((range: any) => 
+                          eventData.attendees >= range.minAttendees && 
+                          eventData.attendees <= range.maxAttendees
+                        );
+                        if (applicableRange) {
+                          total += applicableRange.price;
+                        }
+                      }
+                    });
+                  }
                   
                   // Añadir precio del pack (incluyendo transporte y montaje)
                   if (eventData.selectedPack) {
