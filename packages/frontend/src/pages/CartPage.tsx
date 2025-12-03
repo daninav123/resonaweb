@@ -1263,61 +1263,78 @@ const CartPage = () => {
                   })()}
                 </div>
 
-                {/* Dirección y Distancia - Solo si es envío */}
-                {deliveryOption === 'delivery' && (
-                  <div className="mb-4 pb-4 border-b space-y-3">
-                    {!useManualDistance ? (
-                      <>
-                      <AddressAutocomplete 
-                        onAddressSelect={handleAddressSelect}
-                        baseAddress={shippingConfig?.baseAddress || 'Madrid, España'}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setUseManualDistance(true)}
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        O introduce la distancia manualmente
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <label className="block text-sm font-medium text-gray-900 mb-2">
-                        📍 Distancia aproximada (km)
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={distance}
-                        onChange={(e) => setDistance(Number(e.target.value))}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="15"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setUseManualDistance(false)}
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        Volver a búsqueda por dirección
-                      </button>
-                    </>
-                  )}
+                {/* Dirección y Distancia - Solo si es envío Y NO es evento personalizado */}
+                {(() => {
+                  const hasEventItems = guestCartItems.some((item: any) => 
+                    item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+                  );
                   
-                  {calculatedShipping && (
-                    <div className="bg-blue-50 border border-blue-200 rounded p-2">
-                      <p className="text-xs text-blue-900">
-                        Zona: {calculatedShipping.zone === 'LOCAL' ? '🟢 Local' : 
-                              calculatedShipping.zone === 'REGIONAL' ? '🔵 Regional' :
-                              calculatedShipping.zone === 'EXTENDED' ? '🟡 Ampliada' : '🔴 Personalizada'}
-                        {calculatedShipping.breakdown?.minimumApplied && ' (mínimo aplicado)'}
-                      </p>
-                      <p className="text-xs text-blue-800 font-semibold mt-1">
-                        Distancia: {distance}km → Coste: €{calculatedShipping.finalCost}
-                      </p>
-                    </div>
-                  )}
-                  </div>
-                )}
+                  // Para eventos personalizados, NO mostrar el campo de dirección
+                  // porque la ubicación ya se especificó en la calculadora
+                  if (hasEventItems) {
+                    return null;
+                  }
+                  
+                  // Para pedidos normales, mostrar el campo si eligió envío
+                  if (deliveryOption === 'delivery') {
+                    return (
+                      <div className="mb-4 pb-4 border-b space-y-3">
+                        {!useManualDistance ? (
+                          <>
+                          <AddressAutocomplete 
+                            onAddressSelect={handleAddressSelect}
+                            baseAddress={shippingConfig?.baseAddress || 'Madrid, España'}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setUseManualDistance(true)}
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            O introduce la distancia manualmente
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <label className="block text-sm font-medium text-gray-900 mb-2">
+                            📍 Distancia aproximada (km)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={distance}
+                            onChange={(e) => setDistance(Number(e.target.value))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="15"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setUseManualDistance(false)}
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            Volver a búsqueda por dirección
+                          </button>
+                        </>
+                      )}
+                      
+                      {calculatedShipping && (
+                        <div className="bg-blue-50 border border-blue-200 rounded p-2">
+                          <p className="text-xs text-blue-900">
+                            Zona: {calculatedShipping.zone === 'LOCAL' ? '🟢 Local' : 
+                                  calculatedShipping.zone === 'REGIONAL' ? '🔵 Regional' :
+                                  calculatedShipping.zone === 'EXTENDED' ? '🟡 Ampliada' : '🔴 Personalizada'}
+                            {calculatedShipping.breakdown?.minimumApplied && ' (mínimo aplicado)'}
+                          </p>
+                          <p className="text-xs text-blue-800 font-semibold mt-1">
+                            Distancia: {distance}km → Coste: €{calculatedShipping.finalCost}
+                          </p>
+                        </div>
+                      )}
+                      </div>
+                    );
+                  }
+                  
+                  return null;
+                })()}
 
                 {/* Info: Transporte y montaje incluidos desde calculadora */}
                 {shippingIncludedInPrice && (
