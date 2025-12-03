@@ -433,10 +433,7 @@ export class OrderController {
           
           eventType: eventType || 'Evento',
           eventLocation: {
-            address: eventLocation || 'Por confirmar',
-            city: '',
-            postalCode: '',
-            country: 'España'
+            address: eventLocation || 'Por confirmar'
           },
           attendees: attendees || null,
           contactPerson: `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'Cliente',
@@ -460,10 +457,7 @@ export class OrderController {
           
           deliveryType: 'DELIVERY',
           deliveryAddress: {
-            address: eventLocation || 'Por confirmar',
-            city: '',
-            postalCode: '',
-            country: 'España'
+            address: eventLocation || 'Por confirmar'
           },
           
           subtotal,
