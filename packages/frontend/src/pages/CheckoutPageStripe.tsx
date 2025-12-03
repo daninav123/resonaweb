@@ -112,6 +112,19 @@ const CheckoutPageStripe = () => {
           // ✅ FLUJO DE CALCULADORA: Usar endpoint dedicado
           console.log('🎯 Pedido desde CALCULADORA - Usando endpoint dedicado');
           
+          // IMPORTANTE: El endpoint de calculadora solo acepta 1 pack a la vez
+          const eventItems = orderData.items.filter((item: any) => item.eventMetadata);
+          if (eventItems.length > 1) {
+            toast.error(
+              `⚠️ Solo puedes pagar 1 evento a la vez. Tienes ${eventItems.length} eventos en tu carrito. Por favor, elimina los eventos adicionales.`,
+              { duration: 10000 }
+            );
+            setTimeout(() => {
+              navigate('/carrito');
+            }, 2000);
+            return;
+          }
+          
           const eventMeta = firstItem.eventMetadata;
           
           // Construir selectedExtras como objeto { productId: quantity }
@@ -195,7 +208,8 @@ const CheckoutPageStripe = () => {
       } catch (error: any) {
         console.error('❌ Error completo:', error);
         console.error('❌ Respuesta del servidor:', error.response?.data);
-        console.error('❌ Detalles de validación:', JSON.stringify(error.response?.data?.error?.details, null, 2));
+        console.error('❌ Error message:', error.response?.data?.error?.message || error.response?.data?.message);
+        console.error('❌ Detalles de validación:', JSON.stringify(error.response?.data?.error?.details || error.response?.data?.error, null, 2));
         console.error('❌ Status:', error.response?.status);
         
         const errorDetails = error.response?.data?.error?.details;

@@ -428,6 +428,16 @@ const CheckoutPage = () => {
       toast.error('Debes aceptar los términos y condiciones');
       return;
     }
+    
+    // Validar que solo haya 1 evento/pack de calculadora
+    const eventItems = cartItems.filter((item: any) => item.eventMetadata);
+    if (eventItems.length > 1) {
+      toast.error(
+        `⚠️ Solo puedes pagar 1 evento a la vez. Tienes ${eventItems.length} eventos en tu carrito. Por favor, elimina los eventos adicionales desde el carrito.`,
+        { duration: 10000 }
+      );
+      return;
+    }
 
     setIsProcessing(true);
 
