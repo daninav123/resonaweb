@@ -160,7 +160,7 @@ export interface CartItem {
 export interface Cart {
   items: CartItem[];
   subtotal: number;
-  shippingCost: number;
+  // Nota: Envío y montaje ahora se gestionan mediante Packs de categoría MONTAJE
   servicesCost: number;
   taxAmount: number;
   total: number;
