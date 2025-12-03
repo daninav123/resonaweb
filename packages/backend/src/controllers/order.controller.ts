@@ -447,13 +447,12 @@ export class OrderController {
               `💰 Precio Pack: €${customOrderDetails.packPrice}\n\n` +
               `🎉 Evento: ${eventType || 'Evento personalizado'}\n` +
               `👥 Asistentes: ${attendees || 'N/A'}\n` +
-              `📅 Duración: ${duration} ${durationType === 'hours' ? 'horas' : 'días'}\n` +
               `📍 Ubicación: ${eventLocation || 'Por confirmar'}\n\n` +
               (customOrderDetails.parts && customOrderDetails.parts.length > 0 
-                ? `📦 Partes del Evento:\n${customOrderDetails.parts.map((p: any) => `   • ${p.name} - €${p.price || 0}`).join('\n')}\n💰 Total Partes: €${customOrderDetails.partsTotal}\n\n`
+                ? `📦 Partes del Evento:\n${customOrderDetails.parts.map((p: any) => `   • ${p.name} - €${p.price || 0}`).join('\n')}\n\n💰 Total Partes: €${customOrderDetails.partsTotal}\n\n`
                 : '') +
               (customOrderDetails.extras && customOrderDetails.extras.length > 0 
-                ? `✨ Extras:\n${customOrderDetails.extras.map((e: any) => `   • ${e.name} x${e.quantity} - €${e.total || 0}`).join('\n')}\n💰 Total Extras: €${customOrderDetails.extrasTotal}\n\n`
+                ? `✨ Extras:\n${customOrderDetails.extras.map((e: any) => `   • ${e.name} x${e.quantity} - €${e.total || 0}`).join('\n')}\n\n💰 Total Extras: €${customOrderDetails.extrasTotal}\n\n`
                 : '') +
               `💵 Total Estimado: €${estimatedTotal}\n\n` +
               `✅ Pago completado directamente`

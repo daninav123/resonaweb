@@ -252,20 +252,35 @@ const OrderDetailUserPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-gray-700">
-              <MapPin className="w-5 h-5 text-gray-400" />
-              <div>
-                <p className="text-sm text-gray-500">Método de Entrega</p>
-                <p className="font-medium">
-                  {order.deliveryType === 'PICKUP' ? 'Recogida en tienda' : 'Envío a domicilio'}
-                </p>
+            {/* Para eventos personalizados, mostrar el lugar. Para alquileres, el método de entrega */}
+            {order.items?.some((item: any) => item.product?.id === 'product-custom-event-virtual') ? (
+              <div className="flex items-center gap-3 text-gray-700">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm text-gray-500">Lugar del Evento</p>
+                  <p className="font-medium">
+                    {order.eventLocation?.address || order.deliveryAddress?.address || 'Por confirmar'}
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Método de Entrega</p>
+                    <p className="font-medium">
+                      {order.deliveryType === 'PICKUP' ? 'Recogida en tienda' : 'Envío a domicilio'}
+                    </p>
+                  </div>
+                </div>
 
-            {order.deliveryType === 'DELIVERY' && order.deliveryAddress && (
-              <div className="pl-8">
-                <p className="text-sm text-gray-600">{order.deliveryAddress.address}</p>
-              </div>
+                {order.deliveryType === 'DELIVERY' && order.deliveryAddress && (
+                  <div className="pl-8">
+                    <p className="text-sm text-gray-600">{order.deliveryAddress.address}</p>
+                  </div>
+                )}
+              </>
             )}
 
             <div className="flex items-center gap-3 text-gray-700">
@@ -309,8 +324,8 @@ const OrderDetailUserPage = () => {
               <span className="text-blue-600">€{Number(order.total || 0).toFixed(2)}</span>
             </div>
 
-            {/* Fianza */}
-            {order.depositAmount > 0 && (
+            {/* Fianza - Solo para alquileres, NO para eventos personalizados */}
+            {order.depositAmount > 0 && !order.items?.some((item: any) => item.product?.id === 'product-custom-event-virtual') && (
               <>
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between items-center mb-2">
@@ -386,8 +401,8 @@ const OrderDetailUserPage = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">€{Number(item.totalPrice || 0).toFixed(2)}</p>
-                  <p className="text-xs text-gray-500">€{Number(item.pricePerUnit || 0).toFixed(2)}/día</p>
+                  <p className="font-medium text-gray-900">€{Number(item.subtotal || item.totalPrice || 0).toFixed(2)}</p>
+                  <p className="text-xs text-gray-500">€{Number(item.pricePerDay || item.pricePerUnit || 0).toFixed(2)}/día</p>
                 </div>
               </div>
             ))}
@@ -400,7 +415,8 @@ const OrderDetailUserPage = () => {
             <h2 className="text-xl font-semibold mb-4">📋 Detalles del Evento</h2>
             <div className="prose max-w-none">
               <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-gray-50 p-4 rounded-lg border border-gray-200">
-                {order.notes}
+                {/* Decodificar HTML entities como &#x2F; */}
+                {order.notes.replace(/&#x2F;/g, '/').replace(/&#x([0-9A-Fa-f]+);/g, (match: string, hex: string) => String.fromCharCode(parseInt(hex, 16)))}
               </pre>
             </div>
           </div>
