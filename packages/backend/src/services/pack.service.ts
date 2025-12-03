@@ -327,10 +327,11 @@ class PackService {
   async createPack(data: {
     name: string;
     description: string;
-    category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'OTROS';
+    category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'OTROS';
     discountPercentage?: number;
     discountAmount?: number;
     customFinalPrice?: number;
+    transportCost?: number;
     autoCalculate?: boolean;
     includeShipping?: boolean;
     includeInstallation?: boolean;
@@ -358,6 +359,7 @@ class PackService {
         category: data.category || 'OTROS',
         discountPercentage: new Prisma.Decimal(data.discountPercentage || 0),
         discountAmount: new Prisma.Decimal(data.discountAmount || 0),
+        transportCost: new Prisma.Decimal(data.transportCost || 0),
         autoCalculate: data.autoCalculate !== false, // Por defecto true
         customPriceEnabled: !!data.customFinalPrice,
         finalPrice: data.customFinalPrice ? new Prisma.Decimal(data.customFinalPrice) : 0, // Se calculará después
@@ -451,10 +453,11 @@ class PackService {
     data: {
       name?: string;
       description?: string;
-      category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'OTROS';
+      category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'OTROS';
       discountPercentage?: number;
       discountAmount?: number;
       customFinalPrice?: number;
+      transportCost?: number;
       autoCalculate?: boolean;
       imageUrl?: string;
       featured?: boolean;
@@ -495,6 +498,7 @@ class PackService {
         updateData.customPriceEnabled = true;
         updateData.finalPrice = new Prisma.Decimal(data.customFinalPrice);
       }
+      if (data.transportCost !== undefined) updateData.transportCost = new Prisma.Decimal(data.transportCost);
       if (data.autoCalculate !== undefined) updateData.autoCalculate = data.autoCalculate;
       if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
       if (data.featured !== undefined) updateData.featured = data.featured;
