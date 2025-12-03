@@ -100,6 +100,67 @@ export class PaymentService {
   }
 
   /**
+   * Create a payment intent without order (new flow)
+   */
+  async createPaymentIntentWithoutOrder(amount: number, userId: string, orderData: any) {
+    try {
+      console.log('💳 Creando payment intent sin orden previa');
+      console.log('💰 Monto:', amount / 100, 'EUR');
+      
+      // Get user from database
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new AppError(404, 'Usuario no encontrado', 'USER_NOT_FOUND');
+      }
+
+      // Create or get customer in Stripe
+      let stripeCustomer;
+      let stripeCustomerId = user.stripeCustomerId;
+      
+      if (!stripeCustomerId) {
+        stripeCustomer = await stripe.customers.create({
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`,
+          phone: user.phone || undefined,
+        });
+
+        stripeCustomerId = stripeCustomer.id;
+        
+        // Update user with Stripe customer ID
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { stripeCustomerId: stripeCustomerId },
+        });
+      }
+
+      // Create payment intent
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount, // Already in cents
+        currency: 'eur',
+        payment_method_types: ['card'],
+        customer: stripeCustomerId,
+        metadata: {
+          userId: userId,
+          orderDataJson: JSON.stringify(orderData), // Store order data for later
+        },
+      });
+
+      console.log('✅ Payment intent creado:', paymentIntent.id);
+
+      return {
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      };
+    } catch (error) {
+      logger.error('Error creating payment intent without order:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Confirm payment
    */
   async confirmPayment(paymentIntentId: string) {

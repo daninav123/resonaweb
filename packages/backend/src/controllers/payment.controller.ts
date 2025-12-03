@@ -36,13 +36,22 @@ export class PaymentController {
       // Si NO hay orderId, es un pago inicial (nuevo flujo)
       if (!orderId && orderData) {
         console.log('🔄 Flujo nuevo: Creando payment intent sin orden');
+        console.log('📦 OrderData completo:', JSON.stringify(orderData, null, 2));
+        
         // Calcular el total desde orderData
-        const subtotal = orderData.items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
+        const subtotal = orderData.items.reduce((sum: number, item: any) => {
+          console.log('  Item:', item.productId, '- totalPrice:', item.totalPrice);
+          return sum + (item.totalPrice || 0);
+        }, 0);
         const shippingCost = orderData.shippingCost || 0;
         const taxAmount = (subtotal + shippingCost) * 0.21;
         const total = subtotal + shippingCost + taxAmount;
         
-        console.log('💰 Total calculado:', total);
+        console.log('💰 Subtotal:', subtotal);
+        console.log('💰 Shipping:', shippingCost);
+        console.log('💰 Tax:', taxAmount);
+        console.log('💰 Total final:', total);
+        console.log('💰 Total en centavos:', Math.round(total * 100));
 
         // Crear Payment Intent directo sin orden
         const result = await stripeService.createPaymentIntentWithoutOrder(
