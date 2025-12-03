@@ -393,6 +393,18 @@ const OrderDetailUserPage = () => {
             ))}
           </div>
         </div>
+
+        {/* Detalles del Evento / Notas */}
+        {order.notes && (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">📋 Detalles del Evento</h2>
+            <div className="prose max-w-none">
+              <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-gray-50 p-4 rounded-lg border border-gray-200">
+                {order.notes}
+              </pre>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

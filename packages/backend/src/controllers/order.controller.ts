@@ -334,16 +334,23 @@ export class OrderController {
           }
         }
         
+        // El precio por día para eventos personalizados es el precio total del evento
+        // Usamos toda la duración del evento como 1 "día" conceptual
+        const pricePerDayValue = packSubtotal / (days || 1);
+        
         orderItems.push({
           productId: virtualProductId,
           quantity: 1,
-          pricePerDay: packSubtotal,
+          pricePerDay: pricePerDayValue,
           subtotal: packSubtotal,
           startDate,
           endDate,
         });
         
-        logger.info(`[createOrderFromCalculator] Pedido personalizado creado - Total: €${packSubtotal}`);
+        logger.info(`[createOrderFromCalculator] Pedido personalizado creado:`);
+        logger.info(`  - Total: €${packSubtotal}`);
+        logger.info(`  - Precio por día: €${pricePerDayValue}`);
+        logger.info(`  - Días: ${days}`);
       } else {
         // FLUJO ORIGINAL: Buscar productos existentes
         // Pack
