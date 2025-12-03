@@ -24,6 +24,8 @@ interface EventData {
   selectedParts: string[];
   // Pack seleccionado (solo uno)
   selectedPack: string | null;
+  // Montaje seleccionado (Pack de categoría MONTAJE)
+  selectedMontaje: string | null;
   // Productos extras seleccionados { productId: quantity }
   selectedExtras: Record<string, number>;
   email?: string;
@@ -44,6 +46,7 @@ const EventCalculatorPage = () => {
     eventLocation: '',
     selectedParts: [],
     selectedPack: null,
+    selectedMontaje: null,
     selectedExtras: {},
   });
   const [eventValidation, setEventValidation] = useState<EventValidation | null>(null);
@@ -110,6 +113,28 @@ const EventCalculatorPage = () => {
     queryFn: async () => {
       const result = await productService.getCategories();
       return result || [];
+    },
+  });
+
+  // Cargar packs de MONTAJE (transporte + instalación)
+  const { data: montajePacks = [] } = useQuery({
+    queryKey: ['montaje-packs'],
+    queryFn: async () => {
+      try {
+        const response: any = await api.get('/packs');
+        const allPacks = response?.packs || response || [];
+        
+        // Filtrar solo packs de categoría MONTAJE
+        const montajePacks = allPacks.filter((pack: any) => 
+          pack.category === 'MONTAJE' && pack.isActive !== false
+        );
+        
+        console.log('🚚 Packs de MONTAJE cargados:', montajePacks);
+        return montajePacks;
+      } catch (error) {
+        console.error('Error cargando packs de montaje:', error);
+        return [];
+      }
     },
   });
 
@@ -244,6 +269,17 @@ const EventCalculatorPage = () => {
         }
       }
       
+      // Añadir precio del montaje si está seleccionado
+      let montajePrice = 0;
+      let montajeName = '';
+      if (eventData.selectedMontaje) {
+        const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
+        if (montaje) {
+          montajePrice = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
+          montajeName = montaje.name;
+        }
+      }
+      
       const eventMetadata = {
         eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
         attendees: eventData.attendees,
@@ -255,7 +291,12 @@ const EventCalculatorPage = () => {
         selectedParts: selectedPartsWithPrices,
         partsTotal: partsTotal,
         selectedExtras: selectedExtrasWithPrices,
-        extrasTotal: extrasTotal
+        extrasTotal: extrasTotal,
+        selectedMontaje: eventData.selectedMontaje ? {
+          id: eventData.selectedMontaje,
+          name: montajeName,
+          price: montajePrice
+        } : null
       };
 
       // 3. Añadir SOLO el pack al carrito con todo el metadata (partes + extras)
@@ -1030,6 +1071,69 @@ const EventCalculatorPage = () => {
                 );
               })()}
               
+              {/* Sección de Montajes */}
+              {montajePacks.length > 0 && (
+                <div className="mt-8 border-t pt-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b-2 border-purple-500">
+                    <span className="bg-purple-500 text-white px-3 py-1 rounded-lg text-sm">
+                      {montajePacks.length}
+                    </span>
+                    <span>🚚 Servicio de Montaje</span>
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    ¿Necesitas que nos encarguemos del transporte e instalación? Elige una opción:
+                  </p>
+                  
+                  <div className="space-y-3">
+                    {/* Opción: Sin montaje */}
+                    <div
+                      onClick={() => setEventData({ ...eventData, selectedMontaje: null })}
+                      className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${
+                        !eventData.selectedMontaje ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900">Sin montaje (Recogida en tienda)</h4>
+                          <p className="text-sm text-gray-600 mt-1">Recoges el material en nuestra tienda</p>
+                        </div>
+                        <div className="font-bold text-gray-700">GRATIS</div>
+                      </div>
+                    </div>
+                    
+                    {/* Opciones de montaje */}
+                    {montajePacks.map((montaje: any) => {
+                      const isSelected = eventData.selectedMontaje === montaje.id;
+                      const price = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
+                      
+                      return (
+                        <div
+                          key={montaje.id}
+                          onClick={() => setEventData({ ...eventData, selectedMontaje: montaje.id })}
+                          className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${
+                            isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900">{montaje.name}</h4>
+                              <p className="text-sm text-gray-600 mt-1">{montaje.description || 'Incluye transporte y montaje completo'}</p>
+                            </div>
+                            <div className="font-bold text-purple-600">€{price.toFixed(2)}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <p className="text-xs text-purple-800">
+                      ℹ️ El servicio de montaje es un cargo único por evento (no se multiplica por días)
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
                   💡 <strong>Nota:</strong> Los extras son opcionales. Puedes añadir la cantidad que necesites de cada producto.
@@ -1176,6 +1280,24 @@ const EventCalculatorPage = () => {
                   </div>
                 )}
 
+                {/* Montaje Seleccionado */}
+                {eventData.selectedMontaje && (() => {
+                  const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
+                  if (!montaje) return null;
+                  const price = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
+                  
+                  return (
+                    <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                      <p className="text-sm text-purple-600 font-medium mb-2">🚚 Servicio de Montaje</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">{montaje.name}</span>
+                        <span className="text-sm font-semibold text-purple-600">€{price.toFixed(2)}</span>
+                      </div>
+                      <p className="text-xs text-purple-600 mt-1">Incluye transporte e instalación completa</p>
+                    </div>
+                  );
+                })()}
+
                 {/* Precio Total */}
                 {(() => {
                   let total = 0;
@@ -1244,6 +1366,17 @@ const EventCalculatorPage = () => {
                   const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
                   const totalFinal = total * days;
                   
+                  // Añadir montaje (NO se multiplica por días - es precio fijo)
+                  let montajePrice = 0;
+                  if (eventData.selectedMontaje) {
+                    const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
+                    if (montaje) {
+                      montajePrice = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
+                    }
+                  }
+                  
+                  const totalWithMontaje = totalFinal + montajePrice;
+                  
                   return total > 0 ? (
                     <div className="p-5 bg-green-50 rounded-lg border-2 border-green-300">
                       <div className="flex items-center justify-between mb-2">
@@ -1254,10 +1387,20 @@ const EventCalculatorPage = () => {
                         <span className="text-sm text-gray-600">Duración:</span>
                         <span className="font-semibold text-gray-900">{days} día{days > 1 ? 's' : ''}</span>
                       </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">Subtotal material:</span>
+                        <span className="font-semibold text-gray-900">€{totalFinal.toFixed(2)}</span>
+                      </div>
+                      {montajePrice > 0 && (
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-gray-600">🚚 Montaje:</span>
+                          <span className="font-semibold text-purple-600">€{montajePrice.toFixed(2)}</span>
+                        </div>
+                      )}
                       <div className="pt-2 border-t-2 border-green-300 mt-2">
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-bold text-gray-900">TOTAL:</span>
-                          <span className="text-2xl font-bold text-green-600">€{totalFinal.toFixed(2)}</span>
+                          <span className="text-2xl font-bold text-green-600">€{totalWithMontaje.toFixed(2)}</span>
                         </div>
                       </div>
                       <p className="text-xs text-gray-500 mt-2">
