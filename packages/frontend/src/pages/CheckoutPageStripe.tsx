@@ -158,9 +158,17 @@ const CheckoutPageStripe = () => {
       } catch (error: any) {
         console.error('❌ Error completo:', error);
         console.error('❌ Respuesta del servidor:', error.response?.data);
+        console.error('❌ Detalles de validación:', JSON.stringify(error.response?.data?.error?.details, null, 2));
         console.error('❌ Status:', error.response?.status);
         
-        const errorMessage = error.response?.data?.message || error.message || 'Error al crear la orden';
+        const errorDetails = error.response?.data?.error?.details;
+        const errorMessage = error.response?.data?.error?.message || error.response?.data?.message || error.message || 'Error al crear la orden';
+        
+        // Mostrar detalles de validación si existen
+        if (errorDetails) {
+          console.table(errorDetails);
+        }
+        
         toast.error(`Error al validar el pedido: ${errorMessage}`);
         
         // NO redirigir al carrito - mantener en la página para ver el error
