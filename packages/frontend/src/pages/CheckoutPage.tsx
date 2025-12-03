@@ -433,9 +433,39 @@ const CheckoutPage = () => {
 
     // Guardar datos de la orden en sessionStorage para crearla DESPUÉS del pago
     const orderItems = cartItems.map(item => {
-      const days = calculateDays(item.startDate || '', item.endDate || '');
-      const pricePerUnit = item.product.pricePerDay * days;
-      const totalPrice = pricePerUnit * item.quantity;
+      let pricePerUnit: number;
+      let totalPrice: number;
+      
+      // Items de eventos: precio incluye pack + partes + extras
+      if (item.eventMetadata) {
+        const packPrice = Number(item.product.pricePerDay) || 0;
+        const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
+        const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
+        pricePerUnit = packPrice + partsTotal + extrasTotal;
+        totalPrice = pricePerUnit * item.quantity;
+        
+        console.log('💰 Item de evento:', {
+          name: item.product.name,
+          packPrice,
+          partsTotal,
+          extrasTotal,
+          pricePerUnit,
+          totalPrice
+        });
+      } else {
+        // Items normales: precio por días
+        const days = calculateDays(item.startDate || '', item.endDate || '');
+        pricePerUnit = item.product.pricePerDay * days;
+        totalPrice = pricePerUnit * item.quantity;
+        
+        console.log('💰 Item normal:', {
+          name: item.product.name,
+          days,
+          pricePerDay: item.product.pricePerDay,
+          pricePerUnit,
+          totalPrice
+        });
+      }
       
       // Convertir fechas de string "YYYY-MM-DD" a Date ISO string
       const startDate = item.startDate ? new Date(item.startDate + 'T00:00:00.000Z').toISOString() : new Date().toISOString();

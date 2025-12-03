@@ -38,20 +38,39 @@ export class PaymentController {
         console.log('🔄 Flujo nuevo: Creando payment intent sin orden');
         console.log('📦 OrderData completo:', JSON.stringify(orderData, null, 2));
         
+        // Validar que items existe y tiene elementos
+        if (!orderData.items || !Array.isArray(orderData.items) || orderData.items.length === 0) {
+          console.error('❌ orderData.items está vacío o no es un array');
+          throw new AppError(400, 'No hay items en la orden', 'NO_ITEMS');
+        }
+        
         // Calcular el total desde orderData
         const subtotal = orderData.items.reduce((sum: number, item: any) => {
-          console.log('  Item:', item.productId, '- totalPrice:', item.totalPrice);
-          return sum + (item.totalPrice || 0);
+          const itemPrice = Number(item.totalPrice) || 0;
+          console.log('  Item:', item.productId, '- totalPrice:', itemPrice);
+          return sum + itemPrice;
         }, 0);
-        const shippingCost = orderData.shippingCost || 0;
+        
+        console.log('💰 Subtotal calculado:', subtotal);
+        
+        if (subtotal <= 0) {
+          console.error('❌ Subtotal es 0 o negativo');
+          throw new AppError(400, 'El monto total debe ser mayor a 0', 'INVALID_AMOUNT');
+        }
+        
+        const shippingCost = Number(orderData.shippingCost) || 0;
         const taxAmount = (subtotal + shippingCost) * 0.21;
         const total = subtotal + shippingCost + taxAmount;
         
-        console.log('💰 Subtotal:', subtotal);
         console.log('💰 Shipping:', shippingCost);
-        console.log('💰 Tax:', taxAmount);
+        console.log('💰 Tax (21%):', taxAmount);
         console.log('💰 Total final:', total);
         console.log('💰 Total en centavos:', Math.round(total * 100));
+        
+        if (isNaN(total) || total <= 0) {
+          console.error('❌ Total calculado es inválido:', total);
+          throw new AppError(400, 'Error en el cálculo del total', 'INVALID_TOTAL');
+        }
 
         // Crear Payment Intent directo sin orden
         const result = await stripeService.createPaymentIntentWithoutOrder(
