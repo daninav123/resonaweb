@@ -478,6 +478,7 @@ const CheckoutPage = () => {
         totalPrice: totalPrice,
         startDate: startDate,  // ISO Date string
         endDate: endDate,      // ISO Date string
+        eventMetadata: item.eventMetadata || undefined,  // IMPORTANTE: Incluir metadata para detectar pedidos de calculadora
       };
     });
     
