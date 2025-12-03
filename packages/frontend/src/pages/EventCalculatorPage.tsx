@@ -272,7 +272,12 @@ const EventCalculatorPage = () => {
       }
 
       const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
-      const totalFinal = totalCalculated * days;
+      
+      // IMPORTANTE: Para eventos personalizados, el total NO se multiplica por días
+      // Las partes del evento (Ceremonia, Cóctel, etc.) tienen precio fijo
+      // Los extras tienen precio fijo
+      // El pack de sonido/iluminación ya está incluido en las partes
+      const totalFinal = totalCalculated; // NO multiplicar por días
 
       // 5. Mostrar confirmación
       alert(
