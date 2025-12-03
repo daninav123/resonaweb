@@ -49,6 +49,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/products', icon: Package, label: 'Productos' },
     { path: '/admin/packs', icon: Box, label: 'Packs' },
     { path: '/admin/personal', icon: Users, label: 'Personal' },
+    { path: '/admin/montajes', icon: Truck, label: 'Montajes' },
     { path: '/admin/categories', icon: Grid, label: 'Categorías' },
     { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
     { path: '/admin/users', icon: Users, label: 'Usuarios' },
