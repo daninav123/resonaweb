@@ -481,6 +481,9 @@ model Pack {
   // Categoría del pack
   category PackCategory @default(OTROS) // Categoría del pack
 
+  // Coste de transporte (para montajes)
+  transportCost Decimal @default(0) @db.Decimal(10, 2) // Coste del transporte e instalación
+
   isActive Boolean @default(true)
   featured Boolean @default(false)
 
