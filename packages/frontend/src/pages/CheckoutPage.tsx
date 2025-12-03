@@ -496,20 +496,20 @@ const CheckoutPage = () => {
     let notesWithDetails = formData.notes || '';
     
     // Agregar información de packs y extras de items de eventos
-    const eventItems = cartItems.filter((item: any) => item.eventMetadata);
+    const eventItemsForNotes = cartItems.filter((item: any) => item.eventMetadata);
     
-    console.log('📝 Event Items encontrados:', eventItems.length);
-    console.log('📝 Event Items:', eventItems);
+    console.log('📝 Event Items encontrados:', eventItemsForNotes.length);
+    console.log('📝 Event Items:', eventItemsForNotes);
     console.log('📝 Todos los items del carrito:', cartItems);
     
-    if (eventItems.length > 0) {
+    if (eventItemsForNotes.length > 0) {
       if (notesWithDetails) {
         notesWithDetails += '\n\n---\n\n';
       }
       
       notesWithDetails += '📋 DETALLES DEL EVENTO:\n';
       
-      eventItems.forEach((item: any, index: number) => {
+      eventItemsForNotes.forEach((item: any, index: number) => {
         notesWithDetails += `\n${index + 1}. ${item.product.name}\n`;
         
         console.log(`📝 Item ${index + 1} metadata:`, item.eventMetadata);
