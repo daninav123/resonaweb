@@ -100,12 +100,44 @@ const CheckoutPageStripe = () => {
     // Si es pago inicial (sin orderId), crear la orden ahora
     if (!orderId && orderData && user) {
       try {
-        console.log('📦 Creando orden con datos:', orderData);
+        console.log('📦 Datos originales:', orderData);
         
-        const response: any = await api.post('/orders', {
-          ...orderData,
-          userId: user.id,
-        });
+        // Adaptar el formato al que espera el backend
+        const firstItem = orderData.items[0];
+        const lastItem = orderData.items[orderData.items.length - 1];
+        
+        // Parsear la dirección de entrega (viene como string)
+        const addressParts = (orderData.deliveryAddress || '').split(',').map((s: string) => s.trim());
+        
+        const adaptedOrderData = {
+          startDate: firstItem?.startDate || new Date().toISOString(),
+          endDate: lastItem?.endDate || new Date().toISOString(),
+          eventLocation: {
+            street: addressParts[0] || 'N/A',
+            city: addressParts[1] || 'N/A',
+            postalCode: addressParts[2] || '00000',
+            country: addressParts[addressParts.length - 1] || 'España',
+          },
+          contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+          contactPhone: user.phone || 'N/A',
+          notes: orderData.notes || '',
+          deliveryType: orderData.deliveryType || 'PICKUP',
+          deliveryAddress: orderData.deliveryType === 'DELIVERY' ? {
+            street: addressParts[0] || 'N/A',
+            city: addressParts[1] || 'N/A',
+            postalCode: addressParts[2] || '00000',
+            country: addressParts[addressParts.length - 1] || 'España',
+          } : undefined,
+          paymentTerm: 'FULL_UPFRONT' as const,
+          items: orderData.items.map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity || 1,
+          })),
+        };
+        
+        console.log('📦 Datos adaptados para backend:', adaptedOrderData);
+        
+        const response: any = await api.post('/orders', adaptedOrderData);
         
         console.log('✅ Respuesta del servidor:', response);
         
