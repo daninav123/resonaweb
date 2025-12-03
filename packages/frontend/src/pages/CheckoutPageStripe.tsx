@@ -203,10 +203,16 @@ const CheckoutPageStripe = () => {
         
         console.log('✅ Respuesta del servidor:', response);
         
-        const createdOrder = response?.order || response;
+        // El backend puede devolver en diferentes formatos:
+        // { data: { order } } o { order } o directamente el order
+        const createdOrder = response?.data?.order || response?.order || response;
         const createdOrderId = createdOrder?.id;
         
+        console.log('✅ Order creada:', createdOrder);
+        console.log('✅ Order ID:', createdOrderId);
+        
         if (!createdOrderId) {
+          console.error('❌ No se encontró orderId en la respuesta:', response);
           throw new Error('No se recibió ID de orden del servidor');
         }
         
