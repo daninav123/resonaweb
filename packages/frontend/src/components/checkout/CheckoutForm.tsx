@@ -30,6 +30,8 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
     setIsProcessing(true);
 
     try {
+      console.log('💳 Confirmando pago con Stripe...');
+      
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -45,14 +47,38 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
         redirect: 'if_required',
       });
 
+      console.log('💳 Respuesta de Stripe:', { error, paymentIntent });
+
       if (error) {
+        console.error('❌ Error de Stripe:', error);
         toast.error(error.message || 'Error al procesar el pago');
         onError(error.message || 'Error desconocido');
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        toast.success('¡Pago realizado con éxito!');
-        onSuccess();
+      } else if (paymentIntent) {
+        console.log('✅ Payment Intent status:', paymentIntent.status);
+        
+        if (paymentIntent.status === 'succeeded') {
+          console.log('✅ Pago completado exitosamente');
+          toast.success('¡Pago realizado con éxito!');
+          onSuccess();
+        } else if (paymentIntent.status === 'processing') {
+          console.log('⏳ Pago en procesamiento...');
+          toast.info('El pago está siendo procesado');
+          onSuccess(); // También llamar onSuccess para procesar el pago
+        } else if (paymentIntent.status === 'requires_payment_method') {
+          console.warn('⚠️ Se requiere método de pago');
+          toast.error('Por favor, verifica tu método de pago');
+          onError('Se requiere método de pago');
+        } else {
+          console.warn('⚠️ Estado desconocido:', paymentIntent.status);
+          toast.warning(`Estado del pago: ${paymentIntent.status}`);
+        }
+      } else {
+        console.error('❌ No hay error ni paymentIntent');
+        toast.error('Respuesta inesperada de Stripe');
+        onError('Respuesta inesperada');
       }
     } catch (err: any) {
+      console.error('❌ Excepción al confirmar pago:', err);
       toast.error('Error al procesar el pago');
       onError(err.message);
     } finally {
