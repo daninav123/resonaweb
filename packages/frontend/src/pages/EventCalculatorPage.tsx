@@ -198,13 +198,24 @@ const EventCalculatorPage = () => {
               partPrice = applicableRange ? applicableRange.price : 0;
             }
             
+            // IMPORTANTE: Si es parte de "Disco/Fiesta" y hay pack seleccionado, usar precio del pack
+            const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+            const selectedPackData = eventData.selectedPack 
+              ? catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack)
+              : null;
+            
+            // Precio final: si es parte de fiesta con pack, usar precio del pack
+            const finalPrice = isPartyPart && selectedPackData 
+              ? Number(selectedPackData.pricePerDay) 
+              : partPrice;
+            
             selectedPartsWithPrices.push({
               id: part.id,
               name: part.name,
               icon: part.icon,
-              price: partPrice
+              price: finalPrice
             });
-            partsTotal += partPrice;
+            partsTotal += finalPrice;
           }
         });
       }
@@ -1164,24 +1175,46 @@ const EventCalculatorPage = () => {
                 {(() => {
                   let total = 0;
                   
+                  // Verificar si hay parte de fiesta seleccionada
+                  const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+                    const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+                    return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                  });
+                  
                   // Añadir precio de las partes seleccionadas
                   if (eventData.selectedParts.length > 0 && selectedEventType) {
                     eventData.selectedParts.forEach((partId) => {
                       const part = selectedEventType.parts.find((p: any) => p.id === partId);
-                      if (part && part.pricingRanges && part.pricingRanges.length > 0) {
-                        const applicableRange = part.pricingRanges.find((range: any) => 
-                          eventData.attendees >= range.minAttendees && 
-                          eventData.attendees <= range.maxAttendees
-                        );
-                        if (applicableRange) {
-                          total += applicableRange.price;
+                      if (part) {
+                        // Precio base de la parte
+                        let partPrice = 0;
+                        if (part.pricingRanges && part.pricingRanges.length > 0) {
+                          const applicableRange = part.pricingRanges.find((range: any) => 
+                            eventData.attendees >= range.minAttendees && 
+                            eventData.attendees <= range.maxAttendees
+                          );
+                          partPrice = applicableRange ? applicableRange.price : 0;
                         }
+                        
+                        // Si es parte de fiesta Y hay pack, usar precio del pack
+                        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                        if (isPartyPart && eventData.selectedPack) {
+                          const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+                          if (pack) {
+                            const basePrice = Number(pack.pricePerDay);
+                            const shipping = Number(pack.shippingCost || 0);
+                            const installation = Number(pack.installationCost || 0);
+                            partPrice = basePrice + shipping + installation;
+                          }
+                        }
+                        
+                        total += partPrice;
                       }
                     });
                   }
                   
-                  // Añadir precio del pack (incluyendo transporte y montaje)
-                  if (eventData.selectedPack) {
+                  // Añadir precio del pack SOLO si NO hay parte de fiesta (para evitar duplicar)
+                  if (eventData.selectedPack && !hasPartyPart) {
                     const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                     if (pack) {
                       const basePrice = Number(pack.pricePerDay);
