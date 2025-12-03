@@ -283,7 +283,8 @@ export class OrderController {
         eventLocation,
         selectedPack,
         selectedExtras,
-        estimatedTotal
+        estimatedTotal,
+        customOrderDetails // NUEVO: Para pedidos personalizados
       } = req.body;
 
       const { prisma } = await import('../index');
@@ -308,38 +309,76 @@ export class OrderController {
       // 2. Preparar orderItems
       const orderItems: any[] = [];
       
-      // Pack
-      if (selectedPack) {
-        const pack = await prisma.product.findUnique({ where: { id: selectedPack } });
-        if (pack) {
-          const packSubtotal = Number(pack.pricePerDay) * days;
-          orderItems.push({
-            productId: pack.id,
-            quantity: 1,
-            pricePerDay: Number(pack.pricePerDay),
-            subtotal: packSubtotal,
-            startDate,
-            endDate,
-          });
-          logger.info(`[createOrderFromCalculator] Pack añadido: ${pack.name}`);
+      // SI HAY customOrderDetails, crear pedido personalizado SIN buscar productos
+      if (customOrderDetails) {
+        logger.info(`[createOrderFromCalculator] Creando pedido personalizado: ${customOrderDetails.packName}`);
+        
+        // Usar el producto virtual "Evento Personalizado" que siempre existe
+        const CUSTOM_EVENT_PRODUCT_ID = 'product-custom-event-virtual';
+        const packSubtotal = Number(customOrderDetails.packPrice) || Number(estimatedTotal) || 0;
+        
+        // Verificar si el producto virtual existe, si no, usar el primero disponible
+        let virtualProductId = CUSTOM_EVENT_PRODUCT_ID;
+        const virtualProduct = await prisma.product.findUnique({ 
+          where: { id: CUSTOM_EVENT_PRODUCT_ID } 
+        });
+        
+        if (!virtualProduct) {
+          logger.warn(`[createOrderFromCalculator] Producto virtual no encontrado, creando uno...`);
+          // Como fallback, usar cualquier producto activo (temporalmente)
+          const anyProduct = await prisma.product.findFirst({ where: { isActive: true } });
+          if (anyProduct) {
+            virtualProductId = anyProduct.id;
+          } else {
+            throw new AppError(500, 'No hay productos disponibles en el sistema', 'NO_PRODUCTS');
+          }
         }
-      }
-      
-      // Extras
-      if (selectedExtras && typeof selectedExtras === 'object') {
-        for (const [productId, quantity] of Object.entries(selectedExtras)) {
-          const product = await prisma.product.findUnique({ where: { id: productId } });
-          if (product && Number(quantity) > 0) {
-            const itemSubtotal = Number(product.pricePerDay) * days * Number(quantity);
+        
+        orderItems.push({
+          productId: virtualProductId,
+          quantity: 1,
+          pricePerDay: packSubtotal,
+          subtotal: packSubtotal,
+          startDate,
+          endDate,
+        });
+        
+        logger.info(`[createOrderFromCalculator] Pedido personalizado creado - Total: €${packSubtotal}`);
+      } else {
+        // FLUJO ORIGINAL: Buscar productos existentes
+        // Pack
+        if (selectedPack) {
+          const pack = await prisma.product.findUnique({ where: { id: selectedPack } });
+          if (pack) {
+            const packSubtotal = Number(pack.pricePerDay) * days;
             orderItems.push({
-              productId: product.id,
-              quantity: Number(quantity),
-              pricePerDay: Number(product.pricePerDay),
-              subtotal: itemSubtotal,
+              productId: pack.id,
+              quantity: 1,
+              pricePerDay: Number(pack.pricePerDay),
+              subtotal: packSubtotal,
               startDate,
               endDate,
             });
-            logger.info(`[createOrderFromCalculator] Extra añadido: ${product.name} x${quantity}`);
+            logger.info(`[createOrderFromCalculator] Pack añadido: ${pack.name}`);
+          }
+        }
+        
+        // Extras
+        if (selectedExtras && typeof selectedExtras === 'object') {
+          for (const [productId, quantity] of Object.entries(selectedExtras)) {
+            const product = await prisma.product.findUnique({ where: { id: productId } });
+            if (product && Number(quantity) > 0) {
+              const itemSubtotal = Number(product.pricePerDay) * days * Number(quantity);
+              orderItems.push({
+                productId: product.id,
+                quantity: Number(quantity),
+                pricePerDay: Number(product.pricePerDay),
+                subtotal: itemSubtotal,
+                startDate,
+                endDate,
+              });
+              logger.info(`[createOrderFromCalculator] Extra añadido: ${product.name} x${quantity}`);
+            }
           }
         }
       }

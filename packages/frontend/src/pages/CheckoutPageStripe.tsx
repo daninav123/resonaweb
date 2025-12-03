@@ -135,6 +135,8 @@ const CheckoutPageStripe = () => {
             });
           }
           
+          // IMPORTANTE: No enviamos IDs de productos porque son personalizados
+          // En su lugar, creamos un pedido personalizado con toda la info
           const calculatorOrderData = {
             eventType: eventMeta.eventType,
             attendees: eventMeta.attendees,
@@ -142,9 +144,19 @@ const CheckoutPageStripe = () => {
             durationType: eventMeta.durationType,
             eventDate: eventMeta.eventDate,
             eventLocation: orderData.deliveryAddress || 'Dirección del evento',
-            selectedPack: firstItem.productId, // ID del pack
-            selectedExtras: selectedExtras,
+            // NO enviar selectedPack ni selectedExtras porque los IDs no existen en la BD
+            selectedPack: null,
+            selectedExtras: {},
             estimatedTotal: orderData.items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0),
+            // Enviar la información completa del pedido personalizado
+            customOrderDetails: {
+              packName: firstItem.product?.name || 'Pack Personalizado',
+              packPrice: firstItem.pricePerUnit,
+              parts: eventMeta.selectedParts || [],
+              extras: eventMeta.selectedExtras || [],
+              partsTotal: eventMeta.partsTotal || 0,
+              extrasTotal: eventMeta.extrasTotal || 0,
+            }
           };
           
           console.log('📦 Datos para /create-from-calculator:', calculatorOrderData);
