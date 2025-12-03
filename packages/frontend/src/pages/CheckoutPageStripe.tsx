@@ -102,42 +102,79 @@ const CheckoutPageStripe = () => {
       try {
         console.log('📦 Datos originales:', orderData);
         
-        // Adaptar el formato al que espera el backend
+        // Verificar si viene de la calculadora (tiene eventMetadata)
         const firstItem = orderData.items[0];
-        const lastItem = orderData.items[orderData.items.length - 1];
+        const isFromCalculator = firstItem?.eventMetadata;
         
-        // Parsear la dirección de entrega (viene como string)
-        const addressParts = (orderData.deliveryAddress || '').split(',').map((s: string) => s.trim());
+        let response: any;
         
-        const adaptedOrderData = {
-          startDate: firstItem?.startDate || new Date().toISOString(),
-          endDate: lastItem?.endDate || new Date().toISOString(),
-          eventLocation: {
-            street: addressParts[0] || 'N/A',
-            city: addressParts[1] || 'N/A',
-            postalCode: addressParts[2] || '00000',
-            country: addressParts[addressParts.length - 1] || 'España',
-          },
-          contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
-          contactPhone: user.phone || 'N/A',
-          notes: orderData.notes || '',
-          deliveryType: orderData.deliveryType || 'PICKUP',
-          deliveryAddress: orderData.deliveryType === 'DELIVERY' ? {
-            street: addressParts[0] || 'N/A',
-            city: addressParts[1] || 'N/A',
-            postalCode: addressParts[2] || '00000',
-            country: addressParts[addressParts.length - 1] || 'España',
-          } : undefined,
-          paymentTerm: 'FULL_UPFRONT' as const,
-          items: orderData.items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity || 1,
-          })),
-        };
-        
-        console.log('📦 Datos adaptados para backend:', adaptedOrderData);
-        
-        const response: any = await api.post('/orders', adaptedOrderData);
+        if (isFromCalculator) {
+          // ✅ FLUJO DE CALCULADORA: Usar endpoint dedicado
+          console.log('🎯 Pedido desde CALCULADORA - Usando endpoint dedicado');
+          
+          const eventMeta = firstItem.eventMetadata;
+          
+          // Construir selectedExtras como objeto { productId: quantity }
+          const selectedExtras: Record<string, number> = {};
+          if (eventMeta.selectedExtras && Array.isArray(eventMeta.selectedExtras)) {
+            eventMeta.selectedExtras.forEach((extra: any) => {
+              selectedExtras[extra.id] = extra.quantity;
+            });
+          }
+          
+          const calculatorOrderData = {
+            eventType: eventMeta.eventType,
+            attendees: eventMeta.attendees,
+            duration: eventMeta.duration,
+            durationType: eventMeta.durationType,
+            eventDate: eventMeta.eventDate,
+            eventLocation: orderData.deliveryAddress || 'Dirección del evento',
+            selectedPack: firstItem.productId, // ID del pack
+            selectedExtras: selectedExtras,
+            estimatedTotal: orderData.items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0),
+          };
+          
+          console.log('📦 Datos para /create-from-calculator:', calculatorOrderData);
+          
+          response = await api.post('/orders/create-from-calculator', calculatorOrderData);
+          
+        } else {
+          // ✅ FLUJO NORMAL: Usar endpoint estándar
+          console.log('📦 Pedido NORMAL - Usando endpoint estándar');
+          
+          const lastItem = orderData.items[orderData.items.length - 1];
+          const addressParts = (orderData.deliveryAddress || '').split(',').map((s: string) => s.trim());
+          
+          const adaptedOrderData = {
+            startDate: firstItem?.startDate || new Date().toISOString(),
+            endDate: lastItem?.endDate || new Date().toISOString(),
+            eventLocation: {
+              street: addressParts[0] || 'N/A',
+              city: addressParts[1] || 'N/A',
+              postalCode: addressParts[2] || '00000',
+              country: addressParts[addressParts.length - 1] || 'España',
+            },
+            contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+            contactPhone: user.phone || 'N/A',
+            notes: orderData.notes || '',
+            deliveryType: orderData.deliveryType || 'PICKUP',
+            deliveryAddress: orderData.deliveryType === 'DELIVERY' ? {
+              street: addressParts[0] || 'N/A',
+              city: addressParts[1] || 'N/A',
+              postalCode: addressParts[2] || '00000',
+              country: addressParts[addressParts.length - 1] || 'España',
+            } : undefined,
+            paymentTerm: 'FULL_UPFRONT' as const,
+            items: orderData.items.map((item: any) => ({
+              productId: item.productId,
+              quantity: item.quantity || 1,
+            })),
+          };
+          
+          console.log('📦 Datos adaptados para backend:', adaptedOrderData);
+          
+          response = await api.post('/orders', adaptedOrderData);
+        }
         
         console.log('✅ Respuesta del servidor:', response);
         
