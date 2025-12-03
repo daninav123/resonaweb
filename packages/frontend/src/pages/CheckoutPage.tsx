@@ -768,7 +768,15 @@ const CheckoutPage = () => {
                           toast.error('Por favor, añade un número de teléfono');
                           return;
                         }
-                        setStep(2);
+                        
+                        // Para eventos personalizados, saltar directo al paso 3 (pago)
+                        // porque el transporte y montaje ya están incluidos
+                        const hasEventItems = cartItems.some((item: any) => item.eventMetadata);
+                        if (hasEventItems) {
+                          setStep(3); // Ir directo a pago
+                        } else {
+                          setStep(2); // Ir a confirmación de entrega
+                        }
                       }}
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
                     >
