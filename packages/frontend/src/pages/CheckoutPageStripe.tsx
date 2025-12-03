@@ -167,6 +167,32 @@ const CheckoutPageStripe = () => {
         // Mostrar detalles de validación si existen
         if (errorDetails) {
           console.table(errorDetails);
+          
+          // Verificar si el error es por producto no encontrado
+          const errorsArray = errorDetails.errors || [];
+          const productNotFound = errorsArray.some((err: string) => err.includes('no encontrado'));
+          
+          if (productNotFound) {
+            // Limpiar automáticamente el carrito y datos relacionados
+            localStorage.removeItem('cart');
+            sessionStorage.removeItem('pendingOrderData');
+            localStorage.removeItem('cartEventInfo');
+            localStorage.removeItem('cartEventDates');
+            localStorage.removeItem('cartIncludesShippingInstallation');
+            localStorage.removeItem('cartFromCalculator');
+            
+            toast.error(
+              '⚠️ El pack en tu carrito ya no está disponible. El carrito ha sido limpiado. Por favor, vuelve a la calculadora y añade el pack de nuevo.',
+              { duration: 10000 }
+            );
+            
+            // Redirigir a la calculadora después de 2 segundos
+            setTimeout(() => {
+              navigate('/calculadora');
+            }, 2000);
+            
+            return; // No mostrar el toast genérico
+          }
         }
         
         toast.error(`Error al validar el pedido: ${errorMessage}`);
