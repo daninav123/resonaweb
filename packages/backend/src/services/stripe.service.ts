@@ -116,15 +116,19 @@ export class StripeService {
       }
 
       // Crear Payment Intent
+      // IMPORTANTE: Stripe metadata tiene límite de 500 caracteres por valor
+      // Los datos completos se guardan en sessionStorage del frontend
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount,
         currency: 'eur',
         payment_method_types: ['card'],
         metadata: {
           userId: userId,
-          orderDataJson: JSON.stringify(orderData), // Guardar orderData para crear la orden después
+          itemCount: orderData.items?.length?.toString() || '0',
+          deliveryType: orderData.deliveryType || 'PICKUP',
+          totalAmount: (amount / 100).toString(), // en euros
         },
-        description: `Nuevo pedido - ReSona Events`,
+        description: `Pedido ReSona - ${orderData.items?.length || 0} items`,
         receipt_email: user.email,
       });
 
