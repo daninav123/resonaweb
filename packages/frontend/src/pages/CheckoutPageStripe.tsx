@@ -100,13 +100,21 @@ const CheckoutPageStripe = () => {
     // Si es pago inicial (sin orderId), crear la orden ahora
     if (!orderId && orderData && user) {
       try {
+        console.log('📦 Creando orden con datos:', orderData);
+        
         const response: any = await api.post('/orders', {
           ...orderData,
           userId: user.id,
         });
         
+        console.log('✅ Respuesta del servidor:', response);
+        
         const createdOrder = response?.order || response;
         const createdOrderId = createdOrder?.id;
+        
+        if (!createdOrderId) {
+          throw new Error('No se recibió ID de orden del servidor');
+        }
         
         // Limpiar sessionStorage
         sessionStorage.removeItem('pendingOrderData');
@@ -116,9 +124,15 @@ const CheckoutPageStripe = () => {
           navigate(`/checkout/success?orderId=${createdOrderId}`);
         }, 1000);
       } catch (error: any) {
-        console.error('Error creando orden:', error);
-        toast.error('Error al crear la orden');
-        navigate('/carrito');
+        console.error('❌ Error completo:', error);
+        console.error('❌ Respuesta del servidor:', error.response?.data);
+        console.error('❌ Status:', error.response?.status);
+        
+        const errorMessage = error.response?.data?.message || error.message || 'Error al crear la orden';
+        toast.error(`Error al validar el pedido: ${errorMessage}`);
+        
+        // NO redirigir al carrito - mantener en la página para ver el error
+        // navigate('/carrito');
       }
     } else {
       // Es un pago de una orden existente
