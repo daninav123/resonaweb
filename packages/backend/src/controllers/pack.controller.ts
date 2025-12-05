@@ -9,18 +9,20 @@ interface AuthRequest extends Request {
 class PackController {
   /**
    * Obtener todos los packs activos (o todos si includeInactive=true)
+   * @param includeMontajes - Si es 'true', incluye montajes (para calculadora)
    */
   async getPacks(req: Request, res: Response, next: NextFunction) {
     try {
-      const { startDate, endDate, includeInactive } = req.query;
+      const { startDate, endDate, includeInactive, includeMontajes } = req.query;
 
       const start = startDate ? new Date(startDate as string) : undefined;
       const end = endDate ? new Date(endDate as string) : undefined;
       const includeAll = includeInactive === 'true';
+      const withMontajes = includeMontajes === 'true';
 
       const packs = includeAll 
         ? await packService.getAllPacks(start, end)
-        : await packService.getActivePacks(start, end);
+        : await packService.getActivePacks(start, end, withMontajes);
       
       res.json({ packs });
     } catch (error) {

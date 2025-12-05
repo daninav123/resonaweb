@@ -72,9 +72,15 @@ export class ProductService {
       }
     } = params || {};
 
-    // Merge where conditions - always include isActive
+    // Merge where conditions - always include isActive and exclude hidden categories and proxy products
     const finalWhere: Prisma.ProductWhereInput = {
       isActive: true,
+      category: {
+        isHidden: false, // Excluir productos de categorías ocultas (Personal, Montaje, etc.)
+        name: {
+          not: 'PACKS' // Excluir productos proxy de packs
+        }
+      },
       ...where
     };
 
@@ -503,10 +509,28 @@ export class ProductService {
     }
 
     // Create product
-    // Filtrar categoryId si es null (para packs sin categoría)
-    const productData: any = { ...data, slug };
-    if (!productData.categoryId) {
-      delete productData.categoryId;
+    // Convertir categoryId al formato de Prisma (relación anidada)
+    // Eliminar campos que no existen en el modelo Product (se gestionan mediante Packs MONTAJE)
+    const { 
+      categoryId, 
+      shippingCost, 
+      installationCost, 
+      installationTimeMinutes, 
+      requiresInstallation, 
+      installationComplexity,
+      ...productDataWithoutCategory 
+    } = data;
+    
+    const productData: any = { 
+      ...productDataWithoutCategory, 
+      slug 
+    };
+    
+    // Prisma requiere format: category: { connect: { id: categoryId } }
+    if (categoryId) {
+      productData.category = {
+        connect: { id: categoryId }
+      };
     }
     
     console.log('🔧 Datos procesados para Prisma:', JSON.stringify(productData, null, 2));
@@ -665,6 +689,22 @@ export class ProductService {
     delete cleanData.id;
     delete cleanData.averageRating;
     delete cleanData._count;
+    
+    // Eliminar campos que no existen en el modelo Product (se gestionan mediante Packs MONTAJE)
+    delete cleanData.shippingCost;
+    delete cleanData.installationCost;
+    delete cleanData.installationTimeMinutes;
+    delete cleanData.requiresInstallation;
+    delete cleanData.installationComplexity;
+    
+    // Convertir categoryId al formato de Prisma (relación anidada)
+    if (cleanData.categoryId) {
+      const categoryId = cleanData.categoryId;
+      delete cleanData.categoryId;
+      cleanData.category = {
+        connect: { id: categoryId }
+      };
+    }
     
     logger.info(`📦 Updating product ${id}:`, {
       stock: cleanData.stock,

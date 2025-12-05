@@ -8,6 +8,7 @@ import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import { CouponInput } from '../components/coupons/CouponInput';
 import { useAuthStore } from '../stores/authStore';
+import { calculateCartTotals } from '../utils/cartCalculations';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -52,6 +53,11 @@ const CheckoutPage = () => {
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // 🔍 DEBUG: Log step changes
+  useEffect(() => {
+    console.log('🎯 CheckoutPage - Current step:', step);
+  }, [step]);
+  
   const [formData, setFormData] = useState({
     // Datos personales
     firstName: '',
@@ -81,6 +87,12 @@ const CheckoutPage = () => {
   // Obtener carrito actual desde localStorage
   const [cartItems, setCartItems] = useState<GuestCartItem[]>([]);
   const [cartLoading, setCartLoading] = useState(false);
+  
+  // Detectar si es un pedido de evento
+  const isEventOrder = cartItems.some((item: any) => item.eventMetadata);
+  
+  // Obtener dirección del evento si existe
+  const eventLocation = cartItems.find((item: any) => item.eventMetadata)?.eventMetadata?.eventLocation;
   
   // Estado para cupón de descuento
   const [appliedCoupon, setAppliedCoupon] = useState<{
@@ -189,6 +201,7 @@ const CheckoutPage = () => {
 
   // Estado para saber si productos incluyen transporte/montaje (sin fianza)
   const [shippingIncludedInPrice, setShippingIncludedInPrice] = useState(false);
+  const [fromCalculator, setFromCalculator] = useState(false);
 
   useEffect(() => {
     // Cargar items del carrito desde localStorage
@@ -202,6 +215,10 @@ const CheckoutPage = () => {
     const savedAddress = localStorage.getItem('checkoutAddress');
     const savedInstallation = localStorage.getItem('checkoutInstallation');
     
+    // 💳 Detectar si viene de calculadora (ANTES de que se limpie)
+    const isFromCalc = localStorage.getItem('cartFromCalculator') === 'true';
+    setFromCalculator(isFromCalc);
+    
     // Detectar si productos incluyen transporte/montaje
     const hasShipping = localStorage.getItem('cartIncludesShippingInstallation') === 'true';
     setShippingIncludedInPrice(hasShipping);
@@ -211,8 +228,13 @@ const CheckoutPage = () => {
       distance: savedDistance,
       address: savedAddress,
       installation: savedInstallation,
-      shippingIncluded: hasShipping
+      shippingIncluded: hasShipping,
+      fromCalculator: isFromCalc // 💳 Log importante
     });
+    
+    if (isFromCalc) {
+      console.log('💳 DETECTADO: Pedido desde calculadora - Se aplicará pago de reserva (25%)');
+    }
     
     if (savedDeliveryOption) {
       setFormData(prev => ({ ...prev, deliveryOption: savedDeliveryOption as 'pickup' | 'delivery' }));
@@ -336,6 +358,10 @@ const CheckoutPage = () => {
 
   const calculateDays = (startDate: string, endDate: string) => {
     if (!startDate || !endDate) return 0;
+    
+    // Si las fechas son iguales (mismo día), devolver 0 para eventos
+    if (startDate === endDate) return 0;
+    
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -346,16 +372,18 @@ const CheckoutPage = () => {
   const calculateSubtotal = () => {
     if (!cartItems || cartItems.length === 0) return 0;
     return cartItems.reduce((total: number, item: GuestCartItem) => {
-      // Items de eventos: precio incluye partes + extras (ya calculado)
+      // Items de eventos: precio incluye partes + extras (NO MULTIPLICAR POR DÍAS)
       if (item.eventMetadata) {
-        const packPrice = Number(item.product.pricePerDay) || 0;
+        // IMPORTANTE: partsTotal YA incluye el precio del pack, NO sumar packPrice
         const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
         const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
-        return total + packPrice + partsTotal + extrasTotal;
+        const eventPrice = partsTotal + extrasTotal;
+        console.log('💰 Subtotal evento:', { partsTotal, extrasTotal, eventPrice, NO_MULTIPLICA: true });
+        return total + eventPrice; // NO multiplicar por días ni quantity
       }
       
       // Items normales: precio por día * días
-      const days = calculateDays(item.startDate || '', item.endDate || '');
+      const days = calculateDays(item.startDate || '', item.endDate || '') || 1;
       return total + (item.product.pricePerDay * days * item.quantity);
     }, 0);
   };
@@ -396,24 +424,51 @@ const CheckoutPage = () => {
     return 0;
   };
 
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const shipping = appliedCoupon?.freeShipping ? 0 : calculateShippingCost();
-    const couponDiscount = calculateDiscount();
-    const vipDiscount = calculateVIPDiscount();
-    const beforeTax = subtotal + shipping - couponDiscount - vipDiscount;
-    return Math.max(0, beforeTax * 1.21); // Con IVA (nunca negativo)
-  };
+  // ⭐ USAR FUNCIÓN CENTRALIZADA PARA TODOS LOS CÁLCULOS
+  const cartTotals = calculateCartTotals({
+    items: cartItems,
+    deliveryOption: formData.deliveryOption as 'pickup' | 'delivery',
+    distance,
+    includeInstallation,
+    shippingIncludedInPrice,
+    userLevel: user?.userLevel,
+    appliedCoupon: appliedCoupon ? {
+      discountAmount: appliedCoupon.discountAmount,
+      freeShipping: appliedCoupon.freeShipping
+    } : null
+  });
+
+  // Extraer valores de la función centralizada
+  const { 
+    subtotal: centralizedSubtotal, 
+    shippingCost: centralizedShipping, 
+    vipDiscount: centralizedVipDiscount, 
+    couponDiscount: centralizedCouponDiscount, 
+    total: centralizedTotal 
+  } = cartTotals;
 
   // Calcular desglose de pago (señal, fianza, etc.)
+  console.log('💳 CALCULANDO PAYMENT BREAKDOWN:', {
+    fromCalculator,
+    total: centralizedTotal,
+    shippingIncludedInPrice
+  });
+  
   const paymentBreakdown = calculatePaymentBreakdown(
-    calculateSubtotal(),
-    calculateShippingCost(),
+    centralizedSubtotal,
+    centralizedShipping,
     formData.deliveryOption as 'pickup' | 'delivery',
     user?.userLevel, // ⭐ Pasar nivel VIP
-    calculateVIPDiscount(), // ⭐ Pasar descuento VIP
-    shippingIncludedInPrice // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
+    centralizedVipDiscount, // ⭐ Pasar descuento VIP
+    shippingIncludedInPrice, // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
+    fromCalculator // 💳 Pasar si viene de calculadora para aplicar 25%
   );
+  
+  console.log('💳 PAYMENT BREAKDOWN RESULTADO:', {
+    payNow: paymentBreakdown.payNow,
+    payLater: paymentBreakdown.payLater,
+    total: paymentBreakdown.total
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -446,25 +501,26 @@ const CheckoutPage = () => {
       let pricePerUnit: number;
       let totalPrice: number;
       
-      // Items de eventos: precio incluye pack + partes + extras
+      // Items de eventos: precio FIJO - NO MULTIPLICAR POR NADA
       if (item.eventMetadata) {
-        const packPrice = Number(item.product.pricePerDay) || 0;
+        // IMPORTANTE: partsTotal YA incluye el precio del pack, NO sumar packPrice
         const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
         const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
-        pricePerUnit = packPrice + partsTotal + extrasTotal;
-        totalPrice = pricePerUnit * item.quantity;
+        pricePerUnit = partsTotal + extrasTotal;
+        totalPrice = pricePerUnit; // NO multiplicar por quantity ni días
         
-        console.log('💰 Item de evento:', {
+        console.log('💰 Item de evento (NO MULTIPLICA):', {
           name: item.product.name,
-          packPrice,
           partsTotal,
           extrasTotal,
           pricePerUnit,
-          totalPrice
+          totalPrice,
+          quantity: item.quantity,
+          MULTIPLICADO: false
         });
       } else {
         // Items normales: precio por días
-        const days = calculateDays(item.startDate || '', item.endDate || '');
+        const days = calculateDays(item.startDate || '', item.endDate || '') || 1;
         pricePerUnit = item.product.pricePerDay * days;
         totalPrice = pricePerUnit * item.quantity;
         
@@ -489,6 +545,7 @@ const CheckoutPage = () => {
         startDate: startDate,  // ISO Date string
         endDate: endDate,      // ISO Date string
         eventMetadata: item.eventMetadata || undefined,  // IMPORTANTE: Incluir metadata para detectar pedidos de calculadora
+        notes: item.notes || undefined,  // Notas específicas del producto
       };
     });
     
@@ -573,9 +630,28 @@ const CheckoutPage = () => {
       console.log('📝 Notas finales construidas:', notesWithDetails);
     }
     
+    // Detectar si es un pedido de calculadora (tiene eventMetadata)
+    const isFromCalculator = eventItemsForNotes.length > 0;
+    const totalAmount = centralizedTotal;
+    
     const orderPayload = {
       // Items
       items: orderItems,
+      
+      // Totales
+      subtotal: centralizedSubtotal,
+      shippingCost: centralizedShipping,
+      taxAmount: totalAmount - (totalAmount / 1.21), // Calcular IVA del total
+      total: totalAmount,
+      
+      // 💳 INFORMACIÓN DE PAGO (25% o 100%)
+      paymentBreakdown: {
+        payNow: paymentBreakdown.payNow,
+        payLater: paymentBreakdown.payLater,
+        total: totalAmount,
+        deposit: paymentBreakdown.deposit,
+        requiresDeposit: paymentBreakdown.requiresDeposit,
+      },
       
       // Tipo de entrega (PICKUP o DELIVERY en mayúsculas)
       deliveryType: formData.deliveryOption.toUpperCase(),
@@ -588,7 +664,6 @@ const CheckoutPage = () => {
       // Información de envío y montaje
       deliveryDistance: formData.deliveryOption === 'delivery' ? distance : 0,
       includeInstallation: includeInstallation,
-      shippingCost: calculateShippingCost(),
       
       // Notas con detalles de packs y extras
       notes: notesWithDetails || undefined,
@@ -596,12 +671,27 @@ const CheckoutPage = () => {
       // Cupón de descuento
       couponCode: appliedCoupon?.code || undefined,
       discountAmount: appliedCoupon?.discountAmount || undefined,
+      
+      // 🎯 CAMPOS PARA PAGO A PLAZOS (eventos de calculadora > 500€)
+      isCalculatorEvent: isFromCalculator,
+      eligibleForInstallments: isFromCalculator && totalAmount > 500,
     };
     
     // Guardar en sessionStorage para usar después del pago
     sessionStorage.setItem('pendingOrderData', JSON.stringify(orderPayload));
     
-    console.log('📦 Datos de orden guardados para crear después del pago');
+    console.log('📦 Datos de orden guardados para crear después del pago:', {
+      hasPaymentBreakdown: !!orderPayload.paymentBreakdown,
+      payNow: orderPayload.paymentBreakdown?.payNow,
+      payLater: orderPayload.paymentBreakdown?.payLater
+    });
+    
+    // Limpiar flags de calculadora DESPUÉS de guardarlos en sessionStorage
+    // (para que no se apliquen en futuras compras)
+    localStorage.removeItem('cartFromCalculator');
+    localStorage.removeItem('cartIncludesShippingInstallation');
+    localStorage.removeItem('cartEventDates');
+    localStorage.removeItem('cartEventInfo');
     
     // Redirigir directamente a Stripe SIN crear la orden aún
     // El orderId será null, indicando que es un pago inicial
@@ -624,7 +714,8 @@ const CheckoutPage = () => {
   }
 
   // cartItems ya está definido en el state
-  const total = calculateTotal();
+  // ⭐ Usar valor centralizado del total
+  const total = centralizedTotal;
 
   if (cartItems.length === 0) {
     return (
@@ -658,12 +749,12 @@ const CheckoutPage = () => {
               <div className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center ${step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>1</div>
               <p className="text-sm mt-1">Datos</p>
             </div>
-            <div className="flex-1 border-t-2 ${step >= 2 ? 'border-blue-600' : 'border-gray-200'}" />
+            <div className={`flex-1 border-t-2 ${step >= 2 ? 'border-blue-600' : 'border-gray-200'}`} />
             <div className={`flex-1 text-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
               <div className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center ${step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>2</div>
               <p className="text-sm mt-1">Entrega</p>
             </div>
-            <div className="flex-1 border-t-2 ${step >= 3 ? 'border-blue-600' : 'border-gray-200'}" />
+            <div className={`flex-1 border-t-2 ${step >= 3 ? 'border-blue-600' : 'border-gray-200'}`} />
             <div className={`flex-1 text-center ${step >= 3 ? 'text-blue-600' : 'text-gray-400'}`}>
               <div className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center ${step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>3</div>
               <p className="text-sm mt-1">Pago</p>
@@ -768,15 +859,8 @@ const CheckoutPage = () => {
                           toast.error('Por favor, añade un número de teléfono');
                           return;
                         }
-                        
-                        // Para eventos personalizados, saltar directo al paso 3 (pago)
-                        // porque el transporte y montaje ya están incluidos
-                        const hasEventItems = cartItems.some((item: any) => item.eventMetadata);
-                        if (hasEventItems) {
-                          setStep(3); // Ir directo a pago
-                        } else {
-                          setStep(2); // Ir a confirmación de entrega
-                        }
+                        // Siempre ir al paso 2 (confirmación de entrega)
+                        setStep(2);
                       }}
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
                     >
@@ -813,15 +897,15 @@ const CheckoutPage = () => {
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg text-gray-900 mb-1">
-                          {formData.deliveryOption === 'pickup' ? 'Recogida en tienda' : 'Envío a domicilio'}
+                          {formData.deliveryOption === 'pickup' ? 'Recogida en tienda' : isEventOrder ? 'Montaje en el lugar del evento' : 'Envío a domicilio'}
                         </h3>
                         {formData.deliveryOption === 'pickup' ? (
                           <p className="text-sm text-gray-600">Gratis - C/ de l'Illa Cabrera, 13, 46026 València</p>
                         ) : (
                           <div className="space-y-1">
-                            <p className="text-sm text-gray-700"><strong>Dirección:</strong> {deliveryAddress || formData.address}</p>
+                            <p className="text-sm text-gray-700"><strong>Dirección:</strong> {isEventOrder ? eventLocation : (deliveryAddress || formData.address)}</p>
                             <p className="text-sm text-gray-700"><strong>Distancia:</strong> {distance} km</p>
-                            {includeInstallation && (
+                            {(isEventOrder || includeInstallation) && (
                               <p className="text-sm text-green-700 flex items-center gap-1 mt-2">
                                 <span className="text-lg">🔧</span>
                                 <strong>Incluye montaje/instalación</strong>
@@ -911,7 +995,6 @@ const CheckoutPage = () => {
                   </h3>
                   <ul className="text-sm text-yellow-800 space-y-1">
                     <li>✓ {user.userLevel === 'VIP' ? '50%' : '70%'} de descuento aplicado</li>
-                    <li>✓ Sin fianza requerida (€0)</li>
                   </ul>
                 </div>
               )}
@@ -920,10 +1003,10 @@ const CheckoutPage = () => {
                 {cartItems.map((item: any) => {
                   // Items de eventos: mostrar desglose detallado
                   if (item.eventMetadata) {
-                    const packPrice = Number(item.product.pricePerDay) || 0;
+                    // ⚠️ IMPORTANTE: partsTotal YA incluye el pack, NO sumar packPrice
                     const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
                     const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
-                    const itemTotal = packPrice + partsTotal + extrasTotal;
+                    const itemTotal = partsTotal + extrasTotal; // Solo partes + extras
                     
                     return (
                       <div key={item.id} className="border-l-4 border-blue-500 pl-3 pb-2">
@@ -932,10 +1015,6 @@ const CheckoutPage = () => {
                           <span className="text-blue-600">€{itemTotal.toFixed(2)}</span>
                         </div>
                         <div className="text-xs text-gray-600 space-y-1 ml-2">
-                          <div className="flex justify-between">
-                            <span>• Pack base</span>
-                            <span>€{packPrice.toFixed(2)}</span>
-                          </div>
                           {partsTotal > 0 && (
                             <div className="flex justify-between">
                               <span>• Partes del evento</span>
@@ -966,13 +1045,13 @@ const CheckoutPage = () => {
               <div className="border-t pt-4 my-4">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>€{calculateSubtotal().toFixed(2)}</span>
+                  <span>€{centralizedSubtotal.toFixed(2)}</span>
                 </div>
                 
                 {/* Coupon Input */}
                 <div className="my-4">
                   <CouponInput
-                    orderAmount={calculateSubtotal()}
+                    orderAmount={centralizedSubtotal}
                     onCouponApplied={(discount) => setAppliedCoupon(discount)}
                     onCouponRemoved={() => setAppliedCoupon(null)}
                     appliedCoupon={appliedCoupon?.code}
@@ -990,7 +1069,7 @@ const CheckoutPage = () => {
                 )}
                 
                 {/* Descuento VIP */}
-                {calculateVIPDiscount() > 0 && (
+                {centralizedVipDiscount > 0 && (
                   <div className="flex justify-between text-sm font-semibold mb-2">
                     <span className="text-yellow-700 flex items-center gap-1">
                       {user?.userLevel === 'VIP' ? (
@@ -999,7 +1078,7 @@ const CheckoutPage = () => {
                         <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
                       )}
                     </span>
-                    <span className="text-green-600 font-bold">-€{calculateVIPDiscount().toFixed(2)}</span>
+                    <span className="text-green-600 font-bold">-€{centralizedVipDiscount.toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -1026,7 +1105,7 @@ const CheckoutPage = () => {
                     
                     <div className="flex justify-between font-bold text-xs text-blue-900 pt-2 border-t border-blue-200">
                       <span>Total {includeInstallation ? 'envío + instalación' : 'envío'}</span>
-                      <span>€{calculateShippingCost().toFixed(2)}</span>
+                      <span>€{centralizedShipping.toFixed(2)}</span>
                     </div>
                   </div>
                 )}
@@ -1034,7 +1113,7 @@ const CheckoutPage = () => {
                 {formData.deliveryOption === 'delivery' && !calculatedShipping && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">🚚 Envío</span>
-                    <span>€{calculateShippingCost().toFixed(2)}</span>
+                    <span>€{centralizedShipping.toFixed(2)}</span>
                   </div>
                 )}
                 
@@ -1057,10 +1136,24 @@ const CheckoutPage = () => {
               <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
                 <div className="flex items-start gap-2 mb-3">
                   <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-blue-900 text-sm mb-1">💳 Pago Total Online</h3>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-blue-900 text-sm mb-1">
+                      {paymentBreakdown.payLater > 0 ? (
+                        <>💳 Pago de Reserva (25%)</>
+                      ) : (
+                        <>💳 Pago Total Online</>
+                      )}
+                    </h3>
                     <p className="text-xs text-blue-800">
-                      Pagas el 100% del pedido ahora al reservar el material.
+                      {paymentBreakdown.payLater > 0 ? (
+                        <>
+                          Pagas solo el <span className="font-bold">25% de reserva</span> ahora.
+                          <br />
+                          Resto: <span className="font-bold">€{paymentBreakdown.payLater.toFixed(2)}</span> en "Mis Pedidos"
+                        </>
+                      ) : (
+                        <>Pagas el 100% del pedido ahora al reservar el material.</>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -1083,16 +1176,6 @@ const CheckoutPage = () => {
                   </div>
                 )}
                 
-                {!paymentBreakdown.requiresDeposit && user && (user.userLevel === 'VIP' || user.userLevel === 'VIP_PLUS') && (
-                  <div className="bg-yellow-100 p-3 rounded border border-yellow-200">
-                    <p className="text-xs text-yellow-900 font-semibold mb-1">
-                      ⭐ Beneficio {user.userLevel}
-                    </p>
-                    <p className="text-xs text-yellow-800">
-                      Como usuario {user.userLevel}, no necesitas pagar fianza.
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">

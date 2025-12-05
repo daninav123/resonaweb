@@ -6,9 +6,11 @@ import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
 import { productService } from '../services/product.service';
+import { companyService } from '../services/company.service';
 import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import { CouponInput } from '../components/coupons/CouponInput';
+import { calculateCartTotals } from '../utils/cartCalculations';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -17,13 +19,11 @@ const CartPage = () => {
   const [globalDates, setGlobalDates] = useState({ start: '', end: '' });
   const [customDatesItems, setCustomDatesItems] = useState<Set<string>>(new Set());
   const [includeInstallation, setIncludeInstallation] = useState(false);
-  const [distance, setDistance] = useState<number>(15); // Default 15km
   const [unavailableItems, setUnavailableItems] = useState<Map<string, string>>(new Map()); // itemId -> error message
   const [calculatedShipping, setCalculatedShipping] = useState<any>(null);
-  const [deliveryAddress, setDeliveryAddress] = useState<string>('');
-  const [useManualDistance, setUseManualDistance] = useState(false);
   const [shippingConfig, setShippingConfig] = useState<any>(null);
-  const [deliveryOption, setDeliveryOption] = useState<'pickup' | 'delivery'>('pickup'); // pickup = recogida, delivery = envío
+  const [companySettings, setCompanySettings] = useState<any>(null);
+  const deliveryOption = 'pickup'; // Siempre recogida en tienda
   const [orderNotes, setOrderNotes] = useState<string>(''); // Notas del pedido
   const [shippingIncludedInPrice, setShippingIncludedInPrice] = useState(false); // Flag: transporte ya incluido en precio
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null); // Cupón aplicado
@@ -46,8 +46,18 @@ const CartPage = () => {
         console.error('Error cargando configuración de envío:', error);
       }
     };
+    
+    const loadCompanySettings = async () => {
+      try {
+        const settings: any = await companyService.getSettings();
+        setCompanySettings(settings);
+      } catch (error) {
+        console.error('Error cargando configuración de empresa:', error);
+      }
+    };
 
     loadShippingConfig();
+    loadCompanySettings();
 
     // Restaurar datos guardados del sidebar
     const savedDates = localStorage.getItem('cartGlobalDates');
@@ -66,18 +76,8 @@ const CartPage = () => {
       }
     }
 
-    if (savedDeliveryOption) {
-      setDeliveryOption(savedDeliveryOption as 'pickup' | 'delivery');
-    }
-
-    if (savedDistance) {
-      setDistance(Number(savedDistance));
-    }
-
-    if (savedAddress) {
-      setDeliveryAddress(savedAddress);
-    }
-
+    // deliveryOption siempre es 'pickup', no hace falta restaurar
+    
     if (savedInstallation) {
       setIncludeInstallation(savedInstallation === 'true');
     }
@@ -268,45 +268,12 @@ const CartPage = () => {
     setOrderNotes(autoNotes);
   }, [guestCartItems, globalDates.start, globalDates.end]);
 
-  // Automarcar transporte + instalación para items de eventos (ya incluido en precio)
-  useEffect(() => {
-    const hasEventItems = guestCartItems.some((item: any) => 
-      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
-    );
-
-    if (hasEventItems) {
-      // Marcar automáticamente delivery con instalación incluida
-      setDeliveryOption('delivery');
-      setIncludeInstallation(true);
-    }
-  }, [guestCartItems]);
-
-  // Handler para cuando se selecciona una dirección
-  const handleAddressSelect = (address: string, calculatedDistance: number) => {
-    setDeliveryAddress(address);
-    setDistance(calculatedDistance);
-    toast.success(`Distancia calculada: ${calculatedDistance}km`);
-  };
+  // Para items de eventos, el transporte ya está incluido (sin necesidad de marcar nada)
 
   // Guardar fechas en localStorage cuando cambian
   useEffect(() => {
     localStorage.setItem('cartGlobalDates', JSON.stringify(globalDates));
   }, [globalDates]);
-
-  // Guardar opción de entrega en localStorage
-  useEffect(() => {
-    localStorage.setItem('cartDeliveryOption', deliveryOption);
-  }, [deliveryOption]);
-
-  // Guardar distancia en localStorage
-  useEffect(() => {
-    localStorage.setItem('cartDistance', distance.toString());
-  }, [distance]);
-
-  // Guardar dirección en localStorage
-  useEffect(() => {
-    localStorage.setItem('cartDeliveryAddress', deliveryAddress);
-  }, [deliveryAddress]);
 
   // Guardar opción de instalación en localStorage
   useEffect(() => {
@@ -343,36 +310,8 @@ const CartPage = () => {
     }
   }, [globalDates.start, globalDates.end, isValidating, lastValidatedDates]);
 
-  // Calcular coste de envío cuando cambia distancia o instalación
-  useEffect(() => {
-    const calculateShipping = async () => {
-      // Solo calcular si es envío a domicilio
-      if (deliveryOption === 'delivery' && distance > 0 && guestCartItems.length > 0) {
-        try {
-          // Preparar datos de productos
-          const productsData = guestCartItems.map((item: any) => ({
-            shippingCost: Number(item.product.shippingCost || 0),
-            installationCost: Number(item.product.installationCost || 0),
-            quantity: item.quantity
-          }));
-
-          const response: any = await api.post('/shipping-config/calculate', {
-            distance,
-            includeInstallation,
-            products: productsData
-          });
-          setCalculatedShipping(response);
-        } catch (error) {
-          console.error('Error calculando envío:', error);
-        }
-      } else {
-        // Si es recogida, limpiar cálculo de envío
-        setCalculatedShipping(null);
-      }
-    };
-
-    calculateShipping();
-  }, [distance, includeInstallation, guestCartItems, deliveryOption]);
+  // Ya no necesitamos calcular envío porque siempre es recogida en tienda (gratis)
+  // Para montajes, el transporte ya está incluido en el precio
 
   // Cargar guest cart (SIEMPRE, backend no persiste aún)
   useEffect(() => {
@@ -381,6 +320,8 @@ const CartPage = () => {
       
       // MIGRACIÓN AUTOMÁTICA: Actualizar productos sin stock con datos actuales
       let needsUpdate = false;
+      const itemsToRemove: string[] = [];
+      
       const updatedCart = await Promise.all(
         cart.map(async (item) => {
           // Si el producto no tiene stock definido, actualizar desde la API
@@ -418,7 +359,8 @@ const CartPage = () => {
                   };
                   needsUpdate = true;
                 } catch (retryError) {
-                  console.warn(`⚠️ Producto/Pack no encontrado: ${item.product.name}`);
+                  console.warn(`⚠️ Producto/Pack no encontrado: ${item.product.name} - Marcado para eliminar`);
+                  itemsToRemove.push(item.id); // Marcar para eliminar
                 }
               } else {
                 console.error(`❌ Error actualizando ${item.productId}:`, error);
@@ -429,11 +371,26 @@ const CartPage = () => {
         })
       );
       
+      // Eliminar productos que no existen
+      if (itemsToRemove.length > 0) {
+        itemsToRemove.forEach(itemId => {
+          guestCart.removeItem(itemId);
+        });
+        needsUpdate = true;
+        toast.error(`${itemsToRemove.length} producto(s) ya no disponible(s) fueron eliminados del carrito`, {
+          duration: 4000,
+          id: 'removed-items'
+        });
+      }
+      
       // Si hubo actualizaciones, guardar el carrito actualizado
       if (needsUpdate) {
         localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
         console.log('✅ Carrito actualizado con información de stock');
-        toast.success('Carrito actualizado con información de stock actual', { duration: 3000 });
+        toast.success('Carrito actualizado con información de stock actual', { 
+          duration: 2000,
+          id: 'cart-stock-update'
+        });
         window.dispatchEvent(new Event('cartUpdated'));
       }
       
@@ -456,6 +413,10 @@ const CartPage = () => {
 
   const calculateDays = (startDate: string, endDate: string) => {
     if (!startDate || !endDate) return 0;
+    
+    // Si las fechas son iguales (mismo día), devolver 0 para eventos
+    if (startDate === endDate) return 0;
+    
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -464,27 +425,37 @@ const CartPage = () => {
   };
 
   const calculateItemPrice = (item: any) => {
-    // Si el item tiene eventMetadata (viene de la calculadora), es siempre 1 día
-    // y ya incluye transporte y montaje
-    if (item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0) {
-      // Calcular precio de las partes, considerando que el pack se muestra en Disco/Fiesta
+    // Si el item tiene eventMetadata (viene de la calculadora) - ES UN EVENTO
+    if (item.eventMetadata) {
+      // Calcular precio de las partes si existen
       let partsPrice = 0;
-      item.eventMetadata.selectedParts.forEach((part: any) => {
-        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
-        const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
-        partsPrice += displayPrice;
-      });
+      if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+        item.eventMetadata.selectedParts.forEach((part: any) => {
+          const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+          const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+          partsPrice += displayPrice;
+        });
+      }
       
       // Añadir precio de extras
       const extrasPrice = item.eventMetadata?.extrasTotal || 0;
       
-      // Items de eventos son SIEMPRE 1 día (no multiplicar por días)
-      return (partsPrice + extrasPrice) * item.quantity;
+      // IMPORTANTE: Los eventos son PRECIO FIJO - NO MULTIPLICAR POR NADA
+      const finalPrice = partsPrice + extrasPrice;
+      console.log('💰 Precio evento (FIJO - NO MULTIPLICA):', { 
+        partsPrice, 
+        extrasPrice, 
+        finalPrice,
+        quantity: item.quantity,
+        MULTIPLICADO: false
+      });
+      return finalPrice;
     }
     
     // Para items normales (no eventos), calcular con días
     const dates = getEffectiveDates(item);
     const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
+    console.log('💰 Precio producto normal:', { pricePerDay: item.product.pricePerDay, days, quantity: item.quantity });
     return Number(item.product.pricePerDay) * days * item.quantity;
   };
 
@@ -530,30 +501,9 @@ const CartPage = () => {
     }, 0);
   };
 
-  // Calcular descuento VIP
-  const calculateVIPDiscount = () => {
-    if (!user || !user.userLevel) return 0;
-    
-    const subtotal = calculateSubtotal();
-    
-    if (user.userLevel === 'VIP') {
-      return subtotal * 0.50; // 50% descuento
-    } else if (user.userLevel === 'VIP_PLUS') {
-      return subtotal * 0.70; // 70% descuento
-    }
-    
-    return 0;
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const shipping = calculateShippingCost();
-    const installation = calculateInstallationCost();
-    const vipDiscount = calculateVIPDiscount(); // ⭐ Descuento VIP
-    const totalBeforeTax = subtotal + shipping + installation - vipDiscount;
-    const tax = totalBeforeTax * 0.21; // IVA 21%
-    return totalBeforeTax + tax;
-  };
+  // ⚠️ FUNCIONES ANTIGUAS ELIMINADAS
+  // Ahora se usa calculateCartTotals() de cartCalculations.ts
+  // que excluye correctamente los montajes del descuento VIP
 
   const allItemsHaveDates = () => {
     if (guestCartItems.length === 0) return false;
@@ -621,12 +571,23 @@ const CartPage = () => {
       console.log('🔍 Verificando disponibilidad después de cambiar cantidad...');
       
       try {
-        const response: any = await api.post('/products/check-availability', {
-          productId: item.product.id,
-          startDate: item.startDate,
-          endDate: item.endDate,
-          quantity: newQuantity
-        });
+        // Detectar si es un pack
+        const isPack = item.product.isPack || 
+                      item.product.category?.name?.toLowerCase() === 'packs' ||
+                      item.product.category?.name?.toLowerCase() === 'montaje';
+        
+        const response: any = isPack
+          ? await api.post(`/packs/${item.product.id}/check-availability`, {
+              startDate: item.startDate,
+              endDate: item.endDate,
+              quantity: newQuantity
+            })
+          : await api.post('/products/check-availability', {
+              productId: item.product.id,
+              startDate: item.startDate,
+              endDate: item.endDate,
+              quantity: newQuantity
+            });
         
         if (response.available) {
           // Limpiar error si existía
@@ -635,7 +596,7 @@ const CartPage = () => {
             newMap.delete(itemId);
             return newMap;
           });
-          toast.success('Cantidad actualizada');
+          toast.success('Cantidad actualizada', { id: 'quantity-update', duration: 1500 });
         } else {
           // Mostrar error de disponibilidad
           const startDateStr = new Date(item.startDate).toLocaleDateString('es-ES');
@@ -648,14 +609,14 @@ const CartPage = () => {
             return newMap;
           });
           
-          toast.error(`No hay suficiente stock disponible`, { duration: 4000 });
+          toast.error(`No hay suficiente stock disponible`, { duration: 4000, id: 'stock-error' });
         }
       } catch (error) {
         console.error('Error verificando disponibilidad:', error);
         toast('Cantidad actualizada. Verificaremos disponibilidad en el checkout.', { icon: '⚠️' });
       }
     } else {
-      toast.success('Cantidad actualizada');
+      toast.success('Cantidad actualizada', { id: 'quantity-update', duration: 1500 });
     }
   };
 
@@ -689,22 +650,25 @@ const CartPage = () => {
     });
 
     try {
-      // Verificar disponibilidad en el backend
-      console.log('🌐 Llamando a API /products/check-availability...');
-      console.log('📤 Payload:', {
-        productId: item.product.id,
-        productName: item.product.name,
-        startDate,
-        endDate,
-        quantity: item.quantity
-      });
+      // Detectar si es un pack
+      const isPack = item.product.isPack || 
+                    item.product.category?.name?.toLowerCase() === 'packs' ||
+                    item.product.category?.name?.toLowerCase() === 'montaje';
       
-      const response: any = await api.post('/products/check-availability', {
-        productId: item.product.id,
-        startDate,
-        endDate,
-        quantity: item.quantity
-      });
+      console.log('🌐 Llamando a API check-availability...', { isPack, productName: item.product.name });
+      
+      const response: any = isPack
+        ? await api.post(`/packs/${item.product.id}/check-availability`, {
+            startDate,
+            endDate,
+            quantity: item.quantity
+          })
+        : await api.post('/products/check-availability', {
+            productId: item.product.id,
+            startDate,
+            endDate,
+            quantity: item.quantity
+          });
 
       console.log('📥 Respuesta recibida del servidor:', response);
       console.log('📊 response.available:', response.available);
@@ -718,7 +682,7 @@ const CartPage = () => {
           newMap.delete(itemId);
           return newMap;
         });
-        toast.success('Producto disponible', { duration: 2000 });
+        toast.success('Producto disponible', { duration: 2000, id: `available-${itemId}` });
       } else {
         console.log('❌ Producto NO DISPONIBLE');
         console.log('🗑️ Limpiando fechas del carrito...');
@@ -774,7 +738,7 @@ const CartPage = () => {
       newMap.delete(itemId);
       return newMap;
     });
-    toast.success('Producto eliminado');
+    toast.success('Producto eliminado', { id: 'item-removed', duration: 2000 });
   };
 
   // Aplicar fechas globales a todos los items
@@ -806,12 +770,29 @@ const CartPage = () => {
       }
       
       try {
-        const response: any = await api.post('/products/check-availability', {
-          productId: item.product.id,
-          startDate: globalDates.start,
-          endDate: globalDates.end,
-          quantity: item.quantity
-        });
+        // Detectar si es un pack
+        const isPack = item.product.isPack || 
+                      item.product.category?.name?.toLowerCase() === 'packs' ||
+                      item.product.category?.name?.toLowerCase() === 'montaje';
+        
+        let response: any;
+        
+        if (isPack) {
+          // Validar como pack
+          response = await api.post(`/packs/${item.product.id}/check-availability`, {
+            startDate: globalDates.start,
+            endDate: globalDates.end,
+            quantity: item.quantity
+          });
+        } else {
+          // Validar como producto individual
+          response = await api.post('/products/check-availability', {
+            productId: item.product.id,
+            startDate: globalDates.start,
+            endDate: globalDates.end,
+            quantity: item.quantity
+          });
+        }
         
         if (!response.available) {
           unavailableCount++;
@@ -826,9 +807,16 @@ const CartPage = () => {
           guestCart.updateDates(item.id, globalDates.start, globalDates.end);
         }
       } catch (error: any) {
-        console.error(`   ❌ Error al validar ${item.product.name}:`, error);
-        unavailableCount++;
-        newUnavailableItems.set(item.id, 'Error al verificar disponibilidad');
+        // Si es un 404, el producto ya no existe - eliminarlo del carrito
+        if (error?.response?.status === 404) {
+          console.warn(`🗑️ Producto eliminado del carrito (ya no existe): ${item.product.name}`);
+          guestCart.removeItem(item.id);
+          // No contar como unavailable, se eliminará
+        } else {
+          console.error(`   ❌ Error al validar ${item.product.name}:`, error);
+          unavailableCount++;
+          newUnavailableItems.set(item.id, 'Error al verificar disponibilidad');
+        }
       }
     }
     
@@ -836,11 +824,17 @@ const CartPage = () => {
     setUnavailableItems(newUnavailableItems);
     setGuestCartItems(guestCart.getCart());
     
-    // Mostrar resumen
+    // Mostrar resumen (con ID único para evitar duplicados)
     if (unavailableCount > 0) {
-      toast.error(`${unavailableCount} producto(s) no disponibles para estas fechas`, { duration: 5000 });
-    } else {
-      toast.success('Todos los productos están disponibles');
+      toast.error(`${unavailableCount} producto(s) no disponibles para estas fechas`, { 
+        duration: 4000,
+        id: 'validation-error' // Evita duplicados
+      });
+    } else if (availableCount > 0) {
+      toast.success('Todos los productos están disponibles', {
+        duration: 2000,
+        id: 'validation-success' // Evita duplicados
+      });
     }
   };
 
@@ -863,21 +857,34 @@ const CartPage = () => {
     return globalDates;
   };
 
-  // Loading state eliminado - trabajamos directo con localStorage
-
-  // Usar siempre guest cart (backend no persiste aún)
-  const cartItems = guestCartItems;
-  const subtotal = calculateSubtotal();
-  const shippingCost = calculateShippingCost();
-  const installationCost = calculateInstallationCost();
+  // ⭐ USAR FUNCIÓN CENTRALIZADA PARA TODOS LOS CÁLCULOS
+  const cartTotals = calculateCartTotals({
+    items: guestCartItems,
+    deliveryOption: 'pickup', // Siempre recogida en tienda
+    distance: 0, // Sin distancia - recogida en tienda
+    includeInstallation,
+    shippingIncludedInPrice,
+    userLevel: user?.userLevel,
+    appliedCoupon: appliedCoupon ? {
+      discountAmount: appliedCoupon.discountAmount,
+      freeShipping: appliedCoupon.freeShipping
+    } : null
+  });
   
-  // Obtener descuento VIP ANTES de calcular IVA
-  const vipDiscount = calculateVIPDiscount();
+  // Extraer valores de la función centralizada
+  const { 
+    subtotal,
+    shippingCost, 
+    installationCost, 
+    vipDiscount, 
+    couponDiscount, 
+    totalBeforeTax, 
+    tax, 
+    total 
+  } = cartTotals;
   
-  // Calcular IVA sobre el total después del descuento VIP
-  const totalBeforeTax = subtotal + shippingCost + installationCost - vipDiscount;
-  const tax = totalBeforeTax * 0.21;
-  const total = calculateTotal();
+  // 💳 Detectar si viene de calculadora
+  const fromCalculator = localStorage.getItem('cartFromCalculator') === 'true';
   
   // Calcular desglose de pago (señal, fianza, etc.)
   const paymentBreakdown = calculatePaymentBreakdown(
@@ -886,8 +893,12 @@ const CartPage = () => {
     deliveryOption,
     user?.userLevel, // ⭐ Pasar nivel VIP
     vipDiscount, // ⭐ Pasar descuento VIP
-    shippingIncludedInPrice // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
+    shippingIncludedInPrice, // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
+    fromCalculator // 💳 Pasar si viene de calculadora para aplicar 25%
   );
+
+  // Usar guestCartItems como cartItems para mantener compatibilidad con el resto del código
+  const cartItems = guestCartItems;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -1043,6 +1054,32 @@ const CartPage = () => {
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
+                      
+                      {/* Notas específicas del producto */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          📝 Notas para este producto
+                        </label>
+                        <textarea
+                          value={item.notes || ''}
+                          onChange={(e) => {
+                            guestCart.updateNotes(item.id, e.target.value);
+                            setGuestCartItems(guestCart.getCart());
+                          }}
+                          placeholder="Ej: Instrucciones especiales, preferencias, horarios específicos..."
+                          rows={2}
+                          maxLength={500}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-xs text-gray-500">
+                            Notas específicas para {item.product.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(item.notes || '').length}/500
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1150,8 +1187,21 @@ const CartPage = () => {
                         
                         {/* Validación automática - sin botón necesario */}
                         {globalDates.start && globalDates.end && (
-                          <div className="mt-3 text-center text-xs text-gray-500">
-                            ✓ Validando disponibilidad automáticamente...
+                          <div className="mt-3 text-center text-xs">
+                            {isValidating ? (
+                              <span className="text-blue-600">
+                                <span className="inline-block animate-spin mr-1">⏳</span>
+                                Validando disponibilidad...
+                              </span>
+                            ) : unavailableItems.size > 0 ? (
+                              <span className="text-red-600">
+                                ❌ {unavailableItems.size} producto(s) no disponibles
+                              </span>
+                            ) : guestCartItems.length > 0 ? (
+                              <span className="text-green-600">
+                                ✓ Todos los productos están disponibles
+                              </span>
+                            ) : null}
                           </div>
                         )}
                       </>
@@ -1167,189 +1217,43 @@ const CartPage = () => {
                   </div>
                 )}
 
-                {/* Método de Entrega */}
-                <div className="mb-4 pb-4 border-b">
-                  <label className="block text-sm font-medium text-gray-900 mb-3">
-                    Método de entrega
-                  </label>
-                  
-                  {(() => {
-                    const hasEventItems = guestCartItems.some((item: any) => 
-                      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
-                    );
-
-                    if (hasEventItems) {
-                      // Mostrar solo la opción de transporte + instalación (bloqueada)
-                      return (
-                        <>
-                          <div className="w-full p-4 border-2 border-green-500 bg-green-50 rounded-lg">
-                            <div>
-                              <p className="font-semibold text-green-900">🚚 Transporte + Instalación</p>
-                              <p className="text-sm text-green-700 mt-1">✅ Ya incluido en el precio del evento</p>
-                              <p className="text-xs text-green-600 mt-1">Nuestro equipo se encargará de todo</p>
-                            </div>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-2 italic">
-                            * El transporte y montaje ya están incluidos para eventos
-                          </p>
-                        </>
-                      );
-                    }
-
-                    // Para items normales, mostrar todas las opciones
-                    return (
-                      <div className="space-y-3">
-                        {/* Opción 1: Recogida en tienda */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDeliveryOption('pickup');
-                            setIncludeInstallation(false);
-                          }}
-                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                            deliveryOption === 'pickup'
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div>
-                            <p className="font-semibold text-gray-900">🏪 Recogida en tienda</p>
-                            <p className="text-sm text-gray-600 mt-1">Gratis</p>
-                            <p className="text-xs text-gray-500 mt-1">{shippingConfig?.baseAddress || 'Madrid, España'}</p>
-                          </div>
-                        </button>
-                        
-                        {/* Opción 2: Transporte (solo envío) */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDeliveryOption('delivery');
-                            setIncludeInstallation(false);
-                          }}
-                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                            deliveryOption === 'delivery' && !includeInstallation
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div>
-                            <p className="font-semibold text-gray-900">📦 Transporte</p>
-                            <p className="text-sm text-gray-600 mt-1">Según distancia</p>
-                            <p className="text-xs text-gray-500 mt-1">Introduce tu dirección</p>
-                          </div>
-                        </button>
-
-                        {/* Opción 3: Transporte + Instalación */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDeliveryOption('delivery');
-                            setIncludeInstallation(true);
-                          }}
-                          className={`w-full p-4 border-2 rounded-lg transition text-left ${
-                            deliveryOption === 'delivery' && includeInstallation
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div>
-                            <p className="font-semibold text-gray-900">🚚 Transporte + Instalación</p>
-                            <p className="text-sm text-gray-600 mt-1">Incluye montaje completo</p>
-                            <p className="text-xs text-gray-500 mt-1">Nuestro equipo montará todo el equipo en tu evento</p>
-                          </div>
-                        </button>
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* Dirección y Distancia - Solo si es envío Y NO es evento personalizado */}
+                {/* Info: Método de Entrega */}
                 {(() => {
                   const hasEventItems = guestCartItems.some((item: any) => 
                     item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
                   );
-                  
-                  // Para eventos personalizados, NO mostrar el campo de dirección
-                  // porque la ubicación ya se especificó en la calculadora
+
                   if (hasEventItems) {
-                    return null;
-                  }
-                  
-                  // Para pedidos normales, mostrar el campo si eligió envío
-                  if (deliveryOption === 'delivery') {
+                    // Para eventos, mostrar que transporte está incluido
                     return (
-                      <div className="mb-4 pb-4 border-b space-y-3">
-                        {!useManualDistance ? (
-                          <>
-                          <AddressAutocomplete 
-                            onAddressSelect={handleAddressSelect}
-                            baseAddress={shippingConfig?.baseAddress || 'Madrid, España'}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setUseManualDistance(true)}
-                            className="text-xs text-blue-600 hover:underline"
-                          >
-                            O introduce la distancia manualmente
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <label className="block text-sm font-medium text-gray-900 mb-2">
-                            📍 Distancia aproximada (km)
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            value={distance}
-                            onChange={(e) => setDistance(Number(e.target.value))}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            placeholder="15"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setUseManualDistance(false)}
-                            className="text-xs text-blue-600 hover:underline"
-                          >
-                            Volver a búsqueda por dirección
-                          </button>
-                        </>
-                      )}
-                      
-                      {calculatedShipping && (
-                        <div className="bg-blue-50 border border-blue-200 rounded p-2">
-                          <p className="text-xs text-blue-900">
-                            Zona: {calculatedShipping.zone === 'LOCAL' ? '🟢 Local' : 
-                                  calculatedShipping.zone === 'REGIONAL' ? '🔵 Regional' :
-                                  calculatedShipping.zone === 'EXTENDED' ? '🟡 Ampliada' : '🔴 Personalizada'}
-                            {calculatedShipping.breakdown?.minimumApplied && ' (mínimo aplicado)'}
-                          </p>
-                          <p className="text-xs text-blue-800 font-semibold mt-1">
-                            Distancia: {distance}km → Coste: €{calculatedShipping.finalCost}
-                          </p>
-                        </div>
-                      )}
+                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm font-semibold text-green-900">✅ Transporte y montaje incluidos</p>
+                        <p className="text-xs text-green-700 mt-1">El evento incluye el transporte y montaje completo</p>
                       </div>
                     );
                   }
-                  
-                  return null;
-                })()}
 
-                {/* Info: Transporte y montaje incluidos desde calculadora */}
-                {shippingIncludedInPrice && (
-                  <div className="mb-4 pb-4 border-b">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                      <p className="text-sm font-medium text-green-700">✓ Transporte y montaje incluidos</p>
-                      <p className="text-xs text-green-600 mt-1">
-                        Ya incluido en el precio de los productos seleccionados
+                  // Para productos/packs normales, mostrar recogida en tienda
+                  return (
+                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm font-semibold text-blue-900">🏪 Recogida en tienda</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        {companySettings ? (
+                          <>
+                            {companySettings.address && <>{companySettings.address}<br /></>}
+                            {companySettings.postalCode} {companySettings.city}, {companySettings.province || 'Valencia'}
+                          </>
+                        ) : (
+                          shippingConfig?.baseAddress || 'Madrid, España'
+                        )}
+                        {' • Gratis'}
                       </p>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
-                {/* Alerta VIP */}
-                {user && user.userLevel && user.userLevel !== 'STANDARD' && (
+                {/* Alerta VIP - Solo mostrar si hay descuento aplicado */}
+                {user && user.userLevel && user.userLevel !== 'STANDARD' && vipDiscount > 0 && (
                   <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-lg mb-4">
                     <h3 className="font-bold text-yellow-900 flex items-center gap-2 text-sm mb-1">
                       {user.userLevel === 'VIP' ? (
@@ -1360,7 +1264,6 @@ const CartPage = () => {
                     </h3>
                     <ul className="text-xs text-yellow-800 space-y-1">
                       <li>✓ {user.userLevel === 'VIP' ? '50%' : '70%'} de descuento aplicado</li>
-                      <li>✓ Sin fianza requerida (€0)</li>
                     </ul>
                   </div>
                 )}
@@ -1383,24 +1286,6 @@ const CartPage = () => {
                     </span>
                   </div>
                   
-                  {/* Desglose de Envío/Instalación */}
-                  {deliveryOption === 'pickup' && (
-                    <div className="flex justify-between text-sm bg-green-50 p-2 rounded">
-                      <span className="text-gray-600">🏪 Recogida en tienda</span>
-                      <span className="font-semibold text-green-600">Gratis</span>
-                    </div>
-                  )}
-                  
-                  {deliveryOption === 'delivery' && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">
-                        {includeInstallation ? '🚚 + 🔧 Envío + instalación' : '🚚 Coste de envío'}
-                      </span>
-                      <span className={`font-semibold ${shippingCost === 0 ? 'text-green-600' : ''}`}>
-                        {shippingCost === 0 ? '✅ Incluido' : `€${shippingCost.toFixed(2)}`}
-                      </span>
-                    </div>
-                  )}
                   
                   {/* Descuento VIP */}
                   {vipDiscount > 0 && (
@@ -1447,24 +1332,23 @@ const CartPage = () => {
                   <div className="flex items-start gap-2">
                     <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <p className="font-semibold text-blue-900 mb-1">💳 Pago Total Online</p>
+                      <p className="font-semibold text-blue-900 mb-1">💳 Pago de Reserva</p>
                       <p className="text-blue-800 mb-2">
-                        Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (100%) ahora al reservar.
+                        {paymentBreakdown.payLater > 0 ? (
+                          <>
+                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (25% de reserva) ahora.
+                            <br />
+                            <span className="text-blue-700">Resto: €{paymentBreakdown.payLater.toFixed(2)} en "Mis Pedidos"</span>
+                          </>
+                        ) : (
+                          <>
+                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (100%) ahora al reservar.
+                          </>
+                        )}
                       </p>
                       {paymentBreakdown.requiresDeposit && (
                         <p className="text-blue-800 text-xs bg-blue-100 p-2 rounded">
                           ℹ️ Fianza de <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span> se cobrará en tienda al recoger el material (reembolsable)
-                        </p>
-                      )}
-                      {!paymentBreakdown.requiresDeposit && (
-                        <p className="text-blue-800 text-xs bg-blue-100 p-2 rounded">
-                          {user && (user.userLevel === 'VIP' || user.userLevel === 'VIP_PLUS') ? (
-                            <>⭐ Como usuario {user.userLevel}, no pagas fianza</>
-                          ) : shippingIncludedInPrice ? (
-                            <>✓ Sin fianza requerida (productos incluyen transporte y montaje)</>
-                          ) : (
-                            <>✓ Sin fianza requerida</>
-                          )}
                         </p>
                       )}
                     </div>
@@ -1528,13 +1412,13 @@ const CartPage = () => {
                     
                     console.log('✅ Procediendo al checkout');
                     
-                    // Guardar datos de envío en localStorage para el checkout
-                    // (ya están guardados en tiempo real con prefijo 'cart', ahora los copiamos a 'checkout')
-                    localStorage.setItem('checkoutDeliveryOption', deliveryOption);
-                    localStorage.setItem('checkoutDistance', distance.toString());
-                    localStorage.setItem('checkoutAddress', deliveryAddress);
+                    // Guardar datos para el checkout
+                    localStorage.setItem('checkoutDeliveryOption', 'pickup'); // Siempre recogida en tienda
                     localStorage.setItem('checkoutInstallation', includeInstallation.toString());
                     localStorage.setItem('checkoutOrderNotes', orderNotes);
+                    
+                    // ⚠️ NO limpiar flags aquí - CheckoutPage los necesita para calcular 25%
+                    // CheckoutPage los limpiará después de usarlos
                     
                     navigate('/checkout');
                   }}

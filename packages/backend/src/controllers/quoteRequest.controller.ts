@@ -25,9 +25,9 @@ class QuoteRequestController {
         notes,
       } = req.body;
 
-      // Validaciones básicas
-      if (!customerEmail) {
-        throw new AppError(400, 'Email del cliente es requerido', 'VALIDATION_ERROR');
+      // Validaciones básicas - Al menos email O teléfono
+      if (!customerEmail && !customerPhone) {
+        throw new AppError(400, 'Se requiere al menos email o teléfono del cliente', 'VALIDATION_ERROR');
       }
 
       if (!eventType || !attendees || !duration) {

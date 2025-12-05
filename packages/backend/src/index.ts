@@ -38,6 +38,9 @@ import backupRouter from './routes/backup.routes';
 import contractRouter from './routes/contract.routes';
 import terminalRouter from './routes/terminal.routes';
 import sitemapRouter from './routes/sitemap.routes';
+import { productPurchaseRouter } from './routes/productPurchase.routes';
+import installmentRouter from './routes/installment.routes';
+import extraCategoryRouter from './routes/extraCategory.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -53,6 +56,7 @@ import { logger } from './utils/logger';
 // import { setupEmailReminders } from './jobs/emailReminders.job';
 import { setupPublishScheduledPosts, setupDailyArticleGeneration } from './jobs/blog.job';
 import { setupGMBPostGenerator } from './jobs/gmb-post-generator.job';
+import { setupInstallmentReminders } from './jobs/installmentReminders.job';
 // import { orderExpirationScheduler } from './schedulers/orderExpiration.scheduler';
 // import { initErrorTracking, getSentryRequestHandler, getSentryTracingHandler, getSentryErrorHandler } from './services/errorTracking.service';
 
@@ -244,6 +248,9 @@ app.use('/api/v1/quote-requests', quoteRequestRouter);
 app.use('/api/v1/admin/backups', backupRouter);
 app.use('/api/v1/contracts', contractRouter);
 app.use('/api/v1/terminal', terminalRouter);
+app.use('/api/v1/product-purchases', productPurchaseRouter);
+app.use('/api/v1/installments', installmentRouter);
+app.use('/api/v1/extra-categories', extraCategoryRouter);
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling
@@ -285,6 +292,14 @@ async function startServer() {
       }
     } catch (e) {
       logger.warn('⚠️  Daily article generation setup failed:', e);
+    }
+
+    // Setup installment payment reminders
+    try {
+      setupInstallmentReminders();
+      logger.info('✅ Installment payment reminders scheduled (daily at 9:00 AM)');
+    } catch (e) {
+      logger.warn('⚠️  Installment reminders setup failed:', e);
     }
 
     // Setup GMB post generator (generates posts for Google My Business)

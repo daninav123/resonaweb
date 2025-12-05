@@ -7,6 +7,7 @@ import { Package, Calendar, MapPin, CreditCard, Download, ArrowLeft, Loader2, Ed
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { EditOrderModal } from '../components/orders/EditOrderModal';
+import { InstallmentPayment } from '../components/InstallmentPayment';
 
 const OrderDetailUserPage = () => {
   const { id } = useParams();
@@ -20,7 +21,19 @@ const OrderDetailUserPage = () => {
     queryKey: ['order', id],
     queryFn: async () => {
       const response: any = await api.get(`/orders/${id}`);
-      return response.data || response;
+      const orderData = response.data || response;
+      
+      console.log('📦 ORDEN CARGADA:', {
+        id: orderData.id,
+        orderNumber: orderData.orderNumber,
+        eligibleForInstallments: orderData.eligibleForInstallments,
+        isCalculatorEvent: orderData.isCalculatorEvent,
+        hasInstallments: !!orderData.installments,
+        installmentsCount: orderData.installments?.length || 0,
+        installments: orderData.installments
+      });
+      
+      return orderData;
     },
   });
 
@@ -253,13 +266,24 @@ const OrderDetailUserPage = () => {
             </div>
 
             {/* Para eventos personalizados, mostrar el lugar. Para alquileres, el método de entrega */}
-            {order.items?.some((item: any) => item.product?.id === 'product-custom-event-virtual') ? (
+            {order.items?.some((item: any) => item.eventMetadata) ? (
               <div className="flex items-center gap-3 text-gray-700">
                 <MapPin className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-500">Lugar del Evento</p>
                   <p className="font-medium">
-                    {order.eventLocation?.address || order.deliveryAddress?.address || 'Por confirmar'}
+                    {(() => {
+                      // eventLocation puede ser string o objeto
+                      const eventLoc = order.items?.find((item: any) => item.eventMetadata)?.eventMetadata?.eventLocation;
+                      if (eventLoc) return eventLoc;
+                      
+                      // Fallback a order.eventLocation
+                      if (typeof order.eventLocation === 'string') return order.eventLocation;
+                      if (order.eventLocation?.address) return order.eventLocation.address;
+                      
+                      // Último fallback
+                      return order.deliveryAddress?.address || 'Por confirmar';
+                    })()}
                   </p>
                 </div>
               </div>
@@ -387,23 +411,149 @@ const OrderDetailUserPage = () => {
           </div>
         </div>
 
+        {/* Pagos en Plazos - Solo para eventos de calculadora > 500€ */}
+        {(() => {
+          const shouldShow = order.eligibleForInstallments && order.isCalculatorEvent;
+          console.log('💳 Renderizando InstallmentPayment?', {
+            shouldShow,
+            eligibleForInstallments: order.eligibleForInstallments,
+            isCalculatorEvent: order.isCalculatorEvent
+          });
+          return shouldShow ? (
+            <div className="mt-6">
+              <InstallmentPayment 
+                orderId={order.id}
+                onPaymentComplete={() => {
+                  // Recargar los datos del pedido
+                  queryClient.invalidateQueries({ queryKey: ['order', id] });
+                }}
+              />
+            </div>
+          ) : null;
+        })()}
+
         {/* Productos */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Productos</h2>
           <div className="space-y-4">
             {order.items?.map((item: any) => (
-              <div key={item.id} className="flex gap-4 border-b pb-4 last:border-0">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{item.product?.name || 'Producto'}</h3>
-                  <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
-                  </p>
+              <div key={item.id} className="border-b pb-4 last:border-0">
+                {/* Información básica del item */}
+                <div className="flex gap-4 mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{item.product?.name || 'Producto'}</h3>
+                    <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-gray-900">€{Number(item.subtotal || item.totalPrice || 0).toFixed(2)}</p>
+                    <p className="text-xs text-gray-500">€{Number(item.pricePerDay || item.pricePerUnit || 0).toFixed(2)}/día</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium text-gray-900">€{Number(item.subtotal || item.totalPrice || 0).toFixed(2)}</p>
-                  <p className="text-xs text-gray-500">€{Number(item.pricePerDay || item.pricePerUnit || 0).toFixed(2)}/día</p>
-                </div>
+
+                {/* Detalles del evento si existe eventMetadata */}
+                {item.eventMetadata && (
+                  <div className="mt-3 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">🎉</span>
+                      <h4 className="font-semibold text-blue-900">Detalles de tu Evento</h4>
+                    </div>
+                    
+                    {/* Información básica del evento */}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      {item.eventMetadata.eventType && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Tipo:</span>
+                          <span className="ml-2">{item.eventMetadata.eventType}</span>
+                        </div>
+                      )}
+                      {item.eventMetadata.attendees && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Asistentes:</span>
+                          <span className="ml-2">{item.eventMetadata.attendees}</span>
+                        </div>
+                      )}
+                      {item.eventMetadata.duration && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Duración:</span>
+                          <span className="ml-2">{item.eventMetadata.duration} {item.eventMetadata.durationType === 'hours' ? 'horas' : 'días'}</span>
+                        </div>
+                      )}
+                      {item.eventMetadata.startTime && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Hora inicio:</span>
+                          <span className="ml-2">{item.eventMetadata.startTime}</span>
+                        </div>
+                      )}
+                      {item.eventMetadata.eventDate && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Fecha:</span>
+                          <span className="ml-2">{new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}</span>
+                        </div>
+                      )}
+                      {item.eventMetadata.eventLocation && (
+                        <div className="col-span-2">
+                          <span className="text-blue-700 font-medium">📍 Ubicación:</span>
+                          <span className="ml-2">{item.eventMetadata.eventLocation}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Partes del evento */}
+                    {item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
+                      <div>
+                        <h5 className="font-medium text-blue-900 mb-2">📦 Partes del Evento:</h5>
+                        <ul className="space-y-1 text-sm ml-4">
+                          {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
+                            <li key={idx} className="flex justify-between">
+                              <span>• {part.name}</span>
+                              {part.price > 0 && <span className="font-medium">€{Number(part.price).toFixed(2)}</span>}
+                            </li>
+                          ))}
+                        </ul>
+                        {item.eventMetadata.partsTotal > 0 && (
+                          <p className="text-sm font-semibold mt-2 text-blue-900">
+                            Subtotal Partes: €{Number(item.eventMetadata.partsTotal).toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Extras del evento */}
+                    {item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
+                      <div>
+                        <h5 className="font-medium text-blue-900 mb-2">✨ Extras:</h5>
+                        <ul className="space-y-1 text-sm ml-4">
+                          {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
+                            <li key={idx} className="flex justify-between">
+                              <span>• {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`}</span>
+                              {extra.total > 0 && <span className="font-medium">€{Number(extra.total).toFixed(2)}</span>}
+                            </li>
+                          ))}
+                        </ul>
+                        {item.eventMetadata.extrasTotal > 0 && (
+                          <p className="text-sm font-semibold mt-2 text-blue-900">
+                            Subtotal Extras: €{Number(item.eventMetadata.extrasTotal).toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Total del evento */}
+                    {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
+                      <div className="pt-2 border-t border-blue-200">
+                        <p className="text-sm font-bold text-blue-900">
+                          💰 Total Evento: €{(
+                            (Number(item.eventMetadata.partsTotal) || 0) + 
+                            (Number(item.eventMetadata.extrasTotal) || 0)
+                          ).toFixed(2)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

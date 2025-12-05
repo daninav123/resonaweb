@@ -20,7 +20,18 @@ export const authenticate = async (
     const authHeader = req.headers.authorization;
     secureLog.debug('Auth header presente:', authHeader ? 'Sí' : 'No');
     
+    // PERMITIR ACCESO A ENDPOINTS PÚBLICOS SIN TOKEN (solo GET)
+    const isPublicEndpoint = req.path.includes('/packs') || req.path.includes('/products') || req.path.includes('/categories');
+    const isGetRequest = req.method === 'GET';
+    
+    // Si no hay token
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      // Permitir solo si es GET en endpoint público
+      if (isPublicEndpoint && isGetRequest) {
+        secureLog.debug('Endpoint público GET sin token - permitiendo acceso');
+        return next();
+      }
+      
       secureLog.debug('No hay token o formato incorrecto');
       throw new AppError(401, 'Token de autenticación no proporcionado', 'NO_TOKEN');
     }

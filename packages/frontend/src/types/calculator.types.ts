@@ -35,15 +35,26 @@ export interface PackRecommendationRule {
   reason?: string; // Razón de la recomendación (opcional)
 }
 
+export interface ExtraCategory {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  order: number;
+  extrasIds: string[]; // IDs de los extras asignados a esta categoría
+}
+
 export interface EventTypeConfig {
   id: string;
   name: string;
   icon: string;
   multiplier: number;
   parts: EventPart[];
+  isActive?: boolean; // Mostrar u ocultar el tipo de evento en la calculadora
   recommendedPacks?: PackRecommendationRule[]; // Packs recomendados según condiciones
   availablePacks?: string[]; // IDs de packs disponibles para este tipo de evento
   availableExtras?: string[]; // IDs de productos extras disponibles para este tipo de evento
+  extraCategories?: ExtraCategory[]; // Categorías para organizar los extras en pestañas
 }
 
 export interface ServicePrices {
@@ -68,6 +79,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Boda',
       icon: '💒',
       multiplier: 1.5,
+      isActive: true,
       parts: [
         {
           id: 'ceremony',
@@ -112,6 +124,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Conferencia',
       icon: '🎤',
       multiplier: 1.2,
+      isActive: true,
       parts: [
         {
           id: 'registration',
@@ -147,6 +160,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Concierto',
       icon: '🎵',
       multiplier: 1.8,
+      isActive: true,
       parts: [
         {
           id: 'soundcheck',
@@ -173,6 +187,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Evento Corporativo',
       icon: '💼',
       multiplier: 1.3,
+      isActive: true,
       parts: [
         {
           id: 'welcome',
@@ -208,6 +223,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Fiesta Privada',
       icon: '🎉',
       multiplier: 1.0,
+      isActive: true,
       parts: [
         {
           id: 'setup',
@@ -234,6 +250,7 @@ export const DEFAULT_CALCULATOR_CONFIG: AdvancedCalculatorConfig = {
       name: 'Otro',
       icon: '📅',
       multiplier: 1.0,
+      isActive: true,
       parts: [
         {
           id: 'event',

@@ -43,24 +43,34 @@ function sanitizeString(value: string): string {
 /**
  * Sanitizar objeto recursivamente
  */
-function sanitizeObject(obj: any): any {
+function sanitizeObject(obj: any, parentKey?: string): any {
   if (obj === null || obj === undefined) {
     return obj;
   }
 
   if (typeof obj === 'string') {
+    // NO sanitizar URLs de imágenes ni rutas
+    if (parentKey && (
+      parentKey === 'imageUrl' || 
+      parentKey === 'mainImageUrl' || 
+      parentKey === 'thumbnailUrl' ||
+      parentKey.endsWith('ImageUrl') ||
+      parentKey.endsWith('Url')
+    )) {
+      return obj; // Retornar sin sanitizar
+    }
     return sanitizeString(obj);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item));
+    return obj.map(item => sanitizeObject(item, parentKey));
   }
 
   if (typeof obj === 'object') {
     const sanitized: any = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
-        sanitized[key] = sanitizeObject(obj[key]);
+        sanitized[key] = sanitizeObject(obj[key], key);
       }
     }
     return sanitized;

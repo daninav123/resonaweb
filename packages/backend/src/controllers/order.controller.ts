@@ -3,6 +3,7 @@ import { orderService } from '../services/order.service';
 import { AppError } from '../middleware/error.middleware';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { NotificationHelper } from '../utils/notificationHelper';
+import { InstallmentService } from '../services/installment.service';
 
 interface AuthRequest extends Request {
   user?: any;
@@ -284,7 +285,8 @@ export class OrderController {
         selectedPack,
         selectedExtras,
         estimatedTotal,
-        customOrderDetails // NUEVO: Para pedidos personalizados
+        customOrderDetails, // NUEVO: Para pedidos personalizados
+        stripePaymentIntentId // Payment Intent ID de Stripe
       } = req.body;
 
       const { prisma } = await import('../index');
@@ -474,6 +476,13 @@ export class OrderController {
           status: 'PENDING', // Cambiará a CONFIRMED tras pago
           paymentStatus: 'PENDING',
           
+          // Campos para pago a plazos
+          eligibleForInstallments: total > 500, // Elegible si total > 500€
+          isCalculatorEvent: true, // Viene de la calculadora
+          
+          // Vincular con el Payment Intent de Stripe
+          stripePaymentIntentId: stripePaymentIntentId || null,
+          
           items: {
             create: orderItems,
           },
@@ -489,10 +498,86 @@ export class OrderController {
 
       logger.info(`[createOrderFromCalculator] Pedido creado: ${order.id}`);
 
+      // Crear plazos de pago si el pedido es elegible (calculadora + total > 500€)
+      const isFromCalculator = true; // Este método solo se usa desde calculadora
+      if (isFromCalculator && total > 500) {
+        try {
+          logger.info(`[createOrderFromCalculator] Creando plazos de pago para orden ${order.id} - Total: €${total}`);
+          const installmentService = new InstallmentService(prisma);
+          
+          await installmentService.createInstallments(
+            order.id,
+            total,
+            startDate
+          );
+          
+          logger.info(`✅ [createOrderFromCalculator] Plazos creados exitosamente para orden ${order.id}`);
+          
+          // Marcar el primer plazo como PAGADO (el pago ya se realizó antes de crear la orden)
+          if (stripePaymentIntentId) {
+            try {
+              // Obtener el primer installment
+              const firstInstallment = await prisma.paymentInstallment.findFirst({
+                where: {
+                  orderId: order.id,
+                  installmentNumber: 1
+                }
+              });
+              
+              if (firstInstallment) {
+                await installmentService.markInstallmentAsPaid(
+                  firstInstallment.id,
+                  stripePaymentIntentId,
+                  undefined // chargeId no disponible aquí
+                );
+                logger.info(`✅ [createOrderFromCalculator] Primer plazo marcado como PAGADO para orden ${order.id}`);
+              }
+            } catch (markError) {
+              logger.error('❌ [createOrderFromCalculator] Error marcando primer plazo como pagado:', markError);
+            }
+          }
+        } catch (installmentError) {
+          logger.error('❌ [createOrderFromCalculator] Error creando plazos:', installmentError);
+          // No fallar la creación de la orden si falla la creación de plazos
+        }
+      }
+
+      // Recargar la orden con installments incluidos
+      const orderWithInstallments = await prisma.order.findUnique({
+        where: { id: order.id },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  category: true
+                }
+              }
+            }
+          },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              phone: true
+            }
+          },
+          payment: true,
+          invoice: true,
+          installments: {
+            orderBy: {
+              installmentNumber: 'asc'
+            }
+          }
+        }
+      });
+
       res.status(201).json({
         success: true,
         message: 'Pedido creado correctamente',
-        data: { order },
+        data: { order: orderWithInstallments },
       });
     } catch (error) {
       next(error);

@@ -30,7 +30,34 @@ const PaymentSuccessPage = () => {
 
     try {
       const orderData = await api.get(`/orders/${orderId}`);
-      setOrder(orderData);
+      
+      console.log('📦 Order data recibido:', orderData);
+      console.log('💳 eligibleForInstallments:', orderData.eligibleForInstallments);
+      console.log('💳 isCalculatorEvent:', orderData.isCalculatorEvent);
+      console.log('💳 installments:', orderData.installments);
+      
+      // Verificar si tiene installments para calcular el monto pagado
+      let amountPaid = orderData.total;
+      let hasInstallments = false;
+      
+      if (orderData.installments && orderData.installments.length > 0) {
+        // Calcular el monto del primer plazo (que es el que se acaba de pagar)
+        const firstInstallment = orderData.installments.find((i: any) => i.installmentNumber === 1);
+        console.log('💳 Primer plazo encontrado:', firstInstallment);
+        if (firstInstallment) {
+          amountPaid = Number(firstInstallment.amount);
+          hasInstallments = true;
+          console.log('💳 Monto pagado calculado:', amountPaid);
+        }
+      } else {
+        console.log('⚠️ No se encontraron installments en la orden');
+      }
+      
+      setOrder({
+        ...orderData,
+        amountPaid,
+        hasInstallments
+      });
     } catch (error) {
       console.error('Error loading order:', error);
     } finally {
@@ -68,30 +95,57 @@ const PaymentSuccessPage = () => {
 
           {/* Información del pedido */}
           {order && (
-            <div className="bg-gray-50 rounded-lg p-6 mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                <div>
-                  <p className="text-sm text-gray-600">Número de pedido</p>
-                  <p className="font-semibold text-lg">{order.orderNumber}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Total pagado</p>
-                  <p className="font-semibold text-lg text-resona">
-                    €{Number(order.total).toFixed(2)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Fecha del evento</p>
-                  <p className="font-semibold">
-                    {new Date(order.startDate).toLocaleDateString('es-ES')}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Estado</p>
-                  <p className="font-semibold text-green-600">Confirmado</p>
+            <>
+              <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                  <div>
+                    <p className="text-sm text-gray-600">Número de pedido</p>
+                    <p className="font-semibold text-lg">{order.orderNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {order.hasInstallments ? 'Pago de Reserva (25%)' : 'Total Pagado'}
+                    </p>
+                    <p className="font-semibold text-lg text-resona">
+                      €{Number(order.amountPaid).toFixed(2)}
+                    </p>
+                    {order.hasInstallments && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Total del pedido: €{Number(order.total).toFixed(2)}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Fecha del evento</p>
+                    <p className="font-semibold">
+                      {new Date(order.startDate).toLocaleDateString('es-ES')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Estado</p>
+                    <p className="font-semibold text-green-600">Confirmado</p>
+                  </div>
                 </div>
               </div>
-            </div>
+              
+              {/* Información de pagos pendientes */}
+              {order.hasInstallments && (
+                <div className="bg-blue-50 border border-blue-300 rounded-lg p-6 mb-8 text-left">
+                  <h2 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                    💳 Pagos Pendientes
+                  </h2>
+                  <p className="text-sm text-blue-800 mb-3">
+                    Has pagado la reserva (25%). El resto se puede pagar desde "Mis Pedidos":
+                  </p>
+                  <p className="text-lg font-bold text-blue-900">
+                    Pendiente: €{(Number(order.total) - Number(order.amountPaid)).toFixed(2)}
+                  </p>
+                  <p className="text-xs text-blue-700 mt-2">
+                    Podrás pagar el resto en plazos o todo de una vez desde tu panel de pedidos
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {/* Próximos pasos */}

@@ -1,8 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Package, X, Save, Calculator, Eye, EyeOff } from 'lucide-react';
+import { Plus, Trash2, Edit2, Package, X, Save, Calculator, Eye, EyeOff, Copy, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
+
+// Helper para construir URLs completas de imágenes
+const getFullImageUrl = (imagePath: string | null | undefined): string => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiPath = baseUrl.replace('/api/v1', '');
+  return `${apiPath}${imagePath}`;
+};
+
+// Helper para convertir URL completa a ruta relativa
+const getRelativeImagePath = (fullUrl: string | null | undefined): string | undefined => {
+  if (!fullUrl) return undefined;
+  if (fullUrl.startsWith('/uploads/')) return fullUrl;
+  const match = fullUrl.match(/\/uploads\/products\/.+$/);
+  return match ? match[0] : undefined;
+};
 
 const MontajesManager = () => {
   const navigate = useNavigate();
@@ -12,30 +29,35 @@ const MontajesManager = () => {
   const [editingPack, setEditingPack] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [packsCategoryId, setPacksCategoryId] = useState<string>('');
-  
+  const [montajeCategoryId, setMontajeCategoryId] = useState<string>('');
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    category: 'MONTAJE' as 'MONTAJE', // Siempre MONTAJE
+    category: 'BODAS' as 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'EXTRAS' | 'OTROS', // Categoría del montaje
     customFinalPrice: '',
     transportCost: '', // Coste de transporte e instalación
     includeShipping: true,
     includeInstallation: true,
-    items: [] as Array<{ 
-      productId: string; 
+    imageUrl: '',
+    items: [] as Array<{
+      productId: string;
       quantity: number;
       numberOfPeople?: number; // Para productos de personal
       hoursPerPerson?: number; // Para productos de personal
-    }>
+    }>,
   });
-  
+
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   const [productFilter, setProductFilter] = useState({
     categoryId: '',
-    search: ''
+    search: '',
   });
 
   const [packCategoryFilter, setPackCategoryFilter] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'name' | 'price' | 'profit'>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     loadPacks();
@@ -48,18 +70,21 @@ const MontajesManager = () => {
       setLoading(true);
       // Incluir packs inactivos en el admin
       const response: any = await api.get('/packs?includeInactive=true');
-      console.log('📦 Respuesta de packs desde /packs:', response);
-      
+      console.log('Respuesta de packs desde /packs:', response);
+
       // El backend retorna { packs: [...] }
       const packsData = response?.packs || response || [];
-      console.log('📦 Packs procesados:', packsData);
-      
+      console.log('Packs procesados:', packsData);
+
       // Filtrar solo packs de categoría MONTAJE
-      const montajePacks = Array.isArray(packsData) 
-        ? packsData.filter((pack: any) => pack.category === 'MONTAJE')
+      const montajePacks = Array.isArray(packsData)
+        ? packsData.filter((pack: any) => {
+            const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
+            return categoryName === 'montaje';
+          })
         : [];
-      
-      console.log('🚚 Montajes filtrados:', montajePacks);
+
+      console.log('Montajes filtrados:', montajePacks);
       setPacks(montajePacks);
     } catch (error) {
       console.error('Error cargando packs:', error);
@@ -72,8 +97,8 @@ const MontajesManager = () => {
   const loadCategories = async () => {
     try {
       const response: any = await api.get('/products/categories');
-      console.log('📂 Respuesta de categorías:', response);
-      
+      console.log('Respuesta de categorías:', response);
+
       // La respuesta puede ser un array directamente o un objeto con categorías
       let cats = [];
       if (Array.isArray(response)) {
@@ -83,19 +108,19 @@ const MontajesManager = () => {
       } else if (response?.data && Array.isArray(response.data)) {
         cats = response.data;
       }
-      
-      console.log('📂 Categorías procesadas:', cats);
+
+      console.log('Categorías procesadas:', cats);
       setCategories(cats);
-      
-      // Buscar categoría "Packs"
-      const packsCategory = cats.find((cat: any) => 
-        cat.name && cat.name.toLowerCase().includes('pack')
+
+      // Buscar categoría "Montaje"
+      const montajeCategory = cats.find((cat: any) =>
+        cat.name && cat.name.toLowerCase() === 'montaje'
       );
-      if (packsCategory) {
-        setPacksCategoryId(packsCategory.id);
-        console.log('✅ Categoría Packs encontrada:', packsCategory.id, packsCategory.name);
+      if (montajeCategory) {
+        setMontajeCategoryId(montajeCategory.id);
+        console.log('Categoría Montaje encontrada:', montajeCategory.id, montajeCategory.name);
       } else {
-        console.log('⚠️ Categoría Packs no encontrada. Categorías disponibles:', cats.map((c: any) => c.name));
+        console.log('Categoría Montaje no encontrada. Categorías disponibles:', cats.map((c: any) => c.name));
       }
     } catch (error) {
       console.error('Error cargando categorías:', error);
@@ -106,8 +131,8 @@ const MontajesManager = () => {
     try {
       // Cargar TODOS los productos sin límite
       const response: any = await api.get('/products?limit=1000');
-      console.log('📦 Respuesta de productos:', response);
-      
+      console.log('Respuesta de productos:', response);
+
       let prods = [];
       if (Array.isArray(response)) {
         prods = response;
@@ -116,8 +141,8 @@ const MontajesManager = () => {
       } else if (response?.data && Array.isArray(response.data)) {
         prods = response.data;
       }
-      
-      console.log('📦 Productos procesados:', prods.length, 'productos');
+
+      console.log('Productos procesados:', prods.length, 'productos');
       setProducts(prods);
     } catch (error) {
       console.error('Error cargando productos:', error);
@@ -126,47 +151,47 @@ const MontajesManager = () => {
 
   // Filtrar productos disponibles para agregar al pack
   const getAvailableProducts = () => {
-    console.log('🔍 Total productos:', products.length);
-    console.log('🔍 Productos con isPack:', products.filter(p => p.isPack).length);
-    console.log('🔍 Productos SIN isPack:', products.filter(p => !p.isPack).length);
-    
+    console.log('Total productos:', products.length);
+    console.log('Productos con isPack:', products.filter(p => p.isPack).length);
+    console.log('Productos SIN isPack:', products.filter(p => !p.isPack).length);
+
     let filtered = products.filter(p => !p.isPack);
-    console.log('🔍 Después de filtrar packs:', filtered.length);
-    
+    console.log('Después de filtrar packs:', filtered.length);
+
     if (filtered.length > 0) {
-      console.log('📋 Categorías de productos disponibles:', [...new Set(filtered.map(p => p.categoryId))]);
-      console.log('📋 Primeros 3 productos antes de filtrar:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
+      console.log('Categorías de productos disponibles:', [...new Set(filtered.map(p => p.categoryId))]);
+      console.log('Primeros 3 productos antes de filtrar:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
     }
-    
+
     // Filtrar por categoría si hay una seleccionada
     if (productFilter.categoryId) {
-      console.log('🔍 Filtrando por categoría:', productFilter.categoryId);
+      console.log('Filtrando por categoría:', productFilter.categoryId);
       const beforeCatFilter = filtered.length;
       filtered = filtered.filter(p => {
         const match = p.categoryId === productFilter.categoryId;
         if (!match && beforeCatFilter < 5) {
-          console.log(`   ❌ Producto "${p.name}" tiene categoryId: ${p.categoryId}`);
+          console.log(`   Producto "${p.name}" tiene categoryId: ${p.categoryId}`);
         }
         return match;
       });
-      console.log(`🔍 Después de filtro categoría: ${beforeCatFilter} -> ${filtered.length}`);
+      console.log(`Después de filtro categoría: ${beforeCatFilter} -> ${filtered.length}`);
     }
-    
+
     // Filtrar por búsqueda
     if (productFilter.search.trim()) {
-      console.log('🔍 Filtrando por búsqueda:', productFilter.search);
+      console.log('Filtrando por búsqueda:', productFilter.search);
       const beforeSearch = filtered.length;
       const search = productFilter.search.toLowerCase();
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter(p =>
         p.name?.toLowerCase().includes(search) ||
         p.sku?.toLowerCase().includes(search)
       );
-      console.log(`🔍 Después de búsqueda: ${beforeSearch} -> ${filtered.length}`);
+      console.log(`Después de búsqueda: ${beforeSearch} -> ${filtered.length}`);
     }
-    
-    console.log('✅ Productos finales disponibles:', filtered.length);
+
+    console.log('Productos finales disponibles:', filtered.length);
     if (filtered.length > 0) {
-      console.log('📋 Primeros 3 productos finales:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
+      console.log('Primeros 3 productos finales:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
     }
     return filtered;
   };
@@ -178,11 +203,12 @@ const MontajesManager = () => {
     setFormData({
       name: '',
       description: '',
-      category: 'MONTAJE', // Siempre MONTAJE
+      category: 'BODAS', // Valor por defecto
       customFinalPrice: '',
       transportCost: '', // Añadir transportCost
       includeShipping: true,
       includeInstallation: true,
+      imageUrl: '',
       items: [],
     });
     const newFilters = {
@@ -190,28 +216,40 @@ const MontajesManager = () => {
       search: '',
     };
     setProductFilter(newFilters);
-    console.log('✅ Filtros reseteados a:', newFilters);
+    console.log('Filtros reseteados a:', newFilters);
     setShowModal(true);
   };
 
   const handleEdit = (pack: any) => {
     setEditingPack(pack);
+    
+    // Mapear items del pack
+    const mappedItems = (pack.items || []).map((item: any) => ({
+      productId: item.productId || item.product?.id,
+      quantity: item.quantity || 1,
+      numberOfPeople: item.numberOfPeople,
+      hoursPerPerson: item.hoursPerPerson
+    }));
+    
+    console.log('✏️ Editando pack - CATEGORIA ORIGINAL:', pack.category);
+    console.log('📷 URL de imagen recibida:', pack.imageUrl);
+    
+    // Convertir URL de imagen a URL completa usando helper
+    const imageUrl = getFullImageUrl(pack.imageUrl);
+    console.log('📷 URL de imagen completa:', imageUrl);
+    
     setFormData({
       name: pack.name || '',
       description: pack.description || '',
-      category: 'MONTAJE', // Siempre MONTAJE
+      category: pack.category || 'OTROS', // Usar la categoría del pack, por defecto OTROS
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
       transportCost: String(pack.transportCost || ''), // Añadir transportCost
       includeShipping: pack.includeShipping !== false,
       includeInstallation: pack.includeInstallation !== false,
-      items: pack.items?.map((item: any) => ({
-        productId: item.productId || item.product?.id,
-        quantity: item.quantity,
-        ...(item.numberOfPeople !== undefined && { numberOfPeople: item.numberOfPeople }),
-        ...(item.hoursPerPerson !== undefined && { hoursPerPerson: item.hoursPerPerson })
-      })) || []
+      imageUrl: imageUrl,
+      items: mappedItems
     });
-    console.log('✏️ Editando pack:', pack);
+    console.log('📝 FormData.category establecido a:', pack.category || 'OTROS');
     console.log('📦 Items del pack (detalle completo):');
     pack.items?.forEach((item: any, index: number) => {
       const product = products.find(p => p.id === (item.productId || item.product?.id));
@@ -224,6 +262,103 @@ const MontajesManager = () => {
       });
     });
     setShowModal(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor selecciona una imagen válida');
+      return;
+    }
+
+    // Validar tamaño (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('La imagen debe ser menor a 5MB');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+      const uploadFormData = new FormData();
+      uploadFormData.append('image', file);
+
+      console.log('📤 Subiendo imagen...');
+      const response: any = await api.post('/upload/image', uploadFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('📥 Respuesta completa del servidor:', response);
+      console.log('📥 response.data:', response.data);
+      console.log('📥 response.imageUrl:', response.imageUrl);
+      
+      // El backend puede responder directamente o con data
+      const imageUrl = response.imageUrl || response.data?.imageUrl || response.data;
+      
+      if (!imageUrl) {
+        console.error('❌ No se recibió imageUrl. Respuesta:', response);
+        throw new Error('El servidor no devolvió la URL de la imagen');
+      }
+      
+      console.log('✅ URL de imagen obtenida:', imageUrl);
+      
+      // Construir URL completa usando helper
+      const fullImageUrl = getFullImageUrl(imageUrl);
+      
+      console.log('✅ URL completa de imagen:', fullImageUrl);
+      setFormData(prev => ({ ...prev, imageUrl: fullImageUrl }));
+      toast.success('Imagen subida correctamente');
+    } catch (error: any) {
+      console.error('❌ Error subiendo imagen:', error);
+      console.error('❌ Error response:', error.response);
+      toast.error(error.response?.data?.error || error.message || 'Error al subir la imagen');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleDuplicate = async (pack: any) => {
+    try {
+      // Generar nombre para el duplicado
+      let duplicateName = `${pack.name} (copia)`;
+      let counter = 1;
+      
+      // Verificar si ya existe un montaje con ese nombre
+      while (packs.some(p => p.name === duplicateName)) {
+        counter++;
+        duplicateName = `${pack.name} (copia ${counter})`;
+      }
+
+      // Preparar datos del montaje duplicado
+      const packData = {
+        name: duplicateName,
+        description: pack.description || '',
+        categoryId: montajeCategoryId,
+        category: pack.category || 'OTROS', // Preservar la categoría del evento
+        customFinalPrice: pack.customPriceEnabled ? Number(pack.finalPrice) : undefined,
+        transportCost: Number(pack.transportCost || 0),
+        items: pack.items?.map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          numberOfPeople: item.numberOfPeople,
+          hoursPerPerson: item.hoursPerPerson,
+        })) || [],
+        featured: false,
+        imageUrl: pack.imageUrl || undefined,
+      };
+
+      // Crear el montaje duplicado
+      await api.post('/packs', packData);
+      toast.success(`Montaje "${duplicateName}" creado exitosamente`);
+      loadPacks();
+    } catch (error: any) {
+      console.error('Error duplicando montaje:', error);
+      toast.error(error.response?.data?.message || 'Error al duplicar el montaje');
+    }
   };
 
   const handleSave = async () => {
@@ -249,15 +384,39 @@ const MontajesManager = () => {
         });
       });
 
+      // Filtrar productos virtuales que no existen en la BD
+      const validItems = formData.items.filter(item => {
+        // Excluir productos virtuales como 'product-custom-event-virtual'
+        if (item.productId && item.productId.includes('virtual')) {
+          console.log(`⚠️ Filtrando producto virtual: ${item.productId}`);
+          return false;
+        }
+        return true;
+      });
+
+      if (validItems.length === 0) {
+        toast.error('Debes agregar al menos un producto real al pack');
+        return;
+      }
+
+      console.log('📝 CATEGORIA ANTES DE GUARDAR:', formData.category);
+      console.log('📝 montajeCategoryId:', montajeCategoryId);
+      
+      // Convertir URL completa de vuelta a ruta relativa para guardar en BD
+      const imageUrlToSave = getRelativeImagePath(formData.imageUrl);
+      console.log('📷 Guardando imagen como:', imageUrlToSave);
+      
       const packData: any = {
         name: formData.name,
         description: formData.description,
-        category: 'MONTAJE', // Forzar MONTAJE
+        categoryId: montajeCategoryId, // ID de la categoría Montaje (esto identifica que es un montaje)
+        category: formData.category, // Categoría del evento: BODAS, EXTRAS, etc.
         customFinalPrice: formData.customFinalPrice ? parseFloat(formData.customFinalPrice) : undefined,
         transportCost: formData.transportCost ? parseFloat(formData.transportCost) : 0, // Añadir transportCost
         includeShipping: formData.includeShipping,
         includeInstallation: formData.includeInstallation,
-        items: formData.items.map(item => ({
+        imageUrl: imageUrlToSave,
+        items: validItems.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
           // IMPORTANTE: Asegurar que numberOfPeople y hoursPerPerson se envíen
@@ -277,11 +436,6 @@ const MontajesManager = () => {
           hoursPerPerson: item.hoursPerPerson
         });
       });
-
-      // Solo agregar categoryId si es un pack nuevo
-      if (!editingPack) {
-        packData.categoryId = packsCategoryId;
-      }
 
       console.log('📦 Guardando pack:', {
         isNew: !editingPack,
@@ -305,10 +459,24 @@ const MontajesManager = () => {
       setShowModal(false);
       await loadPacks();
     } catch (error: any) {
-      console.error('❌ Error guardando pack:', error);
-      console.error('   Response:', error.response?.data);
-      console.error('   Status:', error.response?.status);
-      toast.error(error.response?.data?.message || 'Error al guardar el pack');
+      console.error('❌ ============ ERROR GUARDANDO PACK ============');
+      console.error('📋 Error completo:', error);
+      console.error('📋 Mensaje:', error.message);
+      console.error('📋 Response completa:', error.response);
+      console.error('📋 Response.data:', error.response?.data);
+      console.error('📋 Response.data.error:', error.response?.data?.error);
+      console.error('📋 Response.data.message:', error.response?.data?.message);
+      console.error('📋 Status:', error.response?.status);
+      console.error('📋 Headers:', error.response?.headers);
+      console.error('❌ ===============================================');
+      
+      // Mostrar mensaje de error más detallado
+      const errorMsg = error.response?.data?.error?.message 
+        || error.response?.data?.message 
+        || error.message 
+        || 'Error al guardar el pack';
+      
+      toast.error(errorMsg);
     }
   };
 
@@ -428,7 +596,8 @@ const MontajesManager = () => {
     costShippingInstallation = costShippingInstallation / 2;
 
     const totalCost = costPersonal + costDepreciation + costShippingInstallation;
-    const profit = finalPrice - totalCost;
+    // Incluir transportCost en el cálculo del beneficio
+    const profit = finalPrice - totalCost - (pack.transportCost || 0);
 
     return { totalCost, profit };
   };
@@ -480,15 +649,27 @@ const MontajesManager = () => {
           costDepreciation += depreciation;
         }
 
+        // Calcular amortización para el log
+        let itemAmortization = 0;
+        if (isPersonal) {
+          itemAmortization = Number(product.purchasePrice || 0) * effectiveQuantity;
+        } else if (isConsumable) {
+          itemAmortization = Number(product.purchasePrice || 0) * effectiveQuantity;
+        } else {
+          itemAmortization = Number(product.purchasePrice || 0) * effectiveQuantity * 0.05;
+        }
+
         console.log(`📦 Item ${index}: ${product.name}`, {
           isPersonal,
+          isConsumable,
           numberOfPeople: item.numberOfPeople,
           hoursPerPerson: item.hoursPerPerson,
           quantity: item.quantity,
           effectiveQuantity,
           purchasePrice: product.purchasePrice,
           pricePerDay: product.pricePerDay,
-          itemPrice
+          itemPrice,
+          amortizationCost: itemAmortization.toFixed(2)
         });
 
         totalPricePerDay += itemPrice;
@@ -573,13 +754,40 @@ const MontajesManager = () => {
     CONCIERTOS: { emoji: '🎵', label: 'Conciertos', color: 'bg-blue-100 text-blue-800' },
     EVENTOS_CORPORATIVOS: { emoji: '💼', label: 'Eventos Corporativos', color: 'bg-gray-100 text-gray-800' },
     CONFERENCIAS: { emoji: '🎤', label: 'Conferencias', color: 'bg-indigo-100 text-indigo-800' },
+    EXTRAS: { emoji: '✨', label: 'Extras', color: 'bg-cyan-100 text-cyan-800' },
     OTROS: { emoji: '📅', label: 'Otros', color: 'bg-amber-100 text-amber-800' }
   };
 
   // Filtrar packs por categoría
-  const filteredPacks = packCategoryFilter 
+  let filteredPacks = packCategoryFilter 
     ? packs.filter(pack => pack.category === packCategoryFilter)
     : packs;
+
+  // Ordenar packs
+  filteredPacks = [...filteredPacks].sort((a, b) => {
+    let aValue: number | string = 0;
+    let bValue: number | string = 0;
+
+    if (sortBy === 'price') {
+      aValue = Number(a.finalPrice || a.calculatedTotalPrice || 0);
+      bValue = Number(b.finalPrice || b.calculatedTotalPrice || 0);
+    } else if (sortBy === 'profit') {
+      const aCost = calculatePackCostsAndProfit(a).totalCost;
+      const aProfit = Number(a.finalPrice || a.calculatedTotalPrice || 0) - aCost;
+      const bCost = calculatePackCostsAndProfit(b).totalCost;
+      const bProfit = Number(b.finalPrice || b.calculatedTotalPrice || 0) - bCost;
+      aValue = aProfit;
+      bValue = bProfit;
+    } else {
+      aValue = a.name.toLowerCase();
+      bValue = b.name.toLowerCase();
+    }
+
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+    }
+    return sortOrder === 'asc' ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number);
+  });
 
   return (
     <div className="space-y-6">
@@ -659,12 +867,60 @@ const MontajesManager = () => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nombre</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                  <button
+                    onClick={() => {
+                      if (sortBy === 'name') {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy('name');
+                        setSortOrder('asc');
+                      }
+                    }}
+                    className="flex items-center gap-1 hover:text-resona"
+                  >
+                    Nombre
+                    {sortBy === 'name' && (sortOrder === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />)}
+                    {sortBy !== 'name' && <ArrowUpDown className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoría</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Descripción</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Precio/Día</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                  <button
+                    onClick={() => {
+                      if (sortBy === 'price') {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy('price');
+                        setSortOrder('asc');
+                      }
+                    }}
+                    className="flex items-center gap-1 hover:text-resona"
+                  >
+                    Precio/Día
+                    {sortBy === 'price' && (sortOrder === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />)}
+                    {sortBy !== 'price' && <ArrowUpDown className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Gastos Esperados</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Beneficio Esperado</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                  <button
+                    onClick={() => {
+                      if (sortBy === 'profit') {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy('profit');
+                        setSortOrder('asc');
+                      }
+                    }}
+                    className="flex items-center gap-1 hover:text-resona"
+                  >
+                    Beneficio Esperado
+                    {sortBy === 'profit' && (sortOrder === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />)}
+                    {sortBy !== 'profit' && <ArrowUpDown className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Estado</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Acciones</th>
               </tr>
@@ -717,6 +973,13 @@ const MontajesManager = () => {
                       title={isActive ? 'Ocultar montaje' : 'Mostrar montaje'}
                     >
                       {isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                    <button 
+                      onClick={() => handleDuplicate(pack)}
+                      className="text-purple-600 hover:text-purple-800"
+                      title="Duplicar montaje"
+                    >
+                      <Copy className="w-4 h-4" />
                     </button>
                     <button 
                       onClick={() => handleEdit(pack)}
@@ -802,63 +1065,88 @@ const MontajesManager = () => {
                         <option value="CONCIERTOS">🎵 Conciertos</option>
                         <option value="EVENTOS_CORPORATIVOS">💼 Eventos Corporativos</option>
                         <option value="CONFERENCIAS">🎤 Conferencias</option>
+                        <option value="EXTRAS">✨ Extras</option>
                         <option value="OTROS">📅 Otros</option>
                       </select>
+                    </div>
+
+                    {/* Imagen del montaje */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Imagen del Montaje
+                      </label>
+                      <div className="space-y-2">
+                        {formData.imageUrl && (
+                          <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-gray-50">
+                            <img
+                              src={formData.imageUrl}
+                              alt="Preview"
+                              className="w-full h-auto max-h-64 object-contain"
+                            />
+                            <button
+                              onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                              className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700 shadow-lg"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={uploadingImage}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                        />
+                        {uploadingImage && (
+                          <p className="text-sm text-gray-500">Subiendo imagen...</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Productos del Pack */}
-                <div className="space-y-6">
-                  {/* Sección: Buscar y Agregar Productos */}
-                  <div className="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                      <Package className="w-5 h-5 text-blue-600" />
-                      Buscar y Agregar Productos
+                {/* Productos del Pack - Layout 60/40 */}
+                <div className="grid grid-cols-3 gap-3">
+                  {/* IZQUIERDA: Buscar y Agregar Productos (60%) */}
+                  <div className="col-span-2 space-y-2">
+                    <h3 className="text-sm font-bold flex items-center gap-1 text-gray-900">
+                      <Package className="w-4 h-4 text-blue-600" />
+                      Buscar y Añadir Productos
                     </h3>
 
                     {/* Filtros */}
-                    <div className="mb-3 grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Filtrar por categoría
-                        </label>
-                        <select
-                          value={productFilter.categoryId}
-                          onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white"
-                        >
-                          <option value="">Todas las categorías</option>
-                          {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Buscar producto
-                        </label>
-                        <input
-                          type="text"
-                          value={productFilter.search}
-                          onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                          placeholder="Nombre o SKU..."
-                        />
-                      </div>
+                    <div className="flex gap-1">
+                      <select
+                        value={productFilter.categoryId}
+                        onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
+                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 bg-white"
+                      >
+                        <option value="">📁 Todas</option>
+                        {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={productFilter.search}
+                        onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
+                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                        placeholder="🔍 Buscar..."
+                      />
                     </div>
 
                     {/* Lista de productos disponibles */}
-                    <div className="bg-white border border-gray-300 rounded-lg max-h-64 overflow-y-auto">
+                    <div className="bg-white border border-gray-300 rounded max-h-[500px] overflow-y-auto">
                       {getAvailableProducts().length === 0 ? (
-                        <div className="p-8 text-center text-gray-500">
-                          <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm">No hay productos disponibles con estos filtros</p>
+                        <div className="p-4 text-center text-gray-500">
+                          <Package className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+                          <p className="text-xs">No hay productos</p>
                           <button
                             onClick={() => setProductFilter({ categoryId: '', search: '' })}
-                            className="mt-2 text-xs text-blue-600 hover:underline"
+                            className="mt-1 text-xs text-blue-600 hover:underline"
                           >
-                            Limpiar filtros
+                            Limpiar
                           </button>
                         </div>
                       ) : (
@@ -867,51 +1155,36 @@ const MontajesManager = () => {
                             const isAdded = formData.items.some(item => item.productId === product.id);
                             const isPerson = isPersonalProduct(product);
                             const isConsumable = (product as any).isConsumable;
+                            const price = isConsumable ? (product as any).pricePerUnit : product.pricePerDay;
+                            const unit = isPerson ? 'hora' : isConsumable ? 'unidad' : 'día';
+                            
                             return (
-                              <div key={product.id} className={`flex items-center justify-between p-3 border-l-4 ${
-                                isPerson ? 'border-l-purple-500 bg-purple-50 hover:bg-purple-100' : isConsumable ? 'border-l-orange-500 bg-orange-50 hover:bg-orange-100' : 'border-l-green-500 hover:bg-gray-50'
-                              }`}>
-                                <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
-                                    {isPerson ? '👥' : '📦'} {product.name}
-                                    {(() => {
-                                      const isConsumable = (product as any).isConsumable;
-                                      if (isPerson) {
-                                        return <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>;
-                                      } else if (isConsumable) {
-                                        return <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">CONSUMIBLE</span>;
-                                      } else {
-                                        return <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>;
-                                      }
-                                    })()}
-                                  </div>
-                                  <div className={`text-xs font-medium mt-0.5 ${isPerson ? 'text-purple-700' : (product as any).isConsumable ? 'text-orange-700' : 'text-green-700'}`}>
-                                    {(() => {
-                                      const isConsumable = (product as any).isConsumable;
-                                      const price = isConsumable ? (product as any).pricePerUnit : product.pricePerDay;
-                                      const unit = isPerson ? 'hora' : isConsumable ? 'unidad' : 'día';
-                                      return `€${price}/${unit}`;
-                                    })()}
-                                    {!isPerson && product.shippingCost > 0 && ` + €${product.shippingCost} envío`}
-                                    {!isPerson && product.installationCost > 0 && ` + €${product.installationCost} instalación`}
+                              <div key={product.id} className="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1">
+                                    <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${
+                                      isPerson ? 'bg-purple-600 text-white' : isConsumable ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
+                                    }`}>
+                                      {isPerson ? '👤' : isConsumable ? '🔥' : '📦'}
+                                    </span>
+                                    <span className="font-medium text-gray-900 text-xs truncate">{product.name}</span>
+                                    <span className={`text-xs font-semibold ml-auto ${
+                                      isPerson ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'
+                                    }`}>
+                                      €{price}/{unit}
+                                    </span>
                                   </div>
                                 </div>
                                 <button
                                   onClick={() => addProductToList(product.id)}
                                   disabled={isAdded}
-                                  className={`flex items-center gap-1 px-3 py-1 text-sm rounded transition-colors ${
-                                    isAdded 
-                                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                                      : isPerson
-                                      ? 'bg-purple-600 text-white hover:bg-purple-700'
-                                      : 'bg-green-600 text-white hover:bg-green-700'
+                                  className={`px-2 py-0.5 rounded text-xs font-medium ml-2 ${
+                                    isAdded
+                                      ? 'bg-gray-200 text-gray-500'
+                                      : 'bg-blue-600 text-white hover:bg-blue-700'
                                   }`}
                                 >
-                                  {isAdded ? (
-                                    <>✓ Añadido</>
-                                  ) : (
-                                    <><Plus className="w-4 h-4" /> Añadir</>
-                                  )}
+                                  {isAdded ? '✓' : '+'}
                                 </button>
                               </div>
                             );
@@ -921,20 +1194,22 @@ const MontajesManager = () => {
                     </div>
                   </div>
 
-                  {/* Sección: Productos en el Pack */}
-                  <div className="border-2 border-green-200 rounded-lg p-4 bg-green-50">
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                      <Package className="w-5 h-5 text-green-600" />
-                      Productos en el Pack ({formData.items.length})
-                    </h3>
+                  {/* DERECHA: Productos en el Pack (40%) */}
+                  <div className="col-span-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-gray-900">En el Pack</h3>
+                      <span className="bg-green-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                        {formData.items.length}
+                      </span>
+                    </div>
 
                     {formData.items.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <p className="text-sm">No hay productos en el pack aún</p>
-                        <p className="text-xs mt-1">Usa el buscador de arriba para añadir productos</p>
+                      <div className="text-center py-6 text-gray-500 bg-gray-50 rounded border border-dashed border-gray-300">
+                        <Package className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+                        <p className="text-xs">Sin productos</p>
                       </div>
                     ) : (
-                      <div className="space-y-2">
+                      <div className="bg-white border border-gray-300 rounded max-h-[500px] overflow-y-auto divide-y divide-gray-200">
                         {formData.items.map((item, index) => {
                           const product = products.find(p => p.id === item.productId);
                           if (!product) return null;
@@ -950,69 +1225,67 @@ const MontajesManager = () => {
                           const subtotal = unitPrice * effectiveQuantity;
                           
                           return (
-                            <div key={index} className={`bg-white p-3 rounded-lg border-2 ${
-                              isPerson ? 'border-purple-300 bg-purple-50' : isConsumable ? 'border-orange-300 bg-orange-50' : 'border-green-200'
-                            }`}>
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
-                                    {isPerson ? '👥' : '📦'} {product.name}
-                                    {isPerson && <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded font-semibold">PERSONAL</span>}
-                                    {!isPerson && !isConsumable && <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">MATERIAL</span>}
-                                    {isConsumable && <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">CONSUMIBLE</span>}
-                                  </div>
-                                  <div className={`text-xs font-medium ${isPerson ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'}`}>
-                                    €{unitPrice}/{isPerson ? 'hora' : isConsumable ? 'unidad' : 'día'} × {isPerson ? `${effectiveQuantity.toFixed(1)}h` : `${item.quantity} unid.`} = €{subtotal.toFixed(2)}
+                            <div key={index} className="p-1.5">
+                              {/* Header */}
+                              <div className="flex items-center justify-between gap-1 mb-1">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1">
+                                    <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${
+                                      isPerson ? 'bg-purple-600 text-white' : isConsumable ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
+                                    }`}>
+                                      {isPerson ? '👤' : isConsumable ? '🔥' : '📦'}
+                                    </span>
+                                    <span className="font-medium text-xs text-gray-900 truncate">{product.name}</span>
                                   </div>
                                 </div>
-                                <button
-                                  onClick={() => removeProduct(index)}
-                                  className="p-1 text-red-600 hover:bg-red-50 rounded"
-                                  title="Eliminar"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
+                                <div className="flex items-center gap-1">
+                                  <div className={`font-bold text-sm ${
+                                    isPerson ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'
+                                  }`}>
+                                    €{subtotal.toFixed(2)}
+                                  </div>
+                                  <button onClick={() => removeProduct(index)} className="text-red-600 text-xs">🗑️</button>
+                                </div>
                               </div>
                               
+                              {/* Controles */}
                               {isPerson ? (
-                                <div className="grid grid-cols-2 gap-3 mt-2">
-                                  <div>
-                                    <label className="text-xs text-gray-600 block mb-1">Personas:</label>
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      value={item.numberOfPeople || 1}
-                                      onChange={(e) => updatePersonalDetails(index, parseInt(e.target.value) || 1, item.hoursPerPerson || 1)}
-                                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="text-xs text-gray-600 block mb-1">Horas c/u:</label>
-                                    <input
-                                      type="number"
-                                      min="0.5"
-                                      step="0.5"
-                                      value={item.hoursPerPerson || 1}
-                                      onChange={(e) => updatePersonalDetails(index, item.numberOfPeople || 1, parseFloat(e.target.value) || 1)}
-                                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-                                    />
-                                  </div>
-                                  <div className="col-span-2 text-xs text-purple-700 font-medium">
-                                    = {item.numberOfPeople || 1} persona{(item.numberOfPeople || 1) > 1 ? 's' : ''} × {item.hoursPerPerson || 1}h = {effectiveQuantity.toFixed(1)}h totales
-                                  </div>
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-gray-600">P:</span>
+                                  <button onClick={() => updatePersonalDetails(index, Math.max(1, (item.numberOfPeople || 1) - 1), item.hoursPerPerson || 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={item.numberOfPeople || 1}
+                                    onChange={(e) => updatePersonalDetails(index, parseInt(e.target.value) || 1, item.hoursPerPerson || 1)}
+                                    className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center"
+                                  />
+                                  <button onClick={() => updatePersonalDetails(index, (item.numberOfPeople || 1) + 1, item.hoursPerPerson || 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                                  <span className="text-gray-600 ml-1">H:</span>
+                                  <button onClick={() => updatePersonalDetails(index, item.numberOfPeople || 1, Math.max(0.5, (item.hoursPerPerson || 1) - 0.5))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                                  <input
+                                    type="number"
+                                    min="0.5"
+                                    step="0.5"
+                                    value={item.hoursPerPerson || 1}
+                                    onChange={(e) => updatePersonalDetails(index, item.numberOfPeople || 1, parseFloat(e.target.value) || 1)}
+                                    className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center"
+                                  />
+                                  <button onClick={() => updatePersonalDetails(index, item.numberOfPeople || 1, (item.hoursPerPerson || 1) + 0.5)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                                  <span className="text-purple-700 font-medium ml-auto text-xs">=&nbsp;{effectiveQuantity.toFixed(1)}h</span>
                                 </div>
                               ) : (
-                                <div className="mt-2">
-                                  <div className="flex items-center gap-2">
-                                    <label className="text-xs text-gray-600">Cantidad:</label>
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      value={item.quantity}
-                                      onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
-                                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500"
-                                    />
-                                  </div>
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-gray-600">Cant:</span>
+                                  <button onClick={() => updateQuantity(index, Math.max(1, item.quantity - 1))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={item.quantity}
+                                    onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
+                                    className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center"
+                                  />
+                                  <button onClick={() => updateQuantity(index, item.quantity + 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
                                 </div>
                               )}
                             </div>
@@ -1020,6 +1293,32 @@ const MontajesManager = () => {
                         })}
                       </div>
                     )}
+                    
+                    {/* Total */}
+                    {formData.items.length > 0 && (() => {
+                      const total = formData.items.reduce((sum, item) => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (!product) return sum;
+                        const isPerson = isPersonalProduct(product);
+                        const isConsumable = (product as any).isConsumable;
+                        const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
+                          ? item.numberOfPeople * item.hoursPerPerson
+                          : item.quantity;
+                        const unitPrice = isConsumable 
+                          ? Number((product as any).pricePerUnit || 0)
+                          : Number(product.pricePerDay || 0);
+                        return sum + (unitPrice * effectiveQuantity);
+                      }, 0);
+                      
+                      return (
+                        <div className="mt-2 pt-2 border-t border-gray-300 px-2">
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold text-xs text-gray-900">TOTAL:</span>
+                            <span className="font-bold text-lg text-green-600">€{total.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 

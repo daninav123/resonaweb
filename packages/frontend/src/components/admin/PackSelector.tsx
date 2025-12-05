@@ -56,8 +56,8 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
       {/* Info de tipos y filtros */}
       <div className="space-y-2">
         <div className="flex gap-2 text-xs">
-          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-            📦 {packsCount} Packs
+          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded">
+            🚚 {packsCount} Montajes
           </span>
           <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
             📋 {productsCount} Productos
@@ -80,11 +80,11 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
             onClick={() => setTypeFilter('packs')}
             className={`px-3 py-1 rounded text-xs font-medium transition-all ${
               typeFilter === 'packs'
-                ? 'bg-blue-600 text-white'
-                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                ? 'bg-gray-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Solo Packs
+            Solo Montajes
           </button>
           <button
             onClick={() => setTypeFilter('products')}
@@ -205,8 +205,8 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
                 <div className="font-medium text-gray-900 truncate flex items-center gap-2">
                   {pack.name}
                   {pack.isPack && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-semibold">
-                      PACK
+                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-semibold">
+                      MONTAJE
                     </span>
                   )}
                 </div>

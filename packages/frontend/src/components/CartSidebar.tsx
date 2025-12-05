@@ -55,11 +55,23 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const cartItems = guestCartItems;
 
   const calculateItemPrice = (item: any) => {
-    if (!item.startDate || !item.endDate) return 0;
-    const start = new Date(item.startDate);
-    const end = new Date(item.endDate);
-    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
-    return item.product.pricePerDay * days * item.quantity;
+    // Si es un item de evento (calculadora), usar su total calculado
+    if (item.eventMetadata) {
+      const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
+      const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
+      return partsTotal + extrasTotal;
+    }
+    
+    // Si tiene fechas, calcular por días
+    if (item.startDate && item.endDate) {
+      const start = new Date(item.startDate);
+      const end = new Date(item.endDate);
+      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+      return item.product.pricePerDay * days * item.quantity;
+    }
+    
+    // Si no tiene fechas, usar precio por día × cantidad (precio base)
+    return item.product.pricePerDay * item.quantity;
   };
 
   const subtotal = cartItems.reduce((sum, item) => sum + calculateItemPrice(item), 0);
@@ -150,6 +162,61 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                           <span>
                             {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
                           </span>
+                        </div>
+                      )}
+
+                      {/* Detalles del evento si existe eventMetadata */}
+                      {item.eventMetadata && (
+                        <div className="mt-2 pt-2 border-t border-gray-200 text-xs space-y-1">
+                          {item.eventMetadata.eventType && (
+                            <p><span className="font-medium">Tipo:</span> {item.eventMetadata.eventType}</p>
+                          )}
+                          {item.eventMetadata.attendees && (
+                            <p><span className="font-medium">Asistentes:</span> {item.eventMetadata.attendees}</p>
+                          )}
+                          {item.eventMetadata.eventLocation && (
+                            <p><span className="font-medium">📍 Ubicación:</span> {item.eventMetadata.eventLocation}</p>
+                          )}
+                          
+                          {/* Partes del evento */}
+                          {item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
+                            <div className="mt-1">
+                              <p className="font-medium">📦 Partes:</p>
+                              <ul className="ml-2 space-y-0.5">
+                                {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
+                                  <li key={idx} className="text-gray-600">
+                                    • {part.name} {part.price > 0 && `€${Number(part.price).toFixed(2)}`}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {/* Extras del evento */}
+                          {item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
+                            <div className="mt-1">
+                              <p className="font-medium">✨ Extras:</p>
+                              <ul className="ml-2 space-y-0.5">
+                                {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
+                                  <li key={idx} className="text-gray-600">
+                                    • {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`} {extra.total > 0 && `€${Number(extra.total).toFixed(2)}`}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {/* Totales del evento */}
+                          {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
+                            <div className="mt-1 pt-1 border-t border-gray-200">
+                              <p className="font-semibold text-blue-700">
+                                💰 Total: €{(
+                                  (Number(item.eventMetadata.partsTotal) || 0) + 
+                                  (Number(item.eventMetadata.extrasTotal) || 0)
+                                ).toFixed(2)}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

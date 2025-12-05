@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
@@ -19,13 +19,31 @@ const ProductDetailPage = () => {
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', slug],
     queryFn: async () => {
-      const response: any = await api.get(`/products/slug/${slug}`);
-      console.log('📦 Producto recibido:', response);
-      console.log('🔗 Productos relacionados:', response?.data?.relatedProducts || response?.relatedProducts);
-      return response.data || response;
+      try {
+        const response: any = await api.get(`/products/slug/${slug}`);
+        console.log('📦 Producto recibido:', response);
+        console.log('🔗 Productos relacionados:', response?.data?.relatedProducts || response?.relatedProducts);
+        return response.data || response;
+      } catch (err: any) {
+        if (err?.response?.status === 404) {
+          throw new Error('PRODUCT_NOT_FOUND');
+        }
+        throw err;
+      }
     },
     enabled: !!slug,
+    retry: false, // No reintentar - si no existe, redirigir inmediatamente
   });
+
+  // Redirigir automáticamente si el producto no existe
+  useEffect(() => {
+    if (error || (!isLoading && !product)) {
+      const timer = setTimeout(() => {
+        navigate('/productos');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, product, isLoading, navigate]);
 
   const handleAddToCart = async () => {
     try {
@@ -72,12 +90,14 @@ const ProductDetailPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
+          <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Producto no encontrado</h2>
+          <p className="text-gray-600 mb-4">Redirigiendo al catálogo en 3 segundos...</p>
           <button
             onClick={() => navigate('/productos')}
-            className="text-blue-600 hover:underline"
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
           >
-            Volver al catálogo
+            Ir al catálogo ahora
           </button>
         </div>
       </div>

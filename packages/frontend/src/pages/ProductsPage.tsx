@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
 import { productService } from '../services/product.service';
+import { api } from '../services/api';
 import { ChevronDown, Grid, List, Package } from 'lucide-react';
 import { SearchBar } from '../components/search/SearchBar';
 import { CategorySidebar } from '../components/CategorySidebar';
@@ -37,6 +38,21 @@ const ProductsPage = () => {
     };
     setFilters(newFilters);
   }, [searchParams]);
+
+  // Fetch packs (solo activos)
+  const { data: packsData } = useQuery<any>({
+    queryKey: ['packs-public'],
+    queryFn: async () => {
+      try {
+        const response: any = await api.get('/products/packs');
+        return response?.packs || response || [];
+      } catch (error) {
+        console.error('Error loading packs:', error);
+        return [];
+      }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  });
 
   // Fetch products
   const { data: productsData, isLoading } = useQuery<any>({
@@ -89,6 +105,96 @@ const ProductsPage = () => {
     setPage(1);
   };
 
+  // Combinar packs y productos (packs primero)
+  const combinedData = (() => {
+    if (!productsData?.data) return { data: [], pagination: productsData?.pagination || { total: 0 } };
+    
+    const products = productsData.data || [];
+    const packs = packsData || [];
+    
+    // FILTRO IMPORTANTE: Excluir montajes de la vista de packs públicos
+    // Los montajes se identifican por categoryRef.name = "Montaje" (tabla Category oculta)
+    const packsWithoutMontajes = packs.filter((pack: any) => {
+      // Verificar categoryRef (FK a tabla Category)
+      const categoryRefName = pack.categoryRef?.name || '';
+      
+      // Excluir montajes (categoryRef.name = "Montaje")
+      // Y solo mostrar packs activos
+      return categoryRefName !== 'Montaje' && pack.isActive !== false;
+    });
+    
+    // Si hay filtro de categoría, filtrar packs por esa categoría
+    let filteredPacks = packsWithoutMontajes;
+    if (filters.category) {
+      const categoryObj = categories?.find((c: Category) => c.slug === filters.category);
+      if (categoryObj) {
+        // Filtrar packs que:
+        // 1. Tengan categoryId coincidente con la categoría seleccionada
+        // 2. O tengan items de productos de esta categoría
+        filteredPacks = packsWithoutMontajes.filter((pack: any) => {
+          // Verificar si el pack pertenece directamente a esta categoría
+          if (pack.categoryId === categoryObj.id) {
+            return true;
+          }
+          
+          // O si el pack tiene categoryRef que coincide
+          if (pack.categoryRef?.id === categoryObj.id || pack.categoryRef?.slug === categoryObj.slug) {
+            return true;
+          }
+          
+          // O si el pack tiene items de productos de esta categoría
+          if (pack.items && pack.items.length > 0) {
+            return pack.items.some((item: any) => 
+              item.product?.categoryId === categoryObj.id ||
+              item.product?.category?.name === categoryObj.name ||
+              item.product?.category?.slug === categoryObj.slug
+            );
+          }
+          
+          return false;
+        });
+      }
+    }
+    
+    // Combinar: primero packs, luego productos
+    // Marcar packs con isPack: true
+    const packsWithFlag = filteredPacks.map((pack: any) => ({
+      ...pack,
+      isPack: true,
+      pricePerDay: pack.finalPrice || pack.pricePerDay || 0,
+      realStock: 1, // Los packs siempre están "disponibles"
+    }));
+    
+    // Ordenar packs por precio (menor a mayor)
+    const sortedPacks = [...packsWithFlag].sort((a, b) => {
+      const priceA = Number(a.pricePerDay) || 0;
+      const priceB = Number(b.pricePerDay) || 0;
+      return priceA - priceB;
+    });
+    
+    // Ordenar productos por precio (menor a mayor)
+    const sortedProducts = [...products].sort((a, b) => {
+      const priceA = Number(a.pricePerDay) || 0;
+      const priceB = Number(b.pricePerDay) || 0;
+      return priceA - priceB;
+    });
+    
+    // Combinar: primero packs ordenados, luego productos ordenados
+    // Eliminar duplicados por ID
+    const combined = [...sortedPacks, ...sortedProducts];
+    const uniqueCombined = combined.filter((item, index, self) => 
+      index === self.findIndex((t) => t.id === item.id)
+    );
+    
+    return {
+      data: uniqueCombined,
+      pagination: {
+        ...productsData.pagination,
+        total: productsData.pagination.total + sortedPacks.length,
+      },
+    };
+  })();
+
   const categoryName = categories?.find((c: Category) => c.slug === filters.category)?.name;
   const pageTitle = categoryName 
     ? `${categoryName} - Catálogo de Alquiler | ReSona` 
@@ -138,11 +244,11 @@ const ProductsPage = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h1 className="text-2xl font-bold">Catálogo de Productos</h1>
-                  {productsData && productsData.pagination && (
+                  {combinedData && combinedData.pagination && (
                     <p className="text-gray-600 mt-1">
-                      {productsData.pagination.total} productos disponibles
-                      {productsData.data.length < productsData.pagination.total && (
-                        <span className="text-sm"> · Mostrando {productsData.data.length}</span>
+                      {combinedData.pagination.total} productos disponibles
+                      {combinedData.data.length < combinedData.pagination.total && (
+                        <span className="text-sm"> · Mostrando {combinedData.data.length}</span>
                       )}
                     </p>
                   )}
@@ -189,7 +295,7 @@ const ProductsPage = () => {
               <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               </div>
-            ) : productsData?.data.length === 0 ? (
+            ) : combinedData?.data.length === 0 ? (
               <div className="bg-white rounded-lg shadow-md p-12 text-center">
                 <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-lg font-semibold mb-2">No se encontraron productos</h3>
@@ -219,14 +325,23 @@ const ProductsPage = () => {
                   ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
                   : 'grid-cols-1'
               }`}>
-                {productsData.data.map((product: Product) => (
+                {combinedData.data.map((product: Product) => (
                   <Link
-                    key={product.id}
-                    to={`/productos/${product.slug}`}
-                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow ${
+                    key={(product as any).isPack ? `pack-${product.id}` : `product-${product.id}`}
+                    to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}`}
+                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow relative ${
                       viewMode === 'list' ? 'flex' : ''
                     }`}
                   >
+                    {/* Badge de Pack */}
+                    {(product as any).isPack && (
+                      <div className="absolute top-2 left-2 z-10">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
+                          <Package className="w-3 h-3" />
+                          PACK
+                        </span>
+                      </div>
+                    )}
                     {product.images && product.images.length > 0 ? (
                       <img
                         src={getImageUrl(product.images[0] as any)}
@@ -255,9 +370,18 @@ const ProductsPage = () => {
                       )}
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-2xl font-bold text-blue-600">
-                            €{product.pricePerDay}/día
-                          </p>
+                          {product.isConsumable ? (
+                            <div>
+                              <p className="text-2xl font-bold text-green-600">
+                                €{product.pricePerUnit}
+                              </p>
+                              <p className="text-xs text-gray-500">Precio de venta</p>
+                            </div>
+                          ) : (
+                            <p className="text-2xl font-bold text-blue-600">
+                              €{product.pricePerDay}/día
+                            </p>
+                          )}
                         </div>
                         {product.realStock > 0 ? (
                           <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
@@ -276,7 +400,7 @@ const ProductsPage = () => {
             )}
 
             {/* Pagination */}
-            {productsData && productsData.data.length > 0 && (
+            {combinedData && combinedData.data.length > 0 && (
               <div className="mt-8 flex justify-center">
                 <div className="flex gap-2">
                   <button
@@ -293,7 +417,7 @@ const ProductsPage = () => {
                   
                   <button
                     onClick={() => setPage(p => p + 1)}
-                    disabled={productsData.data.length < 12}
+                    disabled={combinedData.data.length < 12}
                     className="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
                   >
                     Siguiente

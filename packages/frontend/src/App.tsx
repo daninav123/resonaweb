@@ -17,6 +17,7 @@ import LoginPage from './pages/auth/LoginPage';
 import { lazy, Suspense } from 'react';
 
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const PackDetailPage = lazy(() => import('./pages/PackDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const TestStockPage = lazy(() => import('./pages/TestStockPage'));
 const TestStockE2EPage = lazy(() => import('./pages/TestStockE2EPage'));
@@ -56,7 +57,7 @@ const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManagerNew'
 const BackupManager = lazy(() => import('./pages/admin/BackupManager'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
-const AdminQuoteRequestsPage = lazy(() => import('./pages/AdminQuoteRequestsPageV2'));
+const AdminQuoteRequestsPage = lazy(() => import('./pages/admin/QuoteRequestsManager'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
@@ -64,8 +65,10 @@ const POSPage = lazy(() => import('./pages/admin/POSPage'));
 const PacksManager = lazy(() => import('./pages/admin/PacksManager'));
 const PersonalManager = lazy(() => import('./pages/admin/PersonalManager'));
 const MontajesManager = lazy(() => import('./pages/admin/MontajesManager'));
+const ExtraCategoriesManager = lazy(() => import('./pages/admin/ExtraCategoriesManager'));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
+const PurchaseLotsManager = lazy(() => import('./pages/admin/PurchaseLotsManager'));
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
@@ -132,6 +135,7 @@ function App() {
             <Route path="/" element={<Layout><HomePage /></Layout>} />
             <Route path="/productos" element={<Layout><ProductsPage /></Layout>} />
             <Route path="/productos/:slug" element={<Layout><ProductDetailPage /></Layout>} />
+            <Route path="/packs/:slug" element={<Layout><PackDetailPage /></Layout>} />
             <Route path="/carrito" element={<Layout><CartPage /></Layout>} />
             <Route path="/test-stock" element={<Layout><TestStockPage /></Layout>} />
             <Route path="/test-stock-e2e" element={<Layout><TestStockE2EPage /></Layout>} />
@@ -200,6 +204,7 @@ function App() {
               <Route path="/admin/blog" element={<AdminLayout><BlogManager /></AdminLayout>} />
               <Route path="/admin/backups" element={<AdminLayout><BackupManager /></AdminLayout>} />
               <Route path="/admin/calculator" element={<AdminLayout><CalculatorManager /></AdminLayout>} />
+              <Route path="/admin/extra-categories" element={<AdminLayout><ExtraCategoriesManager /></AdminLayout>} />
               <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
               <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
@@ -210,6 +215,7 @@ function App() {
               <Route path="/admin/montajes" element={<AdminLayout><MontajesManager /></AdminLayout>} />
               <Route path="/admin/analytics" element={<AdminLayout><AnalyticsPage /></AdminLayout>} />
               <Route path="/admin/statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
+              <Route path="/admin/purchase-lots" element={<AdminLayout><PurchaseLotsManager /></AdminLayout>} />
               <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             </Route>
             
@@ -223,14 +229,18 @@ function App() {
         
         <Toaster
           position="bottom-right"
+          containerStyle={{
+            bottom: 40,
+            right: 40,
+          }}
           toastOptions={{
-            duration: 4000,
+            duration: 3000,
             style: {
               background: '#333',
               color: '#fff',
             },
             success: {
-              duration: 3000,
+              duration: 2000,
               iconTheme: {
                 primary: '#10B981',
                 secondary: '#fff',
@@ -244,6 +254,7 @@ function App() {
               },
             },
           }}
+          limit={3}
         />
         
         {import.meta.env?.DEV && (

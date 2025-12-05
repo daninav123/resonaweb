@@ -18,6 +18,7 @@ export interface GuestCartItem {
   quantity: number;
   startDate?: string;
   endDate?: string;
+  notes?: string; // Notas específicas para este producto
   eventMetadata?: {
     eventType?: string;
     attendees?: number;
@@ -143,6 +144,19 @@ export const guestCart = {
     
     if (item) {
       item.quantity = quantity;
+      
+      // Recalcular precio si hay fechas
+      if (item.startDate && item.endDate) {
+        const start = new Date(item.startDate);
+        const end = new Date(item.endDate);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+        const pricePerDay = Number(item.product.pricePerDay) || 0;
+        
+        // Actualizar precios calculados
+        item.pricePerUnit = pricePerDay * days;
+        item.totalPrice = item.pricePerUnit * quantity;
+      }
+      
       localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
       dispatchCartUpdate();
     }
@@ -156,6 +170,31 @@ export const guestCart = {
     if (item) {
       item.startDate = startDate;
       item.endDate = endDate;
+      
+      // Recalcular precio si ambas fechas están presentes
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+        const pricePerDay = Number(item.product.pricePerDay) || 0;
+        
+        // Actualizar precios calculados
+        item.pricePerUnit = pricePerDay * days;
+        item.totalPrice = item.pricePerUnit * (item.quantity || 1);
+      }
+      
+      localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
+      dispatchCartUpdate();
+    }
+  },
+
+  // Actualizar notas del producto
+  updateNotes(itemId: string, notes: string): void {
+    const cart = this.getCart();
+    const item = cart.find(i => i.id === itemId);
+    
+    if (item) {
+      item.notes = notes || undefined; // Guardar undefined si está vacío
       localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
       dispatchCartUpdate();
     }

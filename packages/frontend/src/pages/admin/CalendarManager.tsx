@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar as CalendarIcon, Plus, Loader2, Package, MapPin, DollarSign, User, Phone, Download, ExternalLink } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Loader2, Package, MapPin, DollarSign, User, Phone, Download, ExternalLink, Share2, X } from 'lucide-react';
 import { Calendar, momentLocalizer, View } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -18,6 +18,7 @@ const CalendarManager = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
+  const [showSyncModal, setShowSyncModal] = useState(false);
 
   // Cargar eventos y estadísticas
   const loadData = useCallback(async () => {
@@ -132,24 +133,16 @@ const CalendarManager = () => {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={handleExportCalendar}
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-                title="Descargar archivo .ics"
+                onClick={() => setShowSyncModal(true)}
+                className="bg-resona text-white px-4 py-2 rounded-lg hover:bg-resona-dark transition-colors flex items-center gap-2"
+                title="Sincronizar con iCalendar o Google Calendar"
               >
-                <Download className="w-5 h-5" />
-                Exportar .ics
-              </button>
-              <button
-                onClick={handleOpenInGoogleCalendar}
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-                title="Abrir en Google Calendar"
-              >
-                <ExternalLink className="w-5 h-5" />
-                Google Calendar
+                <Share2 className="w-5 h-5" />
+                Sincronizar Calendario
               </button>
               <Link
                 to="/admin/orders"
-                className="bg-resona text-white px-4 py-2 rounded-lg hover:bg-resona-dark transition-colors flex items-center gap-2"
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
                 Nuevo Pedido
@@ -271,6 +264,103 @@ const CalendarManager = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Modal de sincronización */}
+        {showSyncModal && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowSyncModal(false)}
+          >
+            <div
+              className="bg-white rounded-lg max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Sincronizar Calendario</h2>
+                <button
+                  onClick={() => setShowSyncModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <p className="text-gray-600">
+                  Elige cómo deseas sincronizar tu calendario con aplicaciones externas:
+                </p>
+
+                {/* Opción 1: Descargar iCalendar */}
+                <button
+                  onClick={() => {
+                    handleExportCalendar();
+                    setShowSyncModal(false);
+                  }}
+                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-resona hover:bg-resona/5 transition-colors text-left"
+                >
+                  <div className="flex items-start gap-3">
+                    <Download className="w-6 h-6 text-resona flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Descargar iCalendar (.ics)</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Descarga un archivo .ics que puedes importar en cualquier aplicación de calendario (Outlook, Apple Calendar, etc.)
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Opción 2: Google Calendar */}
+                <button
+                  onClick={() => {
+                    handleOpenInGoogleCalendar();
+                    setShowSyncModal(false);
+                  }}
+                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-left"
+                >
+                  <div className="flex items-start gap-3">
+                    <ExternalLink className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Sincronizar con Google Calendar</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Abre tu calendario en Google Calendar para importar los eventos
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Opción 3: Copiar URL */}
+                <button
+                  onClick={() => {
+                    const url = calendarService.getExportUrl();
+                    navigator.clipboard.writeText(url);
+                    toast.success('URL copiada al portapapeles');
+                    setShowSyncModal(false);
+                  }}
+                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors text-left"
+                >
+                  <div className="flex items-start gap-3">
+                    <Share2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Copiar URL de Suscripción</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Copia la URL para suscribirte al calendario en tiempo real
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="p-6 border-t">
+                <button
+                  onClick={() => setShowSyncModal(false)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cerrar
+                </button>
+              </div>
             </div>
           </div>
         )}

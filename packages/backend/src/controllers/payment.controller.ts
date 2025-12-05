@@ -30,8 +30,12 @@ export class PaymentController {
         throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
       }
 
-      const { orderId, orderData } = req.body;
-      console.log('📦 Datos recibidos:', { orderId: orderId ? 'presente' : 'no', orderData: orderData ? 'presente' : 'no' });
+      const { orderId, orderData, amountToPay } = req.body;
+      console.log('📦 Datos recibidos:', { 
+        orderId: orderId ? 'presente' : 'no', 
+        orderData: orderData ? 'presente' : 'no',
+        amountToPay: amountToPay ? `€${amountToPay}` : 'no especificado'
+      });
 
       // Si NO hay orderId, es un pago inicial (nuevo flujo)
       if (!orderId && orderData) {
@@ -44,27 +48,37 @@ export class PaymentController {
           throw new AppError(400, 'No hay items en la orden', 'NO_ITEMS');
         }
         
-        // Calcular el total desde orderData
-        const subtotal = orderData.items.reduce((sum: number, item: any) => {
-          const itemPrice = Number(item.totalPrice) || 0;
-          console.log('  Item:', item.productId, '- totalPrice:', itemPrice);
-          return sum + itemPrice;
-        }, 0);
+        // 💳 USAR AMOUNT TO PAY si está presente (25% para calculadora)
+        let total: number;
         
-        console.log('💰 Subtotal calculado:', subtotal);
-        
-        if (subtotal <= 0) {
-          console.error('❌ Subtotal es 0 o negativo');
-          throw new AppError(400, 'El monto total debe ser mayor a 0', 'INVALID_AMOUNT');
+        if (amountToPay && amountToPay > 0) {
+          // Usar el monto especificado (puede ser 25% de reserva)
+          total = Number(amountToPay);
+          console.log('💳 USANDO MONTO DE RESERVA:', total, '(enviado desde frontend)');
+        } else {
+          // Calcular el total completo (100%)
+          const subtotal = orderData.items.reduce((sum: number, item: any) => {
+            const itemPrice = Number(item.totalPrice) || 0;
+            console.log('  Item:', item.productId, '- totalPrice:', itemPrice);
+            return sum + itemPrice;
+          }, 0);
+          
+          console.log('💰 Subtotal calculado:', subtotal);
+          
+          if (subtotal <= 0) {
+            console.error('❌ Subtotal es 0 o negativo');
+            throw new AppError(400, 'El monto total debe ser mayor a 0', 'INVALID_AMOUNT');
+          }
+          
+          const shippingCost = Number(orderData.shippingCost) || 0;
+          const taxAmount = (subtotal + shippingCost) * 0.21;
+          total = subtotal + shippingCost + taxAmount;
+          
+          console.log('💰 Shipping:', shippingCost);
+          console.log('💰 Tax (21%):', taxAmount);
+          console.log('💰 Total final (100%):', total);
         }
         
-        const shippingCost = Number(orderData.shippingCost) || 0;
-        const taxAmount = (subtotal + shippingCost) * 0.21;
-        const total = subtotal + shippingCost + taxAmount;
-        
-        console.log('💰 Shipping:', shippingCost);
-        console.log('💰 Tax (21%):', taxAmount);
-        console.log('💰 Total final:', total);
         console.log('💰 Total en centavos:', Math.round(total * 100));
         
         if (isNaN(total) || total <= 0) {

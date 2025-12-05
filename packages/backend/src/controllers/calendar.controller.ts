@@ -79,10 +79,8 @@ export class CalendarController {
 
         const statusColor = {
           PENDING: '#FCD34D',
-          CONFIRMED: '#10B981',
           IN_PROGRESS: '#3B82F6',
           COMPLETED: '#6B7280',
-          CANCELLED: '#EF4444',
         }[order.status] || '#6B7280';
 
         return {
@@ -206,7 +204,7 @@ export class CalendarController {
               lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
             status: {
-              in: ['CONFIRMED', 'PENDING'],
+              in: ['PENDING', 'IN_PROGRESS'],
             },
           },
           include: {
@@ -289,7 +287,7 @@ export class CalendarController {
             },
           ],
           status: {
-            notIn: ['CANCELLED', 'COMPLETED'],
+            notIn: ['COMPLETED'],
           },
         },
       });

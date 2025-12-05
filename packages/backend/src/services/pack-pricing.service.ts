@@ -5,9 +5,7 @@ const prisma = new PrismaClient();
 export interface PackPricing {
   // Precios base calculados automáticamente
   basePricePerDay: number;           // Suma de pricePerDay de todos los productos
-  baseShippingCost: number;          // Suma de shippingCost de todos los productos
-  baseInstallationCost: number;      // Suma de installationCost de todos los productos
-  calculatedTotalPrice: number;      // Suma de los 3 anteriores
+  calculatedTotalPrice: number;      // basePricePerDay
   
   // Descuento aplicado
   discountPercentage: number;        // Porcentaje de descuento (0-100)
@@ -24,8 +22,6 @@ export interface PackPricing {
   // Desglose detallado
   breakdown: {
     basePricePerDay: number;
-    baseShippingCost: number;
-    baseInstallationCost: number;
     subtotal: number;
     discountAmount: number;
     finalPrice: number;
@@ -46,9 +42,7 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
         include: {
           product: {
             select: {
-              pricePerDay: true,
-              shippingCost: true,
-              installationCost: true
+              pricePerDay: true
             }
           }
         }
@@ -66,36 +60,8 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
     return sum + (productPrice * item.quantity);
   }, 0);
 
-  // Calcular suma de costes de envío de todos los productos
-  let baseShippingCost = pack.items.reduce((sum, item) => {
-    const shippingCost = Number(item.product.shippingCost) || 0;
-    return sum + (shippingCost * item.quantity);
-  }, 0);
-  
-  // Al ser un pack, el coste de envío es la mitad (optimización de envíos)
-  baseShippingCost = baseShippingCost / 2;
-  
-  // Si no incluye envío, no sumar el coste
-  if (!pack.includeShipping) {
-    baseShippingCost = 0;
-  }
-
-  // Calcular suma de costes de instalación de todos los productos
-  let baseInstallationCost = pack.items.reduce((sum, item) => {
-    const installationCost = Number(item.product.installationCost) || 0;
-    return sum + (installationCost * item.quantity);
-  }, 0);
-  
-  // Al ser un pack, el coste de montaje es la mitad (optimización de montaje)
-  baseInstallationCost = baseInstallationCost / 2;
-  
-  // Si no incluye instalación, no sumar el coste
-  if (!pack.includeInstallation) {
-    baseInstallationCost = 0;
-  }
-
-  // Precio total calculado (sin descuento)
-  const calculatedTotalPrice = basePricePerDay + baseShippingCost + baseInstallationCost;
+  // Precio total calculado (sin descuento) - solo basePricePerDay
+  const calculatedTotalPrice = basePricePerDay;
 
   // Obtener descuento: si hay discountAmount en euros, usarlo; si no, calcular desde porcentaje
   let discountAmount = Number(pack.discountAmount) || 0;
@@ -134,8 +100,6 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
 
   return {
     basePricePerDay,
-    baseShippingCost,
-    baseInstallationCost,
     calculatedTotalPrice,
     discountPercentage,
     discountAmount,
@@ -145,8 +109,6 @@ export async function calculatePackPrice(packId: string): Promise<PackPricing> {
     savingsPercentage,
     breakdown: {
       basePricePerDay,
-      baseShippingCost,
-      baseInstallationCost,
       subtotal: calculatedTotalPrice,
       discountAmount,
       finalPrice
@@ -179,8 +141,6 @@ export async function updatePackPrice(packId: string): Promise<void> {
     where: { id: packId },
     data: {
       basePricePerDay: new Prisma.Decimal(pricing.basePricePerDay),
-      baseShippingCost: new Prisma.Decimal(pricing.baseShippingCost),
-      baseInstallationCost: new Prisma.Decimal(pricing.baseInstallationCost),
       calculatedTotalPrice: new Prisma.Decimal(pricing.calculatedTotalPrice),
       discountAmount: new Prisma.Decimal(pricing.discountAmount),
       savingsAmount: new Prisma.Decimal(pricing.savingsAmount),

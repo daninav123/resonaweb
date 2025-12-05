@@ -13,6 +13,7 @@ interface Category {
   parentId?: string | null;
   isActive: boolean;
   isHidden?: boolean;
+  sortOrder?: number;
   createdAt: string;
   _count?: {
     products: number;
@@ -32,6 +33,7 @@ const CategoriesManager = () => {
     parentId: null as string | null,
     isActive: true,
     isHidden: false,
+    sortOrder: 999,
   });
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -81,7 +83,7 @@ const CategoriesManager = () => {
       await api.post('/products/categories', formData);
       toast.success('Categoría creada exitosamente');
       setShowCreateForm(false);
-      setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false });
+      setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false, sortOrder: 999 });
       loadCategories();
     } catch (error: any) {
       console.error('Error creando categoría:', error);
@@ -132,12 +134,13 @@ const CategoriesManager = () => {
       parentId: category.parentId,
       isActive: category.isActive,
       isHidden: category.isHidden || false,
+      sortOrder: category.sortOrder !== undefined ? category.sortOrder : 999,
     });
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false });
+    setFormData({ name: '', slug: '', description: '', imageUrl: '', parentId: null, isActive: true, isHidden: false, sortOrder: 999 });
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,6 +343,21 @@ const CategoriesManager = () => {
                 )}
               </div>
               
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Orden de visualización
+                </label>
+                <input
+                  type="number"
+                  value={formData.sortOrder !== undefined ? formData.sortOrder : 999}
+                  onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  placeholder="999"
+                  min="0"
+                />
+                <p className="mt-1 text-xs text-gray-500">Menor número = aparece primero (ej: 1=PACKS, 2=SONIDO, 3=ILUMINACION)</p>
+              </div>
+              
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -392,6 +410,9 @@ const CategoriesManager = () => {
                   Slug
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Orden
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Productos
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -408,7 +429,7 @@ const CategoriesManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {categories.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     No hay categorías. Crea la primera categoría.
                   </td>
                 </tr>
@@ -444,6 +465,16 @@ const CategoriesManager = () => {
                             value={formData.slug}
                             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                             className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <input
+                            type="number"
+                            value={formData.sortOrder !== undefined ? formData.sortOrder : 999}
+                            onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-resona"
+                            min="0"
+                            title="Orden de visualización (menor = primero)"
                           />
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
@@ -506,6 +537,11 @@ const CategoriesManager = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600">
                           {category.slug}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {category.sortOrder !== undefined ? category.sortOrder : 999}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {category._count?.products || 0} productos

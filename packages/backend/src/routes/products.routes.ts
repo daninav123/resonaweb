@@ -51,8 +51,8 @@ router.get('/category/:categoryId', productController.getProductsByCategory);
 // Check availability endpoint (BEFORE :id routes to avoid conflicts)
 router.post('/check-availability', productController.checkAvailability);
 
-// Pack routes (BEFORE generic :id routes)
-router.get('/packs', productController.getAllPacks);
+// Pack routes (BEFORE generic :id routes) - Con optionalAuthenticate para permitir acceso sin login (Updated 2025-12-03 17:51)
+router.get('/packs', optionalAuthenticate, productController.getAllPacks);
 router.get('/:id/pack-details', productController.getPackWithComponents);
 router.post('/:id/check-pack-availability', productController.checkPackAvailability);
 router.get('/:id/max-pack-availability', productController.getPackMaxAvailability);

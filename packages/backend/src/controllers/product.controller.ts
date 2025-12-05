@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { productService } from '../services/product.service';
 import { productPackService } from '../services/productPack.service';
+import { packService } from '../services/pack.service';
 import { prisma } from '../index';
 
 export class ProductController {
@@ -82,12 +83,29 @@ export class ProductController {
       // Si es la categoría de packs, obtener de la tabla Pack en lugar de Product
       if (isPacksCategory) {
         console.log('📦 Obteniendo packs de la tabla Pack...');
+        
+        // Buscar la categoría "Packs" para filtrar correctamente
+        const packsCategory = await prisma.category.findFirst({
+          where: {
+            OR: [
+              { slug: 'packs' },
+              { name: { equals: 'Packs', mode: 'insensitive' } }
+            ]
+          }
+        });
+        
         const packs = await prisma.pack.findMany({
-          where: { isActive: true },
+          where: { 
+            isActive: true,
+            // IMPORTANTE: Solo mostrar packs con categoryId de "Packs"
+            // Esto excluye montajes y otros tipos de packs
+            categoryId: packsCategory?.id || undefined,
+          },
           skip,
           take: limit,
           orderBy: orderBy === 'createdAt' ? { createdAt: 'desc' } : orderBy,
           include: {
+            categoryRef: true, // Incluir referencia a categoría
             items: {
               include: {
                 product: {
@@ -524,14 +542,39 @@ export class ProductController {
   }
 
   /**
-   * Listar todos los packs
+   * Listar todos los packs (solo packs reales, NO productos proxy)
+   * EXCLUYE montajes - solo packs normales (SONIDO, PACKS, etc.)
    */
   async getAllPacks(req: Request, res: Response, next: NextFunction) {
     try {
-      const includeComponents = req.query.includeComponents === 'true';
-      const packs = await productPackService.getAllPacks(includeComponents);
+      // Obtener packs reales de la tabla Pack
+      // getActivePacks() ya excluye montajes automáticamente (categoryRef.name !== "Montaje")
+      const realPacks = await packService.getActivePacks();
+      
+      // Convertir packs reales al formato esperado por el frontend
+      const packsFormatted = realPacks.map((pack: any) => ({
+        id: pack.id,
+        name: pack.name,
+        slug: pack.slug,
+        description: pack.description,
+        mainImageUrl: pack.imageUrl,
+        imageUrl: pack.imageUrl,
+        pricePerDay: Number(pack.finalPrice || pack.calculatedTotalPrice || pack.basePricePerDay || 0),
+        isPack: true,
+        isActive: pack.isActive,
+        featured: pack.featured,
+        category: pack.category,
+        categoryRef: pack.categoryRef,
+        // Datos específicos de pack
+        items: pack.items,
+        basePricePerDay: Number(pack.basePricePerDay || 0),
+        finalPrice: Number(pack.finalPrice || 0),
+        calculatedTotalPrice: Number(pack.calculatedTotalPrice || 0),
+        transportCost: Number(pack.transportCost || 0),
+        discountPercentage: Number(pack.discountPercentage || 0),
+      }));
 
-      res.json({ packs });
+      res.json({ packs: packsFormatted });
     } catch (error) {
       next(error);
     }

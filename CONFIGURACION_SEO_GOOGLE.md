@@ -3,7 +3,7 @@
 ## ✅ **LO QUE YA ESTÁ IMPLEMENTADO**
 
 ### 📄 **1. Sitemap Dinámico**
-- **URL:** `https://api.resona.com/sitemap.xml`
+- **URL:** `![![alt text](image.png)](image.png)`
 - **Incluye:**
   - ✅ Todos los posts del blog publicados
   - ✅ Todos los productos activos

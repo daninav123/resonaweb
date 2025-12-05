@@ -94,7 +94,7 @@ const HomePage = () => {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <Link
-                to="/calculadora-eventos"
+                to="/calculadora"
                 className="group bg-white text-resona px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
               >
                 <Calculator className="w-5 h-5" />

@@ -13,7 +13,7 @@ const OrdersManager = () => {
   const { data: orders = [], isLoading, error } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
-      const response: any = await api.get('/orders');
+      const response: any = await api.get('/orders?includeInstallments=true');
       return response.data;
     },
     refetchInterval: 30000, // Refrescar cada 30 segundos
@@ -29,6 +29,8 @@ const OrdersManager = () => {
     total: Number(order.totalAmount || order.total || 0),
     status: order.status?.toLowerCase() || 'pending',
     items: order.items?.length || 0,
+    installments: order.installments || [],
+    eligibleForInstallments: order.eligibleForInstallments || false,
   }));
 
   const getStatusBadge = (status: string) => {
@@ -45,6 +47,65 @@ const OrdersManager = () => {
       cancelled: 'Cancelado',
     };
     return { class: badges[status as keyof typeof badges], label: labels[status as keyof typeof labels] };
+  };
+
+  const getPaymentStatus = (order: any) => {
+    if (!order.eligibleForInstallments || !order.installments || order.installments.length === 0) {
+      // Sin plazos, asumimos pago completo
+      return {
+        paid: order.total,
+        total: order.total,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+        label: 'Pagado'
+      };
+    }
+
+    // Calcular pagado y pendiente
+    const paid = order.installments
+      .filter((i: any) => i.status === 'COMPLETED')
+      .reduce((sum: number, i: any) => sum + Number(i.amount), 0);
+    const total = order.installments
+      .reduce((sum: number, i: any) => sum + Number(i.amount), 0);
+
+    // Verificar si hay plazos vencidos
+    const now = new Date();
+    const hasOverdue = order.installments.some((i: any) => {
+      if (i.status !== 'PENDING') return false;
+      const dueDate = new Date(i.dueDate);
+      return dueDate < now;
+    });
+
+    // Todo pagado
+    if (paid >= total) {
+      return {
+        paid,
+        total,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+        label: 'Completo'
+      };
+    }
+
+    // Plazos vencidos
+    if (hasOverdue) {
+      return {
+        paid,
+        total,
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        label: 'Vencido'
+      };
+    }
+
+    // Pendiente en plazo
+    return {
+      paid,
+      total,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50',
+      label: 'Pendiente'
+    };
   };
 
   const filteredOrders = statusFilter === 'all'
@@ -175,6 +236,9 @@ const OrdersManager = () => {
                   Total
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Pagado/Total
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -185,6 +249,7 @@ const OrdersManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredOrders.map((order) => {
                 const statusBadge = getStatusBadge(order.status);
+                const paymentStatus = getPaymentStatus(order);
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -202,6 +267,14 @@ const OrdersManager = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                       €{order.total.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${paymentStatus.bgColor} ${paymentStatus.color}`}>
+                        €{paymentStatus.paid.toFixed(2)} / €{paymentStatus.total.toFixed(2)}
+                      </div>
+                      <div className={`text-xs mt-1 ${paymentStatus.color} font-medium`}>
+                        {paymentStatus.label}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge.class}`}>

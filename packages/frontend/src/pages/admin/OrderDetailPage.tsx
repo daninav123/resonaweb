@@ -526,24 +526,148 @@ const OrderDetailPage = () => {
                 Productos ({order.items?.length || 0})
               </h2>
               <div className="space-y-4">
-                {order.items?.map((item: any) => (
-                  <div key={item.id} className="flex justify-between items-start border-b pb-4 last:border-0">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.product?.name || 'Producto'}</h3>
-                      <p className="text-sm text-gray-600">SKU: {item.product?.sku}</p>
-                      <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date(item.startDate).toLocaleDateString('es-ES')} - {new Date(item.endDate).toLocaleDateString('es-ES')}
-                      </p>
+                {order.items?.map((item: any) => {
+                  console.log('🔍 Item en OrderDetailPage:', item);
+                  console.log('🔍 Item.eventMetadata:', item.eventMetadata);
+                  return (
+                  <div key={item.id} className="border-b pb-4 last:border-0">
+                    {/* Información básica del item */}
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{item.product?.name || 'Producto'}</h3>
+                        <p className="text-sm text-gray-600">SKU: {item.product?.sku}</p>
+                        <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
+                        <p className="text-sm text-gray-600">
+                          {new Date(item.startDate).toLocaleDateString('es-ES')} - {new Date(item.endDate).toLocaleDateString('es-ES')}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">€{Number(item.totalPrice).toFixed(2)}</p>
+                        <p className="text-sm text-gray-600">€{Number(item.pricePerUnit).toFixed(2)}/unidad</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">€{Number(item.totalPrice).toFixed(2)}</p>
-                      <p className="text-sm text-gray-600">€{Number(item.pricePerUnit).toFixed(2)}/unidad</p>
-                    </div>
+
+                    {/* Detalles del evento si existe eventMetadata */}
+                    {item.eventMetadata && (
+                      <div className="mt-3 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg space-y-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-lg">🎉</span>
+                          <h4 className="font-semibold text-purple-900">Detalles del Evento</h4>
+                        </div>
+                        
+                        {/* Información básica del evento */}
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          {item.eventMetadata.eventType && (
+                            <div>
+                              <span className="text-purple-700 font-medium">Tipo:</span>
+                              <span className="ml-2">{item.eventMetadata.eventType}</span>
+                            </div>
+                          )}
+                          {item.eventMetadata.attendees && (
+                            <div>
+                              <span className="text-purple-700 font-medium">Asistentes:</span>
+                              <span className="ml-2">{item.eventMetadata.attendees}</span>
+                            </div>
+                          )}
+                          {item.eventMetadata.duration && (
+                            <div>
+                              <span className="text-purple-700 font-medium">Duración:</span>
+                              <span className="ml-2">{item.eventMetadata.duration} {item.eventMetadata.durationType === 'hours' ? 'horas' : 'días'}</span>
+                            </div>
+                          )}
+                          {item.eventMetadata.startTime && (
+                            <div>
+                              <span className="text-purple-700 font-medium">Hora inicio:</span>
+                              <span className="ml-2">{item.eventMetadata.startTime}</span>
+                            </div>
+                          )}
+                          {item.eventMetadata.eventDate && (
+                            <div>
+                              <span className="text-purple-700 font-medium">Fecha:</span>
+                              <span className="ml-2">{new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}</span>
+                            </div>
+                          )}
+                          {item.eventMetadata.eventLocation && (
+                            <div className="col-span-2">
+                              <span className="text-purple-700 font-medium">📍 Ubicación:</span>
+                              <span className="ml-2">{item.eventMetadata.eventLocation}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Partes del evento */}
+                        {item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
+                          <div>
+                            <h5 className="font-medium text-purple-900 mb-2">📦 Partes del Evento:</h5>
+                            <ul className="space-y-1 text-sm ml-4">
+                              {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
+                                <li key={idx} className="flex justify-between">
+                                  <span>• {part.name}</span>
+                                  {part.price > 0 && <span className="font-medium">€{Number(part.price).toFixed(2)}</span>}
+                                </li>
+                              ))}
+                            </ul>
+                            {item.eventMetadata.partsTotal > 0 && (
+                              <p className="text-sm font-semibold mt-2 text-purple-900">
+                                Subtotal Partes: €{Number(item.eventMetadata.partsTotal).toFixed(2)}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Extras del evento */}
+                        {item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
+                          <div>
+                            <h5 className="font-medium text-purple-900 mb-2">✨ Extras:</h5>
+                            <ul className="space-y-1 text-sm ml-4">
+                              {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
+                                <li key={idx} className="flex justify-between">
+                                  <span>• {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`}</span>
+                                  {extra.total > 0 && <span className="font-medium">€{Number(extra.total).toFixed(2)}</span>}
+                                </li>
+                              ))}
+                            </ul>
+                            {item.eventMetadata.extrasTotal > 0 && (
+                              <p className="text-sm font-semibold mt-2 text-purple-900">
+                                Subtotal Extras: €{Number(item.eventMetadata.extrasTotal).toFixed(2)}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Total del evento */}
+                        {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
+                          <div className="pt-2 border-t border-purple-200">
+                            <p className="text-sm font-bold text-purple-900">
+                              💰 Total Evento: €{(
+                                (Number(item.eventMetadata.partsTotal) || 0) + 
+                                (Number(item.eventMetadata.extrasTotal) || 0)
+                              ).toFixed(2)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
+
+            {/* Notas del Pedido con Detalles del Evento */}
+            {order.notes && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <span className="text-2xl mr-2">📋</span>
+                  Detalles del Evento
+                </h2>
+                <div className="prose max-w-none">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    {order.notes}
+                  </pre>
+                </div>
+              </div>
+            )}
 
             {/* Order Notes - Sistema de comentarios */}
             {user && id && (
@@ -570,7 +694,25 @@ const OrderDetailPage = () => {
                   <p className="text-sm text-gray-600">Fecha de entrega</p>
                   <p className="font-medium">{formatDate(order.deliveryDate)}</p>
                 </div>
-                {order.deliveryAddress && (
+                {/* Para eventos, mostrar ubicación del evento. Para alquileres, dirección de entrega */}
+                {order.items?.some((item: any) => item.eventMetadata) ? (
+                  <div>
+                    <p className="text-sm text-gray-600">Ubicación del Evento</p>
+                    <p className="font-medium">
+                      {(() => {
+                        // Intentar obtener de eventMetadata primero
+                        const eventLoc = order.items?.find((item: any) => item.eventMetadata)?.eventMetadata?.eventLocation;
+                        if (eventLoc) return eventLoc;
+                        
+                        // Fallback a order.eventLocation
+                        if (typeof order.eventLocation === 'string') return order.eventLocation;
+                        if (order.eventLocation?.address) return order.eventLocation.address;
+                        
+                        return 'No especificada';
+                      })()}
+                    </p>
+                  </div>
+                ) : order.deliveryAddress && (
                   <div>
                     <p className="text-sm text-gray-600">Dirección</p>
                     <p className="font-medium">
@@ -634,6 +776,85 @@ const OrderDetailPage = () => {
                 <p className="font-medium capitalize">{order.paymentStatus?.toLowerCase() || 'Pendiente'}</p>
               </div>
             </div>
+
+            {/* Installments - Pagos a Plazos */}
+            {order.eligibleForInstallments && order.installments && order.installments.length > 0 && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  Pagos a Plazos (3 Cuotas)
+                </h2>
+                <div className="space-y-3">
+                  {order.installments.map((installment: any, index: number) => (
+                    <div 
+                      key={installment.id}
+                      className={`flex justify-between items-center p-3 rounded-lg border ${
+                        installment.status === 'COMPLETED' 
+                          ? 'bg-green-50 border-green-200' 
+                          : installment.status === 'FAILED'
+                          ? 'bg-red-50 border-red-200'
+                          : 'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">
+                          Cuota {installment.installmentNumber}/3 ({installment.percentage}%)
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Vencimiento: {new Date(installment.dueDate).toLocaleDateString('es-ES')}
+                        </p>
+                        {installment.paidDate && (
+                          <p className="text-sm text-green-600">
+                            ✓ Pagado: {new Date(installment.paidDate).toLocaleDateString('es-ES')}
+                          </p>
+                        )}
+                        {installment.errorMessage && (
+                          <p className="text-sm text-red-600">
+                            ✗ Error: {installment.errorMessage}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold text-lg">
+                          €{Number(installment.amount).toFixed(2)}
+                        </span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          installment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                          installment.status === 'FAILED' ? 'bg-red-100 text-red-800' :
+                          installment.status === 'PROCESSING' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {installment.status === 'COMPLETED' ? 'PAGADO' :
+                           installment.status === 'FAILED' ? 'FALLIDO' :
+                           installment.status === 'PROCESSING' ? 'PROCESANDO' :
+                           'PENDIENTE'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Total Pagado:</span>
+                    <span className="font-semibold text-green-600">
+                      €{order.installments
+                        .filter((i: any) => i.status === 'COMPLETED')
+                        .reduce((sum: number, i: any) => sum + Number(i.amount), 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-gray-600">Total Pendiente:</span>
+                    <span className="font-semibold text-orange-600">
+                      €{order.installments
+                        .filter((i: any) => i.status === 'PENDING' || i.status === 'FAILED')
+                        .reduce((sum: number, i: any) => sum + Number(i.amount), 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Actions */}
             {/* Resumen de Fianza */}

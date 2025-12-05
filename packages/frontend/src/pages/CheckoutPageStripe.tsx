@@ -53,17 +53,56 @@ const CheckoutPageStripe = () => {
         const parsedOrderData = JSON.parse(pendingOrderData);
         setOrderData(parsedOrderData);
 
+        // 💳 USAR PAYMENT BREAKDOWN para determinar cuánto cobrar
+        const paymentBreakdown = parsedOrderData.paymentBreakdown;
+        
+        console.log('💳 OrderData completo:', {
+          hasPaymentBreakdown: !!paymentBreakdown,
+          paymentBreakdown,
+          total: parsedOrderData.total
+        });
+        
+        // Si tiene paymentBreakdown, usar payNow, sino usar total
+        const amountToPay = (paymentBreakdown && paymentBreakdown.payNow) 
+          ? paymentBreakdown.payNow 
+          : parsedOrderData.total;
+        
+        console.log('💳 Payment Breakdown:', {
+          payNow: paymentBreakdown?.payNow,
+          payLater: paymentBreakdown?.payLater,
+          total: parsedOrderData.total,
+          amountToPay,
+          isInstallment: amountToPay < parsedOrderData.total
+        });
+
         // Crear un Payment Intent para pago inicial (sin orderId)
         const paymentData: any = await api.post('/payments/create-intent', {
           orderData: parsedOrderData,
+          amountToPay: amountToPay, // 💳 ENVIAR EL MONTO CORRECTO (25% o 100%)
         });
         setClientSecret(paymentData.clientSecret);
 
         // Mostrar resumen del pedido
-        const subtotal = parsedOrderData.items.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+        console.log('💰 Items recibidos en Stripe:', parsedOrderData.items.map((item: any) => ({
+          name: item.productId,
+          totalPrice: item.totalPrice,
+          quantity: item.quantity,
+          hasEventMetadata: !!item.eventMetadata
+        })));
+        
+        const subtotal = parsedOrderData.subtotal;
         const shipping = parsedOrderData.shippingCost || 0;
-        const tax = (subtotal + shipping) * 0.21;
-        const total = subtotal + shipping + tax;
+        const total = parsedOrderData.total;
+        const tax = parsedOrderData.taxAmount;
+        
+        console.log('💰 Cálculo Stripe:', { 
+          subtotal, 
+          shipping, 
+          tax, 
+          total,
+          amountToPay,
+          isReserva: amountToPay < total
+        });
 
         setOrder({
           orderNumber: 'PENDIENTE',
@@ -75,6 +114,8 @@ const CheckoutPageStripe = () => {
           shippingCost: shipping,
           taxAmount: tax,
           total,
+          amountToPay, // 💳 MONTO QUE SE VA A COBRAR
+          paymentBreakdown, // Guardar el breakdown completo
         });
       }
     } catch (error: any) {
@@ -94,8 +135,10 @@ const CheckoutPageStripe = () => {
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentIntentId?: string) => {
     toast.success('¡Pago realizado con éxito!');
+    
+    console.log('💳 Payment Intent ID recibido:', paymentIntentId);
     
     // Si es pago inicial (sin orderId), crear la orden ahora
     if (!orderId && orderData && user) {
@@ -143,7 +186,7 @@ const CheckoutPageStripe = () => {
             duration: eventMeta.duration,
             durationType: eventMeta.durationType,
             eventDate: eventMeta.eventDate,
-            eventLocation: orderData.deliveryAddress || 'Dirección del evento',
+            eventLocation: eventMeta.eventLocation || 'Dirección del evento',
             // NO enviar selectedPack ni selectedExtras porque los IDs no existen en la BD
             selectedPack: null,
             selectedExtras: {},
@@ -156,7 +199,9 @@ const CheckoutPageStripe = () => {
               extras: eventMeta.selectedExtras || [],
               partsTotal: eventMeta.partsTotal || 0,
               extrasTotal: eventMeta.extrasTotal || 0,
-            }
+            },
+            // Incluir el Payment Intent ID para vincular el pago con la orden
+            stripePaymentIntentId: paymentIntentId
           };
           
           console.log('📦 Datos para /create-from-calculator:', calculatorOrderData);
@@ -170,14 +215,19 @@ const CheckoutPageStripe = () => {
           const lastItem = orderData.items[orderData.items.length - 1];
           const addressParts = (orderData.deliveryAddress || '').split(',').map((s: string) => s.trim());
           
+          // Para eventos, usar eventLocation del metadata. Para alquileres normales, usar deliveryAddress
+          const hasEventMetadata = firstItem?.eventMetadata?.eventLocation;
+          const eventLocationStr = hasEventMetadata ? firstItem.eventMetadata.eventLocation : orderData.deliveryAddress;
+          const locationParts = (eventLocationStr || '').split(',').map((s: string) => s.trim());
+          
           const adaptedOrderData = {
             startDate: firstItem?.startDate || new Date().toISOString(),
             endDate: lastItem?.endDate || new Date().toISOString(),
             eventLocation: {
-              street: addressParts[0] || 'N/A',
-              city: addressParts[1] || 'N/A',
-              postalCode: addressParts[2] || '00000',
-              country: addressParts[addressParts.length - 1] || 'España',
+              street: locationParts[0] || 'N/A',
+              city: locationParts[1] || 'N/A',
+              postalCode: locationParts[2] || '00000',
+              country: locationParts[locationParts.length - 1] || 'España',
             },
             contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
             contactPhone: user.phone || 'N/A',
@@ -190,9 +240,15 @@ const CheckoutPageStripe = () => {
               country: addressParts[addressParts.length - 1] || 'España',
             } : undefined,
             paymentTerm: 'FULL_UPFRONT' as const,
+            // Incluir el Payment Intent ID para vincular el pago con la orden
+            stripePaymentIntentId: paymentIntentId,
             items: orderData.items.map((item: any) => ({
               productId: item.productId,
               quantity: item.quantity || 1,
+              pricePerUnit: item.pricePerUnit || item.product?.pricePerDay || 0,
+              totalPrice: item.totalPrice || (item.pricePerUnit * item.quantity) || 0,
+              startDate: item.startDate || firstItem?.startDate || new Date().toISOString(),
+              endDate: item.endDate || lastItem?.endDate || new Date().toISOString(),
             })),
           };
           
@@ -216,8 +272,14 @@ const CheckoutPageStripe = () => {
           throw new Error('No se recibió ID de orden del servidor');
         }
         
-        // Limpiar sessionStorage
+        // Limpiar sessionStorage y carrito
         sessionStorage.removeItem('pendingOrderData');
+        localStorage.removeItem('guest_cart'); // Vaciar carrito
+        localStorage.removeItem('cartEventInfo');
+        localStorage.removeItem('cartEventDates');
+        localStorage.removeItem('cartIncludesShippingInstallation');
+        localStorage.removeItem('cartFromCalculator');
+        window.dispatchEvent(new Event('cartUpdated')); // Actualizar UI del carrito
         
         // Redirigir a página de éxito con el nuevo orderId
         setTimeout(() => {
@@ -271,6 +333,14 @@ const CheckoutPageStripe = () => {
       }
     } else {
       // Es un pago de una orden existente
+      // Limpiar carrito también en este caso
+      localStorage.removeItem('guest_cart');
+      localStorage.removeItem('cartEventInfo');
+      localStorage.removeItem('cartEventDates');
+      localStorage.removeItem('cartIncludesShippingInstallation');
+      localStorage.removeItem('cartFromCalculator');
+      window.dispatchEvent(new Event('cartUpdated'));
+      
       setTimeout(() => {
         navigate(`/checkout/success?orderId=${orderId}`);
       }, 1000);
@@ -414,9 +484,20 @@ const CheckoutPageStripe = () => {
                 )}
 
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                  <span>Total</span>
+                  <span>Total del Pedido</span>
                   <span className="text-resona">€{Number(order.total).toFixed(2)}</span>
                 </div>
+                
+                {/* Mostrar monto de reserva si es diferente del total */}
+                {order.amountToPay && order.amountToPay < order.total && (
+                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-300">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-blue-900 font-semibold">💳 Pago de Reserva (25%)</span>
+                      <span className="text-blue-600 font-bold">€{Number(order.amountToPay).toFixed(2)}</span>
+                    </div>
+                    <p className="text-xs text-blue-700">Resto: €{(order.total - order.amountToPay).toFixed(2)} en "Mis Pedidos"</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -439,7 +520,7 @@ const CheckoutPageStripe = () => {
               <Elements stripe={stripePromise} options={options}>
                 <CheckoutForm
                   clientSecret={clientSecret}
-                  amount={Number(order.total)}
+                  amount={Number(order.amountToPay || order.total)}
                   onSuccess={handlePaymentSuccess}
                   onError={handlePaymentError}
                   billingDetails={{

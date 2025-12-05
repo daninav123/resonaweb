@@ -11,6 +11,14 @@ import { validateEventData, type EventValidation } from '../utils/eventValidatio
 import { guestCart } from '../utils/guestCart';
 import { api } from '../services/api';
 
+// Helper para construir URLs completas de imágenes
+const getFullImageUrl = (imagePath: string | null | undefined): string => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiPath = baseUrl.replace('/api/v1', '');
+  return `${apiPath}${imagePath}`;
+};
 
 interface EventData {
   eventType: string;
@@ -24,8 +32,6 @@ interface EventData {
   selectedParts: string[];
   // Pack seleccionado (solo uno)
   selectedPack: string | null;
-  // Montaje seleccionado (Pack de categoría MONTAJE)
-  selectedMontaje: string | null;
   // Productos extras seleccionados { productId: quantity }
   selectedExtras: Record<string, number>;
   email?: string;
@@ -46,10 +52,19 @@ const EventCalculatorPage = () => {
     eventLocation: '',
     selectedParts: [],
     selectedPack: null,
-    selectedMontaje: null,
     selectedExtras: {},
   });
   const [eventValidation, setEventValidation] = useState<EventValidation | null>(null);
+  const [hoveredPackId, setHoveredPackId] = useState<string | null>(null);
+  const [hoveredExtraId, setHoveredExtraId] = useState<string | null>(null);
+  const [activeExtraTab, setActiveExtraTab] = useState(0); // Pestaña activa de extras
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactData, setContactData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    message: ''
+  });
 
   // Cargar configuración desde el gestor de admin
   const [calculatorConfig, setCalculatorConfig] = useState(() => {
@@ -64,46 +79,55 @@ const EventCalculatorPage = () => {
     return DEFAULT_CALCULATOR_CONFIG;
   });
 
-  const eventTypes = calculatorConfig.eventTypes.map((et: any) => ({
-    id: et.id,
-    name: et.name,
-    icon: et.icon,
-    multiplier: et.multiplier,
-    parts: et.parts || [],
-  }));
+  // Filtrar solo tipos de evento activos (isActive !== false)
+  const eventTypes = calculatorConfig.eventTypes
+    .filter((et: any) => et.isActive !== false)
+    .map((et: any) => ({
+      id: et.id,
+      name: et.name,
+      icon: et.icon,
+      multiplier: et.multiplier,
+      parts: et.parts || [],
+    }));
 
   // Cargar productos y packs del catálogo
   const { data: catalogProducts = [] } = useQuery({
     queryKey: ['catalog-products-and-packs'],
     queryFn: async () => {
-      // Cargar packs activos
-      const packsResponse: any = await api.get('/packs');
+      // Cargar packs activos INCLUYENDO MONTAJES (para calculadora)
+      const packsResponse: any = await api.get('/packs?includeMontajes=true');
       const packsData = packsResponse?.packs || packsResponse || [];
-      console.log('📦 Packs cargados en calculadora pública:', packsData);
       
-      // Mapear packs al formato esperado
-      const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => ({
-        id: pack.id,
-        name: pack.name,
-        slug: pack.slug,
-        description: pack.description,
-        mainImageUrl: pack.imageUrl,
-        pricePerDay: Number(pack.finalPrice || pack.calculatedTotalPrice || 0),
-        realStock: 999,
-        category: { name: 'Packs' },
-        isActive: pack.isActive !== false,
-        isPack: true, // Marcar como pack
-      })) : [];
+      // Mapear packs al formato esperado (incluye montajes y otros packs)
+      const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => {
+        // Un montaje se identifica por tener categoryRef.name === 'Montaje'
+        const isMontaje = pack.categoryRef?.name?.toLowerCase() === 'montaje';
+        
+        // Convertir URL de imagen a URL completa usando helper
+        const imageUrl = getFullImageUrl(pack.imageUrl || pack.mainImageUrl);
+        
+        return {
+          id: pack.id,
+          name: pack.name,
+          slug: pack.slug,
+          description: pack.description,
+          mainImageUrl: imageUrl,
+          imageUrl: imageUrl,
+          pricePerDay: Number(pack.pricePerDay || pack.finalPrice || pack.calculatedTotalPrice || 0),
+          realStock: 999,
+          // Mantener la categoría real del pack (ej: MONTAJE, BODAS, etc.)
+          category: pack.category ? 
+            (typeof pack.category === 'string' ? { name: pack.category } : pack.category) 
+            : { name: 'Packs' },
+          isActive: pack.isActive !== false,
+          isPack: true, // Marcar como pack
+          isMontaje, // Flag para identificar montajes
+          packData: pack.packData, // Datos adicionales del pack (transportCost, etc.)
+        };
+      }) : [];
       
-      // Cargar productos normales
-      const productsResult = await productService.getProducts({ limit: 100 });
-      const productsData = productsResult?.data || [];
-      console.log('📦 Productos cargados en calculadora:', productsData);
-      
-      // Combinar packs y productos
-      const allItems = [...mappedPacks, ...productsData];
-      console.log('📦 Total items en calculadora:', allItems.length, '(Packs:', mappedPacks.length, '+ Productos:', productsData.length, ')');
-      return allItems;
+      // NO cargar productos normales - solo mostrar montajes en la calculadora
+      return mappedPacks; // Solo devolver packs (que incluyen montajes)
     },
   });
 
@@ -121,15 +145,15 @@ const EventCalculatorPage = () => {
     queryKey: ['montaje-packs'],
     queryFn: async () => {
       try {
-        const response: any = await api.get('/packs');
+        // INCLUIR MONTAJES explícitamente
+        const response: any = await api.get('/packs?includeMontajes=true');
         const allPacks = response?.packs || response || [];
         
-        // Filtrar solo packs de categoría MONTAJE
+        // Filtrar solo packs que son montajes (categoryRef.name === 'Montaje')
         const montajePacks = allPacks.filter((pack: any) => 
-          pack.category === 'MONTAJE' && pack.isActive !== false
+          pack.categoryRef?.name?.toLowerCase() === 'montaje' && pack.isActive !== false
         );
         
-        console.log('🚚 Packs de MONTAJE cargados:', montajePacks);
         return montajePacks;
       } catch (error) {
         console.error('Error cargando packs de montaje:', error);
@@ -200,6 +224,12 @@ const EventCalculatorPage = () => {
       return;
     }
 
+    // 2. Verificar que se haya especificado fecha Y ubicación
+    if (!eventData.eventDate || !eventData.eventLocation) {
+      alert('❌ Para añadir al carrito necesitas especificar:\n\n• Fecha del evento\n• Ubicación del evento\n\nPor favor, completa estos datos en el paso de "Detalles del Evento".');
+      return;
+    }
+
     // 2. Calcular total incluyendo transporte y montaje
     let totalCalculated = 0;
     let itemCount = 0;
@@ -220,7 +250,17 @@ const EventCalculatorPage = () => {
                 eventData.attendees >= range.minAttendees && 
                 eventData.attendees <= range.maxAttendees
               );
-              partPrice = applicableRange ? applicableRange.price : 0;
+              
+              // Si no hay rango exacto, buscar el rango más cercano
+              if (!applicableRange) {
+                const sortedRanges = [...part.pricingRanges].sort((a: any, b: any) => a.minAttendees - b.minAttendees);
+                const closestRange = sortedRanges.reverse().find((range: any) => 
+                  eventData.attendees >= range.minAttendees
+                );
+                partPrice = closestRange ? closestRange.price : (sortedRanges[0]?.price || 0);
+              } else {
+                partPrice = applicableRange.price;
+              }
             }
             
             // IMPORTANTE: Si es parte de "Disco/Fiesta" y hay pack seleccionado, usar precio del pack
@@ -269,17 +309,21 @@ const EventCalculatorPage = () => {
         }
       }
       
-      // Añadir precio del montaje si está seleccionado
-      let montajePrice = 0;
-      let montajeName = '';
-      if (eventData.selectedMontaje) {
-        const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
-        if (montaje) {
-          montajePrice = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
-          montajeName = montaje.name;
+      // Calcular si el pack debe sumarse aparte o ya está incluido en partsTotal
+      let packBasePrice = 0;
+      const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+        const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+        return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+      });
+      
+      // Si NO hay parte de fiesta Y hay pack seleccionado, calcular precio del pack
+      if (!hasPartyPart && eventData.selectedPack) {
+        const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+        if (pack) {
+          packBasePrice = Number(pack.pricePerDay) || 0;
         }
       }
-      
+
       const eventMetadata = {
         eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
         attendees: eventData.attendees,
@@ -292,11 +336,7 @@ const EventCalculatorPage = () => {
         partsTotal: partsTotal,
         selectedExtras: selectedExtrasWithPrices,
         extrasTotal: extrasTotal,
-        selectedMontaje: eventData.selectedMontaje ? {
-          id: eventData.selectedMontaje,
-          name: montajeName,
-          price: montajePrice
-        } : null
+        packBasePrice: packBasePrice // Nuevo campo para el precio base del pack cuando no está incluido en partes
       };
 
       // 3. Añadir SOLO el pack al carrito con todo el metadata (partes + extras)
@@ -304,52 +344,46 @@ const EventCalculatorPage = () => {
         const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
         if (pack) {
           guestCart.addItem(pack, 1, eventMetadata);
-          const basePrice = Number(pack.pricePerDay);
-          const shipping = Number(pack.shippingCost || 0);
-          const installation = Number(pack.installationCost || 0);
-          totalCalculated += basePrice + shipping + installation + partsTotal;
+          
+          // Verificar si hay parte de fiesta (para evitar duplicar el precio del pack)
+          const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+            const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+            return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+          });
+          
+          // Si NO hay parte de fiesta, sumar el precio del pack
+          // Si SÍ hay parte de fiesta, el pack ya está incluido en partsTotal
+          if (!hasPartyPart) {
+            const basePrice = Number(pack.pricePerDay);
+            const shipping = Number(pack.shippingCost || 0);
+            const installation = Number(pack.installationCost || 0);
+            totalCalculated += basePrice + shipping + installation;
+          }
+          
+          // Sumar las partes (que pueden incluir el pack si hay parte de fiesta)
+          totalCalculated += partsTotal;
           itemCount = 1; // Solo el pack como un item
         }
       }
 
-      const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
-      
-      // IMPORTANTE: Para eventos personalizados, el total NO se multiplica por días
-      // Las partes del evento (Ceremonia, Cóctel, etc.) tienen precio fijo
-      // Los extras tienen precio fijo
-      // El pack de sonido/iluminación ya está incluido en las partes
-      const totalFinal = totalCalculated; // NO multiplicar por días
+      // IMPORTANTE: Los eventos son SIEMPRE 1 día, NO multiplicar por días
+      // El precio ya incluye todo el servicio del evento
+      const totalFinal = totalCalculated;
 
-      // 5. Mostrar confirmación
-      alert(
-        `✅ Productos añadidos al carrito!\n\n` +
-        `${itemCount} producto${itemCount > 1 ? 's' : ''} listos para checkout.\n` +
-        `Total estimado: €${totalFinal.toFixed(2)}\n` +
-        `(${days} día${days > 1 ? 's' : ''}, incluye transporte y montaje)\n\n` +
-        `Te redirigiremos al carrito para completar tu pedido.`
-      );
-
-      // 6. Marcar que los productos ya incluyen transporte/montaje
+      // 5. Marcar que los productos ya incluyen transporte/montaje
       localStorage.setItem('cartIncludesShippingInstallation', 'true');
       localStorage.setItem('cartFromCalculator', 'true');
 
-      // 7. Guardar fechas del evento para el carrito
-      if (eventData.eventDate) {
-        const eventDate = new Date(eventData.eventDate);
-        const startDate = eventDate.toISOString().split('T')[0];
-        
-        // Calcular fecha de fin según duración
-        const endDate = new Date(eventDate);
-        const daysToAdd = eventData.durationType === 'hours' 
-          ? Math.ceil(eventData.duration / 8) 
-          : eventData.duration;
-        endDate.setDate(endDate.getDate() + daysToAdd);
-        
-        localStorage.setItem('cartEventDates', JSON.stringify({
-          start: startDate,
-          end: endDate.toISOString().split('T')[0]
-        }));
-      }
+      // 6. Guardar fechas del evento para el carrito
+      // Los eventos son SIEMPRE 1 día (fecha inicio = fecha fin)
+      const eventDate = new Date(eventData.eventDate);
+      const startDate = eventDate.toISOString().split('T')[0];
+      const endDate = eventDate.toISOString().split('T')[0]; // Mismo día
+      
+      localStorage.setItem('cartEventDates', JSON.stringify({
+        start: startDate,
+        end: endDate
+      }));
 
       // 8. Guardar información completa del evento para las notas
       const eventInfo = {
@@ -396,9 +430,58 @@ const EventCalculatorPage = () => {
     }
 
     try {
-      // Calcular total estimado (incluyendo transporte y montaje)
+      // Calcular total estimado (mismo cálculo que en el resumen visual)
       let total = 0;
-      if (eventData.selectedPack) {
+      
+      // Verificar si hay parte de fiesta seleccionada
+      const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+        const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+        return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+      });
+      
+      // Añadir precio de las partes seleccionadas
+      if (eventData.selectedParts && eventData.selectedParts.length > 0 && selectedEventType) {
+        eventData.selectedParts.forEach((partId) => {
+          const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+          if (part) {
+            let partPrice = 0;
+            if (part.pricingRanges && part.pricingRanges.length > 0) {
+              const applicableRange = part.pricingRanges.find((range: any) => 
+                eventData.attendees >= range.minAttendees && 
+                eventData.attendees <= range.maxAttendees
+              );
+              
+              // Si no hay rango exacto, buscar el rango más cercano
+              if (!applicableRange) {
+                const sortedRanges = [...part.pricingRanges].sort((a: any, b: any) => a.minAttendees - b.minAttendees);
+                const closestRange = sortedRanges.reverse().find((range: any) => 
+                  eventData.attendees >= range.minAttendees
+                );
+                partPrice = closestRange ? closestRange.price : (sortedRanges[0]?.price || 0);
+              } else {
+                partPrice = applicableRange.price;
+              }
+            }
+            
+            // Si es parte de fiesta Y hay pack, usar precio del pack
+            const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+            if (isPartyPart && eventData.selectedPack) {
+              const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+              if (pack) {
+                const basePrice = Number(pack.pricePerDay);
+                const shipping = Number(pack.shippingCost || 0);
+                const installation = Number(pack.installationCost || 0);
+                partPrice = basePrice + shipping + installation;
+              }
+            }
+            
+            total += partPrice;
+          }
+        });
+      }
+      
+      // Añadir precio del pack SOLO si NO hay parte de fiesta
+      if (eventData.selectedPack && !hasPartyPart) {
         const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
         if (pack) {
           const basePrice = Number(pack.pricePerDay);
@@ -407,6 +490,8 @@ const EventCalculatorPage = () => {
           total += basePrice + shipping + installation;
         }
       }
+      
+      // Añadir precio de extras
       Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
         const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
         if (product) {
@@ -416,8 +501,9 @@ const EventCalculatorPage = () => {
           total += (basePrice + shipping + installation) * quantity;
         }
       });
-      const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
-      const totalFinal = total * days;
+      
+      // IMPORTANTE: Los eventos son SIEMPRE 1 día, NO multiplicar
+      const totalFinal = total;
 
       // Preparar datos para enviar (usar datos del usuario logueado)
       const quoteData = {
@@ -483,7 +569,100 @@ const EventCalculatorPage = () => {
             eventData 
           } 
         });
-      }, 1000);
+      }, 2000);
+    }
+  };
+
+  const handleContactRequest = async () => {
+    // Validar campos del formulario
+    if (!contactData.name || !contactData.phone) {
+      alert('❌ Por favor completa al menos tu nombre y teléfono');
+      return;
+    }
+
+    try {
+      // Calcular total del evento
+      let total = 0;
+      
+      // Calcular precio de partes seleccionadas (si aplica)
+      if (eventData.selectedParts && eventData.selectedParts.length > 0) {
+        const eventConfig = calculatorConfig.eventTypes.find((et: any) => et.id === eventData.eventType);
+        eventData.selectedParts.forEach((partId: string) => {
+          const part = eventConfig?.parts?.find((p: any) => p.id === partId);
+          if (part) {
+            total += Number(part.price || 0);
+          }
+        });
+      }
+      
+      // Añadir precio del pack seleccionado
+      if (eventData.selectedPack) {
+        const selectedPackData = catalogProducts.find((p: any) => p.id === eventData.selectedPack);
+        if (selectedPackData) {
+          total += Number(selectedPackData.pricePerDay || selectedPackData.finalPrice || 0);
+        }
+      }
+      
+      // Añadir precio de extras
+      Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
+        const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+        if (product) {
+          const basePrice = Number(product.pricePerDay);
+          total += basePrice * quantity;
+        }
+      });
+
+      // Preparar datos completos para enviar (formato esperado por el backend)
+      const contactRequestData = {
+        customerName: contactData.name,
+        customerPhone: contactData.phone,
+        customerEmail: contactData.email || null,
+        eventType: eventTypes.find(t => t.id === eventData.eventType)?.name || eventData.eventType,
+        attendees: eventData.attendees,
+        duration: eventData.duration,
+        durationType: eventData.durationType,
+        eventDate: eventData.eventDate || null,
+        eventLocation: eventData.eventLocation || null,
+        selectedPack: eventData.selectedPack || null,
+        selectedExtras: eventData.selectedExtras || {},
+        estimatedTotal: total,
+        notes: contactData.message ? `Solicitud de contacto: ${contactData.message}` : 'Solicitud de contacto desde calculadora de eventos'
+      };
+
+      // Enviar solicitud de contacto
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactRequestData),
+      });
+
+      if (response.ok) {
+        alert(
+          '✅ ¡Solicitud enviada correctamente!\n\n' +
+          'Te llamaremos pronto al teléfono: ' + contactData.phone + '\n' +
+          'Horario de atención: L-V 9:00-18:00'
+        );
+        
+        // Cerrar modal y resetear formulario
+        setShowContactModal(false);
+        setContactData({
+          name: '',
+          phone: '',
+          email: '',
+          message: ''
+        });
+      } else {
+        throw new Error('Error al enviar solicitud');
+      }
+    } catch (error) {
+      console.error('Error enviando solicitud:', error);
+      alert(
+        '❌ No se pudo enviar la solicitud.\n\n' +
+        'Por favor llámanos directamente al:\n' +
+        '📞 +34 XXX XXX XXX'
+      );
     }
   };
 
@@ -630,7 +809,7 @@ const EventCalculatorPage = () => {
                 <div>
                   <label className="flex items-center gap-2 text-gray-700 font-medium mb-2">
                     <Calendar className="w-5 h-5 text-resona" />
-                    Fecha del Evento (Opcional)
+                    Fecha del Evento <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -638,14 +817,18 @@ const EventCalculatorPage = () => {
                     onChange={(e) => setEventData({ ...eventData, eventDate: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
                     min={new Date().toISOString().split('T')[0]}
+                    required
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-red-500">*</span> Obligatorio para añadir al carrito
+                  </p>
                 </div>
 
                 {/* Event Location */}
                 <div>
                   <label className="flex items-center gap-2 text-gray-700 font-medium mb-2">
                     <Mail className="w-5 h-5 text-resona" />
-                    Lugar del Evento (Opcional)
+                    Lugar del Evento <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -653,9 +836,10 @@ const EventCalculatorPage = () => {
                     onChange={(e) => setEventData({ ...eventData, eventLocation: e.target.value })}
                     placeholder="Dirección completa del evento"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                    required
                   />
-                  <p className="mt-2 text-sm text-gray-500">
-                    💡 Si no especificas lugar y fecha, el presupuesto será válido solo para eventos a menos de 50km de Valencia y en fechas normales.
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-red-500">*</span> Obligatorio para añadir al carrito
                   </p>
                 </div>
               </div>
@@ -739,16 +923,20 @@ const EventCalculatorPage = () => {
                 const configuredPacks = eventConfig?.availablePacks || [];
                 const recommendedPacksRules = eventConfig?.recommendedPacks || [];
                 
-                // Solo en desarrollo si es necesario
-                // console.log('📦 Packs configurados para', eventConfig?.name, ':', configuredPacks);
-                // console.log('📊 Reglas de recomendación:', recommendedPacksRules);
-                
-                // Filtrar packs según la configuración del admin
+                // Filtrar packs: SOLO mostrar MONTAJES (categoría MONTAJE)
                 const availablePacks = catalogProducts.filter((p: any) => {
-                  if (!p.isPack || !p.isActive) return false;
+                  if (!p.isPack || !p.isActive) {
+                    return false;
+                  }
                   
-                  // REGLA 1: El pack debe estar en la lista de packs disponibles para este tipo de evento
-                  if (configuredPacks.length > 0 && !configuredPacks.includes(p.id)) {
+                  // IMPORTANTE: Solo mostrar montajes (packs con categoría MONTAJE)
+                  if (!p.isMontaje) {
+                    return false;
+                  }
+                  
+                  // ⭐ REGLA CRÍTICA: SOLO mostrar montajes que estén configurados en el admin
+                  // Si NO está en la lista de availablePacks del evento, NO mostrarlo
+                  if (!configuredPacks.includes(p.id)) {
                     return false;
                   }
                   
@@ -806,35 +994,38 @@ const EventCalculatorPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {sortedPacks.map((pack: any) => {
                             const isSelected = eventData.selectedPack === pack.id;
+                            const showImagePreview = hoveredPackId === pack.id;
                             
                             return (
-                              <button
-                                key={pack.id}
-                                onClick={() => {
-                                  // Solo permitir seleccionar UN pack
-                                  setEventData({ 
-                                    ...eventData, 
-                                    selectedPack: isSelected ? null : pack.id 
-                                  });
-                                }}
-                                className={`text-left bg-white rounded-lg border-2 p-6 transition-all hover:shadow-lg ${
-                                  isSelected
-                                    ? 'border-resona bg-resona/5 shadow-md'
-                                    : 'border-gray-200 hover:border-resona/50'
-                                }`}
-                              >
-                                <div className="flex items-start gap-4">
-                                  {pack.mainImageUrl && (
-                                    <img 
-                                      src={pack.mainImageUrl} 
-                                      alt={pack.name}
-                                      className="w-24 h-24 object-cover rounded-lg"
-                                    />
-                                  )}
-                                  <div className="flex-1">
+                              <div key={pack.id} className="relative">
+                                <button
+                                  onClick={() => {
+                                    // Solo permitir seleccionar UN pack
+                                    setEventData({ 
+                                      ...eventData, 
+                                      selectedPack: isSelected ? null : pack.id 
+                                    });
+                                  }}
+                                  onMouseEnter={() => setHoveredPackId(pack.id)}
+                                  onMouseLeave={() => setHoveredPackId(null)}
+                                  className={`w-full text-left bg-white rounded-lg border-2 p-6 transition-all hover:shadow-lg ${
+                                    isSelected
+                                      ? 'border-resona bg-resona/5 shadow-md'
+                                      : 'border-gray-200 hover:border-resona/50'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-4">
+                                    {(pack.imageUrl || pack.mainImageUrl) && (
+                                      <img 
+                                        src={pack.imageUrl || pack.mainImageUrl} 
+                                        alt={pack.name}
+                                        className="w-24 h-24 object-contain rounded-lg border border-gray-200 bg-gray-50"
+                                      />
+                                    )}
+                                    <div className="flex-1">
                                     <div className="flex items-start justify-between">
                                       <div>
-                                        <h4 className="font-bold text-gray-900 text-lg">{pack.name}</h4>
+                                        <h4 className="font-bold text-gray-900">{pack.name}</h4>
                                         {pack.isRecommended && (
                                           <span className="inline-block mt-1 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
                                             ✨ Recomendado para ti
@@ -901,6 +1092,25 @@ const EventCalculatorPage = () => {
                                   </div>
                                 </div>
                               </button>
+                              
+                              {/* Preview con imagen grande y descripción al hacer hover */}
+                              {showImagePreview && (pack.imageUrl || pack.mainImageUrl) && (
+                                <div className="absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
+                                  <div className="w-full h-64 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                    <img 
+                                      src={pack.imageUrl || pack.mainImageUrl} 
+                                      alt={pack.name}
+                                      className="max-w-full max-h-full object-contain"
+                                    />
+                                  </div>
+                                  <h4 className="font-bold text-lg text-gray-900 mb-2">{pack.name}</h4>
+                                  <p className="text-sm text-gray-600">{pack.description}</p>
+                                  <div className="mt-3 text-2xl font-bold text-resona">
+                                    €{Number(pack.pricePerDay || pack.finalPrice || 0).toFixed(2)}/día
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                             );
                           })}
                         </div>
@@ -938,57 +1148,98 @@ const EventCalculatorPage = () => {
                 // Filtrar extras según la configuración del evento
                 const eventConfig = calculatorConfig.eventTypes.find((et: any) => et.id === eventData.eventType);
                 const availableExtras = eventConfig?.availableExtras || [];
+                const extraCategories = eventConfig?.extraCategories || [];
                 
-                // Solo en desarrollo si es necesario
-                // console.log('✨ Extras configurados para', eventConfig?.name, ':', availableExtras);
-                
-                // Filtrar productos/packs extras
+                // Filtrar extras: SOLO mostrar MONTAJES configurados
                 const extrasProducts = catalogProducts.filter((p: any) => {
                   if (!p.isActive) return false;
-                  
-                  // Si hay extras configurados, mostrar SOLO esos (productos O packs)
-                  if (availableExtras.length > 0) {
-                    return availableExtras.includes(p.id);
-                  }
-                  
-                  // Si no hay configuración, mostrar todos los productos (NO packs)
-                  return !p.isPack;
+                  if (!p.isMontaje) return false;
+                  if (!availableExtras.includes(p.id)) return false;
+                  return true;
                 });
                 
-                // Solo en desarrollo si es necesario
-                // console.log('📦 Extras encontrados:', extrasProducts.length, 'de', availableExtras.length, 'configurados');
-                
-                // Agrupar productos por categoría
-                const productsByCategory: Record<string, any[]> = {};
-                extrasProducts.forEach((product: any) => {
-                  const categoryName = product.category?.name || 'Sin categoría';
-                  if (!productsByCategory[categoryName]) {
-                    productsByCategory[categoryName] = [];
-                  }
-                  productsByCategory[categoryName].push(product);
-                });
-                
-                return extrasProducts.length > 0 ? (
-                  <div className="space-y-8">
-                    {Object.entries(productsByCategory).map(([categoryName, products]) => (
-                      <div key={categoryName}>
-                        {/* Título de la categoría */}
-                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b-2 border-resona">
-                          <span className="bg-resona text-white px-3 py-1 rounded-lg text-sm">
-                            {products.length}
-                          </span>
-                          <span>{categoryName}</span>
-                        </h3>
-                        
-                        {/* Productos de la categoría */}
+                // Si hay categorías configuradas, mostrar con pestañas
+                if (extraCategories.length > 0) {
+                  const activeCategory = extraCategories[activeExtraTab];
+                  
+                  // Filtrar productos de la categoría activa
+                  const filteredProducts = extrasProducts.filter((p: any) => 
+                    activeCategory.extrasIds.includes(p.id)
+                  );
+                  
+                  return extrasProducts.length > 0 ? (
+                    <div className="space-y-6">
+                      {/* Pestañas de categorías */}
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {extraCategories.map((category: any, index: number) => {
+                          const productsInCategory = extrasProducts.filter((p: any) => 
+                            category.extrasIds.includes(p.id)
+                          );
+                          const selectedInCategory = productsInCategory.filter((p: any) => 
+                            eventData.selectedExtras[p.id]
+                          ).length;
+                          
+                          // Mapeo de colores Tailwind
+                          const colorClasses: Record<string, { bg: string; text: string; border: string; hover: string }> = {
+                            purple: { bg: 'bg-purple-500', text: 'text-purple-700', border: 'border-purple-500', hover: 'hover:bg-purple-600' },
+                            blue: { bg: 'bg-blue-500', text: 'text-blue-700', border: 'border-blue-500', hover: 'hover:bg-blue-600' },
+                            pink: { bg: 'bg-pink-500', text: 'text-pink-700', border: 'border-pink-500', hover: 'hover:bg-pink-600' },
+                            yellow: { bg: 'bg-yellow-500', text: 'text-yellow-700', border: 'border-yellow-500', hover: 'hover:bg-yellow-600' },
+                            gray: { bg: 'bg-gray-500', text: 'text-gray-700', border: 'border-gray-500', hover: 'hover:bg-gray-600' },
+                            indigo: { bg: 'bg-indigo-500', text: 'text-indigo-700', border: 'border-indigo-500', hover: 'hover:bg-indigo-600' },
+                            green: { bg: 'bg-green-500', text: 'text-green-700', border: 'border-green-500', hover: 'hover:bg-green-600' },
+                            red: { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-500', hover: 'hover:bg-red-600' },
+                            orange: { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-500', hover: 'hover:bg-orange-600' },
+                            cyan: { bg: 'bg-cyan-500', text: 'text-cyan-700', border: 'border-cyan-500', hover: 'hover:bg-cyan-600' },
+                          };
+                          
+                          const colors = colorClasses[category.color] || colorClasses.purple;
+                          const isActive = activeExtraTab === index;
+                          
+                          return (
+                            <button
+                              key={category.id}
+                              onClick={() => setActiveExtraTab(index)}
+                              className={`relative px-6 py-3 rounded-lg font-medium transition-all ${
+                                isActive
+                                  ? `${colors.bg} text-white shadow-lg scale-105`
+                                  : `bg-white border-2 ${colors.border} ${colors.text} ${colors.hover} hover:scale-105`
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-2xl">{category.icon}</span>
+                                <span>{category.name}</span>
+                                {productsInCategory.length > 0 && (
+                                  <span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
+                                    isActive ? 'bg-white/20' : 'bg-gray-100'
+                                  }`}>
+                                    {productsInCategory.length}
+                                  </span>
+                                )}
+                              </div>
+                              {selectedInCategory > 0 && (
+                                <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                                  {selectedInCategory}
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Productos de la categoría activa */}
+                      {filteredProducts.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {products.map((product: any) => {
+                          {filteredProducts.map((product: any) => {
                             const isSelected = !!eventData.selectedExtras[product.id];
                             const quantity = eventData.selectedExtras[product.id] || 0;
+                            const showImagePreview = hoveredExtraId === product.id;
                             
                             return (
+                              <div key={product.id} className="relative">
                               <div
-                                key={product.id}
+                                onMouseEnter={() => setHoveredExtraId(product.id)}
+                                onMouseLeave={() => setHoveredExtraId(null)}
                                 className={`bg-white rounded-lg border-2 p-4 transition-all ${
                                   isSelected ? 'border-resona bg-resona/5' : 'border-gray-200'
                                 }`}
@@ -1057,6 +1308,197 @@ const EventCalculatorPage = () => {
                                   </button>
                                 </div>
                               </div>
+                              
+                              {/* Preview con imagen grande y descripción al hacer hover */}
+                              {showImagePreview && (product.imageUrl || product.mainImageUrl) && (
+                                <div className="absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
+                                  <div className="w-full h-64 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                    <img 
+                                      src={product.imageUrl || product.mainImageUrl} 
+                                      alt={product.name}
+                                      className="max-w-full max-h-full object-contain"
+                                    />
+                                  </div>
+                                  <h4 className="font-bold text-lg text-gray-900 mb-2">{product.name}</h4>
+                                  <p className="text-sm text-gray-600">{product.description}</p>
+                                  <div className="mt-3">
+                                    {(() => {
+                                      const basePrice = Number(product.pricePerDay);
+                                      const shipping = Number(product.shippingCost || 0);
+                                      const installation = Number(product.installationCost || 0);
+                                      const totalPrice = basePrice + shipping + installation;
+                                      
+                                      return (
+                                        <div>
+                                          <div className="text-2xl font-bold text-resona">
+                                            €{totalPrice.toFixed(2)}/día
+                                          </div>
+                                          {(shipping > 0 || installation > 0) && (
+                                            <p className="text-xs text-gray-500 mt-1">
+                                              Incluye transporte y montaje
+                                            </p>
+                                          )}
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-12">
+                          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-600">No hay extras en esta categoría</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">No hay productos extras disponibles</p>
+                    </div>
+                  );
+                }
+                
+                // Fallback: Si NO hay categorías, mostrar todos los extras agrupados por categoría de producto
+                const productsByCategory: Record<string, any[]> = {};
+                extrasProducts.forEach((product: any) => {
+                  const categoryName = product.category?.name || 'Sin categoría';
+                  if (!productsByCategory[categoryName]) {
+                    productsByCategory[categoryName] = [];
+                  }
+                  productsByCategory[categoryName].push(product);
+                });
+                
+                return extrasProducts.length > 0 ? (
+                  <div className="space-y-8">
+                    {Object.entries(productsByCategory).map(([categoryName, products]) => (
+                      <div key={categoryName}>
+                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b-2 border-resona">
+                          <span className="bg-resona text-white px-3 py-1 rounded-lg text-sm">
+                            {products.length}
+                          </span>
+                          <span>{categoryName}</span>
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {products.map((product: any) => {
+                            const isSelected = !!eventData.selectedExtras[product.id];
+                            const quantity = eventData.selectedExtras[product.id] || 0;
+                            const showImagePreview = hoveredExtraId === product.id;
+                            
+                            return (
+                              <div key={product.id} className="relative">
+                              <div
+                                onMouseEnter={() => setHoveredExtraId(product.id)}
+                                onMouseLeave={() => setHoveredExtraId(null)}
+                                className={`bg-white rounded-lg border-2 p-4 transition-all ${
+                                  isSelected ? 'border-resona bg-resona/5' : 'border-gray-200'
+                                }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  {product.mainImageUrl && (
+                                    <img 
+                                      src={product.mainImageUrl} 
+                                      alt={product.name}
+                                      className="w-16 h-16 object-cover rounded-lg"
+                                    />
+                                  )}
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-900">{product.name}</h4>
+                                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
+                                    <div className="mt-2">
+                                      {(() => {
+                                        const basePrice = Number(product.pricePerDay);
+                                        const shipping = Number(product.shippingCost || 0);
+                                        const installation = Number(product.installationCost || 0);
+                                        const totalPrice = basePrice + shipping + installation;
+                                        
+                                        return (
+                                          <>
+                                            <div className="font-bold text-resona">
+                                              €{totalPrice.toFixed(2)}/día
+                                            </div>
+                                            {(shipping > 0 || installation > 0) && (
+                                              <p className="text-xs text-gray-500">
+                                                Inc. transporte y montaje
+                                              </p>
+                                            )}
+                                          </>
+                                        );
+                                      })()}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="mt-3 flex items-center gap-2">
+                                  <button
+                                    onClick={() => {
+                                      const newExtras = { ...eventData.selectedExtras };
+                                      const currentQty = newExtras[product.id] || 0;
+                                      if (currentQty > 1) {
+                                        newExtras[product.id] = currentQty - 1;
+                                      } else {
+                                        delete newExtras[product.id];
+                                      }
+                                      setEventData({ ...eventData, selectedExtras: newExtras });
+                                    }}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 hover:border-resona hover:bg-resona/10 flex items-center justify-center transition-colors"
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </button>
+                                  <span className="w-12 text-center font-medium">{quantity}</span>
+                                  <button
+                                    onClick={() => {
+                                      const newExtras = { ...eventData.selectedExtras };
+                                      newExtras[product.id] = (newExtras[product.id] || 0) + 1;
+                                      setEventData({ ...eventData, selectedExtras: newExtras });
+                                    }}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 hover:border-resona hover:bg-resona/10 flex items-center justify-center transition-colors"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                              
+                              {showImagePreview && (product.imageUrl || product.mainImageUrl) && (
+                                <div className="absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
+                                  <div className="w-full h-64 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                    <img 
+                                      src={product.imageUrl || product.mainImageUrl} 
+                                      alt={product.name}
+                                      className="max-w-full max-h-full object-contain"
+                                    />
+                                  </div>
+                                  <h4 className="font-bold text-lg text-gray-900 mb-2">{product.name}</h4>
+                                  <p className="text-sm text-gray-600">{product.description}</p>
+                                  <div className="mt-3">
+                                    {(() => {
+                                      const basePrice = Number(product.pricePerDay);
+                                      const shipping = Number(product.shippingCost || 0);
+                                      const installation = Number(product.installationCost || 0);
+                                      const totalPrice = basePrice + shipping + installation;
+                                      
+                                      return (
+                                        <div>
+                                          <div className="text-2xl font-bold text-resona">
+                                            €{totalPrice.toFixed(2)}/día
+                                          </div>
+                                          {(shipping > 0 || installation > 0) && (
+                                            <p className="text-xs text-gray-500 mt-1">
+                                              Incluye transporte y montaje
+                                            </p>
+                                          )}
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                             );
                           })}
                         </div>
@@ -1070,69 +1512,6 @@ const EventCalculatorPage = () => {
                   </div>
                 );
               })()}
-              
-              {/* Sección de Montajes */}
-              {montajePacks.length > 0 && (
-                <div className="mt-8 border-t pt-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b-2 border-purple-500">
-                    <span className="bg-purple-500 text-white px-3 py-1 rounded-lg text-sm">
-                      {montajePacks.length}
-                    </span>
-                    <span>🚚 Servicio de Montaje</span>
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    ¿Necesitas que nos encarguemos del transporte e instalación? Elige una opción:
-                  </p>
-                  
-                  <div className="space-y-3">
-                    {/* Opción: Sin montaje */}
-                    <div
-                      onClick={() => setEventData({ ...eventData, selectedMontaje: null })}
-                      className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${
-                        !eventData.selectedMontaje ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900">Sin montaje (Recogida en tienda)</h4>
-                          <p className="text-sm text-gray-600 mt-1">Recoges el material en nuestra tienda</p>
-                        </div>
-                        <div className="font-bold text-gray-700">GRATIS</div>
-                      </div>
-                    </div>
-                    
-                    {/* Opciones de montaje */}
-                    {montajePacks.map((montaje: any) => {
-                      const isSelected = eventData.selectedMontaje === montaje.id;
-                      const price = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
-                      
-                      return (
-                        <div
-                          key={montaje.id}
-                          onClick={() => setEventData({ ...eventData, selectedMontaje: montaje.id })}
-                          className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${
-                            isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{montaje.name}</h4>
-                              <p className="text-sm text-gray-600 mt-1">{montaje.description || 'Incluye transporte y montaje completo'}</p>
-                            </div>
-                            <div className="font-bold text-purple-600">€{price.toFixed(2)}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                    <p className="text-xs text-purple-800">
-                      ℹ️ El servicio de montaje es un cargo único por evento (no se multiplica por días)
-                    </p>
-                  </div>
-                </div>
-              )}
               
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
@@ -1151,29 +1530,24 @@ const EventCalculatorPage = () => {
               
               {/* Información del Evento */}
               <div className="space-y-4 mb-6">
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-600 font-medium">Tipo de Evento</p>
-                  <p className="font-semibold text-lg mt-1">{eventTypes.find(t => t.id === eventData.eventType)?.name}</p>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600 font-medium">Tipo de Evento</p>
+                    <p className="font-semibold text-lg mt-1">{eventTypes.find(t => t.id === eventData.eventType)?.name}</p>
+                  </div>
+                  
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <p className="text-sm text-gray-600 font-medium">Asistentes</p>
                     <p className="font-semibold text-lg mt-1">{eventData.attendees} personas</p>
                   </div>
                   
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-sm text-gray-600 font-medium">Duración</p>
-                    <p className="font-semibold text-lg mt-1">{eventData.duration} {eventData.durationType === 'hours' ? 'horas' : 'días'}</p>
-                  </div>
+                  {eventData.eventDate && (
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <p className="text-sm text-gray-600 font-medium">Fecha del Evento</p>
+                      <p className="font-semibold text-lg mt-1">{new Date(eventData.eventDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                  )}
                 </div>
-                
-                {eventData.eventDate && (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-sm text-gray-600 font-medium">Fecha del Evento</p>
-                    <p className="font-semibold text-lg mt-1">{new Date(eventData.eventDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                  </div>
-                )}
                 
                 {eventData.eventLocation && (
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -1187,18 +1561,29 @@ const EventCalculatorPage = () => {
                   <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                     <p className="text-sm text-purple-600 font-medium mb-3">🎭 Partes del Evento</p>
                     <div className="space-y-2">
-                      {eventData.selectedParts.map((partId) => {
-                        const part = selectedEventType.parts.find((p: any) => p.id === partId);
-                        if (!part) return null;
+                      {selectedEventType.parts
+                        .filter((part: any) => eventData.selectedParts.includes(part.id))
+                        .map((part: any) => {
                         
                         // Calcular el precio de la parte según el número de invitados
                         let partPrice = 0;
                         if (part.pricingRanges && part.pricingRanges.length > 0) {
+                          // Buscar el rango aplicable
                           const applicableRange = part.pricingRanges.find((range: any) => 
                             eventData.attendees >= range.minAttendees && 
                             eventData.attendees <= range.maxAttendees
                           );
-                          partPrice = applicableRange ? applicableRange.price : 0;
+                          
+                          // Si no hay rango exacto, buscar el rango más cercano (el último que el número de invitados supera)
+                          if (!applicableRange) {
+                            const sortedRanges = [...part.pricingRanges].sort((a: any, b: any) => a.minAttendees - b.minAttendees);
+                            const closestRange = sortedRanges.reverse().find((range: any) => 
+                              eventData.attendees >= range.minAttendees
+                            );
+                            partPrice = closestRange ? closestRange.price : (sortedRanges[0]?.price || 0);
+                          } else {
+                            partPrice = applicableRange.price;
+                          }
                         }
                         
                         // Verificar si esta parte es "Disco/Fiesta" y mostrar el pack aquí
@@ -1213,7 +1598,7 @@ const EventCalculatorPage = () => {
                           : partPrice;
                         
                         return (
-                          <div key={partId}>
+                          <div key={part.id}>
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
                               <span className="text-sm font-semibold text-purple-600">€{displayPrice.toFixed(2)}</span>
@@ -1280,24 +1665,6 @@ const EventCalculatorPage = () => {
                   </div>
                 )}
 
-                {/* Montaje Seleccionado */}
-                {eventData.selectedMontaje && (() => {
-                  const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
-                  if (!montaje) return null;
-                  const price = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
-                  
-                  return (
-                    <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                      <p className="text-sm text-purple-600 font-medium mb-2">🚚 Servicio de Montaje</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700">{montaje.name}</span>
-                        <span className="text-sm font-semibold text-purple-600">€{price.toFixed(2)}</span>
-                      </div>
-                      <p className="text-xs text-purple-600 mt-1">Incluye transporte e instalación completa</p>
-                    </div>
-                  );
-                })()}
-
                 {/* Precio Total */}
                 {(() => {
                   let total = 0;
@@ -1320,7 +1687,17 @@ const EventCalculatorPage = () => {
                             eventData.attendees >= range.minAttendees && 
                             eventData.attendees <= range.maxAttendees
                           );
-                          partPrice = applicableRange ? applicableRange.price : 0;
+                          
+                          // Si no hay rango exacto, buscar el rango más cercano
+                          if (!applicableRange) {
+                            const sortedRanges = [...part.pricingRanges].sort((a: any, b: any) => a.minAttendees - b.minAttendees);
+                            const closestRange = sortedRanges.reverse().find((range: any) => 
+                              eventData.attendees >= range.minAttendees
+                            );
+                            partPrice = closestRange ? closestRange.price : (sortedRanges[0]?.price || 0);
+                          } else {
+                            partPrice = applicableRange.price;
+                          }
                         }
                         
                         // Si es parte de fiesta Y hay pack, usar precio del pack
@@ -1362,51 +1739,77 @@ const EventCalculatorPage = () => {
                     }
                   });
                   
-                  // Calcular por días
-                  const days = eventData.durationType === 'hours' ? Math.ceil(eventData.duration / 8) : eventData.duration;
-                  const totalFinal = total * days;
-                  
-                  // Añadir montaje (NO se multiplica por días - es precio fijo)
-                  let montajePrice = 0;
-                  if (eventData.selectedMontaje) {
-                    const montaje = montajePacks.find((p: any) => p.id === eventData.selectedMontaje);
-                    if (montaje) {
-                      montajePrice = Number(montaje.finalPrice || montaje.calculatedTotalPrice || 0);
-                    }
-                  }
-                  
-                  const totalWithMontaje = totalFinal + montajePrice;
+                  // IMPORTANTE: Los eventos son SIEMPRE 1 día, NO multiplicar
+                  const totalFinal = total;
                   
                   return total > 0 ? (
-                    <div className="p-5 bg-green-50 rounded-lg border-2 border-green-300">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Subtotal por día:</span>
-                        <span className="font-semibold text-gray-900">€{total.toFixed(2)}</span>
+                    <>
+                      {/* Total del Evento */}
+                      <div className="p-5 bg-green-50 rounded-lg border-2 border-green-300 mb-4">
+                        <div className="pt-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-gray-900">TOTAL EVENTO:</span>
+                            <span className="text-2xl font-bold text-green-600">€{totalFinal.toFixed(2)}</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          * Incluye transporte y montaje. IVA no incluido. Precio final puede variar según disponibilidad.
+                        </p>
                       </div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Duración:</span>
-                        <span className="font-semibold text-gray-900">{days} día{days > 1 ? 's' : ''}</span>
-                      </div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Subtotal material:</span>
-                        <span className="font-semibold text-gray-900">€{totalFinal.toFixed(2)}</span>
-                      </div>
-                      {montajePrice > 0 && (
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-gray-600">🚚 Montaje:</span>
-                          <span className="font-semibold text-purple-600">€{montajePrice.toFixed(2)}</span>
+
+                      {/* Información de Pago a Plazos (solo si > 500€) */}
+                      {totalFinal > 500 && (
+                        <div className="p-5 bg-blue-50 rounded-lg border-2 border-blue-300">
+                          <div className="flex items-center gap-2 mb-3">
+                            <CreditCard className="w-5 h-5 text-blue-600" />
+                            <h4 className="font-bold text-blue-900">💳 Sistema de Pago a Plazos</h4>
+                          </div>
+                          
+                          <p className="text-sm text-blue-800 mb-3">
+                            Para tu comodidad, puedes pagar tu evento en 3 plazos:
+                          </p>
+                          
+                          <div className="space-y-2 text-sm">
+                            {/* Plazo 1 - 25% */}
+                            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-blue-200">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-900">1️⃣ Reserva ahora (25%)</span>
+                              </div>
+                              <span className="font-bold text-blue-600">€{(totalFinal * 0.25).toFixed(2)}</span>
+                            </div>
+                            
+                            {/* Plazo 2 - 50% */}
+                            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-blue-200">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-700">2️⃣ Un mes antes del evento (50%)</span>
+                              </div>
+                              <span className="font-semibold text-gray-700">€{(totalFinal * 0.50).toFixed(2)}</span>
+                            </div>
+                            
+                            {/* Plazo 3 - 25% */}
+                            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-blue-200">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-700">3️⃣ Un día antes del evento (25%)</span>
+                              </div>
+                              <span className="font-semibold text-gray-700">€{(totalFinal * 0.25).toFixed(2)}</span>
+                            </div>
+                          </div>
+                          
+                          <p className="text-xs text-blue-700 mt-3 bg-blue-100 p-2 rounded">
+                            <strong>ℹ️ Nota:</strong> Al reservar ahora pagarás solo el 25%. Los pagos restantes podrás realizarlos según las fechas indicadas o pagar todo de una vez desde "Mis Pedidos".
+                          </p>
                         </div>
                       )}
-                      <div className="pt-2 border-t-2 border-green-300 mt-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-gray-900">TOTAL:</span>
-                          <span className="text-2xl font-bold text-green-600">€{totalWithMontaje.toFixed(2)}</span>
+                      
+                      {/* Información para pedidos < 500€ */}
+                      {totalFinal <= 500 && (
+                        <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <p className="text-sm text-yellow-800">
+                            <strong>💡 Pago único:</strong> Este pedido se pagará en un solo pago al confirmar la reserva.
+                          </p>
                         </div>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        * IVA no incluido. Precio final puede variar según disponibilidad.
-                      </p>
-                    </div>
+                      )}
+                    </>
                   ) : null;
                 })()}
               </div>
@@ -1421,14 +1824,88 @@ const EventCalculatorPage = () => {
 
               {/* Actions */}
               <div className="space-y-3">
-                {/* NUEVO: Añadir al Carrito y Checkout */}
-                <button
-                  onClick={handleAddToCartAndCheckout}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  🛒 Añadir al Carrito y Pagar
-                </button>
+                {/* Botón principal: Tramitar Reserva */}
+                {(() => {
+                  // Calcular total para mostrar en el botón
+                  let total = 0;
+                  
+                  const hasPartyPart = selectedEventType && eventData.selectedParts.some((partId: string) => {
+                    const part = selectedEventType.parts?.find((p: any) => p.id === partId);
+                    return part && part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                  });
+                  
+                  if (eventData.selectedParts.length > 0 && selectedEventType) {
+                    eventData.selectedParts.forEach((partId) => {
+                      const part = selectedEventType.parts.find((p: any) => p.id === partId);
+                      if (part) {
+                        let partPrice = 0;
+                        if (part.pricingRanges && part.pricingRanges.length > 0) {
+                          const applicableRange = part.pricingRanges.find((range: any) => 
+                            eventData.attendees >= range.minAttendees && 
+                            eventData.attendees <= range.maxAttendees
+                          );
+                          
+                          // Si no hay rango exacto, buscar el rango más cercano
+                          if (!applicableRange) {
+                            const sortedRanges = [...part.pricingRanges].sort((a: any, b: any) => a.minAttendees - b.minAttendees);
+                            const closestRange = sortedRanges.reverse().find((range: any) => 
+                              eventData.attendees >= range.minAttendees
+                            );
+                            partPrice = closestRange ? closestRange.price : (sortedRanges[0]?.price || 0);
+                          } else {
+                            partPrice = applicableRange.price;
+                          }
+                        }
+                        
+                        const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                        if (isPartyPart && eventData.selectedPack) {
+                          const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+                          if (pack) {
+                            partPrice = Number(pack.pricePerDay) + Number(pack.shippingCost || 0) + Number(pack.installationCost || 0);
+                          }
+                        }
+                        
+                        total += partPrice;
+                      }
+                    });
+                  }
+                  
+                  if (eventData.selectedPack && !hasPartyPart) {
+                    const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
+                    if (pack) {
+                      total += Number(pack.pricePerDay) + Number(pack.shippingCost || 0) + Number(pack.installationCost || 0);
+                    }
+                  }
+                  
+                  Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
+                    const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
+                    if (product) {
+                      total += (Number(product.pricePerDay) + Number(product.shippingCost || 0) + Number(product.installationCost || 0)) * quantity;
+                    }
+                  });
+                  
+                  const reservaAmount = total * 0.25;
+                  const isEligibleForInstallments = total > 500;
+                  
+                  return (
+                    <button
+                      onClick={handleAddToCartAndCheckout}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex flex-col items-center justify-center gap-1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        {isEligibleForInstallments ? (
+                          <span>💳 Reservar Ahora (25%)</span>
+                        ) : (
+                          <span>📋 Tramitar Reserva</span>
+                        )}
+                      </div>
+                      {isEligibleForInstallments && (
+                        <span className="text-sm font-normal">Solo pagas: €{reservaAmount.toFixed(2)}</span>
+                      )}
+                    </button>
+                  );
+                })()}
                 
                 {/* Divisor */}
                 <div className="relative my-4">
@@ -1440,21 +1917,15 @@ const EventCalculatorPage = () => {
                   </div>
                 </div>
                 
-                {/* Existente: Solicitar Presupuesto */}
+                {/* Botón de contacto */}
                 <button
-                  onClick={handleRequestQuote}
+                  onClick={() => setShowContactModal(true)}
                   className="w-full bg-resona hover:bg-resona-dark text-white font-semibold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <Mail className="w-5 h-5" />
-                  Solicitar Presupuesto Personalizado
+                  ¿Tienes dudas? Deja tu contacto y te llamamos!
                 </button>
-                <button
-                  onClick={() => navigate('/productos')}
-                  className="w-full bg-white hover:bg-gray-50 text-resona border-2 border-resona font-semibold py-4 rounded-lg transition-all flex items-center justify-center gap-2"
-                >
-                  <Package className="w-5 h-5" />
-                  Ver Productos en el Catálogo
-                </button>
+                
                 <button
                   onClick={() => setStep(1)}
                   className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg transition-all"
@@ -1503,6 +1974,117 @@ const EventCalculatorPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Modal de Contacto */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 relative animate-fade-in">
+            {/* Botón cerrar */}
+            <button
+              onClick={() => setShowContactModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Título */}
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              ¿Tienes dudas?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Déjanos tus datos y te llamaremos para resolver todas tus preguntas
+            </p>
+
+            {/* Formulario */}
+            <form onSubmit={(e) => { e.preventDefault(); handleContactRequest(); }} className="space-y-4">
+              {/* Nombre */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={contactData.name}
+                  onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  placeholder="Tu nombre"
+                  required
+                />
+              </div>
+
+              {/* Teléfono */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Teléfono <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={contactData.phone}
+                  onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  placeholder="+34 XXX XXX XXX"
+                  required
+                />
+              </div>
+
+              {/* Email (opcional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span className="text-gray-400">(opcional)</span>
+                </label>
+                <input
+                  type="email"
+                  value={contactData.email}
+                  onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  placeholder="tu@email.com"
+                />
+              </div>
+
+              {/* Mensaje (opcional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mensaje <span className="text-gray-400">(opcional)</span>
+                </label>
+                <textarea
+                  value={contactData.message}
+                  onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent resize-none"
+                  rows={3}
+                  placeholder="¿Alguna pregunta específica?"
+                />
+              </div>
+
+              {/* Botones */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowContactModal(false)}
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-resona hover:bg-resona-dark text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+
+            {/* Info adicional */}
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs text-blue-800">
+                <strong>📞 Te llamaremos en menos de 24h</strong><br/>
+                Horario: Lunes a Viernes de 9:00 a 18:00
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

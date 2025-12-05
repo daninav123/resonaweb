@@ -8,23 +8,30 @@ interface CategorySidebarProps {
 
 const getCategoryIcon = (slug: string) => {
   const icons: { [key: string]: string } = {
-    'fotografia-video': '📷',
-    'sonido': '🎵',
+    'fotografia-video': '📹',
+    'sonido': '🔊',
     'iluminacion': '💡',
     'equipamiento-dj': '🎧',
     'mobiliario': '🪑',
-    'elementos-escenario': '🎭',
-    'mesas-mezcla': '🎚️',
+    'elementos-escenario': '🎪',
+    'mesas-mezcla': '🎛️',
     'microfonia': '🎤',
-    'efectos-especiales': '✨',
+    'efectos-especiales': '🎆',
     'energia-distribucion': '⚡',
     'pantallas-proyeccion': '📺',
-    'elementos-decorativos': '🎨',
+    'elementos-decorativos': '✨',
     'backline': '🎸',
     'cables-conectores': '🔌',
     'comunicaciones': '📡',
+    'packs': '📦',
+    'estructuras': '🏗️',
+    'control-sonido': '🎚️',
+    'control-iluminacion': '🕯️',
+    'generacion-y-distribucion': '🔌',
+    'pantallas-y-proteccion': '🛡️',
+    'cableado': '🔗',
   };
-  return icons[slug] || '📦';
+  return icons[slug] || '🎉';
 };
 
 export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange }: CategorySidebarProps) => {
@@ -53,7 +60,26 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
         </button>
 
         {/* Category List */}
-        {categories && categories.map((category: any) => (
+        {categories && categories
+          .filter((category: any) => 
+            // Filtrar categorías que no queremos mostrar
+            !category.name?.toLowerCase().includes('eventos personalizados') &&
+            !category.name?.toLowerCase().includes('personal') &&
+            !category.isHidden // No mostrar categorías ocultas
+          )
+          .sort((a: any, b: any) => {
+            // Ordenar por sortOrder (menor = primero)
+            const orderA = a.sortOrder !== undefined ? a.sortOrder : 999;
+            const orderB = b.sortOrder !== undefined ? b.sortOrder : 999;
+            
+            // Si ambos tienen el mismo sortOrder, ordenar alfabéticamente
+            if (orderA === orderB) {
+              return (a.name || '').localeCompare(b.name || '');
+            }
+            
+            return orderA - orderB;
+          })
+          .map((category: any) => (
           <button
             key={category.id}
             onClick={() => onCategoryChange(category.slug)}
@@ -69,21 +95,6 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
             </span>
           </button>
         ))}
-      </div>
-
-      {/* Additional filters section */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Filtros rápidos</h3>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-900">
-            <input type="checkbox" className="rounded text-resona focus:ring-resona" />
-            <span>Solo disponibles</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-900">
-            <input type="checkbox" className="rounded text-resona focus:ring-resona" />
-            <span>Ofertas especiales</span>
-          </label>
-        </div>
       </div>
     </div>
   );

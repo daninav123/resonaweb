@@ -33,7 +33,25 @@ class PackService {
       };
     }
 
-    // Verificar cada producto del pack
+    // ⭐ Verificar si la reserva es con más de 30 días de antelación
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const daysUntilEvent = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Si la reserva es con más de 30 días, siempre está disponible (tiempo para adquirir stock)
+    if (daysUntilEvent > 30) {
+      return {
+        available: true,
+        packName: pack.name,
+        totalProducts: pack.items.length,
+        message: 'Pack disponible - Reserva con suficiente antelación (más de 30 días)',
+        daysUntilEvent,
+      };
+    }
+
+    // Para reservas con menos de 30 días, verificar stock real de cada producto del pack
     const unavailableProducts = [];
     
     for (const item of pack.items) {
@@ -114,11 +132,29 @@ class PackService {
 
   /**
    * Obtener todos los packs activos con su disponibilidad
+   * @param startDate - Fecha de inicio opcional
+   * @param endDate - Fecha de fin opcional
+   * @param includeMontajes - Si es true, incluye montajes (para calculadora). Por defecto false.
    */
-  async getActivePacks(startDate?: Date, endDate?: Date) {
+  async getActivePacks(startDate?: Date, endDate?: Date, includeMontajes: boolean = false) {
+    // Construir el where dinámicamente
+    const whereClause: any = { 
+      isActive: true
+    };
+    
+    // Si NO queremos montajes (catálogo público), excluirlos
+    if (!includeMontajes) {
+      whereClause.categoryRef = {
+        name: {
+          not: 'Montaje'
+        }
+      };
+    }
+    
     const packs = await prisma.pack.findMany({
-      where: { isActive: true },
+      where: whereClause,
       include: {
+        categoryRef: true,
         items: {
           include: {
             product: {
@@ -170,6 +206,7 @@ class PackService {
     const packs = await prisma.pack.findMany({
       // No filtramos por isActive, mostramos todos
       include: {
+        categoryRef: true,
         items: {
           include: {
             product: {
@@ -262,8 +299,6 @@ class PackService {
         // Desglose
         breakdown: {
           basePricePerDay: Number(pack.basePricePerDay),
-          baseShippingCost: Number(pack.baseShippingCost),
-          baseInstallationCost: Number(pack.baseInstallationCost),
           discountPercentage: Number(pack.discountPercentage),
           discountAmount: Number(pack.discountAmount),
         },
@@ -327,14 +362,13 @@ class PackService {
   async createPack(data: {
     name: string;
     description: string;
-    category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'OTROS';
+    categoryId: string;
+    category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'EXTRAS' | 'OTROS';
     discountPercentage?: number;
     discountAmount?: number;
     customFinalPrice?: number;
     transportCost?: number;
     autoCalculate?: boolean;
-    includeShipping?: boolean;
-    includeInstallation?: boolean;
     partsPricing?: Record<string, { price: number; included: boolean }> | null;
     enablePartsPricing?: boolean;
     basePrice?: number;
@@ -342,13 +376,44 @@ class PackService {
     imageUrl?: string;
     featured?: boolean;
   }) {
-    console.log('🆕 Creando nuevo pack:', { name: data.name, discountAmount: data.discountAmount });
-    console.log('📦 Items recibidos para crear:', data.items);
+    try {
+      console.log('🆕 Creando nuevo pack:', { name: data.name, discountAmount: data.discountAmount });
+      console.log('📦 Items recibidos para crear:', data.items);
+      
+      // Validar que todos los productos existen
+      for (const item of data.items) {
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+          select: { id: true, name: true }
+        });
+        if (!product) {
+          throw new AppError(400, `Producto no encontrado: ${item.productId}`, 'PRODUCT_NOT_FOUND');
+        }
+        console.log(`✓ Producto validado: ${product.name}`);
+      }
 
     const slug = data.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+
+    // Verificar si ya existe un pack con este slug
+    const existingPack = await prisma.pack.findUnique({
+      where: { slug }
+    });
+
+    if (existingPack) {
+      throw new AppError(
+        400, 
+        `Ya existe un pack con el nombre "${data.name}". Por favor, usa un nombre diferente.`,
+        'PACK_NAME_DUPLICATE'
+      );
+    }
+
+    // Obtener la categoría para determinar si es MONTAJE (privado)
+    const category = await prisma.category.findUnique({
+      where: { id: data.categoryId }
+    });
 
     // Crear pack temporalmente para calcular precio
     const pack = await prisma.pack.create({
@@ -356,6 +421,7 @@ class PackService {
         name: data.name,
         slug,
         description: data.description,
+        categoryId: data.categoryId,
         category: data.category || 'OTROS',
         discountPercentage: new Prisma.Decimal(data.discountPercentage || 0),
         discountAmount: new Prisma.Decimal(data.discountAmount || 0),
@@ -364,13 +430,9 @@ class PackService {
         customPriceEnabled: !!data.customFinalPrice,
         finalPrice: data.customFinalPrice ? new Prisma.Decimal(data.customFinalPrice) : 0, // Se calculará después
         basePricePerDay: 0,
-        baseShippingCost: 0,
-        baseInstallationCost: 0,
         calculatedTotalPrice: 0,
         imageUrl: data.imageUrl,
         featured: data.featured || false,
-        includeShipping: data.includeShipping !== false, // Por defecto true
-        includeInstallation: data.includeInstallation !== false, // Por defecto true
         partsPricing: data.partsPricing || null,
         enablePartsPricing: data.enablePartsPricing || false,
         basePrice: data.basePrice ? new Prisma.Decimal(data.basePrice) : null,
@@ -412,37 +474,47 @@ class PackService {
     });
 
     // Crear un producto "proxy" para que el pack sea visible en el catálogo público
-    console.log('📦 Creando producto proxy para el pack...');
-    const packsCategoryId = (await prisma.category.findFirst({
-      where: { name: 'PACKS' }
-    }))?.id;
+    // EXCEPTO para montajes, que son privados (solo admin)
+    if (category?.name?.toLowerCase() !== 'montaje') {
+      console.log('📦 Creando producto proxy para el pack...');
+      const packsCategoryId = (await prisma.category.findFirst({
+        where: { name: 'PACKS' }
+      }))?.id;
 
-    if (packsCategoryId) {
-      const finalPrice = updatedPack!.finalPrice || new Prisma.Decimal(0);
-      const finalPriceNum = Number(finalPrice);
-      await prisma.product.create({
-        data: {
-          name: data.name,
-          sku: `PACK-${pack.id.substring(0, 8).toUpperCase()}`,
-          slug: `pack-${slug}`,
-          description: data.description,
-          categoryId: packsCategoryId,
-          isPack: true,
-          pricePerDay: new Prisma.Decimal(finalPriceNum),
-          pricePerWeekend: new Prisma.Decimal(finalPriceNum),
-          pricePerWeek: new Prisma.Decimal(finalPriceNum * 5),
-          mainImageUrl: data.imageUrl,
-          featured: data.featured || false,
-          isActive: true,
-          stock: 999,
-          realStock: 999,
-        }
-      });
-      console.log('✅ Producto proxy creado para el pack');
+      if (packsCategoryId) {
+        const finalPrice = updatedPack!.finalPrice || new Prisma.Decimal(0);
+        const finalPriceNum = Number(finalPrice);
+        await prisma.product.create({
+          data: {
+            name: data.name,
+            sku: `PACK-${pack.id.substring(0, 8).toUpperCase()}`,
+            slug: `pack-${slug}`,
+            description: data.description,
+            categoryId: packsCategoryId,
+            isPack: true,
+            pricePerDay: new Prisma.Decimal(finalPriceNum),
+            pricePerWeekend: new Prisma.Decimal(finalPriceNum),
+            pricePerWeek: new Prisma.Decimal(finalPriceNum * 5),
+            mainImageUrl: data.imageUrl,
+            featured: data.featured || false,
+            isActive: true,
+            stock: 999,
+            realStock: 999,
+          }
+        });
+        console.log('✅ Producto proxy creado para el pack');
+      }
+    } else {
+      console.log('🚚 Pack de MONTAJE - NO se crea producto proxy (privado)');
     }
 
-    logger.info(`Pack created: ${updatedPack!.name} with ${updatedPack!.items.length} products`);
-    return updatedPack;
+      logger.info(`Pack created: ${updatedPack!.name} with ${updatedPack!.items.length} products`);
+      return updatedPack;
+    } catch (error: any) {
+      console.error('❌ ERROR creando pack:', error);
+      console.error('Stack:', error.stack);
+      throw error;
+    }
   }
 
   /**
@@ -453,7 +525,8 @@ class PackService {
     data: {
       name?: string;
       description?: string;
-      category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'OTROS';
+      categoryId?: string;
+      category?: 'BODAS' | 'EVENTOS_PRIVADOS' | 'CONCIERTOS' | 'EVENTOS_CORPORATIVOS' | 'CONFERENCIAS' | 'MONTAJE' | 'EXTRAS' | 'OTROS';
       discountPercentage?: number;
       discountAmount?: number;
       customFinalPrice?: number;
@@ -462,8 +535,6 @@ class PackService {
       imageUrl?: string;
       featured?: boolean;
       isActive?: boolean;
-      includeShipping?: boolean;
-      includeInstallation?: boolean;
       partsPricing?: Record<string, { price: number; included: boolean }> | null;
       enablePartsPricing?: boolean;
       basePrice?: number;
@@ -485,8 +556,26 @@ class PackService {
       const updateData: any = {};
       
       if (data.name) {
+        const newSlug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        
+        // Verificar si ya existe otro pack con este slug (excluyendo el actual)
+        const existingPack = await prisma.pack.findFirst({
+          where: { 
+            slug: newSlug,
+            id: { not: packId }
+          }
+        });
+
+        if (existingPack) {
+          throw new AppError(
+            400, 
+            `Ya existe otro pack con el nombre "${data.name}". Por favor, usa un nombre diferente.`,
+            'PACK_NAME_DUPLICATE'
+          );
+        }
+
         updateData.name = data.name;
-        updateData.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        updateData.slug = newSlug;
       }
       if (data.description) updateData.description = data.description;
       if (data.discountPercentage !== undefined) updateData.discountPercentage = new Prisma.Decimal(data.discountPercentage);
@@ -503,8 +592,6 @@ class PackService {
       if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
       if (data.featured !== undefined) updateData.featured = data.featured;
       if (data.isActive !== undefined) updateData.isActive = data.isActive;
-      if (data.includeShipping !== undefined) updateData.includeShipping = data.includeShipping;
-      if (data.includeInstallation !== undefined) updateData.includeInstallation = data.includeInstallation;
       if (data.category !== undefined) updateData.category = data.category;
       if (data.partsPricing !== undefined) updateData.partsPricing = data.partsPricing;
       if (data.enablePartsPricing !== undefined) updateData.enablePartsPricing = data.enablePartsPricing;

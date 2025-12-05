@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 interface CheckoutFormProps {
   clientSecret: string;
   amount: number;
-  onSuccess: () => void;
+  onSuccess: (paymentIntentId?: string) => void;
   onError: (error: string) => void;
   billingDetails?: {
     name?: string;
@@ -58,12 +58,13 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
         
         if (paymentIntent.status === 'succeeded') {
           console.log('✅ Pago completado exitosamente');
+          console.log('💳 Payment Intent ID:', paymentIntent.id);
           toast.success('¡Pago realizado con éxito!');
-          onSuccess();
+          onSuccess(paymentIntent.id);
         } else if (paymentIntent.status === 'processing') {
           console.log('⏳ Pago en procesamiento...');
           toast.info('El pago está siendo procesado');
-          onSuccess(); // También llamar onSuccess para procesar el pago
+          onSuccess(paymentIntent.id); // También llamar onSuccess para procesar el pago
         } else if (paymentIntent.status === 'requires_payment_method') {
           console.warn('⚠️ Se requiere método de pago');
           toast.error('Por favor, verifica tu método de pago');
@@ -101,6 +102,9 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
                 name: 'never',
               }
             },
+            terms: {
+              card: 'never', // Ocultar opción de guardar tarjeta
+            }
           }}
         />
       </div>

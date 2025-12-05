@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   Tag,
   Grid,
+  Layers,
   ExternalLink,
   Home,
   Menu,
@@ -41,6 +42,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const menuItems = [
     { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
     { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
+    { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
     { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
     { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
@@ -52,6 +54,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/montajes', icon: Truck, label: 'Montajes' },
     { path: '/admin/categories', icon: Grid, label: 'Categorías' },
     { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
+    { path: '/admin/extra-categories', icon: Layers, label: 'Categorías de Extras' },
     { path: '/admin/users', icon: Users, label: 'Usuarios' },
     { path: '/admin/coupons', icon: Tag, label: 'Cupones' },
     { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },

@@ -219,10 +219,21 @@ const Header = () => {
                 </li>
                 <li className="pt-2">
                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-                    Por categoría ({categories.length})
+                    Por categoría ({categories.filter((cat: any) => 
+                      !cat.name?.toLowerCase().includes('eventos personalizados') &&
+                      !cat.name?.toLowerCase().includes('personal') &&
+                      !cat.isHidden
+                    ).length})
                   </div>
                 </li>
-                {categories.map((cat: any) => (
+                {categories
+                  .filter((cat: any) => 
+                    // Filtrar categorías que no queremos mostrar
+                    !cat.name?.toLowerCase().includes('eventos personalizados') &&
+                    !cat.name?.toLowerCase().includes('personal') &&
+                    !cat.isHidden // No mostrar categorías ocultas
+                  )
+                  .map((cat: any) => (
                   <li key={cat.id}>
                     <Link 
                       to={`/productos?category=${cat.slug}`} 
@@ -242,15 +253,6 @@ const Header = () => {
               >
                 <Calendar className="w-4 h-4" />
                 Calculadora de Eventos
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/productos?category=packs"
-                className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors flex items-center gap-1"
-              >
-                <Package className="w-4 h-4" />
-                Packs
               </Link>
             </li>
             <li>

@@ -41,7 +41,8 @@ export const calculatePaymentBreakdown = (
   deliveryOption: 'pickup' | 'delivery',
   userLevel?: 'STANDARD' | 'VIP' | 'VIP_PLUS' | null,
   vipDiscount: number = 0,
-  hasShippingInstallation: boolean = false // NUEVO: indica si productos incluyen transporte/montaje
+  hasShippingInstallation: boolean = false, // Indica si productos incluyen transporte/montaje
+  isFromCalculator: boolean = false // 💳 NUEVO: indica si viene de calculadora
 ): PaymentBreakdown => {
   // VIP users: No deposit
   const isVIP = userLevel === 'VIP' || userLevel === 'VIP_PLUS';
@@ -54,7 +55,19 @@ export const calculatePaymentBreakdown = (
   const tax = beforeTax * 0.21; // IVA 21%
   const total = beforeTax + tax;
   
-  // TODOS pagan 100% online al reservar
+  // 💳 PAGO A PLAZOS: Si viene de calculadora y total > 500€ → Solo pagar 25%
+  const isEligibleForInstallments = total > 500;
+  
+  let payNow = total; // Por defecto: pagar todo
+  let payLater = 0;
+  
+  // Si viene de calculadora y es elegible para plazos: Solo pagar 25%
+  if (isFromCalculator && isEligibleForInstallments) {
+    payNow = total * 0.25; // 25% de reserva
+    payLater = total * 0.75; // 75% restante
+    console.log('💳 CALCULANDO PAGO DE RESERVA:', { total, payNow, payLater, isFromCalculator, isEligible: isEligibleForInstallments });
+  }
+  
   // La fianza se cobra en tienda (no online)
   const deposit = requiresDeposit ? calculateDeposit(subtotal) : 0;
   
@@ -64,8 +77,8 @@ export const calculatePaymentBreakdown = (
     tax,
     total,
     deposit, // Fianza que se cobrará en tienda
-    payNow: total, // 100% ahora online (todos)
-    payLater: 0, // Nada más que pagar después (solo fianza en tienda)
+    payNow, // 25% si es de calculadora y > 500€, sino 100%
+    payLater, // 75% si es de calculadora y > 500€, sino 0
     requiresDeposit, // VIP o productos con transporte/montaje no requieren fianza
   };
 };

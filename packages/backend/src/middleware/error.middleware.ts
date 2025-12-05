@@ -6,6 +6,8 @@ interface ErrorResponse {
     code: string;
     message: string;
     details?: any;
+    stack?: string;
+    originalError?: string;
   };
 }
 
@@ -28,10 +30,14 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log('🔴 ERROR MIDDLEWARE ACTIVADO');
+  console.log('🔴 ============ ERROR MIDDLEWARE ACTIVADO ============');
   console.log('🔴 Tipo de error:', err.name);
   console.log('🔴 Mensaje:', err.message);
   console.log('🔴 URL:', req.method, req.url);
+  console.log('🔴 Stack trace completo:');
+  console.log(err.stack);
+  console.log('🔴 Body:', JSON.stringify(req.body, null, 2));
+  console.log('🔴 ===================================================');
   
   // Log error
   logger.error({
@@ -50,7 +56,7 @@ export const errorHandler = (
   let statusCode = 500;
   let code = 'INTERNAL_ERROR';
   let message = 'Ha ocurrido un error interno del servidor';
-  let details = undefined;
+  let details = err.message; // Incluir el mensaje original del error
 
   // Handle different error types
   if (err instanceof AppError) {
@@ -91,9 +97,14 @@ export const errorHandler = (
     error: {
       code,
       message,
-      ...(process.env.NODE_ENV === 'development' && { details }),
+      ...(process.env.NODE_ENV === 'development' && { 
+        details,
+        stack: err.stack,
+        originalError: err.message,
+      }),
     },
   };
 
+  console.log('🔴 Enviando respuesta de error:', JSON.stringify(errorResponse, null, 2));
   res.status(statusCode).json(errorResponse);
 };

@@ -4,6 +4,8 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
 import { ProductImageManager } from '../../components/admin/ProductImageManager';
+import { useTableSort } from '../../hooks/useTableSort';
+import { SortableTableHeader } from '../../components/admin/SortableTableHeader';
 
 interface Product {
   id: string;
@@ -98,6 +100,20 @@ const ProductsManager = () => {
       }
     }
   }, [searchParams, products]);
+
+  // Filtrar productos por búsqueda y categoría
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.sku.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = !selectedCategory || product.category?.name === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Ordenamiento de tabla
+  const { sortedItems, requestSort, getSortIcon } = useTableSort(filteredProducts, {
+    field: 'name',
+    direction: 'asc'
+  });
 
   const loadPackById = async (packId: string) => {
     try {
@@ -206,31 +222,49 @@ const ProductsManager = () => {
     }
 
     try {
-      // Preparar datos del producto
+      // Preparar datos del producto - SOLO enviar campos necesarios
       const productData: any = {
-        ...formData,
+        name: formData.name,
+        sku: formData.sku,
+        description: formData.description || '',
+        categoryId: formData.categoryId,
+        stock: formData.stock || 0,
+        realStock: formData.realStock || 0,
+        stockStatus: formData.stockStatus || 'IN_STOCK',
+        leadTimeDays: formData.leadTimeDays || 0,
+        shippingCost: formData.shippingCost || 0,
+        installationCost: formData.installationCost || 0,
+        installationTimeMinutes: formData.installationTimeMinutes || 0,
+        requiresInstallation: formData.requiresInstallation || false,
+        installationComplexity: formData.installationComplexity || 1,
+        isPack: formData.isPack || false,
+        isConsumable: formData.isConsumable || false,
       };
 
       // Solo calcular precios de alquiler si NO es consumible
       if (!formData.isConsumable) {
-        productData.pricePerWeekend = formData.pricePerDay; // Fin de semana = mismo precio que 1 día
-        productData.pricePerWeek = formData.pricePerDay * 5; // 5x para semana completa
+        productData.pricePerDay = formData.pricePerDay || 0;
+        productData.pricePerWeekend = formData.pricePerDay || 0; // Fin de semana = mismo precio que 1 día
+        productData.pricePerWeek = (formData.pricePerDay || 0) * 5; // 5x para semana completa
+        // NO enviar pricePerUnit para productos no consumibles
       } else {
         // Para consumibles, asegurar que los campos de alquiler estén en 0
         productData.pricePerDay = 0;
         productData.pricePerWeekend = 0;
         productData.pricePerWeek = 0;
+        productData.pricePerUnit = formData.pricePerUnit || 0;
       }
       
-      // Limpiar campos opcionales vacíos que causan problemas con Prisma
-      if (!productData.purchaseDate || productData.purchaseDate === '') {
-        delete productData.purchaseDate;
+      // Campos opcionales - solo enviar si tienen valor
+      if (formData.purchaseDate && formData.purchaseDate !== '') {
+        productData.purchaseDate = formData.purchaseDate;
       }
-      if (!productData.purchasePrice || productData.purchasePrice === 0) {
-        delete productData.purchasePrice;
+      if (formData.purchasePrice && formData.purchasePrice > 0) {
+        productData.purchasePrice = formData.purchasePrice;
       }
       
-      console.log('📤 Enviando nuevo producto:', productData);
+      console.log('📤 Enviando nuevo producto:');
+      console.log(JSON.stringify(productData, null, 2));
       console.log('🔄 Antes del api.post...');
       
       const response = await api.post('/products', productData);
@@ -452,21 +486,6 @@ const ProductsManager = () => {
     setPackComponents([]);
   };
 
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.sku?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || p.category?.name === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-resona"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-4">
@@ -614,30 +633,44 @@ const ProductsManager = () => {
           <table className="w-full table-auto">
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Producto
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Categoría
-                </th>
+                <SortableTableHeader
+                  label="Producto"
+                  field="name"
+                  sortIcon={getSortIcon('name')}
+                  onSort={requestSort}
+                  className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                />
+                <SortableTableHeader
+                  label="Categoría"
+                  field="category.name"
+                  sortIcon={getSortIcon('category.name')}
+                  onSort={requestSort}
+                  className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                />
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   SKU
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  €/día
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Precio Compra
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Envío
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Instalación
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
+                <SortableTableHeader
+                  label="€/día"
+                  field="pricePerDay"
+                  sortIcon={getSortIcon('pricePerDay')}
+                  onSort={requestSort}
+                  className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                />
+                <SortableTableHeader
+                  label="Precio Compra"
+                  field="purchasePrice"
+                  sortIcon={getSortIcon('purchasePrice')}
+                  onSort={requestSort}
+                  className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                />
+                <SortableTableHeader
+                  label="Stock"
+                  field="stock"
+                  sortIcon={getSortIcon('stock')}
+                  onSort={requestSort}
+                  className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                />
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
                 </th>
@@ -646,14 +679,14 @@ const ProductsManager = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     {searchTerm || selectedCategory 
                       ? 'No se encontraron productos con los filtros aplicados' 
                       : 'No hay productos. Crea el primero.'}
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product) => (
+                sortedItems.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="px-3 py-2">
                       <div className="text-sm font-medium text-gray-900">
@@ -683,17 +716,8 @@ const ProductsManager = () => {
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                       {product.purchasePrice ? `€${product.purchasePrice}` : '-'}
                     </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                      {product.shippingCost ? `€${product.shippingCost}` : '-'}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                      {product.installationCost ? `€${product.installationCost}` : '-'}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                      {product.stock}
-                      {product.stockStatus === 'ON_DEMAND' && (
-                        <span className="ml-1 text-xs text-yellow-600">BD</span>
-                      )}
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                      {product.stock || 0}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                       <button 
@@ -894,86 +918,6 @@ const ProductsManager = () => {
                   </div>
                 </div>
 
-                {/* Sección de Envío e Instalación */}
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">🚚 Envío e Instalación</h3>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Coste de Envío (€)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.shippingCost}
-                        onChange={(e) => setFormData({...formData, shippingCost: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Coste adicional por unidad</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Coste de Instalación (€)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.installationCost}
-                        onChange={(e) => setFormData({...formData, installationCost: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Coste por montaje/unidad</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mt-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Tiempo de Instalación (min)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.installationTimeMinutes}
-                        onChange={(e) => setFormData({...formData, installationTimeMinutes: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Complejidad (1-4)
-                      </label>
-                      <select
-                        value={formData.installationComplexity}
-                        onChange={(e) => setFormData({...formData, installationComplexity: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                      >
-                        <option value={1}>1 - Simple</option>
-                        <option value={2}>2 - Medio</option>
-                        <option value={3}>3 - Complejo</option>
-                        <option value={4}>4 - Avanzado</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.requiresInstallation}
-                        onChange={(e) => setFormData({...formData, requiresInstallation: e.target.checked})}
-                        className="w-4 h-4 text-resona rounded focus:ring-resona"
-                      />
-                      <span className="text-sm text-gray-700">Requiere instalación obligatoria</span>
-                    </label>
-                  </div>
-                </div>
-
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
@@ -1150,161 +1094,81 @@ const ProductsManager = () => {
                   </div>
                 </div>
 
-                {/* Sección de Envío e Instalación */}
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">🚚 Envío e Instalación</h3>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Coste de Envío (€)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.shippingCost}
-                        onChange={(e) => setFormData({...formData, shippingCost: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Coste adicional por unidad</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Coste de Instalación (€)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.installationCost}
-                        onChange={(e) => setFormData({...formData, installationCost: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Coste por montaje/unidad</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mt-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Tiempo de Instalación (min)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.installationTimeMinutes}
-                        onChange={(e) => setFormData({...formData, installationTimeMinutes: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                        min="0"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Complejidad (1-4)
-                      </label>
-                      <select
-                        value={formData.installationComplexity}
-                        onChange={(e) => setFormData({...formData, installationComplexity: Number(e.target.value)})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
-                      >
-                        <option value={1}>1 - Simple</option>
-                        <option value={2}>2 - Medio</option>
-                        <option value={3}>3 - Complejo</option>
-                        <option value={4}>4 - Avanzado</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.requiresInstallation}
-                        onChange={(e) => setFormData({...formData, requiresInstallation: e.target.checked})}
-                        className="w-4 h-4 text-resona rounded focus:ring-resona"
-                      />
-                      <span className="text-sm text-gray-700">Requiere instalación obligatoria</span>
-                    </label>
-                  </div>
-
-                  {/* Gestión de componentes del pack */}
-                  {formData.isPack && (
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <h4 className="font-semibold text-blue-900 mb-3">Componentes del Pack</h4>
-                      
-                      {packComponents.length > 0 ? (
-                        <div className="space-y-2 mb-3">
-                          {packComponents.map((comp: any, idx) => (
-                            <div key={idx} className="flex items-center justify-between bg-white p-2 rounded border">
-                              <span className="text-sm">
-                                <strong>{comp.quantity}x</strong> {comp.componentName || products.find(p => p.id === comp.componentId)?.name}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => removeComponent(comp.componentId)}
-                                className="text-red-600 hover:text-red-800"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-600 mb-3">No hay componentes añadidos</p>
-                      )}
-
-                      {showAddComponent ? (
-                        <div className="bg-white p-3 rounded border space-y-2">
-                          <select
-                            value={newComponent.componentId}
-                            onChange={(e) => setNewComponent({...newComponent, componentId: e.target.value})}
-                            className="w-full px-3 py-2 border rounded-lg"
-                          >
-                            <option value="">Seleccionar producto...</option>
-                            {products.filter(p => p.id !== selectedProduct?.id).map(p => (
-                              <option key={p.id} value={p.id}>{p.name}</option>
-                            ))}
-                          </select>
-                          <input
-                            type="number"
-                            min="1"
-                            value={newComponent.quantity}
-                            onChange={(e) => setNewComponent({...newComponent, quantity: parseInt(e.target.value) || 1})}
-                            placeholder="Cantidad"
-                            className="w-full px-3 py-2 border rounded-lg"
-                          />
-                          <div className="flex gap-2">
+                {/* Gestión de componentes del pack */}
+                {formData.isPack && (
+                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 className="font-semibold text-blue-900 mb-3">Componentes del Pack</h4>
+                    
+                    {packComponents.length > 0 ? (
+                      <div className="space-y-2 mb-3">
+                        {packComponents.map((comp: any, idx) => (
+                          <div key={idx} className="flex items-center justify-between bg-white p-2 rounded border">
+                            <span className="text-sm">
+                              <strong>{comp.quantity}x</strong> {comp.componentName || products.find(p => p.id === comp.componentId)?.name}
+                            </span>
                             <button
                               type="button"
-                              onClick={addComponentToPack}
-                              className="flex-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                              onClick={() => removeComponent(comp.componentId)}
+                              className="text-red-600 hover:text-red-800"
                             >
-                              Añadir
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setShowAddComponent(false)}
-                              className="flex-1 px-3 py-1 border rounded hover:bg-gray-50"
-                            >
-                              Cancelar
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setShowAddComponent(true)}
-                          className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-600 mb-3">No hay componentes añadidos</p>
+                    )}
+
+                    {showAddComponent ? (
+                      <div className="bg-white p-3 rounded border space-y-2">
+                        <select
+                          value={newComponent.componentId}
+                          onChange={(e) => setNewComponent({...newComponent, componentId: e.target.value})}
+                          className="w-full px-3 py-2 border rounded-lg"
                         >
-                          <Plus className="w-4 h-4" />
-                          Añadir Componente
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                          <option value="">Seleccionar producto...</option>
+                          {products.filter(p => p.id !== selectedProduct?.id).map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="number"
+                          min="1"
+                          value={newComponent.quantity}
+                          onChange={(e) => setNewComponent({...newComponent, quantity: parseInt(e.target.value) || 1})}
+                          placeholder="Cantidad"
+                          className="w-full px-3 py-2 border rounded-lg"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={addComponentToPack}
+                            className="flex-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Añadir
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowAddComponent(false)}
+                            className="flex-1 px-3 py-1 border rounded hover:bg-gray-50"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowAddComponent(true)}
+                        className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Añadir Componente
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {/* Sección de Estadísticas de Compra (solo admin) */}
                 <div className="border-t pt-4 mt-4">

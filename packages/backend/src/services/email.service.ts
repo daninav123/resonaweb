@@ -409,6 +409,200 @@ export class EmailService {
     
     return templates[templateName] || '<p>{{data}}</p>';
   }
+
+  /**
+   * Send installment payment reminder
+   */
+  async sendInstallmentReminderEmail(installment: any, order: any, daysUntilDue: number) {
+    try {
+      const userName = order.user?.firstName 
+        ? `${order.user.firstName} ${order.user.lastName || ''}`
+        : order.user?.email || 'Cliente';
+
+      const subject = `Recordatorio: Pago de plazo ${installment.installmentNumber}/3 próximo a vencer`;
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #5ebbff;">Recordatorio de Pago a Plazos</h2>
+          
+          <p>Hola ${userName},</p>
+          
+          <p>Te recordamos que tienes un pago pendiente para tu pedido <strong>#${order.orderNumber}</strong>.</p>
+          
+          <div style="background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #856404;">📅 Plazo ${installment.installmentNumber}/3 (${installment.percentage}%)</h3>
+            <p style="margin: 10px 0;"><strong>Monto:</strong> €${Number(installment.amount).toFixed(2)}</p>
+            <p style="margin: 10px 0;"><strong>Fecha de vencimiento:</strong> ${new Date(installment.dueDate).toLocaleDateString('es-ES', { 
+              day: 'numeric', 
+              month: 'long', 
+              year: 'numeric' 
+            })}</p>
+            <p style="margin: 10px 0;"><strong>⏰ Vence en ${daysUntilDue} ${daysUntilDue === 1 ? 'día' : 'días'}</strong></p>
+          </div>
+
+          <p><strong>Detalles del evento:</strong></p>
+          <ul>
+            <li>Tipo de evento: ${order.eventType || 'Evento'}</li>
+            <li>Fecha del evento: ${new Date(order.startDate).toLocaleDateString('es-ES')}</li>
+            <li>Total del pedido: €${Number(order.total).toFixed(2)}</li>
+          </ul>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.FRONTEND_URL || 'https://resona.com'}/mis-pedidos/${order.id}" 
+               style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+              💳 Pagar Ahora
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 14px;">
+            <strong>Nota:</strong> Este pago se procesará automáticamente si has configurado un método de pago recurrente. 
+            De lo contrario, por favor realiza el pago antes de la fecha de vencimiento.
+          </p>
+
+          <p>Gracias por confiar en ReSona Eventos.</p>
+        </div>
+      `;
+
+      await this.send({
+        to: order.user.email,
+        subject,
+        html
+      });
+
+      logger.info(`Installment reminder sent for order ${order.orderNumber}, installment ${installment.installmentNumber}`);
+    } catch (error) {
+      logger.error('Error sending installment reminder email:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send installment overdue notification
+   */
+  async sendInstallmentOverdueEmail(installment: any, order: any) {
+    try {
+      const userName = order.user?.firstName 
+        ? `${order.user.firstName} ${order.user.lastName || ''}`
+        : order.user?.email || 'Cliente';
+
+      const subject = `⚠️ Plazo vencido - Pedido #${order.orderNumber}`;
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #dc3545;">⚠️ Plazo de Pago Vencido</h2>
+          
+          <p>Hola ${userName},</p>
+          
+          <p>Lamentamos informarte que el plazo de pago ${installment.installmentNumber}/3 para tu pedido <strong>#${order.orderNumber}</strong> ha vencido.</p>
+          
+          <div style="background-color: #f8d7da; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #721c24;">💳 Plazo ${installment.installmentNumber}/3 - VENCIDO</h3>
+            <p style="margin: 10px 0;"><strong>Monto pendiente:</strong> €${Number(installment.amount).toFixed(2)}</p>
+            <p style="margin: 10px 0;"><strong>Fecha de vencimiento:</strong> ${new Date(installment.dueDate).toLocaleDateString('es-ES', { 
+              day: 'numeric', 
+              month: 'long', 
+              year: 'numeric' 
+            })}</p>
+            <p style="margin: 10px 0; color: #dc3545;"><strong>Estado:</strong> Vencido</p>
+          </div>
+
+          <p>Por favor, realiza el pago lo antes posible para evitar cargos adicionales o la cancelación de tu pedido.</p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.FRONTEND_URL || 'https://resona.com'}/mis-pedidos/${order.id}" 
+               style="background-color: #dc3545; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+              💳 Pagar Ahora
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 14px;">
+            Si ya has realizado el pago, por favor ignora este mensaje. Si tienes alguna duda o necesitas ayuda, 
+            <a href="mailto:${process.env.BUSINESS_EMAIL || 'info@resona.com'}">contáctanos</a>.
+          </p>
+
+          <p>Gracias por tu comprensión.</p>
+        </div>
+      `;
+
+      await this.send({
+        to: order.user.email,
+        subject,
+        html
+      });
+
+      logger.info(`Installment overdue notification sent for order ${order.orderNumber}, installment ${installment.installmentNumber}`);
+    } catch (error) {
+      logger.error('Error sending installment overdue email:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send installment paid confirmation
+   */
+  async sendInstallmentPaidEmail(installment: any, order: any) {
+    try {
+      const userName = order.user?.firstName 
+        ? `${order.user.firstName} ${order.user.lastName || ''}`
+        : order.user?.email || 'Cliente';
+
+      const subject = `✅ Pago confirmado - Plazo ${installment.installmentNumber}/3`;
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #28a745;">✅ Pago Confirmado</h2>
+          
+          <p>Hola ${userName},</p>
+          
+          <p>Hemos recibido correctamente el pago del plazo ${installment.installmentNumber}/3 para tu pedido <strong>#${order.orderNumber}</strong>.</p>
+          
+          <div style="background-color: #d4edda; padding: 15px; border-left: 4px solid #28a745; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #155724;">💳 Plazo ${installment.installmentNumber}/3 - PAGADO</h3>
+            <p style="margin: 10px 0;"><strong>Monto:</strong> €${Number(installment.amount).toFixed(2)}</p>
+            <p style="margin: 10px 0;"><strong>Fecha de pago:</strong> ${new Date(installment.paidDate || new Date()).toLocaleDateString('es-ES', { 
+              day: 'numeric', 
+              month: 'long', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
+          </div>
+
+          <p><strong>Resumen de plazos:</strong></p>
+          <ul>
+            ${order.installments?.map((inst: any, idx: number) => `
+              <li>
+                Plazo ${idx + 1}/3 (${inst.percentage}%): €${Number(inst.amount).toFixed(2)} - 
+                <strong style="color: ${inst.status === 'COMPLETED' ? '#28a745' : '#ffc107'}">
+                  ${inst.status === 'COMPLETED' ? '✓ Pagado' : '⏳ Pendiente'}
+                </strong>
+              </li>
+            `).join('') || ''}
+          </ul>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.FRONTEND_URL || 'https://resona.com'}/mis-pedidos/${order.id}" 
+               style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+              📋 Ver Detalles del Pedido
+            </a>
+          </div>
+
+          <p>Gracias por tu pago puntual. ¡Estamos deseando hacer de tu evento un éxito!</p>
+        </div>
+      `;
+
+      await this.send({
+        to: order.user.email,
+        subject,
+        html
+      });
+
+      logger.info(`Installment paid confirmation sent for order ${order.orderNumber}, installment ${installment.installmentNumber}`);
+    } catch (error) {
+      logger.error('Error sending installment paid email:', error);
+      throw error;
+    }
+  }
 }
 
 export const emailService = new EmailService();

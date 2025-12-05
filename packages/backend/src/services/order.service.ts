@@ -3,6 +3,7 @@ import { prisma } from '../index';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import { cartService } from './cart.service';
+import { InstallmentService } from './installment.service';
 
 interface OrderItem {
   productId: string;
@@ -32,21 +33,54 @@ interface CreateOrderData {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  // Campos para pago a plazos
+  eligibleForInstallments?: boolean;
+  isCalculatorEvent?: boolean;
 }
 
 export class OrderService {
   /**
    * Calculate VIP discount based on user level
+   * EXCLUYE TODA LA CALCULADORA del descuento (equipos y montajes)
+   * Solo aplica descuento a productos individuales normales
    */
-  private calculateVIPDiscount(userLevel: string, subtotal: number): number {
-    switch (userLevel) {
-      case 'VIP':
-        return subtotal * 0.50; // 50% discount
-      case 'VIP_PLUS':
-        return subtotal * 0.70; // 70% discount
-      default:
-        return 0;
+  private calculateVIPDiscount(userLevel: string, items: any[]): number {
+    if (userLevel !== 'VIP' && userLevel !== 'VIP_PLUS') {
+      return 0;
     }
+
+    // Calcular subtotal SOLO de productos normales (NO de calculadora)
+    let subtotalProductosNormales = 0;
+
+    for (const item of items) {
+      // Si el item tiene eventMetadata (viene de calculadora)
+      if (item.eventMetadata) {
+        const metadata = item.eventMetadata;
+        const partsTotal = Number(metadata.partsTotal || 0);
+        const extrasTotal = Number(metadata.extrasTotal || 0);
+        const totalCalculadora = partsTotal + extrasTotal;
+        
+        // NO incluir NADA de la calculadora en el descuento VIP
+        logger.info(`❌ Item de CALCULADORA - SIN descuento VIP: Equipos €${partsTotal} + Montajes €${extrasTotal} = €${totalCalculadora}`);
+      } else {
+        // Para productos normales, SÍ incluir el precio completo
+        const totalProducto = Number(item.totalPrice || 0);
+        subtotalProductosNormales += totalProducto;
+        logger.info(`✅ Producto NORMAL - CON descuento VIP: €${totalProducto}`);
+      }
+    }
+
+    logger.info(`💰 Subtotal SOLO productos normales (para descuento VIP): €${subtotalProductosNormales.toFixed(2)}`);
+
+    // Aplicar descuento según nivel SOLO sobre productos normales
+    const discountRate = userLevel === 'VIP' ? 0.50 : 0.70;
+    const discount = subtotalProductosNormales * discountRate;
+    
+    if (subtotalProductosNormales === 0) {
+      logger.info('ℹ️ Solo hay items de calculadora - NO hay descuento VIP');
+    }
+    
+    return discount;
   }
 
   /**
@@ -156,26 +190,26 @@ export class OrderService {
       for (const item of data.items) {
         subtotal += Number(item.totalPrice || 0);
       }
+
+      // Apply VIP discount ANTES de calcular IVA (excluye montajes de calculadora)
+      const vipDiscount = this.calculateVIPDiscount(user.userLevel, data.items);
+      const subtotalAfterDiscount = subtotal - vipDiscount;
       
-      // Calcular IVA sobre subtotal + envío
+      // Calcular IVA sobre (subtotal CON descuento + envío)
       const taxRate = 0.21;
-      const tax = (subtotal + deliveryCost) * taxRate;
+      const tax = (subtotalAfterDiscount + deliveryCost) * taxRate;
       
       const totals = {
         subtotal,
         deliveryCost,
         tax,
-        total: subtotal + deliveryCost + tax
+        total: subtotalAfterDiscount + deliveryCost + tax
       };
-
-      // Apply VIP discount
-      const vipDiscount = this.calculateVIPDiscount(user.userLevel, totals.subtotal);
-      const subtotalAfterDiscount = totals.subtotal - vipDiscount;
 
       // Calculate deposit (VIP users don't pay)
       const depositAmount = await this.calculateDeposit(user.userLevel, data.items);
 
-      // Recalculate total with VIP discount
+      // Total final
       const finalTotal = subtotalAfterDiscount + totals.deliveryCost + totals.tax;
 
       // Generate order number
@@ -257,6 +291,14 @@ export class OrderService {
             eventType: data.eventType,
             eventLocation: JSON.stringify({ address: data.deliveryAddress || 'PICKUP' }),
             attendees: data.attendees,
+            
+            // Campos para pago a plazos
+            eligibleForInstallments: data.eligibleForInstallments || false,
+            isCalculatorEvent: data.isCalculatorEvent || false,
+            
+            // Vincular con Payment Intent de Stripe
+            stripePaymentIntentId: (data as any).stripePaymentIntentId || null,
+            
             items: {
               create: data.items.map(item => {
                 // Calcular días de alquiler
@@ -277,6 +319,7 @@ export class OrderService {
                   totalPrice: item.totalPrice,
                   startDate: item.startDate,
                   endDate: item.endDate,
+                  notes: (item as any).notes || null, // Notas específicas del producto
                 };
               }),
             },
@@ -310,6 +353,54 @@ export class OrderService {
       });
 
       logger.info(`Order created: ${orderNumber} for user ${data.userId}`);
+
+      // Crear plazos de pago si es elegible
+      if (data.eligibleForInstallments && data.isCalculatorEvent && finalTotal > 500) {
+        try {
+          logger.info(`Creating installment plan for order ${order.id} - Total: €${finalTotal}`);
+          const installmentService = new InstallmentService(prisma);
+          
+          // Obtener fecha del evento (primera fecha de inicio de los items)
+          const eventDate = data.items[0]?.startDate || new Date();
+          
+          await installmentService.createInstallments(
+            order.id,
+            finalTotal,
+            eventDate
+          );
+          
+          logger.info(`✅ Installment plan created successfully for order ${order.id}`);
+          
+          // Marcar el primer plazo como PAGADO (el pago ya se realizó antes de crear la orden)
+          const stripePaymentIntentId = (data as any).stripePaymentIntentId;
+          if (stripePaymentIntentId) {
+            try {
+              // Obtener el primer installment
+              const firstInstallment = await prisma.paymentInstallment.findFirst({
+                where: {
+                  orderId: order.id,
+                  installmentNumber: 1
+                }
+              });
+              
+              if (firstInstallment) {
+                await installmentService.markInstallmentAsPaid(
+                  firstInstallment.id,
+                  stripePaymentIntentId,
+                  undefined // chargeId no disponible aquí
+                );
+                logger.info(`✅ First installment marked as PAID for order ${order.id}`);
+              }
+            } catch (markError) {
+              logger.error('❌ Error marking first installment as paid:', markError);
+            }
+          }
+        } catch (installmentError) {
+          logger.error('❌ Error creating installments:', installmentError);
+          // No fallar la creación de la orden si falla la creación de plazos
+          // El admin puede crearlos manualmente después
+        }
+      }
 
       return order;
     } catch (error) {
@@ -403,6 +494,11 @@ export class OrderService {
               },
               payment: true,
               invoice: true,
+              installments: {
+                orderBy: {
+                  installmentNumber: 'asc'
+                }
+              },
             },
           })
         : await prisma.order.findUnique({
@@ -428,6 +524,11 @@ export class OrderService {
               },
               payment: true,
               invoice: true,
+              installments: {
+                orderBy: {
+                  installmentNumber: 'asc'
+                }
+              },
             },
           });
 
@@ -713,6 +814,11 @@ export class OrderService {
               },
             },
             payment: true,
+            installments: {
+              orderBy: {
+                installmentNumber: 'asc'
+              }
+            },
           },
         }),
         prisma.order.count({ where }),

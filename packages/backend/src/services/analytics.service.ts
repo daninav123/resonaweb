@@ -580,16 +580,18 @@ export class AnalyticsService {
    */
   async getProductAmortization() {
     try {
-      // Get all active products with purchase info
+      // Get all active products with purchase lots
       const products = await prisma.product.findMany({
         where: {
           isActive: true,
           isPack: false,
-          purchasePrice: {
-            not: null,
-          },
         },
         include: {
+          purchases: {
+            orderBy: {
+              purchaseDate: 'asc', // FIFO: Los más antiguos primero
+            },
+          },
           orderItems: {
             where: {
               order: {
@@ -600,6 +602,7 @@ export class AnalyticsService {
             },
             select: {
               totalPrice: true,
+              createdAt: true,
             },
           },
         },
@@ -608,34 +611,80 @@ export class AnalyticsService {
         },
       });
 
+      // Filtrar solo productos que tengan lotes
+      const productsWithLots = products.filter(p => p.purchases.length > 0);
+
       // Calculate amortization for each product
-      const amortizationData = products.map(product => {
-        const purchasePrice = Number(product.purchasePrice || 0);
+      const amortizationData = productsWithLots.map(product => {
+        // Calcular totales globales del producto
+        const totalInvestment = product.purchases.reduce(
+          (sum, lot) => sum + Number(lot.totalCost),
+          0
+        );
+        
         const totalGenerated = product.orderItems.reduce(
           (sum, item) => sum + Number(item.totalPrice || 0),
           0
         );
-        
-        const amortizationPercentage = purchasePrice > 0 
-          ? Math.min((totalGenerated / purchasePrice) * 100, 100)
+
+        // Calcular amortización por lote usando FIFO
+        const lots = product.purchases.map(lot => {
+          const lotCost = Number(lot.totalCost);
+          let lotGenerated = Number(lot.totalGenerated || 0);
+          
+          const lotAmortizationPercentage = lotCost > 0 
+            ? Math.min((lotGenerated / lotCost) * 100, 100)
+            : 0;
+          
+          const lotRemaining = Math.max(lotCost - lotGenerated, 0);
+          const lotIsAmortized = lotGenerated >= lotCost;
+          const lotProfit = lotIsAmortized ? lotGenerated - lotCost : 0;
+
+          return {
+            id: lot.id,
+            purchaseDate: lot.purchaseDate,
+            quantity: lot.quantity,
+            unitPrice: Number(lot.unitPrice),
+            totalCost: lotCost,
+            totalGenerated: lotGenerated,
+            amortizationPercentage: Math.round(lotAmortizationPercentage * 100) / 100,
+            remaining: lotRemaining,
+            isAmortized: lotIsAmortized,
+            profit: lotProfit,
+            supplier: lot.supplier,
+            invoiceNumber: lot.invoiceNumber,
+            notes: lot.notes,
+          };
+        });
+
+        // Calcular métricas globales del producto
+        const globalAmortizationPercentage = totalInvestment > 0 
+          ? Math.min((totalGenerated / totalInvestment) * 100, 100)
           : 0;
         
-        const remaining = Math.max(purchasePrice - totalGenerated, 0);
-        const isAmortized = totalGenerated >= purchasePrice;
-        const profit = isAmortized ? totalGenerated - purchasePrice : 0;
+        const globalRemaining = Math.max(totalInvestment - totalGenerated, 0);
+        const globalIsAmortized = totalGenerated >= totalInvestment;
+        const globalProfit = globalIsAmortized ? totalGenerated - totalInvestment : 0;
 
         return {
           id: product.id,
           name: product.name,
           sku: product.sku,
-          purchasePrice,
+          // Métricas globales
+          totalInvestment,
           totalGenerated,
-          amortizationPercentage: Math.round(amortizationPercentage * 100) / 100,
-          remaining,
-          isAmortized,
-          profit,
+          amortizationPercentage: Math.round(globalAmortizationPercentage * 100) / 100,
+          remaining: globalRemaining,
+          isAmortized: globalIsAmortized,
+          profit: globalProfit,
           timesRented: product.orderItems.length,
-          purchaseDate: product.purchaseDate,
+          // Información de lotes
+          lots,
+          totalLots: lots.length,
+          lotsAmortized: lots.filter(l => l.isAmortized).length,
+          // Mantener compatibilidad con vista antigua
+          purchasePrice: lots[0]?.unitPrice || 0, // Mostrar precio del primer lote
+          purchaseDate: lots[0]?.purchaseDate,
         };
       });
 

@@ -14,6 +14,10 @@ import {
   Activity,
   Clock,
   Target,
+  Search,
+  X,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 const StatisticsPage = () => {
@@ -21,6 +25,12 @@ const StatisticsPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState<'7' | '30' | '90'>('30');
   const [activeTab, setActiveTab] = useState<'general' | 'inventory' | 'amortization'>('general');
+  
+  // Filtros y ordenamiento para amortización
+  const [amortizationFilter, setAmortizationFilter] = useState<'all' | 'amortized' | 'not-amortized'>('all');
+  const [amortizationSort, setAmortizationSort] = useState<'percentage' | 'profit' | 'name'>('percentage');
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
+  const [amortizationSearch, setAmortizationSearch] = useState('');
 
   useEffect(() => {
     loadStatistics();
@@ -453,11 +463,119 @@ const StatisticsPage = () => {
               <p className="text-gray-500 text-lg">No hay productos con precio de compra configurado</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {productAmortization.map((product: any) => (
+            <>
+              {/* Buscador */}
+              <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre de producto o SKU..."
+                    value={amortizationSearch}
+                    onChange={(e) => setAmortizationSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                  />
+                  {amortizationSearch && (
+                    <button
+                      onClick={() => setAmortizationSearch('')}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Controles de filtro y ordenamiento */}
+              <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Filtrar por estado:</label>
+                  <select
+                    value={amortizationFilter}
+                    onChange={(e) => setAmortizationFilter(e.target.value as any)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                  >
+                    <option value="all">Todos los productos</option>
+                    <option value="amortized">✅ Amortizados (generando beneficio)</option>
+                    <option value="not-amortized">⏳ No amortizados</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por:</label>
+                  <select
+                    value={amortizationSort}
+                    onChange={(e) => setAmortizationSort(e.target.value as any)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                  >
+                    <option value="percentage">% de Amortización (menor primero)</option>
+                    <option value="profit">💰 Beneficio Generado (mayor primero)</option>
+                    <option value="name">📝 Nombre (A-Z)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {(() => {
+                // Filtrar productos por búsqueda
+                let filtered = productAmortization.filter((product: any) => {
+                  const searchLower = amortizationSearch.toLowerCase();
+                  return (
+                    product.name.toLowerCase().includes(searchLower) ||
+                    product.sku.toLowerCase().includes(searchLower)
+                  );
+                });
+
+                // Filtrar por estado
+                filtered = filtered.filter((product: any) => {
+                  if (amortizationFilter === 'amortized') return product.isAmortized;
+                  if (amortizationFilter === 'not-amortized') return !product.isAmortized;
+                  return true;
+                });
+
+                // Ordenar productos
+                filtered = [...filtered].sort((a: any, b: any) => {
+                  if (amortizationSort === 'percentage') {
+                    return a.amortizationPercentage - b.amortizationPercentage;
+                  } else if (amortizationSort === 'profit') {
+                    return b.profit - a.profit;
+                  } else {
+                    return a.name.localeCompare(b.name);
+                  }
+                });
+
+                return filtered.map((product: any) => {
+                  const isExpanded = expandedProducts.has(product.id);
+                  const hasMultipleLots = product.lots && product.lots.length > 1;
+                  
+                  return (
                 <div key={product.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                  <h3 className="font-bold text-gray-900 mb-1 text-lg truncate">{product.name}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{product.sku}</p>
+                  <div className="flex items-start justify-between mb-1">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900 text-lg truncate">{product.name}</h3>
+                      <p className="text-sm text-gray-500">{product.sku}</p>
+                    </div>
+                    {hasMultipleLots && (
+                      <button
+                        onClick={() => {
+                          const newExpanded = new Set(expandedProducts);
+                          if (isExpanded) {
+                            newExpanded.delete(product.id);
+                          } else {
+                            newExpanded.add(product.id);
+                          }
+                          setExpandedProducts(newExpanded);
+                        }}
+                        className="ml-2 text-resona hover:text-resona-dark"
+                      >
+                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </button>
+                    )}
+                  </div>
+                  {hasMultipleLots && (
+                    <p className="text-xs text-gray-600 mb-4">
+                      {product.lots.length} lotes de compra
+                    </p>
+                  )}
                   
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
@@ -472,14 +590,24 @@ const StatisticsPage = () => {
                     
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">
-                        {product.isAmortized ? 'Beneficio:' : 'Falta:'}
+                        {product.isAmortized ? 'Falta:' : 'Falta:'}
                       </span>
                       <span className={`font-bold text-lg ${product.isAmortized ? 'text-green-600' : 'text-red-600'}`}>
                         {product.isAmortized 
-                          ? `+€${product.profit.toLocaleString()}` 
+                          ? '€0 ✓' 
                           : `-€${product.remaining.toLocaleString()}`}
                       </span>
                     </div>
+                    
+                    {/* Beneficio Generado (solo si está amortizado) */}
+                    {product.isAmortized && (
+                      <div className="flex justify-between text-sm bg-green-50 -mx-5 px-5 py-2">
+                        <span className="text-green-700 font-medium">💰 Beneficio Generado:</span>
+                        <span className="font-bold text-lg text-green-600">
+                          +€{product.profit.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
                     
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Veces Alquilado:</span>
@@ -509,10 +637,83 @@ const StatisticsPage = () => {
                         <p className="text-center text-sm text-green-600 font-bold mt-2">✓ AMORTIZADO</p>
                       )}
                     </div>
+                    
+                    {/* Mostrar lotes individuales si está expandido */}
+                    {isExpanded && product.lots && product.lots.length > 0 && (
+                      <div className="mt-4 pt-4 border-t">
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">
+                          Lotes Individuales ({product.lots.length})
+                        </h4>
+                        <div className="space-y-3">
+                          {product.lots.map((lot: any, index: number) => {
+                            const lotCost = Number(lot.totalCost);
+                            const lotGenerated = Number(lot.totalGenerated);
+                            const lotPercentage = lotCost > 0 ? Math.min((lotGenerated / lotCost) * 100, 100) : 0;
+                            const lotAmortized = lotGenerated >= lotCost;
+                            
+                            return (
+                              <div key={lot.id} className={`p-3 rounded-lg border ${lotAmortized ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex justify-between items-start mb-2">
+                                  <div>
+                                    <p className="text-xs font-bold text-gray-700">
+                                      Lote #{product.lots.length - index}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {new Date(lot.purchaseDate).toLocaleDateString('es-ES')}
+                                    </p>
+                                  </div>
+                                  {lotAmortized && (
+                                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                                      ✓
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                <div className="space-y-1 text-xs mb-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Cantidad:</span>
+                                    <span className="font-medium">{lot.quantity} unid.</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Coste:</span>
+                                    <span className="font-bold">€{lotCost.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Generado:</span>
+                                    <span className="font-bold text-blue-600">€{lotGenerated.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">
+                                      {lotAmortized ? 'Beneficio:' : 'Falta:'}
+                                    </span>
+                                    <span className={`font-bold ${lotAmortized ? 'text-green-600' : 'text-red-600'}`}>
+                                      {lotAmortized ? '+' : '-'}€{Math.abs(lotCost - lotGenerated).toLocaleString()}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className={`h-2 rounded-full ${lotAmortized ? 'bg-green-500' : 'bg-orange-500'}`}
+                                    style={{ width: `${lotPercentage}%` }}
+                                  />
+                                </div>
+                                <p className="text-xs text-center mt-1 font-medium">
+                                  {lotPercentage.toFixed(0)}% amortizado
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
+              );
+                });
+              })()}
             </div>
+            </>
           )}
         </>
       )}
