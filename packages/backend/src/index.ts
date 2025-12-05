@@ -41,6 +41,7 @@ import sitemapRouter from './routes/sitemap.routes';
 import { productPurchaseRouter } from './routes/productPurchase.routes';
 import installmentRouter from './routes/installment.routes';
 import extraCategoryRouter from './routes/extraCategory.routes';
+import contabilidadRouter from './routes/contabilidad.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -251,6 +252,7 @@ app.use('/api/v1/terminal', terminalRouter);
 app.use('/api/v1/product-purchases', productPurchaseRouter);
 app.use('/api/v1/installments', installmentRouter);
 app.use('/api/v1/extra-categories', extraCategoryRouter);
+app.use('/api/v1/contabilidad', contabilidadRouter);
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling

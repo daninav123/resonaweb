@@ -69,6 +69,7 @@ const ExtraCategoriesManager = lazy(() => import('./pages/admin/ExtraCategoriesM
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
 const PurchaseLotsManager = lazy(() => import('./pages/admin/PurchaseLotsManager'));
+const ContabilidadManager = lazy(() => import('./pages/admin/ContabilidadManager'));
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
@@ -215,6 +216,7 @@ function App() {
               <Route path="/admin/montajes" element={<AdminLayout><MontajesManager /></AdminLayout>} />
               <Route path="/admin/analytics" element={<AdminLayout><AnalyticsPage /></AdminLayout>} />
               <Route path="/admin/statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
+              <Route path="/admin/contabilidad" element={<AdminLayout><ContabilidadManager /></AdminLayout>} />
               <Route path="/admin/purchase-lots" element={<AdminLayout><PurchaseLotsManager /></AdminLayout>} />
               <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             </Route>

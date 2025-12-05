@@ -27,7 +27,8 @@ import {
   BarChart3,
   ChevronDown,
   BarChart4,
-  Zap
+  Zap,
+  PieChart
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -70,6 +71,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       items: [
         { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
         { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
+        { path: '/admin/contabilidad', icon: PieChart, label: 'Contabilidad' },
         { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
       ]
     },
