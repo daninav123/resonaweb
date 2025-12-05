@@ -49,6 +49,7 @@ enum PaymentTerm {
   FULL_UPFRONT
   PARTIAL_UPFRONT
   ON_PICKUP
+  THREE_INSTALLMENTS // 25% + 50% + 25% para eventos de calculadora
 }
 
 enum PaymentStatus {
@@ -189,6 +190,7 @@ enum PackCategory {
   EVENTOS_CORPORATIVOS
   CONFERENCIAS
   MONTAJE
+  EXTRAS
   OTROS
 }
 
@@ -309,6 +311,7 @@ model Category {
   // Relaciones
   products Product[]
   coupons  Coupon[]
+  packs    Pack[]
 
   @@index([slug])
   @@index([parentId])
@@ -324,6 +327,10 @@ model Product {
   // Categoría (opcional para packs)
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
+
+  // Categoría de Extra (para organizarlos en la calculadora)
+  extraCategoryId String?
+  extraCategory   ExtraCategory? @relation("ExtraCategoryProducts", fields: [extraCategoryId], references: [id])
 
   // Precios
   pricePerDay       Decimal @db.Decimal(10, 2)
@@ -417,7 +424,11 @@ model Product {
   // Relaciones cuando este producto ES componente de un pack
   usedInPacks ProductComponent[] @relation("ComponentInPacks")
 
+  // Historial de compras (lotes)
+  purchases ProductPurchase[]
+
   @@index([categoryId])
+  @@index([extraCategoryId])
   @@index([slug])
   @@index([stockStatus])
   @@index([isActive, featured])
@@ -445,6 +456,38 @@ model ProductComponent {
   @@unique([packId, componentId])
   @@index([packId])
   @@index([componentId])
+}
+
+// Historial de compras de productos (lotes)
+model ProductPurchase {
+  id String @id @default(uuid())
+
+  // Producto al que pertenece este lote
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Información de la compra
+  purchaseDate DateTime @default(now())
+  quantity     Int      @default(1) // Cuántas unidades se compraron en este lote
+  unitPrice    Decimal  @db.Decimal(10, 2) // Precio por unidad en esta compra
+  totalCost    Decimal  @db.Decimal(10, 2) // quantity × unitPrice
+
+  // Información adicional
+  supplier      String? // Nombre del proveedor
+  invoiceNumber String? // Número de factura
+  notes         String? @db.Text // Notas adicionales
+
+  // Amortización del lote
+  totalGenerated Decimal @default(0) @db.Decimal(10, 2) // Total generado por este lote
+  isAmortized    Boolean @default(false) // Si ya se amortizó completamente
+
+  // Auditoría
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([purchaseDate])
+  @@index([isAmortized])
 }
 
 model Pack {
@@ -479,7 +522,9 @@ model Pack {
   basePrice          Decimal? @db.Decimal(10, 2) // Precio base del pack (antes de sumar partes)
 
   // Categoría del pack
-  category PackCategory @default(OTROS) // Categoría del pack
+  category    PackCategory @default(OTROS) // Categoría del pack (enum legacy, mantener para compatibilidad)
+  categoryId  String? // ID de la categoría del producto
+  categoryRef Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   // Coste de transporte (para montajes)
   transportCost Decimal @default(0) @db.Decimal(10, 2) // Coste del transporte e instalación
@@ -630,6 +675,11 @@ model Order {
   deliveryDate  DateTime?
   deliveredAt   DateTime?
   paymentStatus PaymentStatus @default(PENDING)
+
+  // Pagos en plazos (solo para eventos de calculadora > 500€)
+  installments            PaymentInstallment[]
+  eligibleForInstallments Boolean              @default(false)
+  isCalculatorEvent       Boolean              @default(false)
 
   @@index([userId])
   @@index([status])
@@ -854,6 +904,36 @@ model Payment {
 
   @@index([orderId])
   @@index([invoiceId])
+}
+
+model PaymentInstallment {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  installmentNumber Int // 1, 2, 3
+  percentage        Decimal       @db.Decimal(5, 2) // 25.00, 50.00, 25.00
+  amount            Decimal       @db.Decimal(10, 2)
+  dueDate           DateTime
+  paidDate          DateTime?
+  status            PaymentStatus @default(PENDING)
+
+  // Stripe Integration
+  stripePaymentIntentId String? @unique
+  stripeChargeId        String?
+  paymentMethod         String? // "card", "transfer", etc.
+
+  // Metadata
+  notes        String?
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([installmentNumber])
 }
 
 model Review {
@@ -1429,7 +1509,7 @@ model QuoteRequest {
 
   // Información del cliente
   customerName  String?
-  customerEmail String
+  customerEmail String?
   customerPhone String?
 
   // Información del evento
@@ -1529,3 +1609,25 @@ model CartItem {
 
 // Relación en Product
 // Agregar a Product: cartItems CartItem[]
+
+// ============= CATEGORÍAS DE EXTRAS PARA CALCULADORA =============
+
+model ExtraCategory {
+  id          String  @id @default(uuid())
+  name        String  @unique // Ej: "Disco", "FX", "Decoración"
+  slug        String  @unique
+  icon        String  @default("📦") // Emoji o código de icono
+  color       String  @default("purple") // Color temático para la pestaña
+  description String?
+  order       Int     @default(0) // Orden de visualización
+  isActive    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  products Product[] @relation("ExtraCategoryProducts")
+
+  @@index([isActive, order])
+  @@map("extra_categories")
+}
