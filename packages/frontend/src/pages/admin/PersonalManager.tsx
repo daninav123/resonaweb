@@ -64,7 +64,8 @@ const PersonalManager = () => {
   const loadPersonal = async () => {
     try {
       setLoading(true);
-      const response: any = await api.get(`/products?categoryId=${personalCategoryId}&limit=100`);
+      // includeHidden=true para cargar productos de categoría oculta "Personal"
+      const response: any = await api.get(`/products?categoryId=${personalCategoryId}&limit=100&includeHidden=true`);
       let products = response.data || [];
 
       // Filtrar para SOLO mostrar productos de categoría "Personal"
