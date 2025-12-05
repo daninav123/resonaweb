@@ -21,7 +21,7 @@ class PackController {
       const withMontajes = includeMontajes === 'true';
 
       const packs = includeAll 
-        ? await packService.getAllPacks(start, end)
+        ? await packService.getAllPacks(start, end, withMontajes)
         : await packService.getActivePacks(start, end, withMontajes);
       
       res.json({ packs });

@@ -201,9 +201,25 @@ class PackService {
 
   /**
    * Obtener TODOS los packs (incluyendo inactivos) - para admin
+   * @param startDate - Fecha de inicio opcional
+   * @param endDate - Fecha de fin opcional
+   * @param includeMontajes - Si es true, incluye montajes (para calculadora). Por defecto false.
    */
-  async getAllPacks(startDate?: Date, endDate?: Date) {
+  async getAllPacks(startDate?: Date, endDate?: Date, includeMontajes: boolean = false) {
+    // Construir el where dinámicamente
+    const whereClause: any = {};
+    
+    // Si NO queremos montajes (admin normal), excluirlos
+    if (!includeMontajes) {
+      whereClause.categoryRef = {
+        name: {
+          not: 'Montaje'
+        }
+      };
+    }
+    
     const packs = await prisma.pack.findMany({
+      where: whereClause,
       // No filtramos por isActive, mostramos todos
       include: {
         categoryRef: true,
