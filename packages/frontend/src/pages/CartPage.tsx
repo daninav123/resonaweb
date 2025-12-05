@@ -194,7 +194,17 @@ const CartPage = () => {
     // Buscar items de eventos
     const eventItems = guestCartItems.filter((item: any) => item.eventMetadata);
 
-    if (eventItems.length === 0) return;
+    // Si no hay items de evento, limpiar las notas de eventos viejos
+    if (eventItems.length === 0) {
+      // Solo limpiar si las notas actuales parecen ser de un evento
+      if (orderNotes.includes('📅 INFORMACIÓN DEL EVENTO') || orderNotes.includes('📋 DETALLES DEL EVENTO')) {
+        console.log('🧹 Limpiando notas de eventos antiguos (no hay items de evento en el carrito)');
+        setOrderNotes('');
+        localStorage.removeItem('cartOrderNotes');
+        localStorage.removeItem('cartEventInfo');
+      }
+      return;
+    }
 
     // Autocompletar fechas si no hay fechas establecidas
     if (!globalDates.start && !globalDates.end && eventItems[0].eventMetadata?.eventDate) {
@@ -420,6 +430,19 @@ const CartPage = () => {
 
   // Nota: No usamos useQuery porque trabajamos con localStorage (guest cart)
   // El backend no persiste el carrito aún
+
+  // Limpiar datos de eventos cuando el carrito se vacía
+  useEffect(() => {
+    if (guestCartItems.length === 0) {
+      console.log('🧹 Carrito vacío - Limpiando datos de eventos');
+      localStorage.removeItem('cartFromCalculator');
+      localStorage.removeItem('cartIncludesShippingInstallation');
+      localStorage.removeItem('cartEventDates');
+      localStorage.removeItem('cartEventInfo');
+      localStorage.removeItem('cartOrderNotes');
+      setOrderNotes('');
+    }
+  }, [guestCartItems.length]);
 
   const calculateDays = (startDate: string, endDate: string) => {
     if (!startDate || !endDate) return 0;
