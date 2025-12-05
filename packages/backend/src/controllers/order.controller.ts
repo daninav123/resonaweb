@@ -106,20 +106,26 @@ export class OrderController {
       const { id } = req.params;
       const { status } = req.body;
 
+      console.log('📝 Actualizando estado del pedido:', { orderId: id, newStatus: status });
+
       // Validar que el estado existe
-      const validStatuses = Object.values(OrderStatus);
+      const validStatuses: OrderStatus[] = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
       
       if (!status) {
+        console.error('❌ Estado no proporcionado');
         throw new AppError(400, 'Estado requerido', 'STATUS_REQUIRED');
       }
 
       if (!validStatuses.includes(status as OrderStatus)) {
+        console.error('❌ Estado inválido:', status, 'Estados válidos:', validStatuses);
         throw new AppError(
           400, 
           `Estado inválido. Estados válidos: ${validStatuses.join(', ')}`, 
           'INVALID_STATUS'
         );
       }
+
+      console.log('✅ Estado válido:', status);
 
       // Only admin can update any order
       const userId = req.user.role === 'ADMIN' || req.user.role === 'SUPERADMIN' ? undefined : req.user.id;

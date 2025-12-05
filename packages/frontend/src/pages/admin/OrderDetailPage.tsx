@@ -40,18 +40,27 @@ const OrderDetailPage = () => {
     },
   });
 
+  // Función auxiliar para cerrar modal de estado
+  const handleCloseStatusModal = () => {
+    setShowStatusModal(false);
+    setNewStatus('');
+  };
+
   // Mutation para cambiar estado
   const updateStatusMutation = useMutation({
     mutationFn: async (status: string) => {
+      console.log('📤 Enviando actualización de estado:', status);
       return await api.patch(`/orders/${id}/status`, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-order-detail', id] });
       toast.success('Estado actualizado correctamente');
-      setShowStatusModal(false);
+      handleCloseStatusModal();
     },
-    onError: () => {
-      toast.error('Error al actualizar estado');
+    onError: (error: any) => {
+      console.error('❌ Error al actualizar estado:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Error al actualizar estado';
+      toast.error(errorMessage);
     },
   });
 
@@ -918,7 +927,7 @@ const OrderDetailPage = () => {
 
               <div className="flex gap-3">
                 <button
-                  onClick={() => setShowStatusModal(false)}
+                  onClick={handleCloseStatusModal}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancelar
