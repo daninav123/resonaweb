@@ -129,8 +129,8 @@ const MontajesManager = () => {
 
   const loadProducts = async () => {
     try {
-      // Cargar TODOS los productos sin límite
-      const response: any = await api.get('/products?limit=1000');
+      // Cargar TODOS los productos sin límite - includeHidden=true para ver Personal, etc.
+      const response: any = await api.get('/products?limit=1000&includeHidden=true');
       console.log('Respuesta de productos:', response);
 
       let prods = [];

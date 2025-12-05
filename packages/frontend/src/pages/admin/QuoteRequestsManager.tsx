@@ -93,7 +93,8 @@ const QuoteRequestsManager = () => {
 
   const loadProducts = async () => {
     try {
-      const response: any = await api.get('/products?limit=1000');
+      // includeHidden=true para ver productos de categorías ocultas (Personal, etc.)
+      const response: any = await api.get('/products?limit=1000&includeHidden=true');
       let prods = [];
       if (Array.isArray(response)) {
         prods = response;

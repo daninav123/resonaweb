@@ -61,6 +61,7 @@ export class ProductService {
     where?: Prisma.ProductWhereInput;
     orderBy?: Prisma.ProductOrderByWithRelationInput;
     include?: Prisma.ProductInclude;
+    includeHidden?: boolean; // Nuevo parámetro para admin
   }) {
     const { 
       skip = 0, 
@@ -69,13 +70,18 @@ export class ProductService {
       orderBy = { createdAt: 'desc' },
       include = {
         category: true,
-      }
+      },
+      includeHidden = false
     } = params || {};
 
     // Merge where conditions - always include isActive and exclude hidden categories and proxy products
     const finalWhere: Prisma.ProductWhereInput = {
       isActive: true,
-      category: {
+      category: includeHidden ? {
+        name: {
+          not: 'PACKS' // Excluir productos proxy de packs
+        }
+      } : {
         isHidden: false, // Excluir productos de categorías ocultas (Personal, Montaje, etc.)
         name: {
           not: 'PACKS' // Excluir productos proxy de packs
@@ -480,9 +486,10 @@ export class ProductService {
     // Generate slug if not provided
     const slug = data.slug || slugify(data.name, { lower: true, strict: true });
 
-    // Check if SKU or slug already exists
+    // Check if SKU or slug already exists (solo en productos ACTIVOS)
     const existing = await prisma.product.findFirst({
       where: {
+        isActive: true, // Solo verificar productos activos
         OR: [
           { sku: data.sku },
           { slug },
@@ -492,9 +499,9 @@ export class ProductService {
 
     if (existing) {
       if (existing.sku === data.sku) {
-        throw new AppError(409, 'Ya existe un producto con este SKU', 'SKU_EXISTS');
+        throw new AppError(409, 'Ya existe un producto ACTIVO con este SKU', 'SKU_EXISTS');
       }
-      throw new AppError(409, 'Ya existe un producto con este slug', 'SLUG_EXISTS');
+      throw new AppError(409, 'Ya existe un producto ACTIVO con este slug. Prueba con otro nombre.', 'SLUG_EXISTS');
     }
 
     // Verify category exists (solo si se proporciona categoryId)
@@ -617,25 +624,31 @@ export class ProductService {
       throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
     }
 
-    // If SKU is being changed, check it doesn't exist
+    // If SKU is being changed, check it doesn't exist (solo en activos)
     if (data.sku && data.sku !== existingProduct.sku) {
-      const skuExists = await prisma.product.findUnique({
-        where: { sku: data.sku },
+      const skuExists = await prisma.product.findFirst({
+        where: { 
+          sku: data.sku,
+          isActive: true, // Solo verificar productos activos
+        },
       });
 
       if (skuExists) {
-        throw new AppError(409, 'Ya existe un producto con este SKU', 'SKU_EXISTS');
+        throw new AppError(409, 'Ya existe un producto ACTIVO con este SKU', 'SKU_EXISTS');
       }
     }
 
-    // If slug is being changed, check it doesn't exist
+    // If slug is being changed, check it doesn't exist (solo en activos)
     if (data.slug && data.slug !== existingProduct.slug) {
-      const slugExists = await prisma.product.findUnique({
-        where: { slug: data.slug },
+      const slugExists = await prisma.product.findFirst({
+        where: { 
+          slug: data.slug,
+          isActive: true, // Solo verificar productos activos
+        },
       });
 
       if (slugExists) {
-        throw new AppError(409, 'Ya existe un producto con este slug', 'SLUG_EXISTS');
+        throw new AppError(409, 'Ya existe un producto ACTIVO con este slug', 'SLUG_EXISTS');
       }
     }
 

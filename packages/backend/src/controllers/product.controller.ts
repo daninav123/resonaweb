@@ -152,11 +152,15 @@ export class ProductController {
         return;
       }
       
+      // Permitir includeHidden para admin
+      const includeHidden = req.query.includeHidden === 'true';
+      
       const result = await productService.getAllProducts({
         skip,
         take: limit,
         orderBy,
         where,
+        includeHidden,
       });
 
       console.log('✅ Productos retornados:', result.data?.length || 0);
