@@ -48,6 +48,12 @@ const QuoteRequestsManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productFilter, setProductFilter] = useState({
+    categoryId: '',
+    search: '',
+  });
   const [formData, setFormData] = useState({
     customerName: '',
     customerEmail: '',
@@ -64,7 +70,69 @@ const QuoteRequestsManager = () => {
 
   useEffect(() => {
     loadQuoteRequests();
+    loadCategories();
+    loadProducts();
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const response: any = await api.get('/products/categories');
+      let cats = [];
+      if (Array.isArray(response)) {
+        cats = response;
+      } else if (response?.categories && Array.isArray(response.categories)) {
+        cats = response.categories;
+      } else if (response?.data && Array.isArray(response.data)) {
+        cats = response.data;
+      }
+      setCategories(cats);
+    } catch (error) {
+      console.error('Error cargando categorías:', error);
+    }
+  };
+
+  const loadProducts = async () => {
+    try {
+      const response: any = await api.get('/products?limit=1000');
+      let prods = [];
+      if (Array.isArray(response)) {
+        prods = response;
+      } else if (response?.products && Array.isArray(response.products)) {
+        prods = response.products;
+      } else if (response?.data && Array.isArray(response.data)) {
+        prods = response.data;
+      }
+      setProducts(prods);
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+    }
+  };
+
+  const getAvailableProducts = () => {
+    const montajeCategory = categories.find((c: any) => c.name?.toLowerCase() === 'montaje');
+    let filtered = products.filter(p =>
+      !p.isPack &&
+      p.categoryId !== montajeCategory?.id
+    );
+
+    if (productFilter.categoryId) {
+      filtered = filtered.filter(p => p.categoryId === productFilter.categoryId);
+    }
+
+    if (productFilter.search) {
+      const searchLower = productFilter.search.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.name?.toLowerCase().includes(searchLower) ||
+        p.sku?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered;
+  };
+
+  const isPersonalProduct = (product: any) => {
+    return product.category?.name?.toLowerCase() === 'personal';
+  };
 
   const loadQuoteRequests = async () => {
     try {
@@ -143,27 +211,29 @@ const QuoteRequestsManager = () => {
     }
   };
 
-  const addItemToQuote = (item: any) => {
-    const isPersonal = item.category?.name?.toLowerCase() === 'personal';
+  const addItemToQuote = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const isPersonal = isPersonalProduct(product);
+    const isConsumable = product.isConsumable;
     
     const newItem: QuoteItem = {
-      id: `${item.type}-${item.id}`,
-      type: item.type,
-      name: item.name,
+      id: `product-${product.id}`,
+      type: 'product',
+      name: product.name,
       quantity: isPersonal ? 0 : 1,
       numberOfPeople: isPersonal ? 1 : undefined,
       hoursPerPerson: isPersonal ? 1 : undefined,
-      pricePerDay: item.pricePerDay || 0,
-      purchasePrice: item.purchasePrice || 0,
-      totalPrice: isPersonal ? 0 : (item.pricePerDay || 0),
+      pricePerDay: isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0),
+      purchasePrice: product.purchasePrice || 0,
+      totalPrice: isPersonal ? 0 : (isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0)),
       isPersonal,
-      isConsumable: item.isConsumable,
-      category: item.category?.name,
+      isConsumable,
+      category: product.category?.name,
     };
 
     setQuoteItems([...quoteItems, newItem]);
-    setSearchTerm('');
-    setSearchResults([]);
   };
 
   const updateItemPersonal = (id: string, numberOfPeople: number, hoursPerPerson: number) => {
@@ -705,47 +775,75 @@ const QuoteRequestsManager = () => {
                   <Package className="w-4 h-4 text-blue-600" />
                   Buscar y Añadir Productos
                 </h3>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    searchProducts(e.target.value);
-                  }}
-                  placeholder="🔍 Buscar productos, packs, montajes..."
-                  className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
-                />
 
-                <div className="bg-white border border-gray-300 rounded max-h-[400px] overflow-y-auto">
-                  {searchResults.length === 0 ? (
+                {/* Filtros */}
+                <div className="flex gap-1">
+                  <select
+                    value={productFilter.categoryId}
+                    onChange={(e) => setProductFilter({ ...productFilter, categoryId: e.target.value })}
+                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 bg-white"
+                  >
+                    <option value="">📁 Todas</option>
+                    {categories.filter(c => !c.name?.toLowerCase().includes('pack')).map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={productFilter.search}
+                    onChange={(e) => setProductFilter({ ...productFilter, search: e.target.value })}
+                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                    placeholder="🔍 Buscar..."
+                  />
+                </div>
+
+                {/* Lista de productos disponibles */}
+                <div className="bg-white border border-gray-300 rounded max-h-[500px] overflow-y-auto">
+                  {getAvailableProducts().length === 0 ? (
                     <div className="p-4 text-center text-gray-500">
                       <Package className="w-8 h-8 text-gray-400 mx-auto mb-1" />
                       <p className="text-xs">No hay productos</p>
+                      <button
+                        onClick={() => setProductFilter({ categoryId: '', search: '' })}
+                        className="mt-1 text-xs text-blue-600 hover:underline"
+                      >
+                        Limpiar
+                      </button>
                     </div>
                   ) : (
                     <div className="divide-y">
-                      {searchResults.map((item) => {
-                        const isAdded = quoteItems.some(qi => qi.id === `${item.type}-${item.id}`);
-                        const isPersonal = item.category?.name?.toLowerCase() === 'personal';
-                        const price = item.pricePerDay || 0;
-                        const unit = isPersonal ? 'hora' : 'día';
+                      {getAvailableProducts().map((product) => {
+                        const isAdded = quoteItems.some(item => item.id === `product-${product.id}`);
+                        const isPerson = isPersonalProduct(product);
+                        const isConsumable = product.isConsumable;
+                        const price = isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0);
+                        const unit = isPerson ? 'hora' : isConsumable ? 'unidad' : 'día';
+                        
                         return (
-                          <div key={`${item.type}-${item.id}`} className="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
+                          <div key={product.id} className="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1">
-                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${isPersonal ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
-                                  {isPersonal ? '👤' : '📦'}
+                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${
+                                  isPerson ? 'bg-purple-600 text-white' : isConsumable ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
+                                }`}>
+                                  {isPerson ? '👤' : isConsumable ? '🔥' : '📦'}
                                 </span>
-                                <span className="font-medium text-gray-900 text-xs truncate">{item.name}</span>
-                                <span className={`text-xs font-semibold ml-auto ${isPersonal ? 'text-purple-700' : 'text-green-700'}`}>
+                                <span className="font-medium text-gray-900 text-xs truncate">{product.name}</span>
+                                <span className={`text-xs font-semibold ml-auto ${
+                                  isPerson ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'
+                                }`}>
                                   €{price}/{unit}
                                 </span>
                               </div>
                             </div>
                             <button
-                              onClick={() => addItemToQuote(item)}
+                              onClick={() => addItemToQuote(product.id)}
                               disabled={isAdded}
-                              className={`px-2 py-0.5 rounded text-xs font-medium ml-2 ${isAdded ? 'bg-gray-200 text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                              className={`px-2 py-0.5 rounded text-xs font-medium ml-2 ${
+                                isAdded
+                                  ? 'bg-gray-200 text-gray-500'
+                                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                              }`}
                             >
                               {isAdded ? '✓' : '+'}
                             </button>
@@ -772,34 +870,69 @@ const QuoteRequestsManager = () => {
                     <p className="text-xs">Sin productos</p>
                   </div>
                 ) : (
-                  <div className="bg-white border border-gray-300 rounded max-h-[400px] overflow-y-auto divide-y divide-gray-200">
+                  <div className="bg-white border border-gray-300 rounded max-h-[500px] overflow-y-auto divide-y divide-gray-200">
                     {quoteItems.map((item) => {
                       const isPersonal = item.isPersonal;
+                      const isConsumable = item.isConsumable;
                       const effectiveQuantity = isPersonal ? (item.numberOfPeople || 1) * (item.hoursPerPerson || 1) : item.quantity;
                       return (
                         <div key={item.id} className="p-1.5">
+                          {/* Header */}
                           <div className="flex items-center justify-between gap-1 mb-1">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1">
-                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${isPersonal ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
-                                  {isPersonal ? '👤' : '📦'}
+                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${
+                                  isPersonal ? 'bg-purple-600 text-white' : isConsumable ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
+                                }`}>
+                                  {isPersonal ? '👤' : isConsumable ? '🔥' : '📦'}
                                 </span>
                                 <span className="font-medium text-xs text-gray-900 truncate">{item.name}</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
-                              <div className={`font-bold text-sm ${isPersonal ? 'text-purple-700' : 'text-green-700'}`}>
+                              <div className={`font-bold text-sm ${
+                                isPersonal ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'
+                              }`}>
                                 €{item.totalPrice.toFixed(2)}
                               </div>
                               <button onClick={() => removeItemFromQuote(item.id)} className="text-red-600 text-xs">🗑️</button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 text-xs">
-                            <span className="text-gray-600">Cant:</span>
-                            <button onClick={() => updateItemQuantity(item.id, Math.max(1, item.quantity - 1))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
-                            <input type="number" min="1" value={item.quantity} onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)} className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center" />
-                            <button onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
-                          </div>
+                          
+                          {/* Controles */}
+                          {isPersonal ? (
+                            <div className="flex items-center gap-1 text-xs">
+                              <span className="text-gray-600">P:</span>
+                              <button onClick={() => updateItemPersonal(item.id, Math.max(1, (item.numberOfPeople || 1) - 1), item.hoursPerPerson || 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.numberOfPeople || 1}
+                                onChange={(e) => updateItemPersonal(item.id, parseInt(e.target.value) || 1, item.hoursPerPerson || 1)}
+                                className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center"
+                              />
+                              <button onClick={() => updateItemPersonal(item.id, (item.numberOfPeople || 1) + 1, item.hoursPerPerson || 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                              <span className="text-gray-600 ml-1">H:</span>
+                              <button onClick={() => updateItemPersonal(item.id, item.numberOfPeople || 1, Math.max(0.5, (item.hoursPerPerson || 1) - 0.5))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                              <input
+                                type="number"
+                                min="0.5"
+                                step="0.5"
+                                value={item.hoursPerPerson || 1}
+                                onChange={(e) => updateItemPersonal(item.id, item.numberOfPeople || 1, parseFloat(e.target.value) || 1)}
+                                className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center"
+                              />
+                              <button onClick={() => updateItemPersonal(item.id, item.numberOfPeople || 1, (item.hoursPerPerson || 1) + 0.5)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                              <span className="text-purple-700 font-medium ml-auto text-xs">=&nbsp;{effectiveQuantity.toFixed(1)}h</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 text-xs">
+                              <span className="text-gray-600">Cant:</span>
+                              <button onClick={() => updateItemQuantity(item.id, Math.max(1, item.quantity - 1))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                              <input type="number" min="1" value={item.quantity} onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)} className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center" />
+                              <button onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
