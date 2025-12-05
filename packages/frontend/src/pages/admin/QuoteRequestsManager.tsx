@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, Calendar, Users, MapPin, Package, CheckCircle, Clock, XCircle, Trash2, Eye } from 'lucide-react';
+import { Mail, Phone, Calendar, Users, MapPin, Package, CheckCircle, Clock, XCircle, Trash2, Eye, Plus } from 'lucide-react';
 import { api } from '../../services/api';
 
 interface QuoteRequest {
@@ -28,6 +28,20 @@ const QuoteRequestsManager = () => {
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    eventType: '',
+    attendees: 1,
+    duration: 1,
+    durationType: 'hours',
+    eventDate: '',
+    eventLocation: '',
+    estimatedTotal: 0,
+    notes: '',
+  });
 
   useEffect(() => {
     loadQuoteRequests();
@@ -67,6 +81,39 @@ const QuoteRequestsManager = () => {
     } catch (error) {
       console.error('Error eliminando solicitud:', error);
       alert('❌ Error al eliminar la solicitud');
+    }
+  };
+
+  const createQuoteRequest = async () => {
+    if (!formData.customerName || !formData.customerEmail || !formData.eventType) {
+      alert('Por favor completa los campos obligatorios: Nombre, Email y Tipo de Evento');
+      return;
+    }
+
+    try {
+      await api.post('/quote-requests', {
+        ...formData,
+        status: 'PENDING',
+      });
+      alert('✅ Presupuesto creado correctamente');
+      setShowCreateModal(false);
+      setFormData({
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        eventType: '',
+        attendees: 1,
+        duration: 1,
+        durationType: 'hours',
+        eventDate: '',
+        eventLocation: '',
+        estimatedTotal: 0,
+        notes: '',
+      });
+      await loadQuoteRequests();
+    } catch (error) {
+      console.error('Error creando presupuesto:', error);
+      alert('❌ Error al crear el presupuesto');
     }
   };
 
@@ -116,11 +163,20 @@ const QuoteRequestsManager = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Solicitudes de Presupuesto</h1>
-        <p className="text-gray-600">
-          Gestiona las solicitudes de contacto y presupuesto de los clientes
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Solicitudes de Presupuesto</h1>
+          <p className="text-gray-600">
+            Gestiona las solicitudes de contacto y presupuesto de los clientes
+          </p>
+        </div>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 bg-resona hover:bg-resona-dark text-white px-6 py-3 rounded-lg font-medium transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          Crear Presupuesto
+        </button>
       </div>
 
       {/* Estadísticas */}
@@ -388,6 +444,167 @@ const QuoteRequestsManager = () => {
             >
               Cerrar
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para crear presupuesto */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-2xl font-bold">Crear Presupuesto</h2>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Información del cliente */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-3">Información del Cliente</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                  <input
+                    type="text"
+                    value={formData.customerName}
+                    onChange={(e) => setFormData({...formData, customerName: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    placeholder="Nombre del cliente"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    value={formData.customerEmail}
+                    onChange={(e) => setFormData({...formData, customerEmail: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    placeholder="email@ejemplo.com"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                  <input
+                    type="tel"
+                    value={formData.customerPhone}
+                    onChange={(e) => setFormData({...formData, customerPhone: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    placeholder="+34 123 456 789"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Información del evento */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-3">Información del Evento</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Evento *</label>
+                  <input
+                    type="text"
+                    value={formData.eventType}
+                    onChange={(e) => setFormData({...formData, eventType: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    placeholder="Boda, Cumpleaños, Corporativo..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Asistentes</label>
+                  <input
+                    type="number"
+                    value={formData.attendees}
+                    onChange={(e) => setFormData({...formData, attendees: parseInt(e.target.value) || 1})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    min="1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duración</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={formData.duration}
+                      onChange={(e) => setFormData({...formData, duration: parseInt(e.target.value) || 1})}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                      min="1"
+                    />
+                    <select
+                      value={formData.durationType}
+                      onChange={(e) => setFormData({...formData, durationType: e.target.value})}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    >
+                      <option value="hours">Horas</option>
+                      <option value="days">Días</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha del Evento</label>
+                  <input
+                    type="date"
+                    value={formData.eventDate}
+                    onChange={(e) => setFormData({...formData, eventDate: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+                  <input
+                    type="text"
+                    value={formData.eventLocation}
+                    onChange={(e) => setFormData({...formData, eventLocation: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                    placeholder="Dirección del evento"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Total estimado */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Total Estimado (€)</label>
+              <input
+                type="number"
+                value={formData.estimatedTotal}
+                onChange={(e) => setFormData({...formData, estimatedTotal: parseFloat(e.target.value) || 0})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            {/* Notas */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+              <textarea
+                value={formData.notes}
+                onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                rows={3}
+                placeholder="Notas adicionales sobre el evento..."
+              />
+            </div>
+
+            {/* Botones */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={createQuoteRequest}
+                className="flex-1 bg-resona hover:bg-resona-dark text-white font-medium py-3 rounded-lg transition-colors"
+              >
+                Crear Presupuesto
+              </button>
+            </div>
           </div>
         </div>
       )}
