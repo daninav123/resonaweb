@@ -568,8 +568,8 @@ const MontajesManager = () => {
         if (product) {
           const isPersonal = product.category?.name?.toLowerCase() === 'personal';
           const isConsumable = (product as any).isConsumable;
-          const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
-            ? item.numberOfPeople * item.hoursPerPerson
+          const effectiveQuantity = isPersonal
+            ? (item.numberOfPeople || 1) * (item.hoursPerPerson || 1)
             : item.quantity;
 
           if (isPersonal) {
@@ -623,8 +623,8 @@ const MontajesManager = () => {
         // Calcular cantidad efectiva:
         // - Para personal: numberOfPeople × hoursPerPerson
         // - Para equipamiento: quantity
-        const effectiveQuantity = (item.numberOfPeople && item.hoursPerPerson)
-          ? item.numberOfPeople * item.hoursPerPerson
+        const effectiveQuantity = isPersonal
+          ? (item.numberOfPeople || 1) * (item.hoursPerPerson || 1)
           : item.quantity;
 
         // Detectar si es consumible para usar el precio correcto
