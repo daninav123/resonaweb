@@ -319,7 +319,7 @@ const CartPage = () => {
       const cart = guestCart.getCart();
       
       // MIGRACIÓN AUTOMÁTICA: Actualizar productos sin stock con datos actuales
-      let needsUpdate = false;
+      let stockInfoUpdated = false; // Solo actualización de info de stock
       const itemsToRemove: string[] = [];
       
       const updatedCart = await Promise.all(
@@ -340,7 +340,7 @@ const CartPage = () => {
                 stock: productData.stock || 999, // Packs tienen stock ilimitado
                 realStock: productData.realStock || productData.stock || 999,
               };
-              needsUpdate = true;
+              stockInfoUpdated = true; // Solo actualización silenciosa de stock
             } catch (error: any) {
               // Si es 404, intentar con el otro endpoint
               if (error?.response?.status === 404) {
@@ -357,7 +357,7 @@ const CartPage = () => {
                     stock: productData.stock || 999,
                     realStock: productData.realStock || productData.stock || 999,
                   };
-                  needsUpdate = true;
+                  stockInfoUpdated = true;
                 } catch (retryError) {
                   console.warn(`⚠️ Producto/Pack no encontrado: ${item.product.name} - Marcado para eliminar`);
                   itemsToRemove.push(item.id); // Marcar para eliminar
@@ -371,26 +371,22 @@ const CartPage = () => {
         })
       );
       
-      // Eliminar productos que no existen
+      // Eliminar productos que no existen (solo si realmente hay items para eliminar)
       if (itemsToRemove.length > 0) {
         itemsToRemove.forEach(itemId => {
           guestCart.removeItem(itemId);
         });
-        needsUpdate = true;
+        // Mostrar notificación de productos eliminados
         toast.error(`${itemsToRemove.length} producto(s) ya no disponible(s) fueron eliminados del carrito`, {
           duration: 4000,
           id: 'removed-items'
         });
       }
       
-      // Si hubo actualizaciones, guardar el carrito actualizado
-      if (needsUpdate) {
+      // Si hubo actualizaciones de stock, guardar silenciosamente (sin notificación)
+      if (stockInfoUpdated && itemsToRemove.length === 0) {
         localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
-        console.log('✅ Carrito actualizado con información de stock');
-        toast.success('Carrito actualizado con información de stock actual', { 
-          duration: 2000,
-          id: 'cart-stock-update'
-        });
+        console.log('✅ Carrito actualizado con información de stock (silencioso)');
         window.dispatchEvent(new Event('cartUpdated'));
       }
       
