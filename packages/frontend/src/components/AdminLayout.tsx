@@ -24,46 +24,106 @@ import {
   Database,
   DollarSign,
   Box,
-  BarChart3
+  BarChart3,
+  ChevronDown,
+  BarChart4,
+  Zap
 } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
+interface MenuItem {
+  path?: string;
+  icon: any;
+  label: string;
+}
+
+interface MenuSection {
+  title: string;
+  icon: any;
+  items: MenuItem[];
+}
+
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['analytics']);
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
+  const isActive = (path?: string) => {
+    return path && location.pathname === path;
   };
 
-  const menuItems = [
-    { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
-    { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
-    { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
-    { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
-    { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
-    { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
-    { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
-    { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
-    { path: '/admin/products', icon: Package, label: 'Productos' },
-    { path: '/admin/packs', icon: Box, label: 'Packs' },
-    { path: '/admin/personal', icon: Users, label: 'Personal' },
-    { path: '/admin/montajes', icon: Truck, label: 'Montajes' },
-    { path: '/admin/categories', icon: Grid, label: 'Categorías' },
-    { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
-    { path: '/admin/extra-categories', icon: Layers, label: 'Categorías de Extras' },
-    { path: '/admin/users', icon: Users, label: 'Usuarios' },
-    { path: '/admin/coupons', icon: Tag, label: 'Cupones' },
-    { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
-    { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
-    { path: '/admin/blog', icon: FileText, label: 'Blog' },
-    { path: '/admin/backups', icon: Database, label: 'Backups' },
-    { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
-    { path: '/admin/settings', icon: Settings, label: 'Configuración' },
-    { path: '/admin/refunds', icon: DollarSign, label: 'Gestión de Reembolsos' },
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev =>
+      prev.includes(section)
+        ? prev.filter(s => s !== section)
+        : [...prev, section]
+    );
+  };
+
+  const menuSections: MenuSection[] = [
+    {
+      title: 'Análisis y Reportes',
+      icon: BarChart4,
+      items: [
+        { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
+        { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
+        { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
+      ]
+    },
+    {
+      title: 'Gestión de Productos',
+      icon: Package,
+      items: [
+        { path: '/admin/products', icon: Package, label: 'Productos' },
+        { path: '/admin/packs', icon: Box, label: 'Packs' },
+        { path: '/admin/personal', icon: Users, label: 'Personal' },
+        { path: '/admin/montajes', icon: Truck, label: 'Montajes' },
+        { path: '/admin/categories', icon: Grid, label: 'Categorías' },
+        { path: '/admin/extra-categories', icon: Layers, label: 'Categorías de Extras' },
+        { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
+      ]
+    },
+    {
+      title: 'Ventas y Pedidos',
+      icon: ShoppingCart,
+      items: [
+        { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
+        { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
+        { path: '/admin/coupons', icon: Tag, label: 'Cupones' },
+        { path: '/admin/refunds', icon: DollarSign, label: 'Gestión de Reembolsos' },
+      ]
+    },
+    {
+      title: 'Operaciones',
+      icon: Zap,
+      items: [
+        { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
+        { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
+        { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
+      ]
+    },
+    {
+      title: 'Documentos y Facturación',
+      icon: FileText,
+      items: [
+        { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
+        { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
+        { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
+      ]
+    },
+    {
+      title: 'Administración',
+      icon: Settings,
+      items: [
+        { path: '/admin/users', icon: Users, label: 'Usuarios' },
+        { path: '/admin/blog', icon: FileText, label: 'Blog' },
+        { path: '/admin/backups', icon: Database, label: 'Backups' },
+        { path: '/admin/settings', icon: Settings, label: 'Configuración' },
+      ]
+    },
   ];
 
   return (
@@ -108,25 +168,58 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <span className="font-semibold">Ver Sitio Web</span>
             </Link>
             
-            <nav className="space-y-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
+            <nav className="space-y-1">
+              {menuSections.map((section, index) => {
+                const SectionIcon = section.icon;
+                const isExpanded = expandedSections.includes(`section-${index}`);
+                const hasActiveItem = section.items.some(item => isActive(item.path));
                 
                 return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center gap-3 p-3 rounded transition-colors ${
-                      active 
-                        ? 'bg-resona text-white' 
-                        : 'hover:bg-gray-800'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </Link>
+                  <div key={`section-${index}`}>
+                    {/* Section Header */}
+                    <button
+                      onClick={() => toggleSection(`section-${index}`)}
+                      className={`w-full flex items-center gap-3 p-3 rounded transition-colors ${
+                        hasActiveItem
+                          ? 'bg-resona text-white'
+                          : 'hover:bg-gray-800 text-gray-300'
+                      }`}
+                    >
+                      <SectionIcon className="w-5 h-5 flex-shrink-0" />
+                      <span className="flex-1 text-left font-medium text-sm">{section.title}</span>
+                      <ChevronDown 
+                        className={`w-4 h-4 flex-shrink-0 transition-transform ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    
+                    {/* Section Items */}
+                    {isExpanded && (
+                      <div className="pl-2 space-y-1 mt-1 border-l border-gray-700">
+                        {section.items.map((item) => {
+                          const Icon = item.icon;
+                          const active = isActive(item.path);
+                          
+                          return (
+                            <Link
+                              key={item.path}
+                              to={item.path || '#'}
+                              onClick={() => setIsSidebarOpen(false)}
+                              className={`flex items-center gap-3 p-2 pl-3 rounded text-sm transition-colors ${
+                                active 
+                                  ? 'bg-resona text-white' 
+                                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                              }`}
+                            >
+                              <Icon className="w-4 h-4 flex-shrink-0" />
+                              <span>{item.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </nav>
