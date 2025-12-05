@@ -23,12 +23,25 @@ interface QuoteRequest {
   updatedAt: string;
 }
 
+interface QuoteItem {
+  id: string;
+  type: 'product' | 'pack' | 'montaje' | 'extra';
+  name: string;
+  quantity: number;
+  pricePerDay: number;
+  totalPrice: number;
+}
+
 const QuoteRequestsManager = () => {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
   const [formData, setFormData] = useState({
     customerName: '',
     customerEmail: '',
@@ -84,16 +97,91 @@ const QuoteRequestsManager = () => {
     }
   };
 
+  const searchProducts = async (term: string) => {
+    if (!term.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setLoadingSearch(true);
+    try {
+      const [productsRes, packsRes, montajesRes] = await Promise.all([
+        api.get(`/products?search=${term}&limit=10`),
+        api.get(`/packs?search=${term}&limit=10`),
+        api.get(`/packs?search=${term}&limit=10&category=MONTAJE`),
+      ]);
+
+      const products = (productsRes?.products || []).map((p: any) => ({
+        ...p,
+        type: 'product',
+        displayName: `📦 ${p.name}`,
+      }));
+
+      const packs = (packsRes?.packs || []).map((p: any) => ({
+        ...p,
+        type: 'pack',
+        displayName: `📋 ${p.name}`,
+      }));
+
+      const montajes = (montajesRes?.packs || []).map((p: any) => ({
+        ...p,
+        type: 'montaje',
+        displayName: `🚚 ${p.name}`,
+      }));
+
+      setSearchResults([...products, ...packs, ...montajes]);
+    } catch (error) {
+      console.error('Error buscando productos:', error);
+    } finally {
+      setLoadingSearch(false);
+    }
+  };
+
+  const addItemToQuote = (item: any) => {
+    const newItem: QuoteItem = {
+      id: `${item.type}-${item.id}`,
+      type: item.type,
+      name: item.name,
+      quantity: 1,
+      pricePerDay: item.pricePerDay || 0,
+      totalPrice: item.pricePerDay || 0,
+    };
+
+    setQuoteItems([...quoteItems, newItem]);
+    setSearchTerm('');
+    setSearchResults([]);
+  };
+
+  const removeItemFromQuote = (id: string) => {
+    setQuoteItems(quoteItems.filter(item => item.id !== id));
+  };
+
+  const updateItemQuantity = (id: string, quantity: number) => {
+    setQuoteItems(quoteItems.map(item =>
+      item.id === id
+        ? { ...item, quantity, totalPrice: item.pricePerDay * quantity }
+        : item
+    ));
+  };
+
+  const calculateQuoteTotal = () => {
+    return quoteItems.reduce((sum, item) => sum + item.totalPrice, 0);
+  };
+
   const createQuoteRequest = async () => {
     if (!formData.customerName || !formData.customerEmail || !formData.eventType) {
       alert('Por favor completa los campos obligatorios: Nombre, Email y Tipo de Evento');
       return;
     }
 
+    const total = calculateQuoteTotal();
+
     try {
       await api.post('/quote-requests', {
         ...formData,
         status: 'PENDING',
+        estimatedTotal: total,
+        selectedExtras: JSON.stringify(quoteItems),
       });
       alert('✅ Presupuesto creado correctamente');
       setShowCreateModal(false);
@@ -110,6 +198,7 @@ const QuoteRequestsManager = () => {
         estimatedTotal: 0,
         notes: '',
       });
+      setQuoteItems([]);
       await loadQuoteRequests();
     } catch (error) {
       console.error('Error creando presupuesto:', error);
@@ -578,6 +667,80 @@ const QuoteRequestsManager = () => {
               />
             </div>
 
+            {/* Productos y Servicios */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-3">Productos y Servicios</h3>
+              
+              {/* Búsqueda */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Buscar y Agregar</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      searchProducts(e.target.value);
+                    }}
+                    placeholder="Buscar productos, packs, montajes..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
+                  />
+                  {loadingSearch && <div className="absolute right-3 top-2 text-gray-400">⏳</div>}
+                </div>
+
+                {/* Resultados de búsqueda */}
+                {searchResults.length > 0 && (
+                  <div className="mt-2 border border-gray-300 rounded-lg max-h-40 overflow-y-auto bg-white">
+                    {searchResults.map((item) => (
+                      <button
+                        key={`${item.type}-${item.id}`}
+                        onClick={() => addItemToQuote(item)}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-100 border-b last:border-b-0 flex justify-between items-center"
+                      >
+                        <div>
+                          <p className="font-medium">{item.displayName}</p>
+                          <p className="text-sm text-gray-600">€{Number(item.pricePerDay || 0).toFixed(2)}</p>
+                        </div>
+                        <span className="text-green-600 font-bold">+</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Items agregados */}
+              {quoteItems.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Items agregados:</p>
+                  {quoteItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-gray-600">€{item.pricePerDay.toFixed(2)} × {item.quantity} = €{item.totalPrice.toFixed(2)}</p>
+                      </div>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
+                        min="1"
+                        className="w-16 px-2 py-1 border border-gray-300 rounded"
+                      />
+                      <button
+                        onClick={() => removeItemFromQuote(item.id)}
+                        className="text-red-600 hover:text-red-800 font-bold"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-gray-600">Total Estimado:</p>
+                    <p className="text-2xl font-bold text-blue-600">€{calculateQuoteTotal().toFixed(2)}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Notas */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
@@ -593,7 +756,11 @@ const QuoteRequestsManager = () => {
             {/* Botones */}
             <div className="flex gap-3">
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setQuoteItems([]);
+                  setSearchTerm('');
+                }}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
               >
                 Cancelar
@@ -602,7 +769,7 @@ const QuoteRequestsManager = () => {
                 onClick={createQuoteRequest}
                 className="flex-1 bg-resona hover:bg-resona-dark text-white font-medium py-3 rounded-lg transition-colors"
               >
-                Crear Presupuesto
+                Crear Presupuesto (€{calculateQuoteTotal().toFixed(2)})
               </button>
             </div>
           </div>
