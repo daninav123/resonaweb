@@ -49,6 +49,7 @@ uploads/*
 # Backups
 backups/*.sql
 backups/*.sql.gz
+backups/database/temp_read_*/
 
 # Temporary files
 *.tmp
