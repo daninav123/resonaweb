@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Limpiar Carrito</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .success {
+            background: #27ae60;
+        }
+        .success:hover {
+            background: #229954;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .error {
+            background: #ffe6e6;
+            color: #c0392b;
+            border: 1px solid #c0392b;
+        }
+        .ok {
+            background: #e6ffe6;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+        .info {
+            background: #e6f3ff;
+            color: #2980b9;
+            border: 1px solid #2980b9;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar Carrito</h1>
+        
+        <div class="info" style="display: block;">
+            <strong>Problema detectado:</strong>
+            <p>Hay productos en el carrito que ya no existen en la base de datos.</p>
+            <p>Producto problemático: <code>7cf8ec26-82a4-405f-961b-83668ee97bb0</code></p>
+        </div>
+        
+        <button onclick="verCarrito()">📋 Ver Contenido del Carrito</button>
+        <button onclick="limpiarCarrito()">🗑️ Limpiar Carrito Completo</button>
+        <button onclick="limpiarProductoFantasma()">🔧 Eliminar Solo Productos Fantasma</button>
+        <br><br>
+        <button class="success" onclick="irAlCarrito()">🛒 Ir al Carrito</button>
+        
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        function showMessage(msg, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = msg;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+            
+            if (type === 'ok') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function verCarrito() {
+            const cart = localStorage.getItem('guest_cart');
+            if (!cart) {
+                showMessage('El carrito está vacío', 'ok');
+                return;
+            }
+            
+            try {
+                const items = JSON.parse(cart);
+                console.log('📦 Contenido del carrito:', items);
+                showMessage(`Carrito tiene ${items.length} items. Revisa la consola (F12) para ver detalles.`, 'ok');
+                
+                items.forEach((item, index) => {
+                    console.log(`Item ${index + 1}:`, {
+                        id: item.productId,
+                        nombre: item.product?.name,
+                        cantidad: item.quantity
+                    });
+                });
+            } catch (e) {
+                showMessage('Error al leer el carrito: ' + e.message, 'error');
+            }
+        }
+
+        function limpiarCarrito() {
+            if (confirm('¿Estás seguro de que quieres limpiar TODO el carrito?')) {
+                localStorage.removeItem('guest_cart');
+                showMessage('✅ Carrito limpiado completamente', 'ok');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }
+        }
+
+        function limpiarProductoFantasma() {
+            const cart = localStorage.getItem('guest_cart');
+            if (!cart) {
+                showMessage('El carrito está vacío', 'ok');
+                return;
+            }
+            
+            try {
+                const items = JSON.parse(cart);
+                const productoFantasma = '7cf8ec26-82a4-405f-961b-83668ee97bb0';
+                
+                const itemsLimpios = items.filter(item => item.productId !== productoFantasma);
+                
+                if (items.length === itemsLimpios.length) {
+                    showMessage('No se encontró el producto fantasma', 'ok');
+                } else {
+                    localStorage.setItem('guest_cart', JSON.stringify(itemsLimpios));
+                    showMessage(`✅ Producto fantasma eliminado. Carrito actualizado: ${itemsLimpios.length} items`, 'ok');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } catch (e) {
+                showMessage('Error: ' + e.message, 'error');
+            }
+        }
+
+        function irAlCarrito() {
+            window.open('http://localhost:3000/carrito', '_blank');
+        }
+
+        // Auto-diagnostico al cargar
+        window.onload = function() {
+            const cart = localStorage.getItem('guest_cart');
+            if (cart) {
+                try {
+                    const items = JSON.parse(cart);
+                    console.log('🔍 Auto-diagnóstico:', {
+                        'Total items': items.length,
+                        'Items': items.map(i => ({
+                            id: i.productId,
+                            nombre: i.product?.name
+                        }))
+                    });
+                } catch (e) {
+                    console.error('Error en auto-diagnóstico:', e);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

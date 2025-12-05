@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Configuración Calculadora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #00B894; margin-top: 20px; }
+        .event-type {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #00B894;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificar Configuración de Calculadora</h1>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const config = localStorage.getItem('advancedCalculatorConfig');
+        const resultDiv = document.getElementById('result');
+
+        if (!config) {
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <h2>❌ No hay configuración guardada</h2>
+                    <p>No se encontró configuración en <code>localStorage.advancedCalculatorConfig</code></p>
+                    <p><strong>Solución:</strong> Ve al panel de admin → Configuración de Calculadora y guarda la configuración.</p>
+                </div>
+            `;
+        } else {
+            try {
+                const parsed = JSON.parse(config);
+                let html = '<div class="success"><h2>✅ Configuración encontrada</h2></div>';
+                
+                if (parsed.eventTypes && Array.isArray(parsed.eventTypes)) {
+                    html += `<h2>📅 Tipos de Eventos (${parsed.eventTypes.length})</h2>`;
+                    
+                    parsed.eventTypes.forEach((event, index) => {
+                        const packsCount = event.availablePacks ? event.availablePacks.length : 0;
+                        const extrasCount = event.availableExtras ? event.availableExtras.length : 0;
+                        
+                        const alertClass = packsCount === 0 ? 'warning' : 'event-type';
+                        
+                        html += `
+                            <div class="${alertClass}">
+                                <h3>${index + 1}. ${event.name}</h3>
+                                <p><strong>ID:</strong> <code>${event.id}</code></p>
+                                <p><strong>Montajes configurados:</strong> ${packsCount}</p>
+                                <p><strong>Extras configurados:</strong> ${extrasCount}</p>
+                                
+                                ${packsCount === 0 ? `
+                                    <div style="background: #fff; padding: 10px; margin-top: 10px; border-radius: 4px;">
+                                        <strong>⚠️ Sin montajes configurados</strong>
+                                        <p>Este tipo de evento no tiene montajes asignados. Por eso no aparecen en la calculadora.</p>
+                                    </div>
+                                ` : `
+                                    <details style="margin-top: 10px;">
+                                        <summary style="cursor: pointer; font-weight: bold;">Ver IDs de montajes</summary>
+                                        <pre style="margin-top: 10px;">${JSON.stringify(event.availablePacks, null, 2)}</pre>
+                                    </details>
+                                `}
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<div class="error"><p>❌ No se encontraron tipos de eventos en la configuración</p></div>';
+                }
+                
+                html += `
+                    <h2>🔧 Cómo Configurar los Montajes</h2>
+                    <ol>
+                        <li>Ve al panel de admin: <strong>Configuración → Calculadora</strong></li>
+                        <li>Para cada tipo de evento, haz clic en "Editar"</li>
+                        <li>En la sección <strong>"Packs disponibles"</strong>, selecciona los montajes que quieres mostrar</li>
+                        <li>Guarda la configuración</li>
+                        <li>Los montajes aparecerán inmediatamente en la calculadora</li>
+                    </ol>
+                    
+                    <h2>📋 Configuración Completa</h2>
+                    <details>
+                        <summary style="cursor: pointer; font-weight: bold;">Ver JSON completo</summary>
+                        <pre>${JSON.stringify(parsed, null, 2)}</pre>
+                    </details>
+                `;
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Error al parsear configuración</h2>
+                        <p>La configuración existe pero no es válida:</p>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

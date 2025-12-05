@@ -139,6 +139,7 @@ class BackupController {
           
           // Catálogo de productos
           categories: await prisma.category.findMany(),
+          extraCategories: await prisma.extraCategory.findMany(),
           products: await prisma.product.findMany(),
           productSpecifications: await prisma.productSpecification.findMany(),
           productComponents: await prisma.productComponent.findMany(),
@@ -362,6 +363,7 @@ class BackupController {
         await prisma.review.deleteMany();
         await prisma.favorite.deleteMany();
         await prisma.product.deleteMany();
+        await prisma.extraCategory.deleteMany();
         await prisma.category.deleteMany();
         await prisma.blogPost.deleteMany();
         await prisma.blogCategory.deleteMany();
@@ -419,6 +421,7 @@ class BackupController {
         
         // 3. Catálogo
         restored.categories = await restoreSimple('category', backupData.data.categories);
+        restored.others += await restoreSimple('extraCategory', backupData.data.extraCategories);
         restored.products = await restoreSimple('product', backupData.data.products);
         restored.others += await restoreSimple('productSpecification', backupData.data.productSpecifications);
         restored.others += await restoreSimple('productComponent', backupData.data.productComponents);
