@@ -142,6 +142,7 @@ class BackupController {
           products: await prisma.product.findMany(),
           productSpecifications: await prisma.productSpecification.findMany(),
           productComponents: await prisma.productComponent.findMany(),
+          productPurchases: await prisma.productPurchase.findMany(),
           
           // Packs
           packs: await prisma.pack.findMany(),
@@ -161,6 +162,7 @@ class BackupController {
           invoices: await prisma.invoice.findMany(),
           customInvoices: await prisma.customInvoice.findMany(),
           payments: await prisma.payment.findMany(),
+          paymentInstallments: await prisma.paymentInstallment.findMany(),
           
           // Servicios
           services: await prisma.service.findMany(),
@@ -194,6 +196,10 @@ class BackupController {
           
           // Solicitudes de presupuesto
           quoteRequests: await prisma.quoteRequest.findMany(),
+          
+          // Carritos de compra
+          carts: await prisma.cart.findMany(),
+          cartItems: await prisma.cartItem.findMany(),
           
           // API y seguridad
           apiKeys: await prisma.apiKey.findMany(),
@@ -336,10 +342,13 @@ class BackupController {
         await prisma.notification.deleteMany();
         await prisma.customerNote.deleteMany();
         await prisma.quoteRequest.deleteMany();
+        await prisma.cartItem.deleteMany();
+        await prisma.cart.deleteMany();
         await prisma.orderModification.deleteMany();
         await prisma.orderNote.deleteMany();
         await prisma.orderService.deleteMany();
         await prisma.orderItem.deleteMany();
+        await prisma.paymentInstallment.deleteMany();
         await prisma.delivery.deleteMany();
         await prisma.payment.deleteMany();
         await prisma.invoice.deleteMany();
@@ -347,6 +356,7 @@ class BackupController {
         await prisma.order.deleteMany();
         await prisma.packItem.deleteMany();
         await prisma.pack.deleteMany();
+        await prisma.productPurchase.deleteMany();
         await prisma.productSpecification.deleteMany();
         await prisma.productComponent.deleteMany();
         await prisma.review.deleteMany();
@@ -412,6 +422,7 @@ class BackupController {
         restored.products = await restoreSimple('product', backupData.data.products);
         restored.others += await restoreSimple('productSpecification', backupData.data.productSpecifications);
         restored.others += await restoreSimple('productComponent', backupData.data.productComponents);
+        restored.others += await restoreSimple('productPurchase', backupData.data.productPurchases);
         
         // 4. Blog
         restored.others += await restoreSimple('blogCategory', backupData.data.blogCategories);
@@ -446,6 +457,7 @@ class BackupController {
         restored.others += await restoreSimple('invoice', backupData.data.invoices);
         restored.others += await restoreSimple('customInvoice', backupData.data.customInvoices);
         restored.others += await restoreSimple('payment', backupData.data.payments);
+        restored.others += await restoreSimple('paymentInstallment', backupData.data.paymentInstallments);
         
         // 11. Notificaciones
         restored.others += await restoreSimple('notification', backupData.data.notifications);
@@ -459,6 +471,10 @@ class BackupController {
         // 13. Otros
         restored.others += await restoreSimple('quoteRequest', backupData.data.quoteRequests);
         restored.others += await restoreSimple('auditLog', backupData.data.auditLogs);
+        
+        // 14. Carritos de compra
+        restored.others += await restoreSimple('cart', backupData.data.carts);
+        restored.others += await restoreSimple('cartItem', backupData.data.cartItems);
 
         console.log('✅ Restauración de base de datos completada');
 
