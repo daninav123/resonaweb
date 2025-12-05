@@ -499,9 +499,9 @@ export class ProductService {
 
     if (existing) {
       if (existing.sku === data.sku) {
-        throw new AppError(409, 'Ya existe un producto ACTIVO con este SKU', 'SKU_EXISTS');
+        throw new AppError(409, `Ya existe un producto ACTIVO con el SKU "${data.sku}". Producto existente: "${existing.name}" (ID: ${existing.id})`, 'SKU_EXISTS');
       }
-      throw new AppError(409, 'Ya existe un producto ACTIVO con este slug. Prueba con otro nombre.', 'SLUG_EXISTS');
+      throw new AppError(409, `Ya existe un producto ACTIVO con el nombre "${existing.name}" (slug: ${slug}). ID: ${existing.id}. Usa otro nombre o ve a editar el producto existente.`, 'SLUG_EXISTS');
     }
 
     // Verify category exists (solo si se proporciona categoryId)
