@@ -7,6 +7,7 @@ import {
   DEFAULT_CALCULATOR_CONFIG 
 } from '../types/calculator.types';
 import toast from 'react-hot-toast';
+import { api } from '../services/api';
 
 export const useCalculatorConfig = () => {
   const [config, setConfig] = useState<AdvancedCalculatorConfig>(DEFAULT_CALCULATOR_CONFIG);
@@ -15,10 +16,24 @@ export const useCalculatorConfig = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const savedConfig = localStorage.getItem('advancedCalculatorConfig');
-    if (savedConfig) {
+    // Primero intentar cargar desde BD
+    const loadConfigFromBD = async () => {
       try {
-        const parsed = JSON.parse(savedConfig);
+        const response = await api.get('/calculator-config');
+        if (response && response.eventTypes) {
+          console.log('✅ Configuración cargada desde BD');
+          setConfig(response);
+          return;
+        }
+      } catch (error) {
+        console.log('⚠️ No hay configuración en BD, usando localStorage o default');
+      }
+
+      // Si no hay en BD, intentar cargar desde localStorage
+      const savedConfig = localStorage.getItem('advancedCalculatorConfig');
+      if (savedConfig) {
+        try {
+          const parsed = JSON.parse(savedConfig);
         
         // 1. Merge eventos guardados: Si no tienen partes, usar las del default
         const mergedEventTypes = parsed.eventTypes.map((savedEvent: EventTypeConfig) => {
@@ -60,20 +75,29 @@ export const useCalculatorConfig = () => {
             }));
           }, 100);
         }
-      } catch (error) {
-        console.error('Error loading config:', error);
-        toast.error('Error al cargar configuración, usando valores por defecto');
-        setConfig(DEFAULT_CALCULATOR_CONFIG);
+        } catch (error) {
+          console.error('Error loading config:', error);
+          toast.error('Error al cargar configuración, usando valores por defecto');
+          setConfig(DEFAULT_CALCULATOR_CONFIG);
+        }
       }
-    }
+    };
+
+    loadConfigFromBD();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
     try {
+      // Guardar en BD
+      await api.post('/calculator-config', { config });
+      
+      // También guardar en localStorage como backup
       localStorage.setItem('advancedCalculatorConfig', JSON.stringify(config));
+      
       toast.success('✅ Configuración guardada correctamente');
     } catch (error) {
+      console.error('Error al guardar:', error);
       toast.error('❌ Error al guardar la configuración');
     } finally {
       setSaving(false);
