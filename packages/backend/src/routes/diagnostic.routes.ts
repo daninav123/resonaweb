@@ -7,7 +7,7 @@ const router = Router();
 
 /**
  * GET /api/v1/diagnostic/montajes
- * Endpoint de diagnóstico para verificar montajes en la BD
+ * Endpoint de diagnóstico para verificar montajes en la BD (SIN autenticación)
  */
 router.get('/montajes', async (req: Request, res: Response) => {
   try {
