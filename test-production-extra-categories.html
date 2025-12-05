@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test ExtraCategories en Producción</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button.secondary {
+      background: #10b981;
+    }
+    button.secondary:hover {
+      background: #059669;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    h1 {
+      color: #1f2937;
+    }
+    .info {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Test de ExtraCategories en Producción</h1>
+    
+    <div class="info">
+      <strong>Problema:</strong> Los montajes no aparecen en la calculadora en producción.<br>
+      <strong>Causa:</strong> La tabla ExtraCategory puede estar vacía o los productos no están vinculados.
+    </div>
+
+    <h3>1. Verificar ExtraCategories</h3>
+    <button onclick="testExtraCategories()">🔍 Test ExtraCategories (Sin Auth)</button>
+    <button onclick="testExtraCategoriesAuth()" class="secondary">🔐 Test ExtraCategories (Con Auth)</button>
+
+    <h3>2. Verificar Productos</h3>
+    <button onclick="testProducts()">📦 Test Productos Públicos</button>
+    <button onclick="testProductsPersonal()">👷 Test Productos Personal</button>
+
+    <h3>3. Crear ExtraCategories (Requiere login)</h3>
+    <button onclick="createExtraCategories()" class="secondary">✨ Crear ExtraCategories</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://resona-backend.onrender.com';
+    let authToken = localStorage.getItem('authToken');
+
+    function showResult(message, type = 'info') {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = type;
+      resultDiv.textContent = message;
+    }
+
+    async function testExtraCategories() {
+      showResult('🔄 Consultando ExtraCategories (sin autenticación)...', 'info');
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/extra-categories`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult(
+            `✅ Respuesta exitosa (${response.status})\n\n` +
+            `Total de categorías: ${data.categories?.length || 0}\n\n` +
+            JSON.stringify(data, null, 2),
+            'success'
+          );
+        } else {
+          showResult(
+            `❌ Error ${response.status}: ${response.statusText}\n\n` +
+            JSON.stringify(data, null, 2),
+            'error'
+          );
+        }
+      } catch (error) {
+        showResult(
+          `❌ Error de red:\n${error.message}\n\n` +
+          `Posible causa: CORS, servidor no disponible, o problema de red`,
+          'error'
+        );
+      }
+    }
+
+    async function testExtraCategoriesAuth() {
+      if (!authToken) {
+        showResult(
+          '⚠️ No hay token de autenticación.\n\n' +
+          'Ve a https://www.resonaevents.com y haz login como admin.\n' +
+          'Luego abre la consola y ejecuta:\n' +
+          'localStorage.getItem("authToken")\n\n' +
+          'Copia el token y ejecútalo aquí:\n' +
+          'localStorage.setItem("authToken", "TU_TOKEN_AQUÍ")\n' +
+          'Luego recarga esta página.',
+          'warning'
+        );
+        return;
+      }
+
+      showResult('🔄 Consultando ExtraCategories (con autenticación)...', 'info');
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/extra-categories`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult(
+            `✅ Respuesta exitosa (${response.status})\n\n` +
+            `Total de categorías: ${data.categories?.length || 0}\n\n` +
+            JSON.stringify(data, null, 2),
+            'success'
+          );
+        } else {
+          showResult(
+            `❌ Error ${response.status}: ${response.statusText}\n\n` +
+            JSON.stringify(data, null, 2),
+            'error'
+          );
+        }
+      } catch (error) {
+        showResult(
+          `❌ Error de red:\n${error.message}`,
+          'error'
+        );
+      }
+    }
+
+    async function testProducts() {
+      showResult('🔄 Consultando productos...', 'info');
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/products?limit=5`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          const productsWithExtraCategory = data.products?.filter(p => p.extraCategoryId) || [];
+          showResult(
+            `✅ Respuesta exitosa (${response.status})\n\n` +
+            `Total de productos: ${data.products?.length || 0}\n` +
+            `Productos con extraCategoryId: ${productsWithExtraCategory.length}\n\n` +
+            `Primeros 5 productos:\n` +
+            JSON.stringify(data.products?.slice(0, 5).map(p => ({
+              name: p.name,
+              category: p.category?.name,
+              extraCategoryId: p.extraCategoryId,
+              extraCategory: p.extraCategory?.name
+            })), null, 2),
+            'success'
+          );
+        } else {
+          showResult(
+            `❌ Error ${response.status}: ${response.statusText}\n\n` +
+            JSON.stringify(data, null, 2),
+            'error'
+          );
+        }
+      } catch (error) {
+        showResult(
+          `❌ Error de red:\n${error.message}`,
+          'error'
+        );
+      }
+    }
+
+    async function testProductsPersonal() {
+      showResult('🔄 Consultando productos de personal/montaje...', 'info');
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/products?category=Personal`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          const productsWithExtraCategory = data.products?.filter(p => p.extraCategoryId) || [];
+          showResult(
+            `✅ Respuesta exitosa (${response.status})\n\n` +
+            `Total de productos Personal: ${data.products?.length || 0}\n` +
+            `Productos con extraCategoryId: ${productsWithExtraCategory.length}\n\n` +
+            `Productos:\n` +
+            JSON.stringify(data.products?.map(p => ({
+              name: p.name,
+              sku: p.sku,
+              extraCategoryId: p.extraCategoryId,
+              extraCategory: p.extraCategory?.name
+            })), null, 2),
+            productsWithExtraCategory.length === 0 ? 'warning' : 'success'
+          );
+          
+          if (productsWithExtraCategory.length === 0 && data.products?.length > 0) {
+            showResult(
+              document.getElementById('result').textContent +
+              '\n\n⚠️ PROBLEMA DETECTADO:\n' +
+              'Los productos de Personal NO tienen extraCategoryId asignado.\n' +
+              'Por eso no aparecen en la calculadora.',
+              'warning'
+            );
+          }
+        } else {
+          showResult(
+            `❌ Error ${response.status}: ${response.statusText}\n\n` +
+            JSON.stringify(data, null, 2),
+            'error'
+          );
+        }
+      } catch (error) {
+        showResult(
+          `❌ Error de red:\n${error.message}`,
+          'error'
+        );
+      }
+    }
+
+    async function createExtraCategories() {
+      if (!authToken) {
+        showResult(
+          '⚠️ No hay token de autenticación.\n\n' +
+          'Debes estar logueado como admin.\n' +
+          'Ve a https://www.resonaevents.com/admin y haz login.',
+          'warning'
+        );
+        return;
+      }
+
+      showResult('🔄 Creando ExtraCategories...', 'info');
+
+      const categories = [
+        { name: 'Disco', slug: 'disco', icon: '🎵', color: 'purple', order: 1, description: 'Equipamiento para ambientar la fiesta' },
+        { name: 'FX', slug: 'fx', icon: '✨', color: 'blue', order: 2, description: 'Efectos especiales visuales' },
+        { name: 'Decoración', slug: 'decoracion', icon: '🎨', color: 'pink', order: 3, description: 'Elementos decorativos' },
+        { name: 'Iluminación', slug: 'iluminacion', icon: '💡', color: 'yellow', order: 4, description: 'Iluminación adicional' },
+        { name: 'Estructuras', slug: 'estructuras', icon: '🏗️', color: 'gray', order: 5, description: 'Escenarios y estructuras' },
+        { name: 'Audiovisual', slug: 'audiovisual', icon: '📺', color: 'indigo', order: 6, description: 'Pantallas y proyección' },
+        { name: 'Otros', slug: 'otros', icon: '📦', color: 'slate', order: 99, description: 'Otros extras' }
+      ];
+
+      let results = [];
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const category of categories) {
+        try {
+          const response = await fetch(`${BACKEND_URL}/api/v1/extra-categories`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify(category)
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            results.push(`✅ ${category.icon} ${category.name} - Creada`);
+            successCount++;
+          } else {
+            if (response.status === 400 && data.message?.includes('ya existe')) {
+              results.push(`⚠️ ${category.icon} ${category.name} - Ya existe`);
+            } else {
+              results.push(`❌ ${category.icon} ${category.name} - Error: ${data.message}`);
+              errorCount++;
+            }
+          }
+        } catch (error) {
+          results.push(`❌ ${category.icon} ${category.name} - Error: ${error.message}`);
+          errorCount++;
+        }
+      }
+
+      showResult(
+        `📊 Resultados de creación:\n\n` +
+        `✅ Creadas: ${successCount}\n` +
+        `❌ Errores: ${errorCount}\n\n` +
+        results.join('\n') +
+        `\n\n${successCount > 0 ? '✅ SIGUIENTE PASO:\n' +
+        'Las categorías están creadas, pero ahora necesitas asignar\n' +
+        'los productos de montaje a la categoría "Estructuras".\n\n' +
+        'Ve al panel admin: https://www.resonaevents.com/admin/calculator' : ''}`,
+        successCount > 0 ? 'success' : 'error'
+      );
+    }
+
+    // Check if we have token on load
+    window.addEventListener('load', () => {
+      if (authToken) {
+        showResult('ℹ️ Token de autenticación detectado. Puedes usar las funciones que requieren auth.', 'success');
+      } else {
+        showResult(
+          'ℹ️ No hay token de autenticación.\n\n' +
+          'Para funciones que requieren auth, primero haz login en:\n' +
+          'https://www.resonaevents.com/admin\n\n' +
+          'Luego ejecuta en la consola:\n' +
+          'localStorage.setItem("authToken", "TU_TOKEN")\n' +
+          'Y recarga esta página.',
+          'info'
+        );
+      }
+    });
+  </script>
+</body>
+</html>
