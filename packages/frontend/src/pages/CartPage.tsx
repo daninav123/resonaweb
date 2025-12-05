@@ -328,41 +328,13 @@ const CartPage = () => {
           if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
             console.log(`🔄 Actualizando info de stock para: ${item.product.name}`);
             
-            // Detectar si es un pack o producto regular (MEJORADO)
-            const isPack = item.eventMetadata || 
-                          item.product.category?.name === 'Packs' || 
-                          item.product.name?.toLowerCase().includes('pack');
+            let itemFound = false;
             
-            // Intentar primero como pack si parece serlo
-            if (isPack) {
-              try {
-                console.log(`📦 Intentando cargar como pack: ${item.productId}`);
-                const response: any = await api.get(`/packs/${item.productId}`);
-                const productData = response.data || response;
-                
-                item.product = {
-                  ...item.product,
-                  stock: productData.stock || 999,
-                  realStock: productData.realStock || productData.stock || 999,
-                };
-                stockInfoUpdated = true;
-                console.log(`✅ Pack cargado exitosamente`);
-                return item;
-              } catch (error: any) {
-                if (error?.response?.status === 404) {
-                  console.log(`⚠️ No encontrado como pack, intentando como producto...`);
-                  // Continuar para intentar como producto
-                } else {
-                  console.error(`❌ Error cargando pack:`, error);
-                  return item;
-                }
-              }
-            }
-            
-            // Intentar como producto
+            // ESTRATEGIA: Intentar SIEMPRE ambos endpoints
+            // 1. Intentar primero como PACK
             try {
-              console.log(`📦 Intentando cargar como producto: ${item.productId}`);
-              const response: any = await api.get(`/products/${item.productId}`);
+              console.log(`📦 Intentando cargar como PACK: ${item.productId}`);
+              const response: any = await api.get(`/packs/${item.productId}`);
               const productData = response.data || response;
               
               item.product = {
@@ -371,18 +343,39 @@ const CartPage = () => {
                 realStock: productData.realStock || productData.stock || 999,
               };
               stockInfoUpdated = true;
-              console.log(`✅ Producto cargado exitosamente`);
+              itemFound = true;
+              console.log(`✅ PACK cargado exitosamente`);
             } catch (error: any) {
-              // Si falla como producto Y como pack, solo entonces eliminar
-              if (error?.response?.status === 404 && isPack) {
-                console.warn(`❌ ${item.product.name} no encontrado en ningún endpoint - Marcado para eliminar`);
-                itemsToRemove.push(item.id);
-              } else if (error?.response?.status === 404) {
-                console.warn(`❌ ${item.product.name} no encontrado - Marcado para eliminar`);
-                itemsToRemove.push(item.id);
+              if (error?.response?.status === 404) {
+                console.log(`⚠️ No encontrado como PACK (404), intentando como PRODUCTO...`);
               } else {
-                console.error(`❌ Error inesperado actualizando ${item.productId}:`, error);
-                // NO eliminar si es otro tipo de error
+                console.error(`❌ Error cargando como pack (no es 404):`, error.message);
+              }
+            }
+            
+            // 2. Si no se encontró como pack, intentar como PRODUCTO
+            if (!itemFound) {
+              try {
+                console.log(`📦 Intentando cargar como PRODUCTO: ${item.productId}`);
+                const response: any = await api.get(`/products/${item.productId}`);
+                const productData = response.data || response;
+                
+                item.product = {
+                  ...item.product,
+                  stock: productData.stock || 999,
+                  realStock: productData.realStock || productData.stock || 999,
+                };
+                stockInfoUpdated = true;
+                itemFound = true;
+                console.log(`✅ PRODUCTO cargado exitosamente`);
+              } catch (error: any) {
+                if (error?.response?.status === 404) {
+                  console.warn(`❌ ${item.product.name} NO ENCONTRADO en ningún endpoint - Marcado para eliminar`);
+                  itemsToRemove.push(item.id);
+                } else {
+                  console.error(`❌ Error inesperado cargando como producto:`, error.message);
+                  // NO eliminar si es otro tipo de error (red, timeout, etc)
+                }
               }
             }
           }
