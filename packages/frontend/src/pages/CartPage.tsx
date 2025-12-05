@@ -381,16 +381,18 @@ const CartPage = () => {
           duration: 4000,
           id: 'removed-items'
         });
+        // Actualizar desde el carrito limpio DESPUÉS de eliminar
+        setGuestCartItems(guestCart.getCart());
+      } else {
+        // Si hubo actualizaciones de stock, guardar silenciosamente (sin notificación)
+        if (stockInfoUpdated) {
+          localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
+          console.log('✅ Carrito actualizado con información de stock (silencioso)');
+          window.dispatchEvent(new Event('cartUpdated'));
+        }
+        // Usar el carrito actualizado
+        setGuestCartItems(updatedCart);
       }
-      
-      // Si hubo actualizaciones de stock, guardar silenciosamente (sin notificación)
-      if (stockInfoUpdated && itemsToRemove.length === 0) {
-        localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
-        console.log('✅ Carrito actualizado con información de stock (silencioso)');
-        window.dispatchEvent(new Event('cartUpdated'));
-      }
-      
-      setGuestCartItems(updatedCart);
     };
     
     initializeCart();
