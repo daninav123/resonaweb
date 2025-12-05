@@ -144,18 +144,40 @@ const QuoteRequestsManager = () => {
   };
 
   const addItemToQuote = (item: any) => {
+    const isPersonal = item.category?.name?.toLowerCase() === 'personal';
+    
     const newItem: QuoteItem = {
       id: `${item.type}-${item.id}`,
       type: item.type,
       name: item.name,
-      quantity: 1,
+      quantity: isPersonal ? 0 : 1,
+      numberOfPeople: isPersonal ? 1 : undefined,
+      hoursPerPerson: isPersonal ? 1 : undefined,
       pricePerDay: item.pricePerDay || 0,
-      totalPrice: item.pricePerDay || 0,
+      purchasePrice: item.purchasePrice || 0,
+      totalPrice: isPersonal ? 0 : (item.pricePerDay || 0),
+      isPersonal,
+      isConsumable: item.isConsumable,
+      category: item.category?.name,
     };
 
     setQuoteItems([...quoteItems, newItem]);
     setSearchTerm('');
     setSearchResults([]);
+  };
+
+  const updateItemPersonal = (id: string, numberOfPeople: number, hoursPerPerson: number) => {
+    setQuoteItems(quoteItems.map(item =>
+      item.id === id
+        ? {
+            ...item,
+            numberOfPeople,
+            hoursPerPerson,
+            quantity: numberOfPeople * hoursPerPerson,
+            totalPrice: item.pricePerDay * numberOfPeople * hoursPerPerson
+          }
+        : item
+    ));
   };
 
   const removeItemFromQuote = (id: string) => {
@@ -744,64 +766,54 @@ const QuoteRequestsManager = () => {
                   </span>
                 </div>
 
-              {/* Items agregados */}
-              {quoteItems.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-700">Items agregados:</p>
-                  <div className="mb-4">
-                    <h4 className="font-bold text-lg mb-2">Material</h4>
-                    {quoteItems.filter((item) => item.type === 'material').map((item) => (
-                      <div key={item.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-600">€{item.pricePerDay.toFixed(2)} × {item.quantity} = €{item.totalPrice.toFixed(2)}</p>
+                {quoteItems.length === 0 ? (
+                  <div className="text-center py-6 text-gray-500 bg-gray-50 rounded border border-dashed border-gray-300">
+                    <Package className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+                    <p className="text-xs">Sin productos</p>
+                  </div>
+                ) : (
+                  <div className="bg-white border border-gray-300 rounded max-h-[400px] overflow-y-auto divide-y divide-gray-200">
+                    {quoteItems.map((item) => {
+                      const isPersonal = item.isPersonal;
+                      const effectiveQuantity = isPersonal ? (item.numberOfPeople || 1) * (item.hoursPerPerson || 1) : item.quantity;
+                      return (
+                        <div key={item.id} className="p-1.5">
+                          <div className="flex items-center justify-between gap-1 mb-1">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1">
+                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${isPersonal ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
+                                  {isPersonal ? '👤' : '📦'}
+                                </span>
+                                <span className="font-medium text-xs text-gray-900 truncate">{item.name}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <div className={`font-bold text-sm ${isPersonal ? 'text-purple-700' : 'text-green-700'}`}>
+                                €{item.totalPrice.toFixed(2)}
+                              </div>
+                              <button onClick={() => removeItemFromQuote(item.id)} className="text-red-600 text-xs">🗑️</button>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs">
+                            <span className="text-gray-600">Cant:</span>
+                            <button onClick={() => updateItemQuantity(item.id, Math.max(1, item.quantity - 1))} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">-</button>
+                            <input type="number" min="1" value={item.quantity} onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)} className="w-10 px-1 py-0.5 border border-gray-300 rounded text-xs text-center" />
+                            <button onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded">+</button>
+                          </div>
                         </div>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
-                          min="1"
-                          className="w-16 px-2 py-1 border border-gray-300 rounded"
-                        />
-                        <button
-                          onClick={() => removeItemFromQuote(item.id)}
-                          className="text-red-600 hover:text-red-800 font-bold"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
-                  <div className="mb-4">
-                    <h4 className="font-bold text-lg mb-2">Personal</h4>
-                    {quoteItems.filter((item) => item.type === 'personal').map((item) => (
-                      <div key={item.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-600">€{item.pricePerHour.toFixed(2)} × {item.hours} horas = €{item.totalPrice.toFixed(2)}</p>
-                        </div>
-                        <input
-                          type="number"
-                          value={item.hours}
-                          onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
-                          min="1"
-                          className="w-16 px-2 py-1 border border-gray-300 rounded"
-                        />
-                        <button
-                          onClick={() => removeItemFromQuote(item.id)}
-                          className="text-red-600 hover:text-red-800 font-bold"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
+                )}
+                
+                {/* Total */}
+                {quoteItems.length > 0 && (
+                  <div className="p-2 bg-blue-50 rounded border border-blue-200">
+                    <p className="text-xs text-gray-600">Total Estimado:</p>
+                    <p className="text-lg font-bold text-blue-600">€{calculateQuoteTotal().toFixed(2)}</p>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-gray-600">Total Estimado:</p>
-                    <p className="text-2xl font-bold text-blue-600">€{calculateQuoteTotal().toFixed(2)}</p>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             {/* Notas */}
