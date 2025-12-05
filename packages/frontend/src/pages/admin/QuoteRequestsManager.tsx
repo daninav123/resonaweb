@@ -675,45 +675,74 @@ const QuoteRequestsManager = () => {
               />
             </div>
 
-            {/* Productos y Servicios */}
-            <div className="mb-6">
-              <h3 className="font-bold text-lg mb-3">Productos y Servicios</h3>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Buscar y Agregar</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      searchProducts(e.target.value);
-                    }}
-                    placeholder="Buscar productos, packs, montajes..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
-                  />
-                  {loadingSearch && <div className="absolute right-3 top-2 text-gray-400">⏳</div>}
-                </div>
+            {/* Productos y Servicios - Layout 60/40 */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {/* IZQUIERDA: Buscar y Agregar (60%) */}
+              <div className="col-span-2 space-y-2">
+                <h3 className="text-sm font-bold flex items-center gap-1 text-gray-900">
+                  <Package className="w-4 h-4 text-blue-600" />
+                  Buscar y Añadir Productos
+                </h3>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    searchProducts(e.target.value);
+                  }}
+                  placeholder="🔍 Buscar productos, packs, montajes..."
+                  className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                />
 
-                {/* Resultados de búsqueda */}
-                {searchResults.length > 0 && (
-                  <div className="mt-2 border border-gray-300 rounded-lg max-h-40 overflow-y-auto bg-white">
-                    {searchResults.map((item) => (
-                      <button
-                        key={`${item.type}-${item.id}`}
-                        onClick={() => addItemToQuote(item)}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-100 border-b last:border-b-0 flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="font-medium">{item.displayName}</p>
-                          <p className="text-sm text-gray-600">€{Number(item.pricePerDay || 0).toFixed(2)}</p>
-                        </div>
-                        <span className="text-green-600 font-bold">+</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <div className="bg-white border border-gray-300 rounded max-h-[400px] overflow-y-auto">
+                  {searchResults.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      <Package className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+                      <p className="text-xs">No hay productos</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y">
+                      {searchResults.map((item) => {
+                        const isAdded = quoteItems.some(qi => qi.id === `${item.type}-${item.id}`);
+                        const isPersonal = item.category?.name?.toLowerCase() === 'personal';
+                        const price = item.pricePerDay || 0;
+                        const unit = isPersonal ? 'hora' : 'día';
+                        return (
+                          <div key={`${item.type}-${item.id}`} className="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1">
+                                <span className={`inline-flex px-1 py-0.5 rounded text-xs font-bold ${isPersonal ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
+                                  {isPersonal ? '👤' : '📦'}
+                                </span>
+                                <span className="font-medium text-gray-900 text-xs truncate">{item.name}</span>
+                                <span className={`text-xs font-semibold ml-auto ${isPersonal ? 'text-purple-700' : 'text-green-700'}`}>
+                                  €{price}/{unit}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => addItemToQuote(item)}
+                              disabled={isAdded}
+                              className={`px-2 py-0.5 rounded text-xs font-medium ml-2 ${isAdded ? 'bg-gray-200 text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                            >
+                              {isAdded ? '✓' : '+'}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* DERECHA: Items en el Presupuesto (40%) */}
+              <div className="col-span-1 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-gray-900">En el Presupuesto</h3>
+                  <span className="bg-green-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                    {quoteItems.length}
+                  </span>
+                </div>
 
               {/* Items agregados */}
               {quoteItems.length > 0 && (
