@@ -217,17 +217,21 @@ const QuoteRequestsManager = () => {
 
     const isPersonal = isPersonalProduct(product);
     const isConsumable = product.isConsumable;
+    const price = isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0);
+    
+    // Para personal: calcular total inicial (1 persona × 1 hora)
+    const initialTotal = isPersonal ? price * 1 * 1 : price * 1;
     
     const newItem: QuoteItem = {
       id: `product-${product.id}`,
       type: 'product',
       name: product.name,
-      quantity: isPersonal ? 0 : 1,
+      quantity: isPersonal ? 1 : 1, // Para personal será numberOfPeople × hoursPerPerson
       numberOfPeople: isPersonal ? 1 : undefined,
       hoursPerPerson: isPersonal ? 1 : undefined,
-      pricePerDay: isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0),
+      pricePerDay: price,
       purchasePrice: product.purchasePrice || 0,
-      totalPrice: isPersonal ? 0 : (isConsumable ? (product.pricePerUnit || 0) : (product.pricePerDay || 0)),
+      totalPrice: initialTotal,
       isPersonal,
       isConsumable,
       category: product.category?.name,
@@ -263,7 +267,7 @@ const QuoteRequestsManager = () => {
   };
 
   const calculateQuoteTotal = () => {
-    return quoteItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    return quoteItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
   };
 
   const createQuoteRequest = async () => {
@@ -893,7 +897,7 @@ const QuoteRequestsManager = () => {
                               <div className={`font-bold text-sm ${
                                 isPersonal ? 'text-purple-700' : isConsumable ? 'text-orange-700' : 'text-green-700'
                               }`}>
-                                €{item.totalPrice.toFixed(2)}
+                                €{(item.totalPrice || 0).toFixed(2)}
                               </div>
                               <button onClick={() => removeItemFromQuote(item.id)} className="text-red-600 text-xs">🗑️</button>
                             </div>
