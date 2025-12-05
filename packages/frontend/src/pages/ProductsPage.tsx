@@ -333,7 +333,7 @@ const ProductsPage = () => {
                       viewMode === 'list' ? 'flex' : ''
                     }`}
                   >
-                    {/* Badge de Pack */}
+                    {/* Badge de Pack - Solo en la imagen */}
                     {(product as any).isPack && (
                       <div className="absolute top-2 left-2 z-10">
                         <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
@@ -342,6 +342,8 @@ const ProductsPage = () => {
                         </span>
                       </div>
                     )}
+                    
+                    {/* Imagen - Mismo estilo para todos */}
                     {product.images && product.images.length > 0 ? (
                       <img
                         src={getImageUrl(product.images[0] as any)}
@@ -361,6 +363,7 @@ const ProductsPage = () => {
                       </div>
                     )}
                     
+                    {/* Contenido - Mismo estilo para todos */}
                     <div className="p-4 flex-1">
                       <h3 className="font-semibold mb-2 line-clamp-2">{product.name}</h3>
                       {viewMode === 'list' && (
