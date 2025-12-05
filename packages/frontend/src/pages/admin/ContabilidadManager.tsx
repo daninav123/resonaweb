@@ -45,12 +45,30 @@ interface RentabilidadItem {
   roi: number;
 }
 
+interface MonthlyEvolution {
+  month: string;
+  ingresos: number;
+  gastos: number;
+  beneficio: number;
+}
+
+interface CostBreakdown {
+  costPersonal: number;
+  costDepreciacion: number;
+  costTransporte: number;
+  costConsumibles: number;
+  total: number;
+}
+
 const ContabilidadManager = () => {
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<'month' | 'quarter' | 'year'>('month');
   const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
   const [topRentables, setTopRentables] = useState<RentabilidadItem[]>([]);
   const [lessRentables, setLessRentables] = useState<RentabilidadItem[]>([]);
+  const [monthlyEvolution, setMonthlyEvolution] = useState<MonthlyEvolution[]>([]);
+  const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     loadFinancialData();
@@ -73,6 +91,14 @@ const ContabilidadManager = () => {
       setTopRentables(sorted.slice(0, 10));
       setLessRentables(sorted.slice(-5).reverse());
 
+      // Cargar evolución mensual (últimos 12 meses)
+      const evolutionResponse: any = await api.get('/contabilidad/evolution?months=12');
+      setMonthlyEvolution(evolutionResponse as MonthlyEvolution[]);
+
+      // Cargar desglose de costes del período actual
+      const costResponse: any = await api.get(`/contabilidad/cost-breakdown?period=${period}`);
+      setCostBreakdown(costResponse as CostBreakdown);
+
     } catch (error) {
       console.error('Error cargando datos contables:', error);
       toast.error('Error al cargar datos financieros');
@@ -91,6 +117,66 @@ const ContabilidadManager = () => {
   const formatPercentage = (value: number) => {
     const formatted = value.toFixed(1);
     return value >= 0 ? `+${formatted}%` : `${formatted}%`;
+  };
+
+  const exportToPDF = async () => {
+    try {
+      setExporting(true);
+      toast.loading('Generando PDF...');
+      
+      const response = await api.get(`/contabilidad/export/pdf?period=${period}`, {
+        responseType: 'blob'
+      });
+      
+      const blob = response as Blob;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contabilidad_${period}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.dismiss();
+      toast.success('PDF descargado correctamente');
+    } catch (error) {
+      console.error('Error exportando PDF:', error);
+      toast.dismiss();
+      toast.error('Error al generar PDF');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const exportToExcel = async () => {
+    try {
+      setExporting(true);
+      toast.loading('Generando Excel...');
+      
+      const response = await api.get(`/contabilidad/export/excel?period=${period}`, {
+        responseType: 'blob'
+      });
+      
+      const blob = response as Blob;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contabilidad_${period}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.dismiss();
+      toast.success('Excel descargado correctamente');
+    } catch (error) {
+      console.error('Error exportando Excel:', error);
+      toast.dismiss();
+      toast.error('Error al generar Excel');
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loading) {
@@ -115,38 +201,60 @@ const ContabilidadManager = () => {
           </p>
         </div>
         
-        {/* Selector de período */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPeriod('month')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              period === 'month'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            Mes
-          </button>
-          <button
-            onClick={() => setPeriod('quarter')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              period === 'quarter'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            Trimestre
-          </button>
-          <button
-            onClick={() => setPeriod('year')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              period === 'year'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            Año
-          </button>
+        <div className="flex flex-col gap-3">
+          {/* Botones de exportación */}
+          <div className="flex gap-2">
+            <button
+              onClick={exportToPDF}
+              disabled={exporting}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Exportar PDF
+            </button>
+            <button
+              onClick={exportToExcel}
+              disabled={exporting}
+              className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors disabled:bg-gray-400 flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Exportar Excel
+            </button>
+          </div>
+
+          {/* Selector de período */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPeriod('month')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                period === 'month'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Mes
+            </button>
+            <button
+              onClick={() => setPeriod('quarter')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                period === 'quarter'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Trimestre
+            </button>
+            <button
+              onClick={() => setPeriod('year')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                period === 'year'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Año
+            </button>
+          </div>
         </div>
       </div>
 
@@ -337,26 +445,176 @@ const ContabilidadManager = () => {
         </div>
       </div>
 
-      {/* Próximamente */}
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-        <div className="flex items-start gap-4">
-          <div className="bg-blue-600 text-white p-3 rounded-lg">
-            <BarChart3 className="w-6 h-6" />
+      {/* Evolución Mensual */}
+      {monthlyEvolution.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-blue-600" />
+            Evolución de los Últimos 12 Meses
+          </h3>
+          <div className="space-y-2">
+            {monthlyEvolution.map((month, index) => {
+              const maxValue = Math.max(...monthlyEvolution.map(m => m.ingresos));
+              const ingresosWidth = (month.ingresos / maxValue) * 100;
+              const gastosWidth = (month.gastos / maxValue) * 100;
+              
+              return (
+                <div key={index} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium text-gray-700">{month.month}</span>
+                    <div className="flex gap-4">
+                      <span className="text-green-600">↑ {formatCurrency(month.ingresos)}</span>
+                      <span className="text-red-600">↓ {formatCurrency(month.gastos)}</span>
+                      <span className={`font-semibold ${month.beneficio >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                        = {formatCurrency(month.beneficio)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative h-8 bg-gray-100 rounded overflow-hidden">
+                    <div
+                      className="absolute top-0 left-0 h-full bg-green-500 opacity-70"
+                      style={{ width: `${ingresosWidth}%` }}
+                    />
+                    <div
+                      className="absolute top-0 left-0 h-full bg-red-500 opacity-70"
+                      style={{ width: `${gastosWidth}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              Próximas Funcionalidades
-            </h3>
-            <ul className="space-y-1 text-blue-800">
-              <li>• Gráficos de evolución mensual</li>
-              <li>• Desglose detallado de costes operativos</li>
-              <li>• Facturación y estado de cobros</li>
-              <li>• Exportación a PDF/Excel para el contable</li>
-              <li>• Proyecciones de ingresos futuros</li>
-            </ul>
+          <div className="flex gap-6 mt-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-500 rounded"></div>
+              <span className="text-gray-600">Ingresos</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-red-500 rounded"></div>
+              <span className="text-gray-600">Gastos</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Desglose de Costes Operativos */}
+      {costBreakdown && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Users className="w-5 h-5 text-purple-600" />
+            Desglose de Costes Operativos
+          </h3>
+          <div className="space-y-4">
+            {/* Coste Personal */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-purple-600" />
+                  Personal (horas trabajadas)
+                </span>
+                <span className="font-semibold text-purple-600">
+                  {formatCurrency(costBreakdown.costPersonal)}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-purple-600 h-2 rounded-full"
+                  style={{
+                    width: `${(costBreakdown.costPersonal / costBreakdown.total) * 100}%`
+                  }}
+                />
+              </div>
+              <span className="text-xs text-gray-500">
+                {((costBreakdown.costPersonal / costBreakdown.total) * 100).toFixed(1)}% del total
+              </span>
+            </div>
+
+            {/* Coste Depreciación */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 flex items-center gap-2">
+                  <Package className="w-4 h-4 text-blue-600" />
+                  Depreciación equipos (5% por alquiler)
+                </span>
+                <span className="font-semibold text-blue-600">
+                  {formatCurrency(costBreakdown.costDepreciacion)}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full"
+                  style={{
+                    width: `${(costBreakdown.costDepreciacion / costBreakdown.total) * 100}%`
+                  }}
+                />
+              </div>
+              <span className="text-xs text-gray-500">
+                {((costBreakdown.costDepreciacion / costBreakdown.total) * 100).toFixed(1)}% del total
+              </span>
+            </div>
+
+            {/* Coste Transporte */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 flex items-center gap-2">
+                  <ShoppingCart className="w-4 h-4 text-orange-600" />
+                  Transporte e instalación
+                </span>
+                <span className="font-semibold text-orange-600">
+                  {formatCurrency(costBreakdown.costTransporte)}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-orange-600 h-2 rounded-full"
+                  style={{
+                    width: `${(costBreakdown.costTransporte / costBreakdown.total) * 100}%`
+                  }}
+                />
+              </div>
+              <span className="text-xs text-gray-500">
+                {((costBreakdown.costTransporte / costBreakdown.total) * 100).toFixed(1)}% del total
+              </span>
+            </div>
+
+            {/* Coste Consumibles */}
+            {costBreakdown.costConsumibles > 0 && (
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 flex items-center gap-2">
+                    <Package className="w-4 h-4 text-red-600" />
+                    Consumibles vendidos
+                  </span>
+                  <span className="font-semibold text-red-600">
+                    {formatCurrency(costBreakdown.costConsumibles)}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-red-600 h-2 rounded-full"
+                    style={{
+                      width: `${(costBreakdown.costConsumibles / costBreakdown.total) * 100}%`
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-gray-500">
+                  {((costBreakdown.costConsumibles / costBreakdown.total) * 100).toFixed(1)}% del total
+                </span>
+              </div>
+            )}
+
+            {/* Total */}
+            <div className="pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-900">Total Costes Operativos:</span>
+                <span className="font-bold text-xl text-gray-900">
+                  {formatCurrency(costBreakdown.total)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

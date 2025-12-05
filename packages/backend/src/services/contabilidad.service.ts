@@ -263,6 +263,139 @@ export class ContabilidadService {
       throw error;
     }
   }
+
+  /**
+   * Obtener evolución mensual (últimos N meses)
+   */
+  async getMonthlyEvolution(months: number = 12) {
+    try {
+      const now = new Date();
+      const results = [];
+
+      for (let i = months - 1; i >= 0; i--) {
+        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonthDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+
+        const orders = await prisma.order.findMany({
+          where: {
+            createdAt: {
+              gte: monthDate,
+              lt: nextMonthDate,
+            },
+            status: {
+              not: 'CANCELLED',
+            },
+          },
+          include: {
+            items: {
+              include: {
+                product: {
+                  include: {
+                    category: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const metrics = this.calculateMetrics(orders);
+
+        results.push({
+          month: monthDate.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }),
+          ingresos: metrics.ingresos,
+          gastos: metrics.gastos,
+          beneficio: metrics.beneficio,
+        });
+      }
+
+      return results;
+    } catch (error) {
+      logger.error('Error calculating monthly evolution:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener desglose de costes del período
+   */
+  async getCostBreakdown(period: 'month' | 'quarter' | 'year') {
+    try {
+      const now = new Date();
+      let startDate: Date;
+
+      if (period === 'month') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      } else if (period === 'quarter') {
+        const quarter = Math.floor(now.getMonth() / 3);
+        startDate = new Date(now.getFullYear(), quarter * 3, 1);
+      } else {
+        startDate = new Date(now.getFullYear(), 0, 1);
+      }
+
+      const orders = await prisma.order.findMany({
+        where: {
+          createdAt: {
+            gte: startDate,
+          },
+          status: {
+            not: 'CANCELLED',
+          },
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  category: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      let costPersonal = 0;
+      let costDepreciacion = 0;
+      let costConsumibles = 0;
+      let costTransporte = 0;
+
+      orders.forEach((order) => {
+        order.items?.forEach((item: any) => {
+          const product = item.product;
+          const quantity = item.quantity || 1;
+          const isPersonal = product?.category?.name?.toLowerCase() === 'personal';
+          const isConsumable = product?.isConsumable || false;
+
+          if (isPersonal) {
+            const hours = ((item as any).numberOfPeople || 1) * ((item as any).hoursPerPerson || 1);
+            costPersonal += Number(product.purchasePrice || 0) * hours;
+          } else if (isConsumable) {
+            costConsumibles += Number(product.purchasePrice || 0) * quantity;
+          } else {
+            costDepreciacion += Number(product.purchasePrice || 0) * quantity * 0.05;
+          }
+        });
+
+        if (order.transportCost) {
+          costTransporte += Number(order.transportCost);
+        }
+      });
+
+      const total = costPersonal + costDepreciacion + costConsumibles + costTransporte;
+
+      return {
+        costPersonal,
+        costDepreciacion,
+        costTransporte,
+        costConsumibles,
+        total,
+      };
+    } catch (error) {
+      logger.error('Error calculating cost breakdown:', error);
+      throw error;
+    }
+  }
 }
 
 export const contabilidadService = new ContabilidadService();

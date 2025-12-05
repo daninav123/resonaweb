@@ -20,4 +20,28 @@ router.get('/summary', contabilidadController.getFinancialSummary);
  */
 router.get('/rentabilidad', contabilidadController.getRentabilidadAnalysis);
 
+/**
+ * GET /api/v1/contabilidad/evolution
+ * Obtener evolución mensual
+ */
+router.get('/evolution', contabilidadController.getMonthlyEvolution);
+
+/**
+ * GET /api/v1/contabilidad/cost-breakdown
+ * Obtener desglose de costes operativos
+ */
+router.get('/cost-breakdown', contabilidadController.getCostBreakdown);
+
+/**
+ * GET /api/v1/contabilidad/export/pdf
+ * Exportar informe a PDF
+ */
+router.get('/export/pdf', contabilidadController.exportToPDF);
+
+/**
+ * GET /api/v1/contabilidad/export/excel
+ * Exportar informe a Excel
+ */
+router.get('/export/excel', contabilidadController.exportToExcel);
+
 export default router;
