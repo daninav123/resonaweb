@@ -125,19 +125,24 @@ class BackupController {
       const tempDbFile = path.join(backupScript, `temp_${timestamp}.json`);
 
       // Extraer TODOS los datos de la base de datos
-      console.log('📊 Extrayendo todos los datos...');
+      console.log('📊 Extrayendo TODOS los datos de la BD...');
       
       const backup = {
         timestamp: new Date().toISOString(),
-        version: '2.0',
+        version: '3.0',
         data: {
-          // Usuarios y datos relacionados
+          // ===== CONFIGURACIÓN DEL SISTEMA (PRIMERO) =====
+          systemConfig: await prisma.systemConfig.findMany(),
+          companySettings: await prisma.companySettings.findMany(),
+          shippingConfig: await prisma.shippingConfig.findMany(),
+          
+          // ===== USUARIOS Y DATOS RELACIONADOS =====
           users: await prisma.user.findMany(),
           billingData: await prisma.billingData.findMany(),
           userDiscounts: await prisma.userDiscount.findMany(),
           customerNotes: await prisma.customerNote.findMany(),
           
-          // Catálogo de productos
+          // ===== CATÁLOGO DE PRODUCTOS =====
           categories: await prisma.category.findMany(),
           extraCategories: await prisma.extraCategory.findMany(),
           products: await prisma.product.findMany(),
@@ -145,68 +150,70 @@ class BackupController {
           productComponents: await prisma.productComponent.findMany(),
           productPurchases: await prisma.productPurchase.findMany(),
           
-          // Packs
+          // ===== PACKS Y MONTAJES =====
           packs: await prisma.pack.findMany(),
           packItems: await prisma.packItem.findMany(),
           
-          // Pedidos y relacionados
+          // ===== PEDIDOS Y RELACIONADOS =====
           orders: await prisma.order.findMany(),
           orderItems: await prisma.orderItem.findMany(),
           orderNotes: await prisma.orderNote.findMany(),
           orderServices: await prisma.orderService.findMany(),
           orderModifications: await prisma.orderModification.findMany(),
           
-          // Entregas
+          // ===== ENTREGAS =====
           deliveries: await prisma.delivery.findMany(),
           
-          // Facturas y pagos
+          // ===== FACTURAS Y PAGOS =====
           invoices: await prisma.invoice.findMany(),
           customInvoices: await prisma.customInvoice.findMany(),
           payments: await prisma.payment.findMany(),
           paymentInstallments: await prisma.paymentInstallment.findMany(),
           
-          // Servicios
+          // ===== SERVICIOS Y TARIFAS =====
           services: await prisma.service.findMany(),
           shippingRates: await prisma.shippingRate.findMany(),
           
-          // Reviews y favoritos
+          // ===== REVIEWS Y FAVORITOS =====
           reviews: await prisma.review.findMany(),
           favorites: await prisma.favorite.findMany(),
           
-          // Blog
+          // ===== BLOG =====
           blogPosts: await prisma.blogPost.findMany(),
           blogCategories: await prisma.blogCategory.findMany(),
           blogTags: await prisma.blogTag.findMany(),
           
-          // Cupones
+          // ===== CUPONES =====
           coupons: await prisma.coupon.findMany(),
           couponUsages: await prisma.couponUsage.findMany(),
           
-          // Configuración
-          companySettings: await prisma.companySettings.findMany(),
-          shippingConfig: await prisma.shippingConfig.findMany(),
-          systemConfig: await prisma.systemConfig.findMany(),
-          
-          // Notificaciones
+          // ===== NOTIFICACIONES =====
           notifications: await prisma.notification.findMany(),
           emailNotifications: await prisma.emailNotification.findMany(),
           
-          // Analytics y métricas
+          // ===== ANALYTICS Y MÉTRICAS =====
           productInteractions: await prisma.productInteraction.findMany(),
           productDemandAnalytics: await prisma.productDemandAnalytics.findMany(),
           
-          // Solicitudes de presupuesto
+          // ===== SOLICITUDES DE PRESUPUESTO =====
           quoteRequests: await prisma.quoteRequest.findMany(),
           
-          // Carritos de compra
+          // ===== CARRITOS DE COMPRA =====
           carts: await prisma.cart.findMany(),
           cartItems: await prisma.cartItem.findMany(),
           
-          // API y seguridad
+          // ===== API Y SEGURIDAD =====
           apiKeys: await prisma.apiKey.findMany(),
           auditLogs: await prisma.auditLog.findMany()
         }
       };
+
+      // Log detallado de lo que se está guardando
+      console.log('📊 Resumen del backup:');
+      Object.entries(backup.data).forEach(([key, value]: [string, any]) => {
+        const count = Array.isArray(value) ? value.length : 0;
+        console.log(`   - ${key}: ${count} registros`);
+      });
 
       console.log('✅ Datos extraídos completamente');
 
