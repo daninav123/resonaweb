@@ -152,6 +152,11 @@ const CalculatorManagerNew = () => {
     const updatedCategories = [...(selectedEvent.extraCategories || [])];
     const category = updatedCategories[categoryIndex];
     
+    // Inicializar extrasIds si no existe
+    if (!category.extrasIds) {
+      category.extrasIds = [];
+    }
+    
     if (category.extrasIds.includes(extraId)) {
       // Remover
       category.extrasIds = category.extrasIds.filter((id: string) => id !== extraId);
@@ -162,18 +167,6 @@ const CalculatorManagerNew = () => {
     
     // Actualizar categorías
     updateEventType(selectedEventIndex, 'extraCategories', updatedCategories);
-    
-    // Sincronizar availableExtras con todos los IDs únicos de todas las categorías
-    const allExtraIds = new Set<string>();
-    updatedCategories.forEach((cat: any) => {
-      cat.extrasIds.forEach((id: string) => allExtraIds.add(id));
-    });
-    
-    // Obtener los objetos completos de los extras
-    const allMontajes = catalogProducts.filter((p: any) => p.isPack && p.isMontaje);
-    const selectedExtras = allMontajes.filter((m: any) => allExtraIds.has(m.id));
-    
-    updateEventType(selectedEventIndex, 'availableExtras', selectedExtras.map((e: any) => e.id));
   };
 
   // Validación y debug
@@ -615,10 +608,10 @@ const CalculatorManagerNew = () => {
                             
                             // Separar asignados vs no asignados
                             const assignedExtras = allMontajes.filter((extra: any) => 
-                              category.extrasIds.includes(extra.id)
+                              category.extrasIds?.includes(extra.id) || false
                             );
                             const unassignedExtras = allMontajes.filter((extra: any) => 
-                              !category.extrasIds.includes(extra.id)
+                              !category.extrasIds?.includes(extra.id)
                             );
 
                             return (
@@ -705,7 +698,7 @@ const CalculatorManagerNew = () => {
                                     <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white">
                                       <div className="divide-y divide-gray-200">
                                         {allMontajes.map((extra: any) => {
-                                          const isAssigned = category.extrasIds.includes(extra.id);
+                                          const isAssigned = category.extrasIds?.includes(extra.id) || false;
                                           return (
                                             <label
                                               key={extra.id}
