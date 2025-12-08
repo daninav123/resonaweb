@@ -89,11 +89,40 @@ export const useCalculatorConfig = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Sincronizar availableExtras con extraCategories antes de guardar
+      const syncedConfig = {
+        ...config,
+        eventTypes: config.eventTypes.map(eventType => {
+          // Si tiene categorías de extras, recopilar todos los IDs
+          if (eventType.extraCategories && eventType.extraCategories.length > 0) {
+            const allExtrasIds = new Set<string>();
+            
+            // Recopilar IDs de todas las categorías
+            eventType.extraCategories.forEach((category: any) => {
+              if (category.extrasIds && Array.isArray(category.extrasIds)) {
+                category.extrasIds.forEach((id: string) => allExtrasIds.add(id));
+              }
+            });
+            
+            // Actualizar availableExtras con todos los IDs únicos
+            return {
+              ...eventType,
+              availableExtras: Array.from(allExtrasIds)
+            };
+          }
+          
+          return eventType;
+        })
+      };
+      
       // Guardar en BD
-      await api.post('/calculator-config', { config });
+      await api.post('/calculator-config', { config: syncedConfig });
       
       // También guardar en localStorage como backup
-      localStorage.setItem('advancedCalculatorConfig', JSON.stringify(config));
+      localStorage.setItem('advancedCalculatorConfig', JSON.stringify(syncedConfig));
+      
+      // Actualizar estado local con la config sincronizada
+      setConfig(syncedConfig);
       
       toast.success('✅ Configuración guardada correctamente');
     } catch (error) {
