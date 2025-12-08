@@ -5,7 +5,7 @@ import { productService } from '../services/product.service';
 import { Product, Category } from '../types';
 import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
-import { organizationSchema, websiteSchema, localBusinessSchema } from '../utils/schemas';
+import { organizationSchema, websiteSchema, localBusinessSchema, serviceSchema } from '../utils/advancedSchemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 
 const HomePage = () => {
@@ -46,7 +46,8 @@ const HomePage = () => {
         title="Resona Events - Alquiler de Material para Eventos | Sonido, Iluminación, Foto y Video"
         description="Alquiler profesional de equipos de sonido, iluminación, fotografía y video para eventos. Bodas, conciertos, conferencias. Calculadora de presupuesto online. Mejores precios garantizados."
         keywords="alquiler material eventos, alquiler sonido, alquiler iluminación, alquiler equipos audiovisuales, bodas, conciertos, calculadora presupuesto eventos"
-        schema={[organizationSchema, websiteSchema, localBusinessSchema]}
+        ogImage="https://resonaevents.com/og-image.jpg"
+        schema={[organizationSchema, websiteSchema, localBusinessSchema, serviceSchema]}
       />
       {/* Hero Section */}
       <section className="relative bg-resona text-white overflow-hidden">
