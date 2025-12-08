@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { diagnosticController } from '../controllers/diagnostic.controller';
 
 const prisma = new PrismaClient();
 
@@ -75,5 +76,17 @@ router.get('/montajes', async (req: Request, res: Response) => {
     res.status(500).json({ error: String(error) });
   }
 });
+
+/**
+ * GET /api/v1/diagnostic/calculator-config
+ * Diagnóstico de configuración de calculadora (SIN autenticación)
+ */
+router.get('/calculator-config', diagnosticController.checkCalculatorConfig.bind(diagnosticController));
+
+/**
+ * POST /api/v1/diagnostic/init-calculator-config
+ * Inicializar configuración de calculadora si no existe (SIN autenticación)
+ */
+router.post('/init-calculator-config', diagnosticController.initCalculatorConfig.bind(diagnosticController));
 
 export default router;
