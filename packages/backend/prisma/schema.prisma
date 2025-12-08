@@ -554,6 +554,10 @@ model PackItem {
   numberOfPeople Int? // Número de personas (ej: 2 montadores)
   hoursPerPerson Decimal? @db.Decimal(8, 2) // Horas por persona (ej: 3 horas)
 
+  // Contabilidad
+  estimatedCost Decimal? @db.Decimal(10, 2) // Coste estimado inicial
+  realCost      Decimal? @db.Decimal(10, 2) // Coste real final
+
   @@unique([packId, productId])
 }
 
@@ -595,6 +599,7 @@ model Order {
   paymentTermSurcharge  Decimal? @db.Decimal(10, 2)
   taxAmount             Decimal  @db.Decimal(10, 2)
   total                 Decimal  @db.Decimal(10, 2)
+  realCost              Decimal  @default(0) @db.Decimal(10, 2) // Gastos reales del pedido (contabilidad)
 
   // Pagos
   upfrontPaymentAmount   Decimal?       @db.Decimal(10, 2)
@@ -1630,4 +1635,21 @@ model ExtraCategory {
 
   @@index([isActive, order])
   @@map("extra_categories")
+}
+
+// ============= CONTABILIDAD =============
+
+model OperationalExpense {
+  id        String   @id @default(uuid())
+  concept   String
+  amount    Decimal  @db.Decimal(10, 2)
+  category  String   // Transporte, Personal, Mantenimiento, Marketing, Oficina, Servicios, Varios
+  date      DateTime
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([date])
+  @@map("operational_expenses")
 }

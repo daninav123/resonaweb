@@ -130,6 +130,180 @@ export class ContabilidadController {
       next(error);
     }
   }
+
+  /**
+   * GET /api/v1/contabilidad/alquileres
+   * Obtener lista de alquileres
+   */
+  async getAlquileres(req: Request, res: Response, next: NextFunction) {
+    try {
+      const status = req.query.status as string | undefined;
+      const alquileres = await contabilidadService.getAlquileres(status);
+
+      logger.info(`Alquileres retrieved: ${alquileres.length} orders`);
+      res.json(alquileres);
+    } catch (error) {
+      logger.error('Error getting alquileres:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * PUT /api/v1/contabilidad/alquileres/:id/gastos
+   * Actualizar gastos reales de un alquiler
+   */
+  async updateAlquilerGastos(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { realCost } = req.body;
+
+      if (typeof realCost !== 'number' || realCost < 0) {
+        return res.status(400).json({
+          error: 'Invalid realCost. Must be a positive number',
+        });
+      }
+
+      const updated = await contabilidadService.updateAlquilerGastos(id, realCost);
+
+      logger.info(`Alquiler gastos updated: ${id} - €${realCost}`);
+      res.json(updated);
+    } catch (error) {
+      logger.error('Error updating alquiler gastos:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/v1/contabilidad/montajes
+   * Obtener lista de montajes
+   */
+  async getMontajes(req: Request, res: Response, next: NextFunction) {
+    try {
+      const montajes = await contabilidadService.getMontajes();
+
+      logger.info(`Montajes retrieved: ${montajes.length} montajes`);
+      res.json(montajes);
+    } catch (error) {
+      logger.error('Error getting montajes:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * PUT /api/v1/contabilidad/montajes/:id/gastos
+   * Actualizar gastos reales de un montaje
+   */
+  async updateMontajeGastos(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { realCost } = req.body;
+
+      if (typeof realCost !== 'number' || realCost < 0) {
+        return res.status(400).json({
+          error: 'Invalid realCost. Must be a positive number',
+        });
+      }
+
+      const result = await contabilidadService.updateMontajeGastos(id, realCost);
+
+      logger.info(`Montaje gastos updated: ${id} - €${realCost}`);
+      res.json(result);
+    } catch (error) {
+      logger.error('Error updating montaje gastos:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/v1/contabilidad/gastos
+   * Obtener gastos operativos
+   */
+  async getGastos(req: Request, res: Response, next: NextFunction) {
+    try {
+      const category = req.query.category as string | undefined;
+      const gastos = await contabilidadService.getGastos(category);
+
+      logger.info(`Gastos retrieved: ${gastos.length} expenses`);
+      res.json(gastos);
+    } catch (error) {
+      logger.error('Error getting gastos:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/v1/contabilidad/gastos
+   * Crear gasto operativo
+   */
+  async createGasto(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { concept, amount, category, date, notes } = req.body;
+
+      if (!concept || typeof amount !== 'number' || !category || !date) {
+        return res.status(400).json({
+          error: 'Missing required fields: concept, amount, category, date',
+        });
+      }
+
+      const gasto = await contabilidadService.createGasto({
+        concept,
+        amount,
+        category,
+        date: new Date(date),
+        notes,
+      });
+
+      logger.info(`Gasto created: ${gasto.id} - ${concept}`);
+      res.status(201).json(gasto);
+    } catch (error) {
+      logger.error('Error creating gasto:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * PUT /api/v1/contabilidad/gastos/:id
+   * Actualizar gasto operativo
+   */
+  async updateGasto(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { concept, amount, category, date, notes } = req.body;
+
+      const updateData: any = {};
+      if (concept !== undefined) updateData.concept = concept;
+      if (amount !== undefined) updateData.amount = amount;
+      if (category !== undefined) updateData.category = category;
+      if (date !== undefined) updateData.date = new Date(date);
+      if (notes !== undefined) updateData.notes = notes;
+
+      const gasto = await contabilidadService.updateGasto(id, updateData);
+
+      logger.info(`Gasto updated: ${id}`);
+      res.json(gasto);
+    } catch (error) {
+      logger.error('Error updating gasto:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * DELETE /api/v1/contabilidad/gastos/:id
+   * Eliminar gasto operativo
+   */
+  async deleteGasto(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      await contabilidadService.deleteGasto(id);
+
+      logger.info(`Gasto deleted: ${id}`);
+      res.json({ success: true });
+    } catch (error) {
+      logger.error('Error deleting gasto:', error);
+      next(error);
+    }
+  }
 }
 
 export const contabilidadController = new ContabilidadController();

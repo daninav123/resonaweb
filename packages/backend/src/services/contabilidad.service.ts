@@ -147,8 +147,8 @@ export class ContabilidadService {
       });
 
       // Costes de transporte (si aplica)
-      if (order.transportCost) {
-        costTransporte += Number(order.transportCost);
+      if (order.shippingCost) {
+        costTransporte += Number(order.shippingCost);
       }
     });
 
@@ -377,8 +377,8 @@ export class ContabilidadService {
           }
         });
 
-        if (order.transportCost) {
-          costTransporte += Number(order.transportCost);
+        if (order.shippingCost) {
+          costTransporte += Number(order.shippingCost);
         }
       });
 
@@ -393,6 +393,297 @@ export class ContabilidadService {
       };
     } catch (error) {
       logger.error('Error calculating cost breakdown:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener lista de alquileres con gastos reales
+   */
+  async getAlquileres(status?: string) {
+    try {
+      const where: any = {
+        status: { not: 'CANCELLED' },
+      };
+
+      if (status) {
+        where.status = status;
+      }
+
+      const orders = await prisma.order.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return orders.map((order) => {
+        const totalAmount = Number(order.total || 0);
+        const realCost = Number(order.realCost || 0);
+        const profit = totalAmount - realCost;
+        const margin = totalAmount > 0 ? (profit / totalAmount) * 100 : 0;
+
+        return {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          customerName: `${order.user.firstName} ${order.user.lastName}`,
+          startDate: order.startDate,
+          endDate: order.endDate,
+          totalAmount,
+          realCost,
+          profit,
+          margin,
+          status: order.status,
+        };
+      });
+    } catch (error) {
+      logger.error('Error getting alquileres:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar gastos reales de un pedido
+   */
+  async updateAlquilerGastos(orderId: string, realCost: number) {
+    try {
+      const updated = await prisma.order.update({
+        where: { id: orderId },
+        data: { realCost },
+      });
+
+      return updated;
+    } catch (error) {
+      logger.error('Error updating alquiler gastos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener lista de montajes con costes
+   */
+  async getMontajes() {
+    try {
+      // Obtener todos los packs de tipo montaje
+      const packs = await prisma.pack.findMany({
+        where: {
+          categoryRef: {
+            name: {
+              equals: 'Montaje',
+              mode: 'insensitive',
+            },
+          },
+        },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      // Buscar órdenes que incluyan estos montajes
+      const results = [];
+
+      for (const pack of packs) {
+        // Buscar items de pedido que referencien este pack
+        const orderItems = await prisma.orderItem.findMany({
+          where: {
+            productId: pack.id, // Los packs se guardan como productos
+          },
+          include: {
+            order: {
+              include: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        for (const item of orderItems) {
+          const estimatedCost = pack.items.reduce((sum, packItem) => {
+            return sum + (Number(packItem.estimatedCost || packItem.product.purchasePrice || 0) * (packItem.quantity || 1));
+          }, 0);
+
+          const realCost = pack.items.reduce((sum, packItem) => {
+            return sum + (Number(packItem.realCost || packItem.estimatedCost || packItem.product.purchasePrice || 0) * (packItem.quantity || 1));
+          }, 0);
+
+          const price = Number(pack.finalPrice || 0);
+          const profit = price - realCost;
+          const margin = price > 0 ? (profit / price) * 100 : 0;
+
+          results.push({
+            id: pack.id,
+            name: pack.name,
+            orderId: item.order.id,
+            orderNumber: item.order.orderNumber,
+            customerName: `${item.order.user.firstName} ${item.order.user.lastName}`,
+            date: item.order.startDate,
+            estimatedCost,
+            realCost,
+            price,
+            profit,
+            margin,
+          });
+        }
+      }
+
+      return results;
+    } catch (error) {
+      logger.error('Error getting montajes:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar costes reales de un montaje
+   */
+  async updateMontajeGastos(montajeId: string, realCost: number) {
+    try {
+      // Actualizar el coste real en los PackItems
+      const pack = await prisma.pack.findUnique({
+        where: { id: montajeId },
+        include: { items: true },
+      });
+
+      if (!pack) {
+        throw new Error('Montaje no encontrado');
+      }
+
+      // Distribuir el coste real proporcionalmente entre los items
+      const totalEstimated = pack.items.reduce((sum, item) => sum + Number(item.estimatedCost || 0), 0);
+
+      for (const item of pack.items) {
+        const proportion = totalEstimated > 0 ? Number(item.estimatedCost || 0) / totalEstimated : 1 / pack.items.length;
+        const itemRealCost = realCost * proportion;
+
+        await prisma.packItem.update({
+          where: { id: item.id },
+          data: { realCost: itemRealCost },
+        });
+      }
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Error updating montaje gastos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener gastos operativos
+   */
+  async getGastos(category?: string) {
+    try {
+      const where: any = {};
+
+      if (category) {
+        where.category = category;
+      }
+
+      const gastos = await prisma.operationalExpense.findMany({
+        where,
+        orderBy: {
+          date: 'desc',
+        },
+      });
+
+      return gastos.map((gasto) => ({
+        id: gasto.id,
+        concept: gasto.concept,
+        amount: Number(gasto.amount),
+        category: gasto.category,
+        date: gasto.date,
+        notes: gasto.notes,
+      }));
+    } catch (error) {
+      logger.error('Error getting gastos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Crear gasto operativo
+   */
+  async createGasto(data: {
+    concept: string;
+    amount: number;
+    category: string;
+    date: Date;
+    notes?: string;
+  }) {
+    try {
+      const gasto = await prisma.operationalExpense.create({
+        data: {
+          concept: data.concept,
+          amount: data.amount,
+          category: data.category,
+          date: data.date,
+          notes: data.notes,
+        },
+      });
+
+      return gasto;
+    } catch (error) {
+      logger.error('Error creating gasto:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar gasto operativo
+   */
+  async updateGasto(
+    id: string,
+    data: {
+      concept?: string;
+      amount?: number;
+      category?: string;
+      date?: Date;
+      notes?: string;
+    }
+  ) {
+    try {
+      const gasto = await prisma.operationalExpense.update({
+        where: { id },
+        data,
+      });
+
+      return gasto;
+    } catch (error) {
+      logger.error('Error updating gasto:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar gasto operativo
+   */
+  async deleteGasto(id: string) {
+    try {
+      await prisma.operationalExpense.delete({
+        where: { id },
+      });
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Error deleting gasto:', error);
       throw error;
     }
   }
