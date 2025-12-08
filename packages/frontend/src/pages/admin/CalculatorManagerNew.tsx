@@ -6,7 +6,6 @@ import { useCalculatorConfig } from '../../hooks/useCalculatorConfig';
 import { SERVICE_LEVEL_LABELS, ServiceLevel } from '../../types/calculator.types';
 import { productService } from '../../services/product.service';
 import { api } from '../../services/api';
-import PackSelector from '../../components/admin/PackSelector';
 import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
 import PartPricingEditor from '../../components/admin/PartPricingEditor';
 
@@ -537,25 +536,7 @@ const CalculatorManagerNew = () => {
                   </div>
 
                   <div className="p-6 space-y-6">
-                    {/* Available Packs */}
                     <div>
-                      <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Montajes Disponibles para este Evento
-                        </label>
-                        <p className="text-xs text-gray-500">
-                          Selecciona montajes individuales. Usa el filtro de categorías para encontrarlos más fácilmente.
-                        </p>
-                      </div>
-                      <PackSelector
-                        allPacks={catalogProducts.filter((p: any) => p.isPack && p.isMontaje)}
-                        selectedPacks={selectedEvent.availablePacks || []}
-                        onChange={(packs) => updateEventType(selectedEventIndex, 'availablePacks', packs)}
-                      />
-                    </div>
-
-                    {/* Divider */}
-                    <div className="border-t pt-6">
                       <div className="mb-3">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Reglas de Recomendación
