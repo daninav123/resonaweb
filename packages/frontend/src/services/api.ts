@@ -39,7 +39,8 @@ class ApiClient {
                               config.url?.includes('/auth/register');
         const isPublicEndpoint = config.url?.includes('/packs') ||
                                 config.url?.includes('/products') ||
-                                config.url?.includes('/categories');
+                                config.url?.includes('/categories') ||
+                                config.url?.includes('/calculator-config');
         
         if (!isAuthEndpoint && !isPublicEndpoint) {
           const token = useAuthStore.getState().accessToken;
