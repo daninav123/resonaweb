@@ -12,7 +12,7 @@ interface IndexingRequest {
 }
 
 export class GoogleIndexingService {
-  private static readonly INDEXING_API_URL = 'https://indexing.googleapis.com/batch';
+  private static readonly INDEXING_API_URL = 'https://indexing.googleapis.com/v3/urlNotifications:publish';
   private static readonly SCOPES = ['https://www.googleapis.com/auth/indexing'];
 
   /**
@@ -35,17 +35,12 @@ export class GoogleIndexingService {
         return false;
       }
 
-      // Preparar request
-      const request: IndexingRequest = {
-        url,
-        type,
-      };
-
-      // Enviar a Google
+      // Enviar a Google (formato correcto de la API)
       const response = await axios.post(
         this.INDEXING_API_URL,
         {
-          requests: [request],
+          url,
+          type,
         },
         {
           headers: {
@@ -62,8 +57,11 @@ export class GoogleIndexingService {
 
       logger.error(`❌ Error al indexar URL: ${response.statusText}`);
       return false;
-    } catch (error) {
-      logger.error(`❌ Error en Google Indexing API:`, error);
+    } catch (error: any) {
+      logger.error(`❌ Error en Google Indexing API: ${error.message}`);
+      if (error.response?.data) {
+        logger.error(`Detalles:`, error.response.data);
+      }
       return false;
     }
   }
