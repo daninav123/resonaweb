@@ -31,6 +31,7 @@ interface Product {
   pricePerUnit?: number;
   purchasePrice?: number;
   purchaseDate?: string;
+  timesUsed?: number;
 }
 
 const ProductsManager = () => {
@@ -628,8 +629,8 @@ const ProductsManager = () => {
           </div>
         </div>
 
-        {/* Products Table */}
-        <div className="bg-white rounded-lg shadow overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
+        {/* Products Table - Desktop */}
+        <div className="hidden md:block bg-white rounded-lg shadow overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
           <table className="w-full table-auto">
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
@@ -717,7 +718,7 @@ const ProductsManager = () => {
                       {product.purchasePrice ? `€${product.purchasePrice}` : '-'}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-semibold">
-                      {product.stock || 0}
+                      {product.realStock || product.stock || 0}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                       <button 
@@ -757,6 +758,97 @@ const ProductsManager = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Products Cards - Mobile */}
+        <div className="md:hidden space-y-4 overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)' }}>
+          {filteredProducts.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+              <Package className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+              {searchTerm || selectedCategory 
+                ? 'No se encontraron productos con los filtros aplicados' 
+                : 'No hay productos. Crea el primero.'}
+            </div>
+          ) : (
+            sortedItems.map((product) => (
+              <div key={product.id} className="bg-white rounded-lg shadow p-4">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-lg">
+                      {product.name}
+                    </h3>
+                    {(product as any).isPack && (
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-resona/10 text-resona text-xs font-semibold rounded">
+                        PACK
+                      </span>
+                    )}
+                  </div>
+                  {product.category && (
+                    <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {product.category.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Info Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">SKU:</span>
+                    <p className="font-medium text-gray-900">{product.sku}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Stock:</span>
+                    <p className="font-bold text-gray-900">{product.realStock || product.stock || 0} uds</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">€/día:</span>
+                    <p className="font-bold text-resona">€{product.pricePerDay}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Precio Compra:</span>
+                    <p className="font-medium text-gray-900">
+                      {product.purchasePrice ? `€${product.purchasePrice}` : '-'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-3 border-t border-gray-200">
+                  <button 
+                    onClick={() => {
+                      setImageProduct(product);
+                      setShowImageManager(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    Imágenes
+                  </button>
+                  <button 
+                    onClick={() => openEditModal(product)}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-resona/10 text-resona rounded-lg hover:bg-resona/20 transition-colors text-sm font-medium"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Editar
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(product.id, product.name)}
+                    disabled={deleting === product.id || !!deleting}
+                    className={`flex items-center justify-center px-3 py-2 rounded-lg transition-colors ${
+                      deleting === product.id 
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                        : deleting 
+                        ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                        : 'bg-red-50 text-red-700 hover:bg-red-100'
+                    }`}
+                  >
+                    <Trash2 className={`w-4 h-4 ${deleting === product.id ? 'animate-pulse' : ''}`} />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import http from 'http';
+import { uploadImageToCloudinary as uploadToCloudinary } from './cloudinary.service';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -245,17 +246,41 @@ commercial photography aesthetic. No text or logos in the image.`;
 
     logger.info(`✅ Imagen generada: ${imageUrl}`);
 
-    // Descargar y guardar la imagen
-    const savedPath = await downloadAndSaveImage(imageUrl, articleTitle);
+    // Subir a Cloudinary para uso en producción (funciona tanto en local como en producción)
+    const cloudinaryUrl = await uploadImageToCloudinary(imageUrl, articleTitle);
     
-    return savedPath;
+    return cloudinaryUrl;
   } catch (error: any) {
     logger.error(`❌ Error generando imagen: ${error.message}`);
     return null;
   }
 }
 
-// Función para descargar y guardar imagen
+// Función para subir imagen a Cloudinary
+async function uploadImageToCloudinary(imageUrl: string, articleTitle: string): Promise<string> {
+  try {
+    // Generar nombre único para Cloudinary
+    const timestamp = Date.now();
+    const slug = articleTitle
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 50);
+    
+    const publicId = `${slug}-${timestamp}`;
+    
+    // Subir a Cloudinary
+    const cloudinaryUrl = await uploadToCloudinary(imageUrl, 'blog', publicId);
+    return cloudinaryUrl;
+  } catch (error: any) {
+    logger.error(`❌ Error subiendo imagen a Cloudinary: ${error.message}`);
+    throw error;
+  }
+}
+
+// Función para descargar y guardar imagen (legacy - solo para local)
 async function downloadAndSaveImage(imageUrl: string, articleTitle: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {

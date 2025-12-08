@@ -45,8 +45,9 @@ const PurchaseLotsManager = () => {
       console.log('Productos cargados:', prods.length);
       
       // Filtrar solo productos con precio de compra (excluir packs)
+      // Incluir productos inactivos para poder registrar compras de todos los productos
       const productsWithPurchase = prods.filter((p: any) => 
-        !p.isPack && p.purchasePrice && p.isActive
+        !p.isPack && p.purchasePrice
       );
       
       console.log('Productos con precio de compra:', productsWithPurchase.length);

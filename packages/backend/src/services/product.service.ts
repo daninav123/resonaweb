@@ -884,17 +884,19 @@ export class ProductService {
       throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
     }
 
-    let newStock: number;
+    // Inicializar realStock si no existe (migración para productos antiguos)
+    const realStock = product.realStock ?? product.stock;
+
     let newAvailableStock: number;
 
     if (operation === 'increase') {
-      newStock = product.stock + quantity;
+      // Solo actualizar availableStock, NO el stock físico
       newAvailableStock = product.availableStock + quantity;
     } else {
       if (product.availableStock < quantity) {
         throw new AppError(400, 'Stock insuficiente', 'INSUFFICIENT_STOCK');
       }
-      newStock = product.stock - quantity;
+      // Solo actualizar availableStock, NO el stock físico
       newAvailableStock = product.availableStock - quantity;
     }
 
@@ -909,14 +911,14 @@ export class ProductService {
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
       data: {
-        stock: newStock,
-        availableStock: newAvailableStock,
+        realStock: realStock,  // Asegurar que realStock esté poblado
+        availableStock: newAvailableStock,  // Solo modificar el disponible
         status,
       },
     });
 
     logger.info(
-      `Stock updated for product ${productId}: ${operation} ${quantity}. New stock: ${newStock}`
+      `Stock updated for product ${productId}: ${operation} ${quantity}. Available stock: ${newAvailableStock}, Real stock: ${realStock} (unchanged)`
     );
 
     return updatedProduct;
