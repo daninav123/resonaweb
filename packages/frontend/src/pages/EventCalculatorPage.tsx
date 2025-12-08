@@ -67,18 +67,44 @@ const EventCalculatorPage = () => {
     message: ''
   });
 
-  // Cargar configuración desde el gestor de admin
-  const [calculatorConfig, setCalculatorConfig] = useState(() => {
-    const saved = localStorage.getItem('advancedCalculatorConfig');
-    if (saved) {
+  // Cargar configuración desde la BD (igual que el admin)
+  const [calculatorConfig, setCalculatorConfig] = useState(DEFAULT_CALCULATOR_CONFIG);
+
+  // Cargar configuración al montar el componente
+  useEffect(() => {
+    const loadConfig = async () => {
       try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return DEFAULT_CALCULATOR_CONFIG;
+        // Primero intentar cargar desde BD
+        const response: any = await api.get('/calculator-config');
+        if (response && response.eventTypes) {
+          console.log('✅ Configuración cargada desde BD (usuario)');
+          setCalculatorConfig(response as any);
+          return;
+        }
+      } catch (error) {
+        console.log('⚠️ No hay configuración en BD, usando localStorage o default');
       }
-    }
-    return DEFAULT_CALCULATOR_CONFIG;
-  });
+
+      // Si no hay en BD, intentar localStorage
+      const saved = localStorage.getItem('advancedCalculatorConfig');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setCalculatorConfig(parsed as any);
+          console.log('✅ Configuración cargada desde localStorage');
+          return;
+        } catch (e) {
+          console.error('Error al parsear localStorage:', e);
+        }
+      }
+
+      // Si nada funciona, usar default
+      console.log('ℹ️ Usando configuración por defecto');
+      setCalculatorConfig(DEFAULT_CALCULATOR_CONFIG);
+    };
+
+    loadConfig();
+  }, []);
 
   // Filtrar solo tipos de evento activos (isActive !== false)
   const eventTypes = calculatorConfig.eventTypes
