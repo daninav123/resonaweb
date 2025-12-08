@@ -80,6 +80,9 @@ const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 // Cookie Banner
 import CookieBanner from './components/CookieBanner';
 
+// Scroll to top on route change
+import ScrollToTop from './components/ScrollToTop';
+
 // Loading component
 const Loading = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -130,6 +133,7 @@ function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ScrollToTop />
         <Suspense fallback={<Loading />}>
           <Routes>
             {/* Public Routes */}
