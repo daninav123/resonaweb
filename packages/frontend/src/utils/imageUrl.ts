@@ -8,15 +8,22 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
     return '';
   }
 
-  // Si ya es una URL completa, devolverla tal cual
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
-  }
-
   // Detectar automáticamente el entorno
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '';
-  
+
+  // Si ya es una URL completa
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    // En producción, reemplazar localhost por el dominio de producción
+    if (isProduction && imagePath.includes('localhost')) {
+      // Extraer la ruta después de localhost:3001
+      const path = imagePath.replace(/https?:\/\/localhost:\d+/, '');
+      return `https://${hostname}${path}`;
+    }
+    // Si no es localhost, devolverla tal cual
+    return imagePath;
+  }
+
   // Obtener la URL base del backend
   let baseUrl: string;
   
