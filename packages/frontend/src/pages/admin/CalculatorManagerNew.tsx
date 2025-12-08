@@ -603,14 +603,14 @@ const CalculatorManagerNew = () => {
                       {selectedEvent.extraCategories && selectedEvent.extraCategories.length > 0 ? (
                         <div className="space-y-4">
                           {selectedEvent.extraCategories.map((category: any, catIndex: number) => {
-                            // Obtener TODOS los montajes disponibles
-                            const allMontajes = catalogProducts.filter((p: any) => p.isPack && p.isMontaje);
+                            // Obtener TODOS los PRODUCTOS (NO montajes, NO packs)
+                            const allExtras = catalogProducts.filter((p: any) => !p.isPack && !p.isMontaje);
                             
                             // Separar asignados vs no asignados
-                            const assignedExtras = allMontajes.filter((extra: any) => 
+                            const assignedExtras = allExtras.filter((extra: any) => 
                               category.extrasIds?.includes(extra.id) || false
                             );
-                            const unassignedExtras = allMontajes.filter((extra: any) => 
+                            const unassignedExtras = allExtras.filter((extra: any) => 
                               !category.extrasIds?.includes(extra.id)
                             );
 
@@ -678,14 +678,14 @@ const CalculatorManagerNew = () => {
                                   </div>
                                 )}
 
-                                {/* Lista de montajes disponibles */}
+                                {/* Lista de productos extras disponibles */}
                                 <div>
                                   <div className="text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
-                                    <span>Montajes en esta categoría ({assignedExtras.length}/{allMontajes.length})</span>
-                                    {allMontajes.length > 10 && (
+                                    <span>Productos en esta categoría ({assignedExtras.length}/{allExtras.length})</span>
+                                    {allExtras.length > 10 && (
                                       <input
                                         type="text"
-                                        placeholder="Buscar montaje..."
+                                        placeholder="Buscar producto..."
                                         className="px-2 py-1 text-xs border rounded"
                                         onChange={(e) => {
                                           // TODO: Implementar filtro de búsqueda si es necesario
@@ -694,10 +694,10 @@ const CalculatorManagerNew = () => {
                                     )}
                                   </div>
                                   
-                                  {allMontajes.length > 0 ? (
+                                  {allExtras.length > 0 ? (
                                     <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white">
                                       <div className="divide-y divide-gray-200">
-                                        {allMontajes.map((extra: any) => {
+                                        {allExtras.map((extra: any) => {
                                           const isAssigned = category.extrasIds?.includes(extra.id) || false;
                                           return (
                                             <label
@@ -740,7 +740,7 @@ const CalculatorManagerNew = () => {
                                   ) : (
                                     <div className="text-center py-8 text-gray-500 border border-gray-200 rounded-lg bg-white">
                                       <p className="text-sm">
-                                        No hay montajes disponibles. Crea montajes en la sección "Montajes" primero.
+                                        No hay productos disponibles. Los productos se muestran automáticamente desde el catálogo.
                                       </p>
                                     </div>
                                   )}
