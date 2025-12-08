@@ -76,11 +76,24 @@ const CalculatorManagerNew = () => {
       const montajesData = Array.isArray(packsData) 
         ? packsData.filter((pack: any) => {
             const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
-            return categoryName === 'montaje';
+            const isMontaje = categoryName === 'montaje';
+            
+            // Debug: Log primer pack para ver estructura
+            if (packsData.indexOf(pack) === 0) {
+              console.log('🔍 Debug primer pack:', {
+                name: pack.name,
+                categoryRef: pack.categoryRef,
+                category: pack.category,
+                categoryName,
+                isMontaje
+              });
+            }
+            
+            return isMontaje;
           })
         : [];
       
-      console.log('🚚 Montajes filtrados para calculadora:', montajesData.length);
+      console.log('🚚 Montajes filtrados para calculadora:', montajesData.length, 'de', packsData.length, 'packs');
       
       // Mapear montajes al formato esperado
       const mappedMontajes = montajesData.map((pack: any) => {
