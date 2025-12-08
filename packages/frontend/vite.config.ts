@@ -36,6 +36,28 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false, // Desactivar en producción para mejor rendimiento
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Eliminar todos los console.log en producción
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separar vendors grandes para mejor caché
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'query-vendor': ['@tanstack/react-query'],
+          'ui-vendor': ['lucide-react'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Aumentar límite a 1MB
+  },
+  // Optimizaciones de performance
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 });
