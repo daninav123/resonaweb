@@ -69,56 +69,8 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
     onChange(selectedPacks.filter(id => !filteredIds.has(id)));
   };
 
-  const packsCount = allPacks.filter(p => p.isPack).length;
-  const productsCount = allPacks.filter(p => !p.isPack).length;
-
   return (
     <div className="space-y-4">
-      {/* Info de tipos y filtros */}
-      <div className="space-y-2">
-        <div className="flex gap-2 text-xs">
-          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded">
-            🚚 {packsCount} Montajes
-          </span>
-          <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
-            📋 {productsCount} Productos
-          </span>
-        </div>
-        
-        {/* Filtro por tipo */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setTypeFilter('all')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
-              typeFilter === 'all'
-                ? 'bg-gray-800 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            Todos
-          </button>
-          <button
-            onClick={() => setTypeFilter('packs')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
-              typeFilter === 'packs'
-                ? 'bg-gray-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            Solo Montajes
-          </button>
-          <button
-            onClick={() => setTypeFilter('products')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-all ${
-              typeFilter === 'products'
-                ? 'bg-green-600 text-white'
-                : 'bg-green-100 text-green-700 hover:bg-green-200'
-            }`}
-          >
-            Solo Productos
-          </button>
-        </div>
-      </div>
 
       {/* Búsqueda */}
       <div>
