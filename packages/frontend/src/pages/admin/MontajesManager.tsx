@@ -68,9 +68,9 @@ const MontajesManager = () => {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      // Incluir packs inactivos en el admin
-      const response: any = await api.get('/packs?includeInactive=true');
-      console.log('Respuesta de packs desde /packs:', response);
+      // Incluir packs inactivos Y montajes en el admin
+      const response: any = await api.get('/packs?includeInactive=true&includeMontajes=true');
+      console.log('Respuesta de packs desde /packs (con montajes):', response);
 
       // El backend retorna { packs: [...] }
       const packsData = response?.packs || response || [];
