@@ -13,9 +13,21 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
     return imagePath;
   }
 
+  // Detectar automáticamente el entorno
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '';
+  
   // Obtener la URL base del backend
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
-  const baseUrl = apiUrl.replace('/api/v1', '');
+  let baseUrl: string;
+  
+  if (isProduction) {
+    // En producción, usar el mismo dominio con HTTPS
+    baseUrl = `https://${hostname}`;
+  } else {
+    // En desarrollo, usar localhost:3001
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
+    baseUrl = apiUrl.replace('/api/v1', '');
+  }
 
   // Asegurar que imagePath empiece con /
   const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
