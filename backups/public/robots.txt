@@ -1,0 +1,60 @@
+# Robots.txt for ReSona Events
+# Generated: 2025-11-18
+
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /checkout
+Disallow: /mis-pedidos
+Disallow: /perfil
+Allow: /
+
+# Sitemaps
+Sitemap: https://resona.com/sitemap.xml
+
+# Crawl-delay (seconds)
+Crawl-delay: 1
+
+# Specific bot rules
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Social media bots
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Allow images
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /productos/
+
+User-agent: bingbot
+Allow: /images/
+Allow: /productos/

@@ -231,7 +231,8 @@ const HomePage = () => {
                     {product.mainImageUrl ? (
                       <img
                         src={getImageUrl(product.mainImageUrl)}
-                        alt={product.name}
+                        alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos profesionales'} para eventos | ReSona Events Valencia`}
+                        loading="lazy"
                         className="w-full h-48 object-contain bg-white group-hover:scale-105 transition"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = placeholderImage;

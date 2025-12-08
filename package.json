@@ -27,6 +27,7 @@
     "test:e2e:report": "playwright show-report",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",
+    "seo:sitemap": "node generate-sitemap.js",
     "db:generate": "npm run db:generate --workspace=backend",
     "db:push": "npm run db:push --workspace=backend",
     "db:migrate": "npm run db:migrate --workspace=backend",
