@@ -52,8 +52,7 @@ export interface EventTypeConfig {
   parts: EventPart[];
   isActive?: boolean; // Mostrar u ocultar el tipo de evento en la calculadora
   recommendedPacks?: PackRecommendationRule[]; // Packs recomendados según condiciones
-  availablePacks?: string[]; // IDs de packs disponibles para este tipo de evento (legacy)
-  availableMontajeCategories?: string[]; // Categorías de montajes disponibles (BODAS, EVENTOS_PRIVADOS, etc.)
+  availablePacks?: string[]; // IDs de packs/montajes disponibles para este tipo de evento
   availableExtras?: string[]; // IDs de productos extras disponibles para este tipo de evento
   extraCategories?: ExtraCategory[]; // Categorías para organizar los extras en pestañas
 }

@@ -7,21 +7,42 @@ interface PackSelectorProps {
   onChange: (packIds: string[]) => void;
 }
 
+// Categorías de montajes para filtrar
+const MONTAJE_CATEGORIES = [
+  { id: 'ALL', name: 'Todas', icon: '📦' },
+  { id: 'BODAS', name: 'Bodas', icon: '💒' },
+  { id: 'EVENTOS_PRIVADOS', name: 'Eventos Privados', icon: '🎉' },
+  { id: 'CONCIERTOS', name: 'Conciertos', icon: '🎵' },
+  { id: 'EVENTOS_CORPORATIVOS', name: 'Eventos Corporativos', icon: '💼' },
+  { id: 'CONFERENCIAS', name: 'Conferencias', icon: '🎤' },
+  { id: 'EXTRAS', name: 'Extras', icon: '✨' },
+  { id: 'OTROS', name: 'Otros', icon: '📅' },
+];
+
 const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, onChange }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'packs' | 'products'>('all');
+  const [categoryFilter, setCategoryFilter] = useState('ALL');
 
-  // Obtener categorías únicas
+  // Obtener categorías de montajes únicas
   const categories = useMemo(() => {
-    const cats = new Set(allPacks.map(p => p.category?.name || 'Sin categoría'));
+    // Extraer categorías de montajes (PackCategory enum)
+    const cats = new Set(
+      allPacks
+        .filter(p => p.isPack && p.isMontaje) // Solo montajes
+        .map(p => p.packData?.category || 'OTROS')
+    );
     return Array.from(cats).sort();
   }, [allPacks]);
 
   // Filtrar packs según categoría, búsqueda y tipo
   const filteredPacks = useMemo(() => {
     return allPacks.filter(pack => {
-      const categoryMatch = !selectedCategory || pack.category?.name === selectedCategory || (selectedCategory === 'Sin categoría' && !pack.category);
+      // Filtro por categoría de montaje (PackCategory enum)
+      const packCategory = pack.packData?.category || pack.category || 'OTROS';
+      const categoryMatch = !selectedCategory || packCategory === selectedCategory;
+      
       const searchMatch = pack.name.toLowerCase().includes(searchTerm.toLowerCase());
       const typeMatch = typeFilter === 'all' || 
                        (typeFilter === 'packs' && pack.isPack) || 
@@ -110,10 +131,10 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
         />
       </div>
 
-      {/* Filtro por categorías */}
-      {categories.length > 0 && (
+      {/* Filtro por categorías de montajes */}
+      {typeFilter !== 'products' && categories.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Categorías</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Categorías de Montajes</label>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedCategory(null)}
@@ -125,19 +146,22 @@ const PackSelector: React.FC<PackSelectorProps> = ({ allPacks, selectedPacks, on
             >
               Todas
             </button>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-resona text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {MONTAJE_CATEGORIES.slice(1).map(cat => {
+              if (!categories.includes(cat.id)) return null;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === cat.id
+                      ? 'bg-resona text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {cat.icon} {cat.name}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

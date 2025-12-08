@@ -7,7 +7,6 @@ import { SERVICE_LEVEL_LABELS, ServiceLevel } from '../../types/calculator.types
 import { productService } from '../../services/product.service';
 import { api } from '../../services/api';
 import PackSelector from '../../components/admin/PackSelector';
-import MontajeCategorySelector from '../../components/admin/MontajeCategorySelector';
 import PackRecommendationEditor from '../../components/admin/PackRecommendationEditor';
 import PartPricingEditor from '../../components/admin/PartPricingEditor';
 
@@ -525,19 +524,20 @@ const CalculatorManagerNew = () => {
                   </div>
 
                   <div className="p-6 space-y-6">
-                    {/* Available Montaje Categories */}
+                    {/* Available Packs */}
                     <div>
                       <div className="mb-3">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Categorías de Montajes Disponibles
+                          Montajes Disponibles para este Evento
                         </label>
                         <p className="text-xs text-gray-500">
-                          Selecciona qué categorías de montajes estarán disponibles para este tipo de evento
+                          Selecciona montajes individuales. Usa el filtro de categorías para encontrarlos más fácilmente.
                         </p>
                       </div>
-                      <MontajeCategorySelector
-                        selectedCategories={selectedEvent.availableMontajeCategories || []}
-                        onChange={(categories) => updateEventType(selectedEventIndex, 'availableMontajeCategories', categories)}
+                      <PackSelector
+                        allPacks={catalogProducts.filter((p: any) => p.isPack && p.isMontaje)}
+                        selectedPacks={selectedEvent.availablePacks || []}
+                        onChange={(packs) => updateEventType(selectedEventIndex, 'availablePacks', packs)}
                       />
                     </div>
 
