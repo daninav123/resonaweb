@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
 import { ChevronLeft, ChevronRight, Calculator, Users, Clock, Calendar, Package, Mail, Plus, Minus, AlertTriangle, MapPin, CreditCard } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
+import { calculatorFAQSchema } from '../utils/faqSchema';
 import { serviceSchema } from '../utils/schemas';
 import { DEFAULT_CALCULATOR_CONFIG } from '../types/calculator.types';
 import { productService } from '../services/product.service';
@@ -679,7 +680,7 @@ const EventCalculatorPage = () => {
         description="Calcula el presupuesto estimado para tu evento en minutos. Bodas, conciertos, conferencias, eventos corporativos. Presupuesto inmediato y sin compromiso. Herramienta gratuita."
         keywords="calculadora presupuesto eventos, calcular costo evento, presupuesto boda, presupuesto concierto, presupuesto evento corporativo, alquiler material eventos precio"
         canonicalUrl="https://resona.com/calculadora-evento"
-        schema={serviceSchema}
+        schema={[serviceSchema, calculatorFAQSchema]}
       />
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
