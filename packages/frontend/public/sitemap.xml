@@ -226,8 +226,8 @@
     <priority>0.7</priority>
   </url>
     <url>
-    <loc>https://resonaevents.com/productos/maquinas-fuego-frio</loc>
-    <lastmod>2025-12-02</lastmod>
+    <loc>https://resonaevents.com/productos/maquina-fuego-frio-700w</loc>
+    <lastmod>2025-12-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -328,12 +328,6 @@
     <priority>0.7</priority>
   </url>
     <url>
-    <loc>https://resonaevents.com/productos/ventiladores</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-    <url>
     <loc>https://resonaevents.com/productos/focos-rgb-decoracion</loc>
     <lastmod>2025-12-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -383,6 +377,12 @@
   </url>
     <url>
     <loc>https://resonaevents.com/productos/patas-1-m</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+    <url>
+    <loc>https://resonaevents.com/productos/ventiladores</loc>
     <lastmod>2025-12-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -595,6 +595,18 @@
   </url>
     <url>
     <loc>https://resonaevents.com/blog/mesas-de-mezclas-digitales-vs-analogicas-cual-elegir-para-tu-evento</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+    <url>
+    <loc>https://resonaevents.com/blog/equipos-para-festivales-que-necesitas</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+    <url>
+    <loc>https://resonaevents.com/blog/camaras-profesionales-cuando-comprar-vs-alquilar</loc>
     <lastmod>2025-12-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
