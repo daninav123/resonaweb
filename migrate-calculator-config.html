@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrar Configuración Calculadora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4F46E5;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 5px;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        button {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4338CA;
+        }
+        button.danger {
+            background: #DC2626;
+        }
+        button.danger:hover {
+            background: #B91C1C;
+        }
+        button.success {
+            background: #059669;
+        }
+        button.success:hover {
+            background: #047857;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #059669;
+        }
+        .status.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #DC2626;
+        }
+        .status.info {
+            background: #DBEAFE;
+            color: #1E40AF;
+            border: 1px solid #3B82F6;
+        }
+        .info-box {
+            background: #FEF3C7;
+            border: 2px solid #F59E0B;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info-box strong {
+            color: #92400E;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migración de Configuración de Calculadora</h1>
+        
+        <div class="info-box">
+            <strong>⚠️ Problema Detectado:</strong>
+            <p>El panel de admin carga configuración desde la <strong>base de datos</strong>, pero tu configuración buena está en el <strong>localStorage</strong> del navegador.</p>
+            <p>Por eso el admin muestra solo 2 eventos, pero la vista pública funciona correctamente.</p>
+        </div>
+
+        <div class="section">
+            <h2>📋 Paso 1: Ver Configuración Actual</h2>
+            <button onclick="verConfiguracion()">Ver Configuración en localStorage</button>
+            <div id="config-display"></div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Paso 2: Migrar a Base de Datos</h2>
+            <p>Esto copiará tu configuración actual (que funciona) del localStorage a la base de datos.</p>
+            <button class="success" onclick="migrarABD()">Migrar a Base de Datos</button>
+            <div id="migration-status"></div>
+        </div>
+
+        <div class="section">
+            <h2>🧹 Paso 3 (Opcional): Limpiar localStorage</h2>
+            <p>Una vez migrado, puedes limpiar el localStorage para que siempre use la BD.</p>
+            <button class="danger" onclick="limpiarLocalStorage()">Limpiar localStorage</button>
+            <div id="clean-status"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api/v1';
+
+        function verConfiguracion() {
+            const config = localStorage.getItem('advancedCalculatorConfig');
+            const display = document.getElementById('config-display');
+            
+            if (!config) {
+                display.innerHTML = '<div class="status error">❌ No hay configuración en localStorage</div>';
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(config);
+                const eventosCount = parsed.eventTypes ? parsed.eventTypes.length : 0;
+                const eventosActivos = parsed.eventTypes ? parsed.eventTypes.filter(e => e.isActive !== false).length : 0;
+                
+                let html = '<div class="status success">';
+                html += `<strong>✅ Configuración encontrada:</strong><br>`;
+                html += `📊 Total eventos: ${eventosCount}<br>`;
+                html += `✅ Eventos activos: ${eventosActivos}<br><br>`;
+                html += '<strong>Eventos:</strong><ul>';
+                
+                if (parsed.eventTypes) {
+                    parsed.eventTypes.forEach(e => {
+                        const status = e.isActive !== false ? '✅' : '❌';
+                        const partsCount = e.parts ? e.parts.length : 0;
+                        html += `<li>${status} ${e.icon || ''} ${e.name} (${partsCount} partes)</li>`;
+                    });
+                }
+                
+                html += '</ul></div>';
+                
+                // Mostrar JSON completo
+                html += '<h3>📄 Configuración Completa:</h3>';
+                html += '<div class="code-block">' + JSON.stringify(parsed, null, 2) + '</div>';
+                
+                display.innerHTML = html;
+            } catch (error) {
+                display.innerHTML = `<div class="status error">❌ Error al parsear: ${error.message}</div>`;
+            }
+        }
+
+        async function migrarABD() {
+            const statusDiv = document.getElementById('migration-status');
+            const config = localStorage.getItem('advancedCalculatorConfig');
+            
+            if (!config) {
+                statusDiv.innerHTML = '<div class="status error">❌ No hay configuración para migrar</div>';
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = '<div class="status info">⏳ Migrando...</div>';
+                
+                const parsed = JSON.parse(config);
+                
+                // Obtener token de autenticación
+                const authData = localStorage.getItem('auth-storage');
+                let token = null;
+                
+                if (authData) {
+                    try {
+                        const authParsed = JSON.parse(authData);
+                        token = authParsed.state?.token || authParsed.token;
+                    } catch (e) {
+                        console.error('Error parsing auth:', e);
+                    }
+                }
+                
+                if (!token) {
+                    statusDiv.innerHTML = '<div class="status error">❌ No estás autenticado. Inicia sesión como admin primero.</div>';
+                    return;
+                }
+                
+                // Enviar a la API
+                const response = await fetch(`${API_URL}/calculator-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ config: parsed })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+                
+                const result = await response.json();
+                
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>✅ ¡Migración Exitosa!</strong><br>
+                        La configuración se ha guardado en la base de datos.<br><br>
+                        <strong>Ahora:</strong><br>
+                        1. Recarga el panel de admin de la calculadora<br>
+                        2. Deberías ver todos tus eventos y montajes<br>
+                        3. Puedes editar y guardar cambios normalmente
+                    </div>
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Error en la migración:</strong><br>
+                        ${error.message}<br><br>
+                        <strong>Posibles causas:</strong><br>
+                        • No estás autenticado como admin<br>
+                        • El backend no está corriendo<br>
+                        • El endpoint no existe
+                    </div>
+                `;
+                console.error('Error completo:', error);
+            }
+        }
+
+        function limpiarLocalStorage() {
+            const statusDiv = document.getElementById('clean-status');
+            
+            if (confirm('⚠️ ¿Estás seguro?\n\nEsto eliminará la configuración de localStorage. Solo hazlo DESPUÉS de migrar a la BD.')) {
+                localStorage.removeItem('advancedCalculatorConfig');
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ localStorage limpiado.<br>
+                        Ahora la aplicación usará solo la configuración de la BD.
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-cargar configuración al abrir
+        window.onload = () => {
+            verConfiguracion();
+        };
+    </script>
+</body>
+</html>
