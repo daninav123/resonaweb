@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Fix Calculator Config - Producción</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-height: 300px;
+            font-size: 12px;
+            border: 1px solid #dee2e6;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content h3 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .step-content p {
+            color: #666;
+            margin: 0;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Solucionador de Calculadora</h1>
+
+        <!-- Paso 1: Diagnóstico -->
+        <div class="card">
+            <h2>
+                <span>🔍</span>
+                Paso 1: Diagnóstico
+            </h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                Primero vamos a verificar qué está pasando en tu backend de producción.
+            </p>
+            <button onclick="runDiagnostic()" id="btn-diagnostic">
+                ▶️ Ejecutar Diagnóstico
+            </button>
+            <div id="diagnostic-result"></div>
+        </div>
+
+        <!-- Paso 2: Solución -->
+        <div class="card">
+            <h2>
+                <span>🛠️</span>
+                Paso 2: Solución Automática
+            </h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                Si el diagnóstico indica que falta la configuración, este botón la creará automáticamente.
+            </p>
+            <button onclick="initConfig()" id="btn-init" disabled class="btn-success">
+                ✨ Crear Configuración en BD
+            </button>
+            <div id="init-result"></div>
+        </div>
+
+        <!-- Paso 3: Verificación -->
+        <div class="card">
+            <h2>
+                <span>✅</span>
+                Paso 3: Verificación Final
+            </h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                Verifica que todo funciona correctamente en tu aplicación en producción.
+            </p>
+            <button onclick="verifyFix()" id="btn-verify" disabled class="btn-success">
+                🔄 Verificar Solución
+            </button>
+            <div id="verify-result"></div>
+        </div>
+
+        <!-- Instrucciones -->
+        <div class="card">
+            <h2>
+                <span>📖</span>
+                ¿Qué hace esta herramienta?
+            </h2>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Diagnóstico</h3>
+                    <p>Verifica si la configuración existe en la base de datos de producción</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Creación</h3>
+                    <p>Si no existe, crea la configuración con 6 tipos de eventos predefinidos</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Verificación</h3>
+                    <p>Confirma que la configuración se guarda correctamente y es accesible</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://resona-backend.onrender.com/api/v1';
+
+        function showStatus(elementId, type, message, details = null) {
+            const element = document.getElementById(elementId);
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            let html = `<div class="status status-${type}">
+                <strong>${icon} ${message}</strong>
+            </div>`;
+            
+            if (details) {
+                html += `<pre>${JSON.stringify(details, null, 2)}</pre>`;
+            }
+            
+            element.innerHTML = html;
+        }
+
+        async function runDiagnostic() {
+            const btn = document.getElementById('btn-diagnostic');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Diagnosticando...';
+            
+            showStatus('diagnostic-result', 'info', 'Conectando con el backend...');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/diagnostic/calculator-config`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.database.hasConfig) {
+                    showStatus('diagnostic-result', 'success', 
+                        `Configuración encontrada en la base de datos (${data.config.eventTypes} eventos)`, 
+                        data
+                    );
+                    
+                    // Habilitar verificación
+                    document.getElementById('btn-verify').disabled = false;
+                    
+                } else {
+                    showStatus('diagnostic-result', 'warning', 
+                        'NO hay configuración en la base de datos. Necesitas crearla.', 
+                        data
+                    );
+                    
+                    // Habilitar creación
+                    document.getElementById('btn-init').disabled = false;
+                }
+
+            } catch (error) {
+                showStatus('diagnostic-result', 'error', 
+                    `Error al diagnosticar: ${error.message}`,
+                    { error: error.toString() }
+                );
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '▶️ Ejecutar Diagnóstico';
+            }
+        }
+
+        async function initConfig() {
+            const btn = document.getElementById('btn-init');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creando configuración...';
+            
+            showStatus('init-result', 'info', 'Creando configuración en la base de datos...');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/diagnostic/init-calculator-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                showStatus('init-result', 'success', 
+                    data.message,
+                    data
+                );
+                
+                // Habilitar verificación
+                document.getElementById('btn-verify').disabled = false;
+                
+                // Mostrar siguiente paso
+                setTimeout(() => {
+                    showStatus('init-result', 'success', 
+                        '✅ ¡Configuración creada! Ahora haz clic en "Verificar Solución"'
+                    );
+                }, 1500);
+
+            } catch (error) {
+                showStatus('init-result', 'error', 
+                    `Error al crear configuración: ${error.message}`,
+                    { error: error.toString() }
+                );
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '✨ Crear Configuración en BD';
+            }
+        }
+
+        async function verifyFix() {
+            const btn = document.getElementById('btn-verify');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Verificando...';
+            
+            showStatus('verify-result', 'info', 'Verificando que la configuración funciona...');
+
+            try {
+                // Test 1: Endpoint público de configuración
+                const configResponse = await fetch(`${BACKEND_URL}/calculator-config`);
+                
+                if (!configResponse.ok) {
+                    throw new Error(`Error al cargar configuración: ${configResponse.status}`);
+                }
+
+                const configData = await configResponse.json();
+                
+                if (!configData.eventTypes || configData.eventTypes.length === 0) {
+                    throw new Error('La configuración no tiene eventos definidos');
+                }
+
+                showStatus('verify-result', 'success', 
+                    `✅ ¡TODO FUNCIONA! La configuración está disponible con ${configData.eventTypes.length} eventos`,
+                    {
+                        eventos: configData.eventTypes.map(e => ({
+                            name: e.name,
+                            icon: e.icon,
+                            parts: e.parts?.length || 0,
+                            extras: e.availableExtras?.length || 0
+                        }))
+                    }
+                );
+                
+                // Mensaje final
+                setTimeout(() => {
+                    const finalMessage = document.createElement('div');
+                    finalMessage.className = 'status status-success';
+                    finalMessage.innerHTML = `
+                        <div style="text-align: center; width: 100%;">
+                            <h3 style="margin-bottom: 10px;">🎉 ¡Problema Resuelto!</h3>
+                            <p>Los usuarios ahora verán los montajes y extras en la calculadora.</p>
+                            <p style="margin-top: 10px; font-size: 14px;">
+                                Ve a: <a href="https://resonaweb.vercel.app/calculadora-eventos" target="_blank" style="color: #155724; font-weight: bold;">
+                                    https://resonaweb.vercel.app/calculadora-eventos
+                                </a>
+                            </p>
+                        </div>
+                    `;
+                    document.getElementById('verify-result').appendChild(finalMessage);
+                }, 1000);
+
+            } catch (error) {
+                showStatus('verify-result', 'error', 
+                    `Error en verificación: ${error.message}`,
+                    { error: error.toString() }
+                );
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Verificar Solución';
+            }
+        }
+    </script>
+</body>
+</html>

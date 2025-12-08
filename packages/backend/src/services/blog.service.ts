@@ -1,4 +1,6 @@
 import { PrismaClient, BlogPostStatus } from '@prisma/client';
+import { GoogleIndexingService } from './google-indexing.service';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -26,7 +28,7 @@ export const blogService = {
   async createPost(data: CreateBlogPostData) {
     const { tags, ...postData } = data;
 
-    return prisma.blogPost.create({
+    const post = await prisma.blogPost.create({
       data: {
         ...postData,
         tags: tags && tags.length > 0 ? {
@@ -52,6 +54,17 @@ export const blogService = {
         },
       },
     });
+
+    // Indexar automáticamente si está publicado
+    if (post.status === 'PUBLISHED' && post.publishedAt) {
+      const postUrl = `https://resonaevents.com/blog/${post.slug}`;
+      // Ejecutar en background sin esperar
+      GoogleIndexingService.notifyGoogle(postUrl).catch(error => {
+        logger.error(`❌ Error indexando blog post: ${error.message}`);
+      });
+    }
+
+    return post;
   },
 
   // Obtener todos los posts (con filtros)
@@ -235,7 +248,7 @@ export const blogService = {
 
   // Publicar post inmediatamente
   async publishPost(id: string) {
-    return prisma.blogPost.update({
+    const post = await prisma.blogPost.update({
       where: { id },
       data: {
         status: BlogPostStatus.PUBLISHED,
@@ -243,6 +256,14 @@ export const blogService = {
         scheduledFor: null,
       },
     });
+
+    // Indexar automáticamente en Google
+    const postUrl = `https://resonaevents.com/blog/${post.slug}`;
+    GoogleIndexingService.notifyGoogle(postUrl).catch(error => {
+      logger.error(`❌ Error indexando blog post: ${error.message}`);
+    });
+
+    return post;
   },
 
   // Programar post para publicación futura

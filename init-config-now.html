@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inicializar Config - AHORA</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            padding: 40px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        button:hover { opacity: 0.9; }
+        .success { 
+            background: #d4edda; 
+            color: #155724; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 15px 0;
+            border: 2px solid #c3e6cb;
+        }
+        .error { 
+            background: #f8d7da; 
+            color: #721c24; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 15px 0;
+            border: 2px solid #f5c6cb;
+        }
+        .info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 15px 0;
+            border: 2px solid #bee5eb;
+        }
+        pre { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 8px; 
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .step { margin: 20px 0; }
+        .step h3 { color: #667eea; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Inicializar Configuración de Calculadora</h1>
+        
+        <div class="info">
+            <strong>📋 Esto va a hacer:</strong><br>
+            1. Verificar si existe configuración en la BD de producción<br>
+            2. Si NO existe, crearla con 6 tipos de eventos<br>
+            3. Confirmar que funciona
+        </div>
+
+        <div class="step">
+            <h3>Paso 1: Verificar Estado Actual</h3>
+            <button onclick="checkCurrent()">🔍 Verificar Ahora</button>
+            <div id="check-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Crear Configuración</h3>
+            <button onclick="initConfig()" id="btn-init">✨ Crear Config en BD</button>
+            <div id="init-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Verificar Solución</h3>
+            <button onclick="verifyFinal()" id="btn-verify">✅ Verificar Final</button>
+            <div id="verify-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND = 'https://resona-backend.onrender.com/api/v1';
+
+        async function checkCurrent() {
+            const div = document.getElementById('check-result');
+            div.innerHTML = '<div class="info">⏳ Verificando...</div>';
+            
+            try {
+                const res = await fetch(`${BACKEND}/calculator-config`);
+                const data = await res.json();
+                
+                if (data.eventTypes && data.eventTypes.length > 0) {
+                    div.innerHTML = `
+                        <div class="success">
+                            <strong>✅ ¡La configuración YA EXISTE!</strong><br><br>
+                            Eventos encontrados: ${data.eventTypes.length}<br>
+                            <pre>${JSON.stringify(data.eventTypes.map(e => e.name), null, 2)}</pre>
+                            <br>
+                            <strong>Si los usuarios no la ven, el problema está en el frontend.</strong><br>
+                            Limpia el caché del navegador (Ctrl + F5) o usa ventana incógnita.
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="error">
+                            <strong>❌ NO hay configuración en la BD</strong><br><br>
+                            Haz clic en el botón "Crear Config en BD" abajo.
+                        </div>
+                    `;
+                    document.getElementById('btn-init').style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                }
+            } catch (error) {
+                div.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error al verificar:</strong><br>
+                        ${error.message}<br><br>
+                        <strong>Solución alternativa:</strong><br>
+                        Ve directamente al panel admin y guarda la configuración desde ahí:<br>
+                        <a href="https://resonaweb.vercel.app/admin/calculator" target="_blank">
+                            https://resonaweb.vercel.app/admin/calculator
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        async function initConfig() {
+            const div = document.getElementById('init-result');
+            const btn = document.getElementById('btn-init');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creando...';
+            
+            div.innerHTML = '<div class="info">⏳ Creando configuración en la base de datos...</div>';
+            
+            try {
+                const res = await fetch(`${BACKEND}/diagnostic/init-calculator-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                
+                const data = await res.json();
+                
+                div.innerHTML = `
+                    <div class="success">
+                        <strong>🎉 ¡CONFIGURACIÓN CREADA EXITOSAMENTE!</strong><br><br>
+                        ${data.message}<br><br>
+                        <strong>Eventos creados:</strong><br>
+                        <pre>${JSON.stringify(data.config, null, 2)}</pre>
+                        <br>
+                        <strong>✅ Ahora haz clic en "Verificar Final" abajo</strong>
+                    </div>
+                `;
+                
+                document.getElementById('btn-verify').style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                
+            } catch (error) {
+                div.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error:</strong> ${error.message}<br><br>
+                        <strong>Solución alternativa:</strong><br>
+                        1. Ve a: <a href="https://resonaweb.vercel.app/admin/calculator" target="_blank">Panel Admin</a><br>
+                        2. Inicia sesión<br>
+                        3. Haz clic en "Guardar Configuración"
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '✨ Crear Config en BD';
+            }
+        }
+
+        async function verifyFinal() {
+            const div = document.getElementById('verify-result');
+            div.innerHTML = '<div class="info">⏳ Verificando...</div>';
+            
+            try {
+                const res = await fetch(`${BACKEND}/calculator-config`);
+                const data = await res.json();
+                
+                if (data.eventTypes && data.eventTypes.length > 0) {
+                    div.innerHTML = `
+                        <div class="success">
+                            <h2 style="margin-top: 0;">🎉 ¡TODO FUNCIONANDO!</h2>
+                            
+                            <strong>✅ Configuración verificada</strong><br>
+                            Eventos: ${data.eventTypes.length}<br><br>
+                            
+                            <strong>Los usuarios ahora verán:</strong><br>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                ${data.eventTypes.map(e => `<li>${e.icon} ${e.name} (${e.parts?.length || 0} partes)</li>`).join('')}
+                            </ul>
+                            
+                            <br>
+                            <strong>Ve a la calculadora:</strong><br>
+                            <a href="https://resonaweb.vercel.app/calculadora-eventos" target="_blank" 
+                               style="color: #155724; font-weight: bold; font-size: 16px;">
+                                https://resonaweb.vercel.app/calculadora-eventos
+                            </a>
+                            
+                            <br><br>
+                            <strong>Si no ves los cambios:</strong><br>
+                            • Limpia caché: Ctrl + F5<br>
+                            • O usa ventana incógnita
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="error">
+                            <strong>⚠️ La configuración está vacía</strong><br><br>
+                            Prueba la solución alternativa del panel admin.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                div.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-check al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkCurrent();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

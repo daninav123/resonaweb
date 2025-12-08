@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar BD Producción</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .card { background: white; padding: 30px; margin: 20px 0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 15px 30px; 
+                 border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px; }
+        .success { background: #d4edda; color: #155724; padding: 20px; border-radius: 8px; margin: 15px 0; }
+        .error { background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px; margin: 15px 0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 8px; overflow-x: auto; max-height: 400px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 Verificar Base de Datos de Producción</h1>
+        
+        <h2>Paso 1: Login</h2>
+        <input type="email" id="email" placeholder="Email admin" value="admin@resona.com">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">🔑 Hacer Login</button>
+        <div id="login-result"></div>
+
+        <h2>Paso 2: Verificar Configuración</h2>
+        <button onclick="checkConfig()" id="btn-check" disabled>📊 Verificar Config en BD</button>
+        <div id="config-result"></div>
+    </div>
+
+    <script>
+        const BACKEND = 'https://resona-backend.onrender.com/api/v1';
+        let token = '';
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const div = document.getElementById('login-result');
+            
+            div.innerHTML = '<p style="color: blue;">⏳ Iniciando sesión...</p>';
+
+            try {
+                const response = await fetch(`${BACKEND}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                token = data.accessToken;
+
+                div.innerHTML = `
+                    <div class="success">
+                        ✅ Login exitoso<br>
+                        Usuario: ${data.user.email}<br>
+                        Role: ${data.user.role}
+                    </div>
+                `;
+
+                document.getElementById('btn-check').disabled = false;
+
+            } catch (error) {
+                div.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function checkConfig() {
+            const div = document.getElementById('config-result');
+            div.innerHTML = '<p style="color: blue;">⏳ Consultando base de datos...</p>';
+
+            try {
+                const response = await fetch(`${BACKEND}/calculator-config`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(`${response.status}: ${error.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.eventTypes || data.eventTypes.length === 0) {
+                    div.innerHTML = `
+                        <div class="error">
+                            <h2>❌ LA BASE DE DATOS ESTÁ VACÍA</h2>
+                            <p><strong>Problema confirmado:</strong></p>
+                            <p>• El backup fue SUBIDO pero NO RESTAURADO</p>
+                            <p>• La tabla systemConfig NO tiene la configuración</p>
+                            <br>
+                            <p><strong>Solución:</strong></p>
+                            <ol>
+                                <li>Ve a: <a href="https://resonaweb.vercel.app/admin/backups" target="_blank">Panel Backups</a></li>
+                                <li>Busca: backup_2025-12-08_21-42-18.zip</li>
+                                <li>Haz clic en "Restaurar"</li>
+                                <li>Espera 1-2 minutos</li>
+                                <li>Vuelve aquí y verifica de nuevo</li>
+                            </ol>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `
+                    <div class="success">
+                        <h2>✅ CONFIGURACIÓN ENCONTRADA EN LA BD</h2>
+                        <p>Eventos: ${data.eventTypes.length}</p>
+                    </div>
+                `;
+
+                html += '<h3>📋 Eventos en la Base de Datos:</h3><ul>';
+                data.eventTypes.forEach(event => {
+                    html += `<li><strong>${event.icon || '📅'} ${event.name}</strong> 
+                             (${event.parts?.length || 0} partes, ${event.availableExtras?.length || 0} extras)</li>`;
+                });
+                html += '</ul>';
+
+                html += `
+                    <div class="success">
+                        <p><strong>✅ El backup FUE restaurado correctamente</strong></p>
+                        <p>Si los usuarios no ven la config, el problema es:</p>
+                        <ul>
+                            <li>Caché del navegador (Ctrl + F5)</li>
+                            <li>O el deploy de Render aún no terminó (~10 min más)</li>
+                        </ul>
+                    </div>
+                `;
+
+                div.innerHTML = html;
+
+            } catch (error) {
+                div.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Error al verificar</h2>
+                        <p>${error.message}</p>
+                        <p>Si dice "404" o "No hay configuración", significa que el backup NO fue restaurado.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

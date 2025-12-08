@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Estado Render</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .error { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .info { background: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificar Estado del Backend (Render)</h1>
+    
+    <div class="status">
+        <h2>Estado del Servicio</h2>
+        <button onclick="checkHealth()">🔄 Verificar Backend</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="status">
+        <h2>Test Directo con CORS Bypass</h2>
+        <button onclick="testWithCorsProxy()">🌐 Test con Proxy CORS</button>
+        <div id="proxy-result"></div>
+    </div>
+
+    <div class="status">
+        <h2>Inicializar Config Directamente</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+            Este botón creará la configuración directamente usando un proxy CORS.
+        </p>
+        <button onclick="initConfigWithProxy()" style="background: #28a745;">✨ Crear Config Ahora</button>
+        <div id="init-result"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://resona-backend.onrender.com';
+        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+
+        function showResult(elementId, html) {
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        async function checkHealth() {
+            showResult('health-result', '<div class="info">⏳ Verificando backend...</div>');
+            
+            try {
+                // Intentar sin proxy primero
+                const response = await fetch(`${BACKEND_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                showResult('health-result', `
+                    <div class="success">
+                        ✅ Backend está funcionando!
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                    <div class="info">
+                        💡 Ahora puedes usar la herramienta principal: fix-production-calculator.html
+                    </div>
+                `);
+
+            } catch (error) {
+                showResult('health-result', `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                    <div class="info">
+                        <strong>Posibles causas:</strong><br>
+                        1. ⏰ Render aún está desplegando (~10 min)<br>
+                        2. 🔒 Problema de CORS<br>
+                        3. 😴 El servicio está en modo "sleep"<br><br>
+                        
+                        <strong>Soluciones:</strong><br>
+                        • Espera 5-10 minutos más<br>
+                        • O usa el botón de abajo para crear config con proxy
+                    </div>
+                `);
+            }
+        }
+
+        async function testWithCorsProxy() {
+            showResult('proxy-result', '<div class="info">⏳ Probando con proxy CORS...</div>');
+            
+            try {
+                const response = await fetch(`${CORS_PROXY}${BACKEND_URL}/api/v1/diagnostic/calculator-config`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                let html = '';
+                if (data.database.hasConfig) {
+                    html = `
+                        <div class="success">
+                            ✅ Configuración encontrada!
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                        <div class="info">
+                            💡 La configuración ya existe. Los usuarios deberían verla.
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="error">
+                            ⚠️ NO hay configuración en la base de datos
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                        <div class="info">
+                            💡 Usa el botón de abajo para crearla.
+                        </div>
+                    `;
+                }
+                
+                showResult('proxy-result', html);
+
+            } catch (error) {
+                showResult('proxy-result', `
+                    <div class="error">
+                        ❌ Error con proxy: ${error.message}
+                    </div>
+                    <div class="info">
+                        El servicio puede estar iniciándose. Espera 5-10 minutos.
+                    </div>
+                `);
+            }
+        }
+
+        async function initConfigWithProxy() {
+            showResult('init-result', '<div class="info">⏳ Creando configuración...</div>');
+            
+            try {
+                const response = await fetch(`${CORS_PROXY}${BACKEND_URL}/api/v1/diagnostic/init-calculator-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                showResult('init-result', `
+                    <div class="success">
+                        🎉 ¡Configuración creada exitosamente!
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                    <div class="success" style="margin-top: 20px;">
+                        <strong>✅ ¡PROBLEMA RESUELTO!</strong><br><br>
+                        Los usuarios ahora verán los montajes y extras en:<br>
+                        <a href="https://resonaweb.vercel.app/calculadora-eventos" target="_blank" 
+                           style="color: #155724; font-weight: bold;">
+                            https://resonaweb.vercel.app/calculadora-eventos
+                        </a>
+                    </div>
+                `);
+
+            } catch (error) {
+                showResult('init-result', `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                    <div class="info">
+                        <strong>Soluciones alternativas:</strong><br><br>
+                        
+                        <strong>Opción 1: Esperar</strong><br>
+                        Render tarda ~10 min en desplegar. Espera un poco más y vuelve a intentar.<br><br>
+                        
+                        <strong>Opción 2: Desde el admin panel</strong><br>
+                        1. Ve a: <a href="https://resonaweb.vercel.app/admin/calculator" target="_blank">Panel Admin</a><br>
+                        2. Haz clic en "Guardar Configuración"<br>
+                        3. Eso guardará la config en la BD
+                    </div>
+                `);
+            }
+        }
+
+        // Auto-check al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkHealth();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

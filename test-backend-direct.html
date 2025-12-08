@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Backend Directo</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .test { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; 
+                 border-radius: 4px; cursor: pointer; margin: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Backend Directo</h1>
+    
+    <div class="test">
+        <h2>Test 1: Backend Health</h2>
+        <button onclick="testHealth()">Probar /health</button>
+        <div id="health"></div>
+    </div>
+
+    <div class="test">
+        <h2>Test 2: Calculator Config (actual endpoint)</h2>
+        <button onclick="testConfig()">Probar /calculator-config</button>
+        <div id="config"></div>
+    </div>
+
+    <div class="test">
+        <h2>Test 3: Wake Up + Retry</h2>
+        <button onclick="wakeAndTest()">Wake Up Backend (puede tardar 30seg)</button>
+        <div id="wake"></div>
+    </div>
+
+    <script>
+        const BACKEND = 'https://resona-backend.onrender.com';
+
+        async function testHealth() {
+            const div = document.getElementById('health');
+            div.innerHTML = 'Testing...';
+            
+            try {
+                const start = Date.now();
+                const res = await fetch(`${BACKEND}/health`);
+                const time = Date.now() - start;
+                const data = await res.json();
+                
+                div.innerHTML = `
+                    <span class="success">✅ Backend OK (${time}ms)</span>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                div.innerHTML = `<span class="error">❌ Error: ${error.message}</span>
+                    <p><strong>Posible causa:</strong> El backend está "dormido" en Render (free tier). 
+                    Haz clic en "Wake Up Backend" abajo.</p>`;
+            }
+        }
+
+        async function testConfig() {
+            const div = document.getElementById('config');
+            div.innerHTML = 'Testing...';
+            
+            try {
+                const start = Date.now();
+                const res = await fetch(`${BACKEND}/api/v1/calculator-config`);
+                const time = Date.now() - start;
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                
+                const data = await res.json();
+                
+                if (data.eventTypes && data.eventTypes.length > 0) {
+                    div.innerHTML = `
+                        <span class="success">✅ Config encontrada! (${time}ms)</span>
+                        <p>Eventos: ${data.eventTypes.length}</p>
+                        <pre>${JSON.stringify(data.eventTypes.map(e => ({
+                            name: e.name,
+                            icon: e.icon,
+                            parts: e.parts?.length || 0
+                        })), null, 2)}</pre>
+                        <p class="success"><strong>✅ LA CONFIGURACIÓN EXISTE. El problema debe ser en el frontend.</strong></p>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <span class="error">⚠️ Config vacía (${time}ms)</span>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <p><strong>Solución:</strong> Ve al panel admin y haz clic en "Guardar Configuración"</p>
+                    `;
+                }
+            } catch (error) {
+                div.innerHTML = `<span class="error">❌ Error: ${error.message}</span>
+                    <p>Si ves este error, el backend necesita "despertar". Usa el botón de abajo.</p>`;
+            }
+        }
+
+        async function wakeAndTest() {
+            const div = document.getElementById('wake');
+            div.innerHTML = '⏳ Despertando backend... (puede tardar 30-60 segundos)';
+            
+            try {
+                // Primera llamada para despertar
+                await fetch(`${BACKEND}/health`).catch(() => {});
+                
+                // Esperar 5 segundos
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                
+                // Segunda llamada
+                await fetch(`${BACKEND}/health`).catch(() => {});
+                
+                // Esperar otros 5 segundos
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                
+                // Tercera llamada (debería funcionar)
+                const res = await fetch(`${BACKEND}/api/v1/calculator-config`);
+                const data = await res.json();
+                
+                if (data.eventTypes && data.eventTypes.length > 0) {
+                    div.innerHTML = `
+                        <span class="success">✅ Backend despierto y funcionando!</span>
+                        <p>Config encontrada con ${data.eventTypes.length} eventos</p>
+                        <pre>${JSON.stringify(data.eventTypes.map(e => e.name), null, 2)}</pre>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <span class="error">⚠️ Backend despierto pero sin configuración</span>
+                        <p><strong>SOLUCIÓN RÁPIDA:</strong></p>
+                        <ol>
+                            <li>Ve a: <a href="https://resonaweb.vercel.app/admin/calculator" target="_blank">Panel Admin</a></li>
+                            <li>Inicia sesión</li>
+                            <li>Haz clic en "Guardar Configuración"</li>
+                            <li>Vuelve aquí y prueba de nuevo</li>
+                        </ol>
+                    `;
+                }
+            } catch (error) {
+                div.innerHTML = `<span class="error">❌ Error: ${error.message}</span>
+                    <p>El backend aún no responde. Prueba directamente en el navegador:</p>
+                    <p><a href="${BACKEND}/health" target="_blank">${BACKEND}/health</a></p>`;
+            }
+        }
+
+        // Auto-test al cargar
+        setTimeout(() => {
+            testHealth();
+        }, 1000);
+    </script>
+</body>
+</html>
