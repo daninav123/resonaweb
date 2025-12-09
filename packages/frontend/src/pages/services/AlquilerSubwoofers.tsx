@@ -65,7 +65,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, bodas, fiestas
       {
             title: "Mesas de Mezclas y Procesadores",
             items: [
-                  subwoofers activos 18\: Mesas digitales 16-32 canales, efectos integrados, control remoto iPad",
+                  "Subwoofers activos 18\": Mesas digitales 16-32 canales, efectos integrados, control remoto iPad",
                   "Allen & Heath Qu/SQ Series: DSP avanzado, 32 entradas, matrices auxiliares",
                   "Yamaha TF/CL Series: TouchFlow interface, recallable scene, feedback suppressor",
                   "Procesadores Klark Teknik/DBX: Ecualizadores gráficos 31 bandas, compresores dinámicos",
