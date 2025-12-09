@@ -328,6 +328,31 @@ export class InvoiceController {
       next(error);
     }
   }
+
+  /**
+   * Delete invoice (admin only)
+   */
+  async deleteInvoice(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      const { id } = req.params;
+
+      await invoiceService.deleteInvoice(id);
+
+      res.json({
+        message: 'Factura eliminada exitosamente',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const invoiceController = new InvoiceController();

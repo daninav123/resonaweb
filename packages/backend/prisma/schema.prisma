@@ -244,6 +244,7 @@ model User {
   billingData        BillingData?
   orderModifications OrderModification[]
   carts              Cart[]
+  budgets            Budget[] // Presupuestos creados
 
   // Stripe
   stripeCustomerId String?
@@ -418,6 +419,7 @@ model Product {
   productSpecs ProductSpecification?
   coupons      Coupon[]
   cartItems    CartItem[]
+  budgetItems  BudgetItem[] // Items en presupuestos
 
   // Relaciones de Pack (cuando este producto ES un pack)
   components  ProductComponent[] @relation("PackComponents")
@@ -685,6 +687,9 @@ model Order {
   installments            PaymentInstallment[]
   eligibleForInstallments Boolean              @default(false)
   isCalculatorEvent       Boolean              @default(false)
+
+  // Presupuesto relacionado (si se convirtió de presupuesto)
+  budget Budget?
 
   @@index([userId])
   @@index([status])
@@ -1537,6 +1542,18 @@ model QuoteRequest {
   notes      String?     @db.Text
   adminNotes String?     @db.Text
 
+  // Sistema de pagos
+  paymentToken    String?  @unique // Token único para enlace de pago
+  firstPayment    Decimal? @db.Decimal(10, 2) // 25% al reservar
+  secondPayment   Decimal? @db.Decimal(10, 2) // 50% un mes antes
+  thirdPayment    Decimal? @db.Decimal(10, 2) // 25% día del evento
+  firstPaymentPaid    Boolean @default(false)
+  secondPaymentPaid   Boolean @default(false)
+  thirdPaymentPaid    Boolean @default(false)
+  firstPaymentDate    DateTime?
+  secondPaymentDate   DateTime?
+  thirdPaymentDate    DateTime?
+
   // Metadata
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1544,6 +1561,7 @@ model QuoteRequest {
   @@index([status])
   @@index([customerEmail])
   @@index([createdAt])
+  @@index([paymentToken])
   @@map("quote_requests")
 }
 
@@ -1652,4 +1670,167 @@ model OperationalExpense {
   @@index([category])
   @@index([date])
   @@map("operational_expenses")
+}
+
+// ============= MENSAJES DE CONTACTO =============
+
+enum ContactStatus {
+  NEW         // Nuevo - No leído
+  READ        // Leído - Visto por admin
+  RESPONDED   // Respondido - Se ha contactado al cliente
+  ARCHIVED    // Archivado - Resuelto o no relevante
+}
+
+enum ContactSource {
+  WEBSITE     // Formulario web
+  EMAIL       // Email directo
+  PHONE       // Llamada telefónica
+  WHATSAPP    // WhatsApp
+  OTHER       // Otro canal
+}
+
+model ContactMessage {
+  id        String        @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String        @db.Text
+  status    ContactStatus @default(NEW)
+  source    ContactSource @default(WEBSITE)
+  
+  // Metadata adicional
+  metadata     Json?          // IP, userAgent, referrer, etc
+  notes        String?        @db.Text // Notas internas del admin
+  respondedAt  DateTime?      // Cuándo se respondió
+  respondedBy  String?        // ID del admin que respondió
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+// ============= PRESUPUESTOS PROFESIONALES =============
+
+enum BudgetStatus {
+  DRAFT       // Borrador - En edición
+  SENT        // Enviado al cliente
+  ACCEPTED    // Aceptado por cliente
+  REJECTED    // Rechazado
+  EXPIRED     // Caducado
+  CONVERTED   // Convertido a pedido
+}
+
+model Budget {
+  id          String       @id @default(uuid())
+  
+  // Información básica
+  budgetNumber String      @unique // BUD-2025-001
+  title        String      // "Boda Maria - 15 Junio"
+  description  String?     @db.Text
+  
+  // Cliente
+  clientName   String
+  clientEmail  String
+  clientPhone  String?
+  
+  // Evento
+  eventType    String?     // Boda, Concierto, etc
+  eventDate    DateTime?
+  eventLocation String?    @db.Text
+  attendees    Int?
+  
+  // Secciones del presupuesto
+  sections     BudgetSection[]
+  
+  // Totales
+  subtotal     Decimal     @default(0) @db.Decimal(10, 2)
+  discount     Decimal     @default(0) @db.Decimal(10, 2)
+  tax          Decimal     @default(0) @db.Decimal(10, 2)
+  total        Decimal     @default(0) @db.Decimal(10, 2)
+  
+  // Estado y validez
+  status       BudgetStatus @default(DRAFT)
+  validUntil   DateTime?    // Fecha de caducidad
+  
+  // Notas
+  notes        String?      @db.Text // Notas internas
+  termsAndConditions String? @db.Text // Condiciones del presupuesto
+  
+  // Relación con pedido (si se convierte)
+  orderId      String?      @unique
+  order        Order?       @relation(fields: [orderId], references: [id])
+  
+  // Usuario que lo creó
+  createdBy    String
+  createdByUser User        @relation(fields: [createdBy], references: [id])
+  
+  // Timestamps
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  sentAt       DateTime?    // Cuándo se envió al cliente
+  
+  @@index([budgetNumber])
+  @@index([clientEmail])
+  @@index([status])
+  @@index([createdBy])
+  @@index([createdAt])
+  @@map("budgets")
+}
+
+model BudgetSection {
+  id          String  @id @default(uuid())
+  budgetId    String
+  budget      Budget  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  
+  // Información de la sección
+  name        String  // "Sonorización", "Iluminación", "Montaje"
+  description String? @db.Text // Descripción que verá el cliente
+  order       Int     @default(0) // Orden de visualización
+  
+  // Items detallados (internos, no se muestran al cliente)
+  items       BudgetItem[]
+  
+  // Total de la sección
+  subtotal    Decimal @default(0) @db.Decimal(10, 2)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([budgetId])
+  @@map("budget_sections")
+}
+
+model BudgetItem {
+  id          String        @id @default(uuid())
+  sectionId   String
+  section     BudgetSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  
+  // Producto o servicio
+  productId   String?       // Referencia a producto (opcional)
+  product     Product?      @relation(fields: [productId], references: [id])
+  
+  // Información del item
+  name        String        // Nombre del producto/servicio
+  description String?       @db.Text
+  quantity    Int           @default(1)
+  unitPrice   Decimal       @db.Decimal(10, 2)
+  total       Decimal       @db.Decimal(10, 2)
+  
+  // Metadata
+  isInternal  Boolean       @default(true) // Si es true, no se muestra al cliente
+  
+  // Timestamps
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  @@index([sectionId])
+  @@index([productId])
+  @@map("budget_items")
 }

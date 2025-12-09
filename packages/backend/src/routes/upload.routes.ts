@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { upload, handleMulterError } from '../middleware/upload.middleware';
+import { upload, handleMulterError, fixImageOrientation } from '../middleware/upload.middleware';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import fs from 'fs';
 import path from 'path';
@@ -13,6 +13,7 @@ router.post(
   authorize('ADMIN', 'SUPERADMIN'),
   upload.single('image'),
   handleMulterError,
+  fixImageOrientation,
   (req: Request, res: Response) => {
     try {
       if (!req.file) {
@@ -43,6 +44,7 @@ router.post(
   authorize('ADMIN', 'SUPERADMIN'),
   upload.array('images', 10), // Máximo 10 imágenes
   handleMulterError,
+  fixImageOrientation,
   (req: Request, res: Response) => {
     try {
       if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {

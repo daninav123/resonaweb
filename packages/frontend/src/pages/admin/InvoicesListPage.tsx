@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, FileText, Search, Filter, X, Calendar } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Search, Filter, X, Calendar, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const InvoicesListPage = () => {
@@ -16,13 +16,28 @@ const InvoicesListPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   // Fetch invoices
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['invoices'],
     queryFn: async () => {
       const result = await api.get('/invoices/');
       return result || [];
     },
   });
+
+  // Delete invoice
+  const deleteInvoice = async (invoiceId: string, invoiceNumber: string) => {
+    if (!confirm(`¿Estás seguro de que quieres eliminar la factura ${invoiceNumber}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/invoices/${invoiceId}`);
+      toast.success('Factura eliminada correctamente');
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al eliminar la factura');
+    }
+  };
 
   // Extract invoices array from response
   const invoices: any[] = Array.isArray(data) ? data : ((data as any)?.invoices || []);
@@ -354,6 +369,13 @@ const InvoicesListPage = () => {
                               title="Generar Facturae XML"
                             >
                               <FileText className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => deleteInvoice(invoice.id, invoice.invoiceNumber)}
+                              className="text-red-600 hover:text-red-800"
+                              title="Eliminar factura"
+                            >
+                              <Trash2 className="w-5 h-5" />
                             </button>
                           </div>
                         </td>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, Calendar, Users, MapPin, Package, CheckCircle, Clock, XCircle, Trash2, Eye, Plus } from 'lucide-react';
+import { Mail, Phone, Calendar, Users, MapPin, Package, CheckCircle, Clock, XCircle, Trash2, Eye, Plus, Calculator, X } from 'lucide-react';
 import { api } from '../../services/api';
+import { companyService } from '../../services/company.service';
+import jsPDF from 'jspdf';
 
 interface QuoteRequest {
   id: string;
@@ -25,7 +27,7 @@ interface QuoteRequest {
 
 interface QuoteItem {
   id: string;
-  type: 'product' | 'pack' | 'montaje' | 'extra';
+  type: 'product' | 'pack' | 'montaje' | 'extra' | 'custom';
   name: string;
   quantity: number;
   numberOfPeople?: number;
@@ -36,6 +38,16 @@ interface QuoteItem {
   isPersonal?: boolean;
   isConsumable?: boolean;
   category?: string;
+  sectionId?: string;
+  description?: string;
+  isInternal?: boolean;
+}
+
+interface QuoteSection {
+  id: string;
+  name: string;
+  description?: string;
+  items: QuoteItem[];
 }
 
 const QuoteRequestsManager = () => {
@@ -44,7 +56,21 @@ const QuoteRequestsManager = () => {
   const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'presupuesto' | 'pdf'>('presupuesto');
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
+  const [quoteSections, setQuoteSections] = useState<QuoteSection[]>([]);
+  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  
+  // Estado para edición del PDF
+  const [pdfData, setPdfData] = useState({
+    title: 'Presupuesto',
+    showItemDetails: false,
+    concepts: [] as Array<{id: string, name: string, price: number}>,
+    footer: 'Gracias por confiar en nosotros',
+  });
+  const [newConceptName, setNewConceptName] = useState('');
+  const [newConceptPrice, setNewConceptPrice] = useState(0);
+  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -66,6 +92,12 @@ const QuoteRequestsManager = () => {
     eventLocation: '',
     estimatedTotal: 0,
     notes: '',
+    // Nuevos campos
+    transportCost: 0,
+    rentalCost: 0,
+    finalPrice: 0,
+    includeShipping: true,
+    includeInstallation: true,
   });
 
   useEffect(() => {
@@ -271,20 +303,114 @@ const QuoteRequestsManager = () => {
     return quoteItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
   };
 
+  // Calcular análisis de rentabilidad (igual que en Montajes)
+  const calculatePackTotals = () => {
+    let totalPricePerDay = 0;
+    let totalShipping = 0;
+    let totalInstallation = 0;
+    
+    // Costes separados
+    let costMaterial = 0;
+    let costPersonal = 0;
+    let costDepreciation = 0;
+    let costShippingInstallation = 0;
+
+    quoteItems.forEach((item) => {
+      const product = products.find((p: any) => p.id === item.id.replace('product-', ''));
+      if (product) {
+        const isPersonal = item.isPersonal;
+        const isConsumable = item.isConsumable;
+        
+        const effectiveQuantity = isPersonal
+          ? (item.numberOfPeople || 1) * (item.hoursPerPerson || 1)
+          : item.quantity;
+
+        const unitPrice = isConsumable 
+          ? Number((product as any).pricePerUnit || 0)
+          : Number((product as any).pricePerDay || 0);
+        const itemPrice = unitPrice * effectiveQuantity;
+        
+        if (isPersonal) {
+          const personalCost = Number((product as any).purchasePrice || 0) * effectiveQuantity;
+          costPersonal += personalCost;
+        } else if (isConsumable) {
+          const consumableCost = Number((product as any).purchasePrice || 0) * effectiveQuantity;
+          costDepreciation += consumableCost;
+        } else {
+          const depreciationRate = 0.05;
+          const depreciation = Number((product as any).purchasePrice || 0) * effectiveQuantity * depreciationRate;
+          costDepreciation += depreciation;
+        }
+
+        totalPricePerDay += itemPrice;
+        
+        if (formData.includeShipping) {
+          const shippingPrice = Number((product as any).shippingCost || 0) * effectiveQuantity;
+          totalShipping += shippingPrice;
+          costShippingInstallation += shippingPrice;
+        }
+        if (formData.includeInstallation) {
+          const installationPrice = Number((product as any).installationCost || 0) * effectiveQuantity;
+          totalInstallation += installationPrice;
+          costShippingInstallation += installationPrice;
+        }
+      }
+    });
+
+    totalShipping = totalShipping / 2;
+    totalInstallation = totalInstallation / 2;
+    costShippingInstallation = costShippingInstallation / 2;
+
+    const subtotal = totalPricePerDay + totalShipping + totalInstallation;
+    const calculatedTotal = subtotal + (formData.transportCost || 0) + (formData.rentalCost || 0);
+    const finalPrice = formData.finalPrice || calculatedTotal;
+
+    const transportCostValue = formData.transportCost || 0;
+    const rentalCostValue = formData.rentalCost || 0;
+    
+    const totalCost = costMaterial + costPersonal + costShippingInstallation + costDepreciation + transportCostValue + rentalCostValue;
+    const profit = finalPrice - totalCost;
+    const profitMargin = finalPrice > 0 ? (profit / finalPrice) * 100 : 0;
+
+    return {
+      totalPricePerDay,
+      totalShipping,
+      totalInstallation,
+      subtotal,
+      finalPrice,
+      costMaterial,
+      costPersonal,
+      costShippingInstallation,
+      costDepreciation,
+      transportCost: transportCostValue,
+      rentalCost: rentalCostValue,
+      totalCost,
+      profit,
+      profitMargin
+    };
+  };
+
   const createQuoteRequest = async () => {
     if (!formData.customerName || !formData.customerEmail || !formData.eventType) {
       alert('Por favor completa los campos obligatorios: Nombre, Email y Tipo de Evento');
       return;
     }
 
-    const total = calculateQuoteTotal();
+    // Calcular total con IVA de los conceptos del PDF
+    const subtotal = pdfData.concepts.reduce((sum, c) => sum + c.price, 0);
+    const totalWithIVA = subtotal * 1.21;
 
     try {
       await api.post('/quote-requests', {
         ...formData,
         status: 'PENDING',
-        estimatedTotal: total,
-        selectedExtras: JSON.stringify(quoteItems),
+        estimatedTotal: totalWithIVA,
+        selectedExtras: JSON.stringify({
+          products: quoteItems,
+          pdfConcepts: pdfData.concepts,
+          pdfTitle: pdfData.title,
+          pdfFooter: pdfData.footer,
+        }),
       });
       alert('✅ Presupuesto creado correctamente');
       setShowCreateModal(false);
@@ -300,8 +426,21 @@ const QuoteRequestsManager = () => {
         eventLocation: '',
         estimatedTotal: 0,
         notes: '',
+        transportCost: 0,
+        rentalCost: 0,
+        finalPrice: 0,
+        includeShipping: true,
+        includeInstallation: true,
       });
       setQuoteItems([]);
+      setPdfData({
+        title: 'Presupuesto',
+        showItemDetails: false,
+        concepts: [],
+        footer: 'Gracias por confiar en nosotros',
+      });
+      setNewConceptName('');
+      setNewConceptPrice(0);
       await loadQuoteRequests();
     } catch (error) {
       console.error('Error creando presupuesto:', error);
@@ -311,12 +450,302 @@ const QuoteRequestsManager = () => {
     }
   };
 
+  // Convertir presupuesto aceptado en pedido
+  const convertToOrder = async (request: QuoteRequest) => {
+    if (!confirm('¿Convertir este presupuesto en un pedido?')) return;
+    
+    try {
+      // Aquí deberías llamar al endpoint para crear el pedido
+      // await api.post('/orders', { ...datos del pedido });
+      alert('✅ Pedido creado correctamente');
+      await loadQuoteRequests();
+    } catch (error) {
+      console.error('Error creando pedido:', error);
+      alert('❌ Error al crear el pedido');
+    }
+  };
+
+  // Generar PDF del presupuesto
+  const generatePDF = async (request: QuoteRequest) => {
+    try {
+      // Cargar datos de la empresa
+      let companyData: any = {
+        companyName: 'Resona Events',
+        taxId: 'B-XXXXXXXX',
+        address: 'C/ Ejemplo, 123',
+        city: 'Madrid',
+        postalCode: '28000',
+        phone: '+34 XXX XXX XXX',
+        email: 'info@resonaevents.com',
+      };
+      
+      try {
+        const settings = await companyService.getSettings();
+        if (settings) {
+          companyData = settings;
+        }
+      } catch (e) {
+        console.warn('No se pudieron cargar los datos de la empresa, usando valores por defecto');
+      }
+      
+      const doc = new jsPDF();
+      
+      // Parsear datos del presupuesto
+      let pdfConcepts: Array<{name: string, price: number}> = [];
+      let pdfTitle = 'Presupuesto';
+      let pdfFooter = 'Gracias por confiar en nosotros';
+      
+      try {
+        if (request.selectedExtras && request.selectedExtras !== '[]' && request.selectedExtras !== '{}') {
+          let extras;
+          
+          // Intentar parsear el JSON
+          try {
+            extras = typeof request.selectedExtras === 'string' 
+              ? JSON.parse(request.selectedExtras) 
+              : request.selectedExtras;
+          } catch (parseError) {
+            console.warn('No se pudo parsear selectedExtras:', parseError);
+            extras = null;
+          }
+          
+          // Formato nuevo (con conceptos personalizados)
+          if (extras && extras.pdfConcepts && Array.isArray(extras.pdfConcepts) && extras.pdfConcepts.length > 0) {
+            pdfConcepts = extras.pdfConcepts;
+            pdfTitle = extras.pdfTitle || 'Presupuesto';
+            pdfFooter = extras.pdfFooter || 'Gracias por confiar en nosotros';
+          } 
+          // Formato viejo (solo productos) - array no vacío
+          else if (extras && Array.isArray(extras) && extras.length > 0) {
+            // Presupuesto viejo: usar productos directamente
+            pdfConcepts = [{
+              name: 'Servicios solicitados',
+              price: Number(request.estimatedTotal) / 1.21 // Quitar IVA porque lo calculamos después
+            }];
+          }
+          // Si no hay datos válidos, usar el total
+          else {
+            pdfConcepts = [{
+              name: 'Servicios solicitados',
+              price: Number(request.estimatedTotal || 0) / 1.21
+            }];
+          }
+        } else {
+          // Si selectedExtras está vacío o es null, usar solo el total
+          pdfConcepts = [{
+            name: 'Servicios solicitados',
+            price: Number(request.estimatedTotal || 0) / 1.21
+          }];
+        }
+      } catch (e) {
+        console.error('Error parseando extras:', e);
+        // Si falla, usar solo el total
+        pdfConcepts = [{
+          name: 'Servicios solicitados',
+          price: Number(request.estimatedTotal || 0) / 1.21
+        }];
+      }
+
+      // Header empresarial tipo factura con color corporativo #5ebbff
+      doc.setFillColor(94, 187, 255); // Color Resona
+      doc.rect(0, 0, 210, 50, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(28);
+      doc.setFont('helvetica', 'bold');
+      doc.text(companyData.companyName || 'RESONA EVENTS', 20, 25);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Sonido | Iluminación | Eventos', 20, 32);
+      doc.text(`CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 20, 38);
+      doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'}`, 20, 44);
+      
+      // Tipo de documento en la esquina
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text(pdfTitle.toUpperCase(), 190, 30, { align: 'right' });
+      
+      // Número de presupuesto
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const presupuestoNum = `P-${request.id.substring(0, 8).toUpperCase()}`;
+      doc.text(presupuestoNum, 190, 38, { align: 'right' });
+      doc.text(new Date().toLocaleDateString('es-ES'), 190, 44, { align: 'right' });
+
+      // Información del cliente (tipo factura)
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('DATOS DEL CLIENTE:', 20, 65);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${request.customerName || 'Cliente'}`, 20, 72);
+      if (request.customerEmail) doc.text(`Email: ${request.customerEmail}`, 20, 78);
+      if (request.customerPhone) doc.text(`Tel: ${request.customerPhone}`, 20, 84);
+      
+      // Datos del evento
+      doc.setFont('helvetica', 'bold');
+      doc.text('DATOS DEL EVENTO:', 120, 65);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Tipo: ${request.eventType || 'No especificado'}`, 120, 72);
+      if (request.eventDate) doc.text(`Fecha: ${new Date(request.eventDate).toLocaleDateString('es-ES')}`, 120, 78);
+      if (request.eventLocation) doc.text(`Lugar: ${request.eventLocation}`, 120, 84);
+
+      // Línea separadora más gruesa
+      doc.setDrawColor(100, 100, 100);
+      doc.setLineWidth(0.5);
+      doc.line(20, 95, 190, 95);
+
+      // Tabla de conceptos tipo factura
+      let yPos = 105;
+      
+      // Cabecera de tabla
+      doc.setFillColor(240, 240, 240);
+      doc.rect(20, yPos, 170, 8, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
+      doc.text('DESCRIPCIÓN', 25, yPos + 5);
+      doc.text('IMPORTE', 180, yPos + 5, { align: 'right' });
+      
+      yPos += 10;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      
+      if (pdfConcepts.length > 0) {
+        pdfConcepts.forEach((concept, index) => {
+          // Fondo alternado
+          if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(20, yPos - 3, 170, 7, 'F');
+          }
+          
+          doc.setTextColor(50, 50, 50);
+          doc.text(concept.name, 25, yPos + 2);
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${concept.price.toFixed(2)} €`, 185, yPos + 2, { align: 'right' });
+          doc.setFont('helvetica', 'normal');
+          yPos += 7;
+        });
+      } else {
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(150, 150, 150);
+        doc.text('No hay conceptos definidos', 25, yPos + 2);
+        yPos += 7;
+      }
+
+      // Línea separadora
+      yPos += 3;
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.3);
+      doc.line(20, yPos, 190, yPos);
+      yPos += 10;
+
+      // Cuadro de totales tipo factura
+      const subtotal = pdfConcepts.reduce((sum, c) => sum + c.price, 0);
+      const iva = subtotal * 0.21;
+      const total = subtotal * 1.21;
+
+      const boxTop = yPos;
+      
+      // Subtotal
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 0, 0);
+      doc.text('Base imponible:', 125, yPos);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${subtotal.toFixed(2)} €`, 185, yPos, { align: 'right' });
+      
+      yPos += 7;
+      doc.setFont('helvetica', 'normal');
+      doc.text('IVA (21%):', 125, yPos);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${iva.toFixed(2)} €`, 185, yPos, { align: 'right' });
+      
+      // Línea separadora antes del total
+      yPos += 5;
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      doc.line(120, yPos, 190, yPos);
+      
+      // Total destacado con color corporativo
+      yPos += 8;
+      doc.setFillColor(94, 187, 255); // Color Resona
+      doc.rect(120, yPos - 5, 70, 10, 'F');
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(255, 255, 255); // Texto blanco sobre fondo azul
+      doc.text('TOTAL:', 125, yPos + 2);
+      doc.text(`${total.toFixed(2)} €`, 185, yPos + 2, { align: 'right' });
+      
+      // Borde del cuadro de totales
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.3);
+      doc.rect(120, boxTop - 3, 70, yPos - boxTop + 8);
+
+      // Condiciones y notas
+      yPos += 15;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 0, 0);
+      doc.text('CONDICIONES:', 20, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(80, 80, 80);
+      doc.setFontSize(8);
+      const conditions = [
+        '• Validez del presupuesto: 30 días',
+        '• Forma de pago:',
+        '  - 25% al reservar (señal)',
+        '  - 50% un mes antes del evento',
+        '  - 25% el día del evento',
+        '• El precio no incluye permisos especiales si fueran necesarios'
+      ];
+      conditions.forEach(cond => {
+        doc.text(cond, 20, yPos);
+        yPos += 4;
+      });
+      
+      // Mensaje personalizado
+      if (pdfFooter && pdfFooter !== 'Gracias por confiar en nosotros') {
+        yPos += 5;
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(9);
+        doc.text(pdfFooter, 20, yPos, { maxWidth: 170 });
+      }
+
+      // Footer tipo factura con datos reales
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.3);
+      doc.line(20, 275, 190, 275);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(`${companyData.companyName || 'RESONA EVENTS'} | CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 105, 280, { align: 'center' });
+      const address = `${companyData.address || 'C/ Ejemplo, 123'} - ${companyData.postalCode || '28000'} ${companyData.city || 'Madrid'}`;
+      doc.text(`Dirección: ${address}`, 105, 285, { align: 'center' });
+      doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'} | Email: ${companyData.email || 'info@resonaevents.com'}`, 105, 290, { align: 'center' });
+
+      // Descargar PDF
+      const fileName = `Presupuesto_${presupuestoNum}_${request.customerName?.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+      doc.save(fileName);
+      alert('✅ PDF generado correctamente');
+      
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      alert('❌ Error al generar el PDF');
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'CONTACTED': return 'bg-blue-100 text-blue-800 border-blue-300';
       case 'QUOTED': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'ACCEPTED': return 'bg-green-100 text-green-800 border-green-300';
+      case 'CONVERTED': return 'bg-green-100 text-green-800 border-green-300';
       case 'REJECTED': return 'bg-red-100 text-red-800 border-red-300';
       default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
@@ -327,7 +756,7 @@ const QuoteRequestsManager = () => {
       case 'PENDING': return <Clock className="w-4 h-4" />;
       case 'CONTACTED': return <Phone className="w-4 h-4" />;
       case 'QUOTED': return <Mail className="w-4 h-4" />;
-      case 'ACCEPTED': return <CheckCircle className="w-4 h-4" />;
+      case 'CONVERTED': return <CheckCircle className="w-4 h-4" />;
       case 'REJECTED': return <XCircle className="w-4 h-4" />;
       default: return <Clock className="w-4 h-4" />;
     }
@@ -338,7 +767,7 @@ const QuoteRequestsManager = () => {
       case 'PENDING': return 'Pendiente';
       case 'CONTACTED': return 'Contactado';
       case 'QUOTED': return 'Presupuesto Enviado';
-      case 'ACCEPTED': return 'Aceptado';
+      case 'CONVERTED': return 'Aceptado';
       case 'REJECTED': return 'Rechazado';
       default: return status;
     }
@@ -404,7 +833,7 @@ const QuoteRequestsManager = () => {
             <div>
               <p className="text-sm text-green-600 font-medium">Aceptados</p>
               <p className="text-2xl font-bold text-green-900">
-                {quoteRequests.filter(q => q.status === 'ACCEPTED').length}
+                {quoteRequests.filter(q => q.status === 'CONVERTED').length}
               </p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-600" />
@@ -618,7 +1047,7 @@ const QuoteRequestsManager = () => {
                   Presupuesto Enviado
                 </button>
                 <button
-                  onClick={() => updateStatus(selectedRequest.id, 'ACCEPTED')}
+                  onClick={() => updateStatus(selectedRequest.id, 'CONVERTED')}
                   className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium"
                 >
                   Aceptado
@@ -632,34 +1061,110 @@ const QuoteRequestsManager = () => {
               </div>
             </div>
 
-            <button
-              onClick={() => setShowDetailModal(false)}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
-            >
-              Cerrar
-            </button>
+            {/* Enlace de Pago (si está aceptado) */}
+            {selectedRequest?.status === 'CONVERTED' && (selectedRequest as any).paymentToken && (
+              <div className="bg-green-50 border-2 border-green-400 rounded-lg p-4 mb-4">
+                <p className="text-sm font-bold text-green-900 mb-2">💳 Enlace de Pago para Cliente:</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${window.location.origin}/pagar/${(selectedRequest as any).paymentToken}`}
+                    className="flex-1 px-3 py-2 bg-white border border-green-300 rounded-lg text-sm"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/pagar/${(selectedRequest as any).paymentToken}`);
+                      alert('✅ Enlace copiado al portapapeles');
+                    }}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm transition-colors"
+                  >
+                    Copiar
+                  </button>
+                </div>
+                <p className="text-xs text-green-700 mt-2">
+                  Envía este enlace al cliente para que pueda realizar los pagos fraccionados
+                </p>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              {selectedRequest?.status === 'CONVERTED' && (
+                <button
+                  onClick={() => convertToOrder(selectedRequest)}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Package className="w-5 h-5" />
+                  Convertir en Pedido
+                </button>
+              )}
+              <button
+                onClick={async () => {
+                  if (selectedRequest) {
+                    await generatePDF(selectedRequest);
+                  }
+                }}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+              >
+                📄 Generar PDF
+              </button>
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Modal para crear presupuesto */}
+      {/* Modal para crear presupuesto - BASADO EN MONTAJES */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-6xl w-full p-6 max-h-[95vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-2xl font-bold">Crear Presupuesto</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <XCircle className="w-6 h-6" />
-              </button>
-            </div>
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Crear Presupuesto</h2>
+                <button onClick={() => {
+                  setShowCreateModal(false);
+                  setActiveTab('presupuesto');
+                }} className="text-gray-500 hover:text-gray-700">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
-            {/* Información del cliente */}
-            <div className="mb-6">
-              <h3 className="font-bold text-lg mb-3">Información del Cliente</h3>
-              <div className="grid grid-cols-2 gap-4">
+              {/* Pestañas */}
+              <div className="flex border-b border-gray-200 mb-6">
+                <button
+                  onClick={() => setActiveTab('presupuesto')}
+                  className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+                    activeTab === 'presupuesto'
+                      ? 'border-resona text-resona'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  📝 Crear Presupuesto
+                </button>
+                <button
+                  onClick={() => setActiveTab('pdf')}
+                  className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+                    activeTab === 'pdf'
+                      ? 'border-resona text-resona'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  📄 Editar PDF Cliente
+                </button>
+              </div>
+
+              {/* Contenido de la pestaña Presupuesto */}
+              {activeTab === 'presupuesto' && (
+              <div className="space-y-6">
+                {/* Información Básica */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Información del Cliente</h3>
+                  <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
                   <input
@@ -691,12 +1196,12 @@ const QuoteRequestsManager = () => {
                   />
                 </div>
               </div>
-            </div>
+                </div>
 
-            {/* Información del evento */}
-            <div className="mb-6">
-              <h3 className="font-bold text-lg mb-3">Información del Evento</h3>
-              <div className="grid grid-cols-2 gap-4">
+                {/* Información del evento */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Información del Evento</h3>
+                  <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Evento *</label>
                   <input
@@ -757,23 +1262,10 @@ const QuoteRequestsManager = () => {
                   />
                 </div>
               </div>
-            </div>
+                </div>
 
-            {/* Total estimado */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Total Estimado (€)</label>
-              <input
-                type="number"
-                value={formData.estimatedTotal}
-                onChange={(e) => setFormData({...formData, estimatedTotal: parseFloat(e.target.value) || 0})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-resona"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            {/* Productos y Servicios - Layout 60/40 */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
+                {/* Productos y Servicios - Layout 60/40 */}
+                <div className="grid grid-cols-3 gap-3">
               {/* IZQUIERDA: Buscar y Agregar (60%) */}
               <div className="col-span-2 space-y-2">
                 <h3 className="text-sm font-bold flex items-center gap-1 text-gray-900">
@@ -943,20 +1435,285 @@ const QuoteRequestsManager = () => {
                     })}
                   </div>
                 )}
-                
-                {/* Total */}
-                {quoteItems.length > 0 && (
-                  <div className="p-2 bg-blue-50 rounded border border-blue-200">
-                    <p className="text-xs text-gray-600">Total Estimado:</p>
-                    <p className="text-lg font-bold text-blue-600">€{calculateQuoteTotal().toFixed(2)}</p>
-                  </div>
-                )}
               </div>
-            </div>
+                </div>
 
-            {/* Notas */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+                {/* Paneles de Gestión del Presupuesto - Debajo de productos */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Precio Final Grande */}
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-green-700 mb-1">💰 Precio Final</p>
+                        <p className="text-sm text-green-600">
+                          {formData.finalPrice > 0 ? 'Personalizado' : 'Automático'}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-bold text-green-600">
+                          €{(formData.finalPrice || (calculateQuoteTotal() + (formData.transportCost || 0) + (formData.rentalCost || 0))).toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Checkboxes de Inclusión */}
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.includeShipping}
+                          onChange={(e) => setFormData({ ...formData, includeShipping: e.target.checked })}
+                          className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-gray-700">
+                          ✅ <strong>Incluir transporte</strong> en el precio
+                        </span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.includeInstallation}
+                          onChange={(e) => setFormData({ ...formData, includeInstallation: e.target.checked })}
+                          className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-gray-700">
+                          ✅ <strong>Incluir montaje/instalación</strong> en el precio
+                        </span>
+                      </label>
+                    </div>
+                    <p className="text-xs text-purple-700 mt-2">
+                      Desmarca las opciones para packs sin transporte o montaje
+                    </p>
+                  </div>
+
+                  {/* Desglose de Costes */}
+                  <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
+                    <h4 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
+                      <Calculator className="w-4 h-4" />
+                      Desglose de Costes
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      {/* Productos */}
+                      {calculateQuoteTotal() > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Productos/Servicios:</span>
+                          <span className="font-medium text-blue-900">€{calculateQuoteTotal().toFixed(2)}</span>
+                        </div>
+                      )}
+                      
+                      {/* Transporte */}
+                      {(formData.transportCost || 0) > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-amber-700">🚚 Transporte:</span>
+                          <span className="font-medium text-amber-900">€{(formData.transportCost || 0).toFixed(2)}</span>
+                        </div>
+                      )}
+                      
+                      {/* Alquiler */}
+                      {(formData.rentalCost || 0) > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-purple-700">📦 Alquiler Externo:</span>
+                          <span className="font-medium text-purple-900">€{(formData.rentalCost || 0).toFixed(2)}</span>
+                        </div>
+                      )}
+                      
+                      {/* Total Calculado */}
+                      <div className="border-t-2 border-blue-300 pt-2 mt-2">
+                        <div className="flex justify-between font-semibold">
+                          <span className="text-blue-800">Total Calculado:</span>
+                          <span className="text-blue-900">€{(calculateQuoteTotal() + (formData.transportCost || 0) + (formData.rentalCost || 0)).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold mt-2">
+                          <span className="text-blue-800">Precio Final:</span>
+                          <span className="text-blue-900">
+                            €{(formData.finalPrice || (calculateQuoteTotal() + (formData.transportCost || 0) + (formData.rentalCost || 0))).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Advertencia si el precio personalizado difiere */}
+                    {formData.finalPrice > 0 && 
+                     Math.abs(formData.finalPrice - (calculateQuoteTotal() + (formData.transportCost || 0) + (formData.rentalCost || 0))) > 0.01 && (
+                      <div className="mt-3 bg-yellow-100 border border-yellow-300 rounded p-2">
+                        <p className="text-xs text-yellow-700 font-medium">
+                          💡 Has establecido un precio personalizado diferente al calculado
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Vacío para mantener grid */}
+                  <div></div>
+
+                  {/* Coste de Transporte */}
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <label className="block text-sm font-medium text-amber-900 mb-2">
+                      🚚 Coste de Transporte e Instalación (€)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.transportCost}
+                      onChange={(e) => setFormData({ ...formData, transportCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                      placeholder="Ej: 50.00"
+                    />
+                    <p className="text-xs text-amber-700 mt-2">
+                      Coste manual del transporte e instalación
+                    </p>
+                  </div>
+
+                  {/* Coste de Alquiler Externo */}
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <label className="block text-sm font-medium text-purple-900 mb-2">
+                      📦 Coste de Alquiler Externo (€)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.rentalCost}
+                      onChange={(e) => setFormData({ ...formData, rentalCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      placeholder="Ej: 100.00"
+                    />
+                    <p className="text-xs text-purple-700 mt-2">
+                      Equipos o servicios alquilados externamente
+                    </p>
+                  </div>
+
+                  {/* Precio Final Personalizado - Ocupa toda la fila */}
+                  <div className="col-span-2">
+                    <details className="bg-blue-50 border border-blue-200 rounded-lg">
+                      <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-blue-800 hover:bg-blue-100 rounded-lg">
+                        ▼ Establecer Precio Final Personalizado (opcional)
+                      </summary>
+                      <div className="p-4 pt-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.finalPrice}
+                          onChange={(e) => setFormData({ ...formData, finalPrice: parseFloat(e.target.value) || 0 })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Dejar vacío para usar cálculo automático"
+                        />
+                        <p className="text-xs text-gray-600 mt-2">
+                          Si introduces un valor aquí, se ignorará el cálculo automático.
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+
+                {/* Análisis de Rentabilidad - Debajo de selección de productos */}
+                {quoteItems.length > 0 && (() => {
+                  const totals = calculatePackTotals();
+                  return (
+                    <div className="bg-orange-50 border-2 border-orange-500 rounded-lg p-4">
+                      <h4 className="text-sm font-bold text-orange-800 mb-3 flex items-center gap-2">
+                        <Calculator className="w-4 h-4" />
+                        Análisis de Rentabilidad
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        {/* Costes Detallados */}
+                        <div className="border-t border-orange-200 pt-3 mt-2">
+                          <div className="text-xs font-bold text-orange-800 mb-2 uppercase">Costes:</div>
+                          <div className="space-y-1.5 text-sm">
+                            {totals.costMaterial > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-orange-700">Total costes material:</span>
+                                <span className="font-medium text-orange-900">€{totals.costMaterial.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {totals.costPersonal > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-orange-700">Total costes personal:</span>
+                                <span className="font-medium text-orange-900">€{totals.costPersonal.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {totals.costShippingInstallation > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-orange-700">Total coste envío+montaje:</span>
+                                <span className="font-medium text-orange-900">€{totals.costShippingInstallation.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {totals.costDepreciation > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-orange-700">Total coste amortización:</span>
+                                <span className="font-medium text-orange-900">€{totals.costDepreciation.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {totals.transportCost > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-amber-700">🚚 Coste transporte:</span>
+                                <span className="font-medium text-amber-900">€{totals.transportCost.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {totals.rentalCost > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-purple-700">📦 Coste alquiler:</span>
+                                <span className="font-medium text-purple-900">€{totals.rentalCost.toFixed(2)}</span>
+                              </div>
+                            )}
+                            
+                            <div className="border-t-2 border-orange-300 pt-2 mt-2">
+                              <div className="flex justify-between font-semibold">
+                                <span className="text-orange-800">Coste Total:</span>
+                                <span className="text-orange-900">€{totals.totalCost.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between font-semibold mt-2">
+                                <span className="text-orange-800">Precio Venta:</span>
+                                <span className="text-orange-900">€{totals.finalPrice.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-xs text-orange-600 mt-2 italic">
+                            * Amortización: 5% del valor | Personal: coste/hora
+                          </div>
+                        </div>
+                        <div className="border-t border-orange-200 pt-2 mt-2">
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold text-orange-800">Beneficio:</span>
+                            <span className={`text-lg font-bold ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              €{totals.profit.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center mt-2">
+                            <span className="font-semibold text-orange-800">Margen:</span>
+                            <span className={`text-lg font-bold ${totals.profitMargin >= 30 ? 'text-green-600' : totals.profitMargin >= 15 ? 'text-yellow-600' : 'text-red-600'}`}>
+                              {totals.profitMargin.toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {totals.profit < 0 && (
+                        <div className="mt-3 bg-red-100 border border-red-300 rounded p-2">
+                          <p className="text-xs text-red-700 font-medium">
+                            ⚠️ Beneficio negativo: El precio de venta (€{totals.finalPrice.toFixed(2)}) es menor que los costes totales (€{totals.totalCost.toFixed(2)}). 
+                            Aumenta el precio final o reduce costes.
+                          </p>
+                        </div>
+                      )}
+                      {totals.profit >= 0 && totals.profitMargin < 15 && totals.totalCost > 0 && (
+                        <div className="mt-3 bg-yellow-100 border border-yellow-300 rounded p-2">
+                          <p className="text-xs text-yellow-700 font-medium">
+                            ⚠️ Margen bajo: considera aumentar el precio o reducir costes
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* Notas */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Notas</h3>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Notas adicionales</label>
               <textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({...formData, notes: e.target.value})}
@@ -964,26 +1721,307 @@ const QuoteRequestsManager = () => {
                 rows={3}
                 placeholder="Notas adicionales sobre el evento..."
               />
-            </div>
+                </div>
 
-            {/* Botones */}
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowCreateModal(false);
-                  setQuoteItems([]);
-                  setSearchTerm('');
-                }}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={createQuoteRequest}
-                className="flex-1 bg-resona hover:bg-resona-dark text-white font-medium py-3 rounded-lg transition-colors"
-              >
-                Crear Presupuesto (€{calculateQuoteTotal().toFixed(2)})
-              </button>
+              </div>
+              )}
+
+              {/* Contenido de la pestaña PDF */}
+              {activeTab === 'pdf' && (
+                <div className="space-y-6">
+                  <div className="bg-blue-50 border-2 border-blue-400 rounded-lg p-6">
+                    <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                      <span className="text-2xl">📄</span>
+                      Personalizar PDF para Cliente
+                    </h3>
+                    <p className="text-sm text-blue-800 mb-6">
+                      Configura cómo se verá el presupuesto en el PDF que recibirá el cliente
+                    </p>
+
+                    {/* Título del PDF */}
+                    <div className="mb-6 bg-white p-4 rounded-lg">
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        📌 Título del Documento
+                      </label>
+                      <input
+                        type="text"
+                        value={pdfData.title}
+                        onChange={(e) => setPdfData({...pdfData, title: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="Ej: Presupuesto para tu Evento"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Este será el título principal del PDF</p>
+                    </div>
+
+                    {/* Mostrar detalles */}
+                    <div className="mb-6 bg-white p-4 rounded-lg">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={pdfData.showItemDetails}
+                          onChange={(e) => setPdfData({...pdfData, showItemDetails: e.target.checked})}
+                          className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <div>
+                          <span className="text-sm font-bold text-gray-700">
+                            📋 Mostrar detalles de productos individuales
+                          </span>
+                          <p className="text-xs text-gray-500">
+                            Si está desmarcado, el cliente verá solo conceptos generales
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Pie del PDF */}
+                    <div className="mb-6 bg-white p-4 rounded-lg">
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        👋 Mensaje de Despedida
+                      </label>
+                      <textarea
+                        value={pdfData.footer}
+                        onChange={(e) => setPdfData({...pdfData, footer: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        rows={3}
+                        placeholder="Mensaje que aparecerá al final del PDF"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Este mensaje aparecerá al final del documento</p>
+                    </div>
+
+                    {/* Crear Conceptos Manualmente */}
+                    <div className="mb-6 bg-white p-4 rounded-lg border-2 border-purple-300">
+                      <h4 className="text-sm font-bold text-purple-900 mb-3 flex items-center gap-2">
+                        ✏️ Conceptos para el Cliente
+                      </h4>
+                      <p className="text-xs text-gray-600 mb-4">
+                        Crea los conceptos que verá el cliente en el PDF. Ej: "Sonorización evento", "Iluminación", etc.
+                      </p>
+                      
+                      {/* Formulario para agregar concepto */}
+                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg mb-4">
+                        <p className="text-xs font-bold text-purple-800 mb-3">➕ Agregar Nuevo Concepto</p>
+                        <div className="flex gap-3">
+                          <div className="flex-1">
+                            <label className="block text-xs text-gray-700 mb-1">Nombre del concepto</label>
+                            <input
+                              type="text"
+                              value={newConceptName}
+                              onChange={(e) => setNewConceptName(e.target.value)}
+                              className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
+                              placeholder="Ej: Sonorización evento"
+                            />
+                          </div>
+                          <div className="w-32">
+                            <label className="block text-xs text-gray-700 mb-1">Precio (€)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={newConceptPrice}
+                              onChange={(e) => setNewConceptPrice(parseFloat(e.target.value) || 0)}
+                              className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
+                              placeholder="0.00"
+                            />
+                          </div>
+                          <div className="flex items-end">
+                            <button
+                              onClick={() => {
+                                if (newConceptName.trim()) {
+                                  setPdfData({
+                                    ...pdfData,
+                                    concepts: [
+                                      ...pdfData.concepts,
+                                      {
+                                        id: Date.now().toString(),
+                                        name: newConceptName,
+                                        price: newConceptPrice
+                                      }
+                                    ]
+                                  });
+                                  setNewConceptName('');
+                                  setNewConceptPrice(0);
+                                }
+                              }}
+                              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium text-sm transition-colors"
+                            >
+                              ➕ Agregar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Lista de conceptos creados */}
+                      {pdfData.concepts.length > 0 ? (
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-purple-800 mb-2">📋 Conceptos Creados:</p>
+                          {pdfData.concepts.map((concept) => (
+                            <div key={concept.id} className="bg-gray-50 p-3 rounded-lg border border-gray-200 flex items-center gap-3">
+                              <div className="flex-1">
+                                <input
+                                  type="text"
+                                  value={concept.name}
+                                  onChange={(e) => {
+                                    setPdfData({
+                                      ...pdfData,
+                                      concepts: pdfData.concepts.map(c => 
+                                        c.id === concept.id ? {...c, name: e.target.value} : c
+                                      )
+                                    });
+                                  }}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm font-medium"
+                                />
+                              </div>
+                              <div className="w-32">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  value={concept.price}
+                                  onChange={(e) => {
+                                    setPdfData({
+                                      ...pdfData,
+                                      concepts: pdfData.concepts.map(c => 
+                                        c.id === concept.id ? {...c, price: parseFloat(e.target.value) || 0} : c
+                                      )
+                                    });
+                                  }}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm text-right font-bold text-green-600"
+                                />
+                              </div>
+                              <button
+                                onClick={() => {
+                                  setPdfData({
+                                    ...pdfData,
+                                    concepts: pdfData.concepts.filter(c => c.id !== concept.id)
+                                  });
+                                }}
+                                className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm font-medium transition-colors"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          ))}
+                          
+                          <div className="mt-3 pt-3 border-t-2 border-purple-200">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-bold text-purple-900">Subtotal:</span>
+                              <span className="text-lg font-bold text-purple-900">
+                                €{pdfData.concepts.reduce((sum, c) => sum + c.price, 0).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm text-purple-700">IVA (21%):</span>
+                              <span className="text-sm font-medium text-purple-700">
+                                €{(pdfData.concepts.reduce((sum, c) => sum + c.price, 0) * 0.21).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center pt-2 border-t border-purple-300">
+                              <span className="text-sm font-bold text-purple-900">Total con IVA:</span>
+                              <span className="text-xl font-bold text-green-600">
+                                €{(pdfData.concepts.reduce((sum, c) => sum + c.price, 0) * 1.21).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 p-6 rounded-lg text-center border-2 border-dashed border-gray-300">
+                          <p className="text-sm text-gray-500">
+                            No hay conceptos creados. Agrega el primer concepto arriba 👆
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="mt-4 bg-purple-50 p-3 rounded-lg">
+                        <p className="text-xs text-purple-800">
+                          💡 <strong>Consejo:</strong> Agrupa productos similares bajo un mismo concepto. 
+                          Por ejemplo, todos los equipos de audio bajo "Sonorización evento" con el precio total.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-lg border-2 border-gray-300">
+                      <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        👁️ Vista Previa del PDF
+                      </h4>
+                      <div className="bg-white p-6 rounded shadow-lg">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">{pdfData.title}</h2>
+                        <div className="border-t-2 border-gray-300 pt-4 mb-4">
+                          <p className="text-sm text-gray-600 mb-2">Cliente: {formData.customerName || 'Nombre del cliente'}</p>
+                          <p className="text-sm text-gray-600 mb-2">Evento: {formData.eventType || 'Tipo de evento'}</p>
+                        </div>
+                        <div className="mb-4">
+                          <p className="text-sm font-semibold text-gray-700 mb-2">Conceptos:</p>
+                          {pdfData.concepts.length > 0 ? (
+                            <div className="space-y-1">
+                              {pdfData.concepts.map((concept) => (
+                                <div key={concept.id} className="flex justify-between text-xs text-gray-600 py-1 border-b border-gray-100">
+                                  <span>{concept.name}</span>
+                                  <span className="font-semibold">€{concept.price.toFixed(2)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-gray-500 italic mt-2">
+                              → No hay conceptos creados. Agrégalos arriba ☝️
+                            </p>
+                          )}
+                        </div>
+                        <div className="border-t-2 border-gray-300 pt-4 mt-4">
+                          <div className="space-y-2 mb-4">
+                            <div className="flex justify-between text-sm">
+                              <span className="font-semibold text-gray-700">Subtotal:</span>
+                              <span className="font-semibold text-gray-900">
+                                €{pdfData.concepts.reduce((sum, c) => sum + c.price, 0).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">IVA (21%):</span>
+                              <span className="text-gray-700">
+                                €{(pdfData.concepts.reduce((sum, c) => sum + c.price, 0) * 0.21).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t-2 border-gray-400">
+                              <span className="font-bold text-gray-900">Total:</span>
+                              <span className="text-xl font-bold text-green-600">
+                                €{(pdfData.concepts.reduce((sum, c) => sum + c.price, 0) * 1.21).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 italic">{pdfData.footer}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Botones de acción */}
+                  <div className="flex gap-3 pt-4 border-t">
+                    <button
+                      onClick={() => {
+                        setShowCreateModal(false);
+                        setQuoteItems([]);
+                        setSearchTerm('');
+                        setActiveTab('presupuesto');
+                        setPdfData({
+                          title: 'Presupuesto',
+                          showItemDetails: false,
+                          concepts: [],
+                          footer: 'Gracias por confiar en nosotros',
+                        });
+                      }}
+                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={createQuoteRequest}
+                      className="flex-1 bg-resona hover:bg-resona-dark text-white font-medium py-3 rounded-lg transition-colors"
+                    >
+                      Crear Presupuesto (€{(pdfData.concepts.reduce((sum, c) => sum + c.price, 0) * 1.21).toFixed(2)} IVA inc.)
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

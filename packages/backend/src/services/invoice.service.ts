@@ -1050,6 +1050,34 @@ export class InvoiceService {
       notes: (invoice.metadata as any)?.notes || '',
     };
   }
+
+  /**
+   * Delete invoice (admin only - hard delete)
+   */
+  async deleteInvoice(invoiceId: string) {
+    try {
+      // Verificar que existe
+      const invoice = await prisma.invoice.findUnique({
+        where: { id: invoiceId }
+      });
+
+      if (!invoice) {
+        throw new AppError(404, 'Factura no encontrada', 'NOT_FOUND');
+      }
+
+      // Eliminar
+      await prisma.invoice.delete({
+        where: { id: invoiceId }
+      });
+
+      logger.info(`Invoice ${invoiceId} deleted permanently`);
+      
+      return { success: true };
+    } catch (error) {
+      logger.error('Error deleting invoice:', error);
+      throw error;
+    }
+  }
 }
 
 export const invoiceService = new InvoiceService();

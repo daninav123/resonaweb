@@ -1,0 +1,542 @@
+[
+  {
+    "id": "04806543-14dc-4d0b-9c07-8383e09bf590",
+    "name": "2x altavoces 415a +pioneer rx2",
+    "sku": "PACK-7CF8EC26",
+    "description": ""
+  },
+  {
+    "id": "d0f09eaf-d614-43db-a2c9-a02a7a4e7683",
+    "name": "2x altavoces 415a +pioneer rx2+iluminacion basic",
+    "sku": "PACK-D986A9FF",
+    "description": ""
+  },
+  {
+    "id": "0f92c85b-6558-40be-9844-ba582c09dc27",
+    "name": "2x altavoces 415a +pioneer rx2+iluminacion basic+puente 1",
+    "sku": "PACK-87E6D54E",
+    "description": ""
+  },
+  {
+    "id": "955ee0d4-510d-4a1a-9b33-7027f5abad8e",
+    "name": "2x das audio 215a",
+    "sku": "PACK-857EAA04",
+    "description": ""
+  },
+  {
+    "id": "5ff0cf83-2af2-49ab-8856-904d2472a4f6",
+    "name": "2x das audio 215a 1x sub 218a",
+    "sku": "PACK-C62C0933",
+    "description": ""
+  },
+  {
+    "id": "97f5ddc8-7e34-45fb-a1a1-ff33418daef0",
+    "name": "2x das audio 415a",
+    "sku": "PACK-0AAEEE7B",
+    "description": ""
+  },
+  {
+    "id": "c1952b81-3500-4f70-b747-049b26b0949c",
+    "name": "2x icoa 15a",
+    "sku": "PACK-85E2DD19",
+    "description": ""
+  },
+  {
+    "id": "4f2a8a69-a874-4f19-b472-aa575a7f65e6",
+    "name": "Adapador trípode/mariposa",
+    "sku": "EST-0027",
+    "description": "Adapador trípode/mariposa - ESTRUCTURAS\n\nPrecio individual - IVA no incluido"
+  },
+  {
+    "id": "37531509-5eb5-4d66-8247-dcabb220b16c",
+    "name": "Adaptador trípode/truss",
+    "sku": "EST-0028",
+    "description": "Adaptador trípode/truss - ESTRUCTURAS"
+  },
+  {
+    "id": "ee97ca97-7bef-48e9-bcb8-b5e02110f536",
+    "name": "Alargadores shucko",
+    "sku": "CAB-0056",
+    "description": "Alargadores shucko - CABLEADO"
+  },
+  {
+    "id": "6f612402-643b-4096-a4fd-76ce8df9d4d2",
+    "name": "Alimentación",
+    "sku": "CAB-0054",
+    "description": "Alimentación - CABLEADO"
+  },
+  {
+    "id": "c05c167a-6547-46ef-ad7f-c10b56846500",
+    "name": "Behringheir xair18",
+    "sku": "Behringheir x air18",
+    "description": ""
+  },
+  {
+    "id": "00b102c6-cc30-4e93-8798-8867de3d4e2c",
+    "name": "Boda Basic",
+    "sku": "PACK-7B49F9BB",
+    "description": ""
+  },
+  {
+    "id": "3f6609c8-594d-4676-ab80-b1d9900ddf72",
+    "name": "Cabina jardin",
+    "sku": "ELE-0032",
+    "description": "Cabina jardin - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "cfbf8e70-eb38-4155-824d-57072008ecc3",
+    "name": "Cabina palets",
+    "sku": "ELE-0031",
+    "description": "Cabina palets - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "a0aaf7d4-ea1c-4c11-9718-91f60c4c1aed",
+    "name": "Carga confeti",
+    "sku": "FX-CARGA-CONFETI",
+    "description": ""
+  },
+  {
+    "id": "5c448f7b-0550-447f-b0af-50a4935d05e9",
+    "name": "DJ",
+    "sku": "PERSONAL-DJ-001",
+    "description": "Servicio de DJ profesional para eventos"
+  },
+  {
+    "id": "7be2f4e6-5c98-4d25-9ff8-bdd9181d53dc",
+    "name": "DMX wirelss",
+    "sku": "dmx-wireless",
+    "description": ""
+  },
+  {
+    "id": "b0ab88b8-aa79-473f-90b2-e756a0d08a33",
+    "name": "Das Altea 415a",
+    "sku": "SON-0001",
+    "description": "das Altea 415a - SONIDO"
+  },
+  {
+    "id": "094ec3a1-e2c3-4054-8dbd-d15a79d9da8c",
+    "name": "Das action 215a",
+    "sku": "SON-0004",
+    "description": "das action 215a - SONIDO"
+  },
+  {
+    "id": "61b44fa4-c4e6-458e-816a-2a182964d391",
+    "name": "Dmx",
+    "sku": "CAB-0052",
+    "description": "Dmx - CABLEADO"
+  },
+  {
+    "id": "product-custom-event-virtual",
+    "name": "Evento Personalizado",
+    "sku": "VIRTUAL-EVENT-001",
+    "description": "Producto virtual para pedidos personalizados creados desde la calculadora de eventos. El precio real se calcula según la configuración del evento."
+  },
+  {
+    "id": "2eba7417-4173-439e-8b38-5a542ba35c23",
+    "name": "Guirlanda bombilla incandesdecente 25m",
+    "sku": "guirnalda",
+    "description": ""
+  },
+  {
+    "id": "7a123f62-4b3d-4938-9cf9-ef754c055d82",
+    "name": "Guirnalda led",
+    "sku": "guirnalda-led",
+    "description": ""
+  },
+  {
+    "id": "a2a80159-7fcc-4ff7-b2f1-ab285e0e6974",
+    "name": "LC 8 kinson",
+    "sku": "SON-0006",
+    "description": "LC 8 kinson - SONIDO"
+  },
+  {
+    "id": "2158c26b-e932-42ff-930a-8dc20f76ffc9",
+    "name": "Letras",
+    "sku": "ELE-0033",
+    "description": "Letras - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "43c8ad8c-1839-4fe2-a97c-428d9ea422be",
+    "name": "Manguera trifasica 20 metros",
+    "sku": "CAB-0059",
+    "description": "Manguera trifasica 20 metros - CABLEADO"
+  },
+  {
+    "id": "8d35e6be-4be1-421a-9399-f079382be841",
+    "name": "Maquinas de humo vertical 1500w",
+    "sku": "FX-0016",
+    "description": "Maquina de humo vertical 1500w"
+  },
+  {
+    "id": "0d561b25-c619-4d00-853f-c1b1769abb83",
+    "name": "Minijack/jack",
+    "sku": "CAB-0058",
+    "description": "Minijack/jack - CABLEADO"
+  },
+  {
+    "id": "7e780d1b-c39e-4a9d-8c41-548127e28bb4",
+    "name": "Montador",
+    "sku": "PERSONAL-MONTADOR-001",
+    "description": "Montador profesional para instalación y montaje de equipos"
+  },
+  {
+    "id": "020ba788-c65d-4989-a256-9e10189857b4",
+    "name": "Máquina fuego frío 700w",
+    "sku": "FX-0015",
+    "description": "máquinas fuego frío - FX"
+  },
+  {
+    "id": "db5c11ae-5c2e-4fd0-a345-bc1f08dae3d6",
+    "name": "PACK CONCIERTO BASIC",
+    "sku": "PACK-8040F141",
+    "description": "PA +MIXER+TECNICO"
+  },
+  {
+    "id": "4724ba82-27cb-441e-8d14-1ab72027091d",
+    "name": "Pack Altavoces +dj",
+    "sku": "PACK-B58541B1",
+    "description": ""
+  },
+  {
+    "id": "793c797c-9706-4fc2-b6ad-e59a9b87bea6",
+    "name": "Pack altavoces dj 2",
+    "sku": "PACK-673563F3",
+    "description": "Pack altavoces dj icoa negros 4 horas dj"
+  },
+  {
+    "id": "9a722950-706b-407d-b6a0-4f49a526e8c4",
+    "name": "Pack fuego frio",
+    "sku": "PACK-6E5CF83A",
+    "description": ""
+  },
+  {
+    "id": "40d66de5-2452-4ee4-824f-e4d0dd6f882f",
+    "name": "Pack fuego frio 4",
+    "sku": "PACK-7729818B",
+    "description": ""
+  },
+  {
+    "id": "a65873fd-8682-4645-9021-34836f9a0024",
+    "name": "Pack sonido 215",
+    "sku": "PACK-4329009D",
+    "description": "Pack sonido 215 dj 4h"
+  },
+  {
+    "id": "572115c6-6ea4-45ee-a1c4-963d18e0cf56",
+    "name": "Polvo Fuego Frio",
+    "sku": "FX-polvo-fuego-frio",
+    "description": "Polvo fuego frio 200 g"
+  },
+  {
+    "id": "30fe81b5-f89e-4a89-90b2-7e3a7f96b60d",
+    "name": "Rca/rca",
+    "sku": "CAB-0057",
+    "description": "Rca/rca - CABLEADO"
+  },
+  {
+    "id": "49bdf98e-bf67-4778-9c8f-58d08e18683f",
+    "name": "Soporte Gravity Blanco",
+    "sku": "EST-0026",
+    "description": "soportes blancos - ESTRUCTURAS"
+  },
+  {
+    "id": "c0374fa6-88a4-4b66-a1d7-7dd6373c4954",
+    "name": "Soundcraft 8",
+    "sku": "soundcraft",
+    "description": ""
+  },
+  {
+    "id": "ccc6719e-8363-4219-a55b-29e5b955cdf5",
+    "name": "Totem madera 1m",
+    "sku": "DECORACION-TOTEM-1M",
+    "description": ""
+  },
+  {
+    "id": "f558eb45-15ce-4304-9ea9-de33c0429f54",
+    "name": "Totems madera 2m",
+    "sku": "DECORACION-TOTEMS-2M",
+    "description": "totems de madera de 2m"
+  },
+  {
+    "id": "fe03b9ce-4aa8-49da-9146-840578821e7f",
+    "name": "Trípodes negros",
+    "sku": "EST-0025",
+    "description": "Trípodes negros - ESTRUCTURAS"
+  },
+  {
+    "id": "370b670c-76c0-4afb-bbf7-3700a9133b0f",
+    "name": "Técnico Audiovisual",
+    "sku": "PERSONAL-TECH-AUDIO-001",
+    "description": "Técnico especializado en sistemas de audio y sonido"
+  },
+  {
+    "id": "f9e9467a-38d7-4b80-ac65-9f42d30d936e",
+    "name": "Ventiladores",
+    "sku": "ELE-0035",
+    "description": "ventiladores - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "999ec7a2-3f46-48a5-b33e-7b63a0838be0",
+    "name": "Xlr",
+    "sku": "CAB-0053",
+    "description": "Xlr - CABLEADO"
+  },
+  {
+    "id": "79d86420-efcb-4210-8a61-561cfb2f9fe8",
+    "name": "Zapatillas",
+    "sku": "CAB-0055",
+    "description": "Zapatillas - CABLEADO"
+  },
+  {
+    "id": "55baaf2c-0250-4121-bced-f468706de3db",
+    "name": "alimentacion powercon",
+    "sku": "powercon",
+    "description": ""
+  },
+  {
+    "id": "1b297612-a69b-4985-994d-4181bee88cf3",
+    "name": "bases",
+    "sku": "EST-0019",
+    "description": "bases - ESTRUCTURAS"
+  },
+  {
+    "id": "4afc2b93-ee1a-431b-9ed3-2aebae722cc2",
+    "name": "beam 7r",
+    "sku": "ILU-0008",
+    "description": "Cabeza movil beam 7r - 230w"
+  },
+  {
+    "id": "fbcf8f09-5a28-4fbb-ad8f-d701c178f5f5",
+    "name": "cabezas 3en1 17r",
+    "sku": "ILU-0007",
+    "description": "Cabeza movil 3en1 17r - 350W"
+  },
+  {
+    "id": "854703b3-7c7e-4910-8430-b18dab66beb5",
+    "name": "cajetín usb dmx",
+    "sku": "CON-0046",
+    "description": "cajetín usb dmx - CONTROL ILUMINACION"
+  },
+  {
+    "id": "dee6596e-7a77-4957-aeb0-a4e695f8525e",
+    "name": "cubos",
+    "sku": "EST-0022",
+    "description": "cubos - ESTRUCTURAS"
+  },
+  {
+    "id": "eecd0318-ed89-471a-85e1-6eb1868b9bb5",
+    "name": "distribuidor 32a",
+    "sku": "GEN-0048",
+    "description": "distribuidor 32a - GENERACIÓN Y DISTRIBUCIÓN"
+  },
+  {
+    "id": "f59ddc5b-2f0d-4c85-b6c7-5b3dc71a5448",
+    "name": "fdsf",
+    "sku": "PACK-C5D29FA8",
+    "description": ""
+  },
+  {
+    "id": "0f337696-12a3-4a43-8a75-f60af7519ba4",
+    "name": "flash rgb 1000w",
+    "sku": "ILU-0012",
+    "description": "flash rgb 1000w - ILUMINACION"
+  },
+  {
+    "id": "b6d62b26-06c7-4885-8e35-6cd09d803da3",
+    "name": "flash rgb smd",
+    "sku": "ILU-0014",
+    "description": "flash rgb smd - ILUMINACION"
+  },
+  {
+    "id": "2e96c586-a42f-458c-a74f-13095856deaf",
+    "name": "focos rgb decoración",
+    "sku": "ELE-0034",
+    "description": "focos rgb decoración - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "caf1d47e-a1ca-4889-a2f8-044a21b36514",
+    "name": "focos spot pequeños",
+    "sku": "ILU-0011",
+    "description": "focos spot pequeños - ILUMINACION"
+  },
+  {
+    "id": "cbbebac4-c105-4837-af2b-9080beffa82b",
+    "name": "fsdfs",
+    "sku": "PACK-6AFA6CD4",
+    "description": "fds"
+  },
+  {
+    "id": "99d108dc-60be-4e4f-a5d5-45d364830976",
+    "name": "generador 6500w",
+    "sku": "GEN-0047",
+    "description": "generador 6500w - GENERACIÓN Y DISTRIBUCIÓN"
+  },
+  {
+    "id": "25875a1b-147e-4141-aa39-b89be5ddea68",
+    "name": "hexágono",
+    "sku": "ELE-0036",
+    "description": "hexágono - ELEMENTOS DECORATIVOS"
+  },
+  {
+    "id": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a",
+    "name": "icoa 12a blancos",
+    "sku": "SON-0002",
+    "description": "icoa 12a blancos - SONIDO"
+  },
+  {
+    "id": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a",
+    "name": "icoa 15a negros",
+    "sku": "SON-0003",
+    "description": "icoa 15a negros - SONIDO"
+  },
+  {
+    "id": "25ef5d44-9c06-45f2-92ac-419240140605",
+    "name": "lanzador confeti",
+    "sku": "Confeti",
+    "description": "\n\nPrecio individual - IVA no incluido"
+  },
+  {
+    "id": "581e1b29-fd53-4cdc-81a3-7c07bfa9960d",
+    "name": "láser rgb 10w",
+    "sku": "ILU-0013",
+    "description": "láser rgb 10w - ILUMINACION"
+  },
+  {
+    "id": "17e7bcfc-4998-442e-8e92-84e9846bd79a",
+    "name": "mesa 2x1",
+    "sku": "ELE-0029",
+    "description": "mesa 2x1 - ELEMENTOS ESCENARIO"
+  },
+  {
+    "id": "c6f38a15-d75d-4c90-832a-029698d34985",
+    "name": "mesa quick20",
+    "sku": "CON-0045",
+    "description": "mesa quick20 - CONTROL ILUMINACION"
+  },
+  {
+    "id": "93665f7e-7fe6-4d4d-9f05-4eaf6debea7c",
+    "name": "micro Behringer BA 19A",
+    "sku": "MIC-0039",
+    "description": "micro Behringer BA 19A - MICROFONIA"
+  },
+  {
+    "id": "c7173f0b-b32e-4232-877f-a0bf316663cc",
+    "name": "micro audibax sm570",
+    "sku": "MIC-0038",
+    "description": "micro audibax sm570 - MICROFONIA"
+  },
+  {
+    "id": "650bf3a1-84b1-40aa-94f7-551abf341139",
+    "name": "micros audibax sm580",
+    "sku": "MIC-0037",
+    "description": "micros audibax sm580 - MICROFONIA"
+  },
+  {
+    "id": "6f608ba5-1cf8-4935-9680-91d2e649eeda",
+    "name": "micros inalámbrico",
+    "sku": "MIC-0040",
+    "description": "micros inalámbrico - MICROFONIA"
+  },
+  {
+    "id": "a34a0eec-c251-4a5a-b9dd-2c017458a641",
+    "name": "mini beam",
+    "sku": "ILU-0009",
+    "description": "mini beam - ILUMINACION"
+  },
+  {
+    "id": "a308b6d5-1299-424a-8590-f91c7a62a8d8",
+    "name": "mini truss 2m",
+    "sku": "EST-0024",
+    "description": "mini truss 2m - ESTRUCTURAS"
+  },
+  {
+    "id": "d09f4477-aab0-4909-89dc-c820779b5c0d",
+    "name": "mini wash",
+    "sku": "ILU-0010",
+    "description": "mini wash - ILUMINACION"
+  },
+  {
+    "id": "9a7b4175-59c1-4b64-9f74-10e95cc7075a",
+    "name": "pantalla",
+    "sku": "PAN-0051",
+    "description": "pantalla - PANTALLAS Y PROYECCIÓN"
+  },
+  {
+    "id": "cac170ee-37f1-4262-b348-13636e627cb0",
+    "name": "patas 1 m",
+    "sku": "ELE-0030",
+    "description": "patas 1 m - ELEMENTOS ESCENARIO"
+  },
+  {
+    "id": "01b87849-cfb6-4e24-8369-c6a763b427af",
+    "name": "pioneer rx2",
+    "sku": "EQU-0049",
+    "description": "pioneer rx2 - EQUIPAMIENTO DJ"
+  },
+  {
+    "id": "5a5d034f-fba1-45a6-a413-ac6a80508085",
+    "name": "procesador t racks 204",
+    "sku": "CON-0044",
+    "description": "procesador t racks 204 - CONTROL SONIDO"
+  },
+  {
+    "id": "cbd57efa-4d29-4451-80c0-c46fb7dd25fd",
+    "name": "proyector",
+    "sku": "PAN-0050",
+    "description": "proyector - PANTALLAS Y PROYECCIÓN"
+  },
+  {
+    "id": "2f08f346-30bf-4d8f-b567-11b6aeee18ac",
+    "name": "semicírculos 4m diametro",
+    "sku": "EST-0021",
+    "description": "semicírculos 4m diametro - ESTRUCTURAS"
+  },
+  {
+    "id": "9a6a77bb-d593-4bb0-9346-d00921d4e8c9",
+    "name": "set micro 2 micros inalámbricos",
+    "sku": "MIC-0041",
+    "description": "set micro 2 micros inalámbricos - MICROFONIA"
+  },
+  {
+    "id": "308b83ae-42fa-425b-a632-52ed45343acb",
+    "name": "sub das 218a",
+    "sku": "SON-0005",
+    "description": "sub das 218a - SONIDO"
+  },
+  {
+    "id": "913344d7-9f99-4d57-be75-3e6c4b0890c7",
+    "name": "top",
+    "sku": "EST-0020",
+    "description": "top - ESTRUCTURAS"
+  },
+  {
+    "id": "920b6f32-23ad-4af9-af03-14d9b1f0cef0",
+    "name": "truss 1 m",
+    "sku": "EST-0017",
+    "description": "truss 1 m - ESTRUCTURAS"
+  },
+  {
+    "id": "00bf1552-c807-4b5c-bd41-1c17b11c2365",
+    "name": "truss 1.5m",
+    "sku": "truss-1.5",
+    "description": ""
+  },
+  {
+    "id": "57b24b43-ef0a-4ea0-9232-4040f40b4b4c",
+    "name": "truss 2 m",
+    "sku": "EST-0018",
+    "description": "truss 2 m - ESTRUCTURAS"
+  },
+  {
+    "id": "e8744400-e4c4-45fc-814c-da1e80b4f59e",
+    "name": "trípodes grandes",
+    "sku": "EST-0023",
+    "description": "trípodes grandes - ESTRUCTURAS"
+  },
+  {
+    "id": "a56e4292-1687-4a7c-ab63-79130d76cdc3",
+    "name": "vxcvcv",
+    "sku": "PACK-DA9C5FF5",
+    "description": ""
+  }
+]

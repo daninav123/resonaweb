@@ -136,13 +136,55 @@ class QuoteRequestController {
       const { id } = req.params;
       const { status, adminNotes } = req.body;
 
+      console.log('🔍 Actualizando quote request:', { id, status, adminNotes });
+
+      // Obtener presupuesto actual
+      const currentQuote = await prisma.quoteRequest.findUnique({
+        where: { id },
+      });
+
+      console.log('📋 Quote actual encontrado:', currentQuote ? 'SÍ' : 'NO');
+
+      if (!currentQuote) {
+        throw new AppError(404, 'Presupuesto no encontrado', 'NOT_FOUND');
+      }
+
+      const updateData: any = {
+        ...(status && { status }),
+        ...(adminNotes !== undefined && { adminNotes }),
+      };
+
+      console.log('💾 Data a actualizar (antes de payment):', updateData);
+
+      // Si el estado cambia a CONVERTED (aceptado), generar token de pago y calcular pagos
+      if (status === 'CONVERTED' && !currentQuote.paymentToken) {
+        const paymentToken = `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+        const total = Number(currentQuote.estimatedTotal) || 0;
+        
+        updateData.paymentToken = paymentToken;
+        updateData.firstPayment = total * 0.25;  // 25%
+        updateData.secondPayment = total * 0.50; // 50%
+        updateData.thirdPayment = total * 0.25;  // 25%
+
+        console.log('💰 Generando pagos:', {
+          paymentToken,
+          total,
+          firstPayment: updateData.firstPayment,
+          secondPayment: updateData.secondPayment,
+          thirdPayment: updateData.thirdPayment
+        });
+
+        logger.info(`Generando enlace de pago para presupuesto ${id}: ${paymentToken}`);
+      }
+
+      console.log('📝 Data final a actualizar:', updateData);
+
       const quoteRequest = await prisma.quoteRequest.update({
         where: { id },
-        data: {
-          ...(status && { status }),
-          ...(adminNotes !== undefined && { adminNotes }),
-        },
+        data: updateData,
       });
+
+      console.log('✅ Quote request actualizado exitosamente');
 
       logger.info(`Quote request ${id} actualizada: ${status || 'notes'}`);
 
@@ -152,6 +194,7 @@ class QuoteRequestController {
         data: quoteRequest,
       });
     } catch (error) {
+      console.error('❌ ERROR COMPLETO en updateQuoteRequest:', error);
       logger.error('Error updating quote request:', error);
       throw error;
     }

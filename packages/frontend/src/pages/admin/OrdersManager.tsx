@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Eye, Download, Filter } from 'lucide-react';
+import { ShoppingCart, Eye, Download, Filter, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../services/api';
@@ -10,7 +10,7 @@ const OrdersManager = () => {
   const [statusFilter, setStatusFilter] = useState('all');
 
   // Obtener órdenes reales de la API
-  const { data: orders = [], isLoading, error } = useQuery({
+  const { data: orders = [], isLoading, error, refetch } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
       const response: any = await api.get('/orders?includeInstallments=true');
@@ -18,6 +18,20 @@ const OrdersManager = () => {
     },
     refetchInterval: 30000, // Refrescar cada 30 segundos
   });
+
+  const deleteOrder = async (orderId: string, orderNumber: string) => {
+    if (!confirm(`¿Estás seguro de que quieres eliminar el pedido ${orderNumber}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/orders/${orderId}`);
+      toast.success('Pedido eliminado correctamente');
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al eliminar el pedido');
+    }
+  };
 
   // Mapear las órdenes del backend al formato esperado
   const ordersData = (orders?.data || orders || []).map((order: any) => ({
@@ -288,6 +302,13 @@ const OrdersManager = () => {
                         title="Ver detalles"
                       >
                         <Eye className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => deleteOrder(order.id, order.orderNumber)}
+                        className="text-red-600 hover:text-red-900 mr-3" 
+                        title="Eliminar pedido"
+                      >
+                        <Trash2 className="w-5 h-5" />
                       </button>
                       <button 
                         onClick={async () => {

@@ -73,7 +73,8 @@ export class OrderService {
     logger.info(`💰 Subtotal SOLO productos normales (para descuento VIP): €${subtotalProductosNormales.toFixed(2)}`);
 
     // Aplicar descuento según nivel SOLO sobre productos normales
-    const discountRate = userLevel === 'VIP' ? 0.50 : 0.70;
+    // VIP: 25% de descuento, VIP_PLUS: 50% de descuento
+    const discountRate = userLevel === 'VIP' ? 0.25 : 0.50;
     const discount = subtotalProductosNormales * discountRate;
     
     if (subtotalProductosNormales === 0) {
@@ -745,6 +746,34 @@ export class OrderService {
       return cancelled;
     } catch (error) {
       logger.error('Error cancelling order:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete order (admin only - hard delete)
+   */
+  async deleteOrder(orderId: string) {
+    try {
+      // Verificar que existe
+      const order = await prisma.order.findUnique({
+        where: { id: orderId }
+      });
+
+      if (!order) {
+        throw new AppError(404, 'Pedido no encontrado', 'NOT_FOUND');
+      }
+
+      // Eliminar (CASCADE eliminará items, installments, etc.)
+      await prisma.order.delete({
+        where: { id: orderId }
+      });
+
+      logger.info(`Order ${orderId} deleted permanently`);
+      
+      return { success: true };
+    } catch (error) {
+      logger.error('Error deleting order:', error);
       throw error;
     }
   }

@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import sharp from 'sharp';
 
 // Asegurar que el directorio de uploads existe
 const uploadDir = path.join(__dirname, '../../uploads/products');
@@ -60,4 +61,60 @@ export const handleMulterError = (err: any, req: any, res: any, next: any) => {
     });
   }
   next();
+};
+
+/**
+ * Middleware para corregir la orientación EXIF de las imágenes
+ * Procesa la imagen después de subirla y la guarda con la orientación correcta
+ */
+export const fixImageOrientation = async (req: any, res: any, next: any) => {
+  try {
+    // Procesar archivo único
+    if (req.file) {
+      const filePath = req.file.path;
+      const tempPath = filePath + '.tmp';
+
+      // Procesar imagen con sharp
+      await sharp(filePath)
+        .rotate() // Auto-rotar según EXIF
+        .withMetadata({ orientation: 1 }) // Establecer orientación a normal
+        .toFile(tempPath);
+
+      // Reemplazar archivo original con el procesado
+      fs.unlinkSync(filePath);
+      fs.renameSync(tempPath, filePath);
+
+      console.log(`✅ Orientación corregida: ${req.file.filename}`);
+    }
+
+    // Procesar múltiples archivos
+    if (req.files && Array.isArray(req.files)) {
+      for (const file of req.files) {
+        const filePath = file.path;
+        const tempPath = filePath + '.tmp';
+
+        try {
+          await sharp(filePath)
+            .rotate() // Auto-rotar según EXIF
+            .withMetadata({ orientation: 1 }) // Establecer orientación a normal
+            .toFile(tempPath);
+
+          // Reemplazar archivo original con el procesado
+          fs.unlinkSync(filePath);
+          fs.renameSync(tempPath, filePath);
+
+          console.log(`✅ Orientación corregida: ${file.filename}`);
+        } catch (fileError) {
+          console.error(`Error procesando ${file.filename}:`, fileError);
+          // Continuar con el siguiente archivo
+        }
+      }
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error corrigiendo orientación de imagen:', error);
+    // Continuar aunque falle el procesamiento
+    next();
+  }
 };

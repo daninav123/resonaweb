@@ -33,6 +33,14 @@ router.put(
   orderController.updateOrder.bind(orderController)
 );
 
+// Delete order (Admin only)
+router.delete(
+  '/:id',
+  authenticate,
+  authorize('ADMIN', 'SUPERADMIN'),
+  orderController.deleteOrder.bind(orderController)
+);
+
 // Update order status
 router.patch('/:id/status', authenticate, orderController.updateOrderStatus.bind(orderController));
 

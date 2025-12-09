@@ -73,4 +73,11 @@ router.get(
   invoiceController.downloadAllInvoices
 );
 
+// Delete invoice (admin only)
+router.delete(
+  '/:id',
+  authorize('ADMIN', 'SUPERADMIN'),
+  invoiceController.deleteInvoice
+);
+
 export { router as invoiceRouter };

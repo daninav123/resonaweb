@@ -994,7 +994,7 @@ const CheckoutPage = () => {
                     )}
                   </h3>
                   <ul className="text-sm text-yellow-800 space-y-1">
-                    <li>✓ {user.userLevel === 'VIP' ? '50%' : '70%'} de descuento aplicado</li>
+                    <li>✓ {user.userLevel === 'VIP' ? '25%' : '50%'} de descuento aplicado</li>
                   </ul>
                 </div>
               )}

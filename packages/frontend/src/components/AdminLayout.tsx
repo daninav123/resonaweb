@@ -18,6 +18,7 @@ import {
   Layers,
   ExternalLink,
   Home,
+  ClipboardList,
   Menu,
   X,
   Mail,

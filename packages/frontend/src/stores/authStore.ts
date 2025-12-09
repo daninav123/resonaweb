@@ -62,6 +62,13 @@ export const useAuthStore = create<AuthState>()(
           const response: any = await api.post('/auth/login', { email, password });
           const { user, accessToken, refreshToken } = response.data.data || response.data;
           
+          console.log('🔐 Login exitoso - Datos recibidos:', {
+            user: user?.email,
+            role: user?.role,
+            hasAccessToken: !!accessToken,
+            hasRefreshToken: !!refreshToken
+          });
+          
           // Store token in axios defaults
           if (api.setAuthToken) {
             api.setAuthToken(accessToken);
@@ -77,8 +84,12 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
           
+          console.log('✅ Estado actualizado en Zustand');
+          console.log('💾 Verificando localStorage...', localStorage.getItem('auth-storage'));
+          
           return true;
         } catch (error: any) {
+          console.error('❌ Error en login:', error);
           set({
             loading: false,
             error: error.response?.data?.message || 'Error al iniciar sesión',

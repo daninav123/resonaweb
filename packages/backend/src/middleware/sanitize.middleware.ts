@@ -29,13 +29,12 @@ function sanitizeString(value: string): string {
     sanitized = sanitized.replace(pattern, '');
   }
   
-  // Escapar caracteres HTML básicos
+  // Escapar caracteres HTML básicos (NO escapamos / para permitir direcciones)
   sanitized = sanitized
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+    .replace(/'/g, '&#x27;');
   
   return sanitized;
 }

@@ -197,6 +197,31 @@ export class OrderController {
   }
 
   /**
+   * Delete order (admin only)
+   */
+  async deleteOrder(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Acceso denegado', 'FORBIDDEN');
+      }
+
+      const { id } = req.params;
+
+      await orderService.deleteOrder(id);
+      
+      res.json({
+        message: 'Pedido eliminado exitosamente',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get all orders (admin only)
    */
   async getAllOrders(req: AuthRequest, res: Response, next: NextFunction) {

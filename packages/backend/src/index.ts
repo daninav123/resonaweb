@@ -45,6 +45,8 @@ import extraCategoryRouter from './routes/extraCategory.routes';
 import contabilidadRouter from './routes/contabilidad.routes';
 import diagnosticRouter from './routes/diagnostic.routes';
 import calculatorConfigRouter from './routes/calculatorConfig.routes';
+import contactRouter from './routes/contact.routes';
+import budgetRouter from './routes/budget.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -271,6 +273,8 @@ app.use('/api/v1/installments', installmentRouter);
 app.use('/api/v1/extra-categories', extraCategoryRouter);
 app.use('/api/v1/contabilidad', contabilidadRouter);
 app.use('/api/v1/calculator-config', calculatorConfigRouter);
+app.use('/api/v1/contact', contactRouter);
+app.use('/api/v1/budgets', budgetRouter);
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling

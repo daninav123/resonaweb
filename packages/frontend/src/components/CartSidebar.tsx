@@ -247,7 +247,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                   )}
                 </p>
                 <p className="text-xs text-yellow-800 mt-1">
-                  {user.userLevel === 'VIP' ? '50%' : '70%'} descuento
+                  {user.userLevel === 'VIP' ? '25%' : '50%'} descuento
                 </p>
               </div>
             )}
