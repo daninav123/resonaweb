@@ -36,25 +36,43 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false, // Desactivar en producción para mejor rendimiento
+    sourcemap: false,
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Eliminar todos los console.log en producción
+        drop_console: true,
         drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        passes: 2,
+      },
+      mangle: {
+        safari10: true,
       },
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separar vendors grandes para mejor caché
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'query-vendor': ['@tanstack/react-query'],
-          'ui-vendor': ['lucide-react'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@tanstack')) {
+              return 'query-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'ui-vendor';
+            }
+            if (id.includes('zustand') || id.includes('immer')) {
+              return 'state-vendor';
+            }
+            return 'vendor';
+          }
         },
       },
     },
-    chunkSizeWarningLimit: 1000, // Aumentar límite a 1MB
+    chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
   },
   // Optimizaciones de performance
   optimizeDeps: {

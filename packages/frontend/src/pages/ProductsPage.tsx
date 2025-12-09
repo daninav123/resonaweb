@@ -349,6 +349,8 @@ const ProductsPage = () => {
                       <img
                         src={getImageUrl(product.images[0] as any)}
                         alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
+                        width={viewMode === 'grid' ? 400 : 192}
+                        height={viewMode === 'grid' ? 192 : 128}
                         loading="lazy"
                         decoding="async"
                         className={`object-contain bg-white ${
