@@ -75,7 +75,9 @@ export const getLocalBusinessSchema = (): any => ({
   priceRange: '€€',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Valencia',
     addressLocality: 'Valencia',
+    postalCode: '46000',
     addressRegion: 'Comunidad Valenciana',
     addressCountry: 'ES',
   },
