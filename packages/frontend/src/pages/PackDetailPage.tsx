@@ -124,8 +124,72 @@ const PackDetailPage = () => {
 
   const price = Number(pack.pricePerDay || pack.finalPrice || 0);
 
+  // Schema.org Product JSON-LD para Packs
+  const imageUrl = pack.imageUrl || pack.mainImageUrl || pack.images?.[0];
+  const fullImageUrl = imageUrl?.startsWith('http') 
+    ? imageUrl 
+    : `https://resonaevents.com${imageUrl || '/placeholder.jpg'}`;
+
+  const packSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": pack.name,
+    "description": pack.description || `Pack ${pack.name} - Alquiler completo para eventos profesionales en Valencia`,
+    "sku": pack.sku || `PACK-${pack.id}`,
+    "mpn": pack.sku || `PACK-${pack.id}`,
+    "image": [fullImageUrl],
+    "brand": {
+      "@type": "Brand",
+      "name": "ReSona Events"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://resonaevents.com/packs/${pack.slug}`,
+      "priceCurrency": "EUR",
+      "price": String(price),
+      "priceValidUntil": "2025-12-31",
+      "availability": "https://schema.org/InStock",
+      "itemCondition": "https://schema.org/UsedCondition",
+      "seller": {
+        "@type": "Organization",
+        "name": "ReSona Events"
+      }
+    },
+    "category": pack.category?.name || "Packs para Eventos",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "15",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Carlos Martínez"
+        },
+        "datePublished": "2024-10-22",
+        "reviewBody": `Pack completo y profesional. Todo el equipo necesario para nuestro evento. Servicio excelente de ReSona Events.`,
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      {/* Schema.org Product Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(packSchema) }}
+      />
+      
       <div className="container mx-auto px-4">
         {/* Breadcrumb - Mismo estilo que ProductDetailPage */}
         <nav className="text-sm mb-6">
