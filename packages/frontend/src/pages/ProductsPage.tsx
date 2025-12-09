@@ -383,12 +383,16 @@ const ProductsPage = () => {
                               <p className="text-2xl font-bold text-green-600">
                                 €{product.pricePerUnit}
                               </p>
-                              <p className="text-xs text-gray-500">Precio de venta</p>
+                              <p className="text-xs text-gray-500">Precio de venta por unidad</p>
+                              <p className="text-xs text-gray-400">IVA no incluido</p>
                             </div>
                           ) : (
-                            <p className="text-2xl font-bold text-blue-600">
-                              €{product.pricePerDay}/día
-                            </p>
+                            <div>
+                              <p className="text-2xl font-bold text-blue-600">
+                                €{product.pricePerDay}/día
+                              </p>
+                              <p className="text-xs text-gray-400">Precio por unidad y día. IVA no incluido</p>
+                            </div>
                           )}
                         </div>
                         {product.realStock > 0 ? (

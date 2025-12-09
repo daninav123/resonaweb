@@ -246,6 +246,7 @@ const ProductDetailPage = () => {
                 <p>Fin de semana (viernes-lunes): €{product.pricePerDay}</p>
                 <p>Semana completa: €{product.pricePerWeek}</p>
               </div>
+              <p className="mt-2 text-xs text-gray-500 italic">Precio por unidad y día. IVA no incluido</p>
             </div>
 
             {/* Quantity */}
@@ -403,16 +404,19 @@ const ProductDetailPage = () => {
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {related.name}
                     </h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xl font-bold text-blue-600">
-                        €{Number(related.pricePerDay).toFixed(2)}
-                        <span className="text-sm text-gray-500 font-normal">/día</span>
-                      </p>
-                      {related.isPack && (
-                        <span className="text-xs text-purple-600 font-medium">
-                          Ver pack →
-                        </span>
-                      )}
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xl font-bold text-blue-600">
+                          €{Number(related.pricePerDay).toFixed(2)}
+                          <span className="text-sm text-gray-500 font-normal">/día</span>
+                        </p>
+                        {related.isPack && (
+                          <span className="text-xs text-purple-600 font-medium">
+                            Ver pack →
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">Precio por unidad y día. IVA no incluido</p>
                     </div>
                   </div>
                 </div>

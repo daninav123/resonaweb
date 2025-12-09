@@ -252,6 +252,7 @@ const HomePage = () => {
                             €{product.pricePerDay}
                           </p>
                           <p className="text-sm text-gray-600">por día</p>
+                          <p className="text-xs text-gray-400 mt-1">Precio por unidad y día. IVA no incluido</p>
                         </div>
                       </div>
                     </div>
