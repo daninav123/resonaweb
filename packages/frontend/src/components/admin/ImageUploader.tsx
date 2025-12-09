@@ -27,6 +27,8 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
 
     try {
       const uploadedUrls: string[] = [];
+      let successCount = 0;
+      let errorCount = 0;
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -34,66 +36,88 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
         // Validar tipo de archivo
         if (!file.type.startsWith('image/')) {
           toast.error(`${file.name} no es una imagen`);
+          errorCount++;
           continue;
         }
 
         // Validar tamaño (5MB)
         if (file.size > 5 * 1024 * 1024) {
           toast.error(`${file.name} es demasiado grande (máx. 5MB)`);
+          errorCount++;
           continue;
         }
 
-        // Crear FormData
-        const formData = new FormData();
-        formData.append('image', file);
+        try {
+          // Crear FormData
+          const formData = new FormData();
+          formData.append('image', file);
 
-        // Subir al servidor
-        const response: any = await api.post('/upload/image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+          console.log(`📤 Subiendo ${i + 1}/${files.length}: ${file.name} (${(file.size / 1024).toFixed(2)}KB)...`);
 
-        console.log('📤 Respuesta de upload:', response);
+          // Subir al servidor
+          const response: any = await api.post('/upload/image', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
 
-        // Validar respuesta (puede venir en response.data o directamente en response)
-        const responseData = response.data || response;
-        
-        if (!responseData || !responseData.imageUrl) {
-          console.error('❌ Respuesta inválida del servidor:', response);
-          toast.error(`Error al subir ${file.name}: respuesta inválida del servidor`);
-          continue;
+          // Validar respuesta (puede venir en response.data o directamente en response)
+          const responseData = response.data || response;
+          
+          if (!responseData || !responseData.imageUrl) {
+            console.error('❌ Respuesta inválida del servidor:', response);
+            toast.error(`Error al subir ${file.name}: respuesta inválida`);
+            errorCount++;
+            continue;
+          }
+
+          // El backend devuelve rutas como: /uploads/products/filename.jpg
+          const imagePath = responseData.imageUrl;
+          
+          // Si ya es URL completa, usar directamente
+          if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            uploadedUrls.push(imagePath);
+            console.log(`✅ ${i + 1}/${files.length}: URL completa guardada`);
+            successCount++;
+            continue;
+          }
+          
+          // Construir URL completa del backend
+          const isDevelopment = window.location.hostname === 'localhost';
+          const backendUrl = isDevelopment 
+            ? 'http://localhost:3001'
+            : 'https://resona-backend.onrender.com';
+          
+          const imageUrl = `${backendUrl}${imagePath}`;
+          
+          console.log(`✅ ${i + 1}/${files.length}: ${file.name} subido correctamente`);
+          uploadedUrls.push(imageUrl);
+          successCount++;
+
+          // Pequeño delay entre uploads para no saturar el servidor
+          if (i < files.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
+
+        } catch (uploadError: any) {
+          console.error(`❌ Error al subir ${file.name}:`, uploadError);
+          const errorMsg = uploadError.response?.data?.error || uploadError.message || 'Error desconocido';
+          toast.error(`${file.name}: ${errorMsg}`);
+          errorCount++;
         }
-
-        // El backend devuelve rutas como: /uploads/products/filename.jpg
-        // En producción: https://resona-backend.onrender.com/uploads/products/filename.jpg
-        // En desarrollo: http://localhost:3001/uploads/products/filename.jpg
-        const imagePath = responseData.imageUrl;
-        
-        // Si ya es URL completa, usar directamente
-        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-          uploadedUrls.push(imagePath);
-          console.log('✅ URL completa:', imagePath);
-          continue;
-        }
-        
-        // Construir URL completa del backend
-        // En producción, el backend está en resona-backend.onrender.com
-        // En desarrollo, está en localhost:3001
-        const isDevelopment = window.location.hostname === 'localhost';
-        const backendUrl = isDevelopment 
-          ? 'http://localhost:3001'
-          : 'https://resona-backend.onrender.com';
-        
-        const imageUrl = `${backendUrl}${imagePath}`;
-        
-        console.log('✅ URL de imagen generada:', imageUrl);
-        uploadedUrls.push(imageUrl);
       }
 
       if (uploadedUrls.length > 0) {
         onImagesChange([...currentImages, ...uploadedUrls]);
-        toast.success(`${uploadedUrls.length} imagen(es) subida(s)`);
+      }
+
+      // Mensaje de resumen
+      if (successCount > 0 && errorCount === 0) {
+        toast.success(`✅ ${successCount} imagen(es) subida(s) correctamente`);
+      } else if (successCount > 0 && errorCount > 0) {
+        toast.success(`✅ ${successCount} correctas, ❌ ${errorCount} con errores`);
+      } else if (errorCount > 0) {
+        toast.error(`❌ Error al subir ${errorCount} imagen(es)`);
       }
     } catch (error: any) {
       console.error('Error al subir imágenes:', error);
