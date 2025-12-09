@@ -52,19 +52,21 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   faqs,
   relatedServices,
 }) => {
+  const currentUrl = typeof window !== 'undefined' ? `https://resonaweb.vercel.app${window.location.pathname}` : '';
+  
   return (
     <>
       <Helmet>
         <title>{title}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={keywords} />
-        <link rel="canonical" href={`https://resonaweb.vercel.app${window.location.pathname}`} />
+        <link rel="canonical" href={currentUrl} />
         
         {/* Open Graph */}
         <meta property="og:title" content={title} />
         <meta property="og:description" content={metaDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://resonaweb.vercel.app${window.location.pathname}`} />
+        <meta property="og:url" content={currentUrl} />
         <meta property="og:locale" content="es_ES" />
         <meta property="og:site_name" content="ReSona Events Valencia" />
         
@@ -122,7 +124,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             },
             "availableChannel": {
               "@type": "ServiceChannel",
-              "serviceUrl": `https://resonaweb.vercel.app${window.location.pathname}`,
+              "serviceUrl": currentUrl,
               "servicePhone": {
                 "@type": "ContactPoint",
                 "telephone": "+34613881414",
@@ -155,7 +157,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 "@type": "ListItem",
                 "position": 3,
                 "name": heroTitle,
-                "item": `https://resonaweb.vercel.app${window.location.pathname}`
+                "item": currentUrl
               }
             ]
           })}
