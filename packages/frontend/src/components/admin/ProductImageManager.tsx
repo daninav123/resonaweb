@@ -25,19 +25,23 @@ export const ProductImageManager = ({ product, isOpen, onClose, onSuccess }: Pro
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Convertir URL completa a ruta relativa
+      // Convertir URLs completas a rutas relativas
       const mainImagePath = images[0] ? getRelativePath(images[0]) : null;
+      const allImages = images.map(img => getRelativePath(img));
       
-      console.log('💾 Guardando imagen:', { 
-        original: images[0], 
-        converted: mainImagePath 
+      console.log('💾 Guardando imágenes:', { 
+        mainImage: mainImagePath,
+        allImages: allImages,
+        count: allImages.length
       });
       
+      // Guardar TANTO mainImageUrl COMO el array images
       await api.put(`/products/${product.id}`, {
-        mainImageUrl: mainImagePath
+        mainImageUrl: mainImagePath,
+        images: allImages // ← CRÍTICO: Guardar array completo
       });
 
-      toast.success('Imágenes actualizadas');
+      toast.success(`${allImages.length} imagen(es) guardada(s)`);
       onSuccess();
       onClose();
     } catch (error: any) {
