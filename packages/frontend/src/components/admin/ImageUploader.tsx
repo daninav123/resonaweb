@@ -83,7 +83,8 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
           }
           
           // Construir URL completa del backend
-          const isDevelopment = window.location.hostname === 'localhost';
+          const hostname = window.location.hostname;
+          const isDevelopment = hostname === 'localhost' || hostname === '127.0.0.1';
           const backendUrl = isDevelopment 
             ? 'http://localhost:3001'
             : 'https://resona-backend.onrender.com';

@@ -28,8 +28,8 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
   let baseUrl: string;
   
   if (isProduction) {
-    // En producción, usar el mismo dominio con HTTPS
-    baseUrl = `https://${hostname}`;
+    // En producción, las imágenes están en el backend de Render
+    baseUrl = 'https://resona-backend.onrender.com';
   } else {
     // En desarrollo, usar localhost:3001
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';

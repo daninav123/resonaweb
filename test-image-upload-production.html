@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Subida de Imágenes en Producción</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #5ebbff;
+            padding-bottom: 10px;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #5ebbff;
+            border-radius: 5px;
+        }
+        button {
+            background: #5ebbff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4a9fd6;
+        }
+        .result {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4CAF50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .warning { color: #FF9800; font-weight: bold; }
+        .info { color: #2196F3; font-weight: bold; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test de Subida de Imágenes en Producción</h1>
+        
+        <div class="step">
+            <h3>📋 ¿Qué vamos a verificar?</h3>
+            <ul>
+                <li>✅ Que el código del fix esté desplegado en producción</li>
+                <li>✅ Que el backend esté recibiendo el array <code>images[]</code></li>
+                <li>✅ Que el frontend esté enviando el array completo</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔐 Paso 1: Login</h3>
+            <div>
+                <label>Email: <input type="email" id="email" value="admin@resona.com" style="padding:8px; margin-left:10px; width:250px;"></label>
+            </div>
+            <div style="margin-top:10px;">
+                <label>Password: <input type="password" id="password" value="" style="padding:8px; margin-left:10px; width:250px;"></label>
+            </div>
+            <button onclick="login()">🔓 Iniciar Sesión</button>
+        </div>
+
+        <div class="step" id="test-section" style="display:none;">
+            <h3>🧪 Paso 2: Probar Producto</h3>
+            <div>
+                <label>ID del Producto: <input type="text" id="productId" placeholder="ID del producto que subiste imagen" style="padding:8px; margin-left:10px; width:250px;"></label>
+            </div>
+            <button onclick="checkProduct()">🔍 Verificar Producto</button>
+        </div>
+
+        <div class="result" id="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://resona-backend.onrender.com/api/v1';
+        let authToken = '';
+
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = message + '\n';
+            result.appendChild(span);
+            
+            result.scrollTop = result.scrollHeight;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!password) {
+                alert('Por favor ingresa la contraseña');
+                return;
+            }
+
+            document.getElementById('result').innerHTML = '';
+            log('🔐 Iniciando sesión...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Credenciales incorrectas');
+                }
+
+                const data = await response.json();
+                authToken = data.token;
+                log('✅ Sesión iniciada correctamente\n', 'success');
+                
+                document.getElementById('test-section').style.display = 'block';
+            } catch (error) {
+                log(`❌ Error al iniciar sesión: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkProduct() {
+            const productId = document.getElementById('productId').value;
+
+            if (!productId) {
+                alert('Por favor ingresa el ID del producto');
+                return;
+            }
+
+            log('═══════════════════════════════════════════════════', 'info');
+            log(`🔍 Verificando producto: ${productId}`, 'info');
+            log('═══════════════════════════════════════════════════\n', 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/products/${productId}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Producto no encontrado');
+                }
+
+                const product = await response.json();
+                
+                log(`📦 Producto: ${product.name}`, 'info');
+                log(`📊 SKU: ${product.sku}\n`, 'info');
+                
+                // Verificar mainImageUrl
+                if (product.mainImageUrl) {
+                    log(`✅ mainImageUrl: ${product.mainImageUrl}`, 'success');
+                } else {
+                    log(`❌ mainImageUrl: NO tiene`, 'error');
+                }
+                
+                // Verificar images array
+                if (product.images && product.images.length > 0) {
+                    log(`✅ images[]: ${product.images.length} imagen(es)\n`, 'success');
+                    product.images.forEach((img, i) => {
+                        log(`   ${i + 1}. ${img}`, 'info');
+                    });
+                } else {
+                    log(`❌ images[]: Vacío o no existe`, 'error');
+                }
+                
+                log('\n═══════════════════════════════════════════════════', 'info');
+                log('📊 DIAGNÓSTICO', 'info');
+                log('═══════════════════════════════════════════════════\n', 'info');
+                
+                if (product.images && product.images.length > 0) {
+                    log('🎉 TODO CORRECTO:', 'success');
+                    log('   - El producto tiene imágenes en BD', 'success');
+                    log('   - El fix está funcionando correctamente\n', 'success');
+                    log('💡 Si no ves la imagen en el catálogo:', 'warning');
+                    log('   1. Recarga la página (Ctrl+F5)', 'info');
+                    log('   2. Espera 2-3 minutos (cache del CDN)', 'info');
+                    log('   3. Verifica la consola del navegador', 'info');
+                } else if (product.mainImageUrl) {
+                    log('⚠️  PROBLEMA ENCONTRADO:', 'warning');
+                    log('   - Tiene mainImageUrl pero NO images[]', 'warning');
+                    log('   - Imagen subida ANTES del fix\n', 'warning');
+                    log('💡 SOLUCIÓN:', 'info');
+                    log('   1. Ve a /admin/productos', 'info');
+                    log('   2. Click en icono Imágenes del producto', 'info');
+                    log('   3. La imagen debería estar ahí', 'info');
+                    log('   4. Click "Guardar Cambios" (re-guarda)', 'info');
+                    log('   5. Ahora SÍ aparecerá en el catálogo', 'info');
+                } else {
+                    log('❌ ERROR:', 'error');
+                    log('   - NO tiene mainImageUrl', 'error');
+                    log('   - NO tiene images[]', 'error');
+                    log('   - La imagen NO se subió correctamente\n', 'error');
+                    log('💡 SOLUCIÓN:', 'info');
+                    log('   1. Sube la imagen nuevamente', 'info');
+                    log('   2. Asegúrate de hacer click "Guardar Cambios"', 'info');
+                }
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
