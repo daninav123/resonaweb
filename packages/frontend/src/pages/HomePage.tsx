@@ -46,7 +46,7 @@ const HomePage = () => {
         title="ReSona Events Valencia - Producción Técnica y Servicios para Eventos"
         description="Ofrecemos una amplia gama de equipos profesionales para todo tipo de eventos. Servicio completo de decoración, iluminación y montaje para tu día especial. Hacemos realidad tu boda o evento en Valencia."
         keywords="producción eventos valencia, servicios audiovisuales valencia, eventos corporativos valencia, bodas valencia, sonido iluminación valencia, técnico de sonido valencia"
-        ogImage="https://resonaweb.vercel.app/og-image.jpg"
+        ogImage="https://resonaevents.com/og-image.jpg"
         schema={getLocalBusinessSchema()}
       />
       {/* Hero Section */}

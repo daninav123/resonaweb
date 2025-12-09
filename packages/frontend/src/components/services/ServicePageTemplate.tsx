@@ -52,7 +52,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   faqs,
   relatedServices,
 }) => {
-  const currentUrl = typeof window !== 'undefined' ? `https://resonaweb.vercel.app${window.location.pathname}` : '';
+  const currentUrl = typeof window !== 'undefined' ? `https://resonaevents.com${window.location.pathname}` : '';
   
   return (
     <>
@@ -101,9 +101,9 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             "serviceType": heroTitle,
             "provider": {
               "@type": "LocalBusiness",
-              "@id": "https://resonaweb.vercel.app",
+              "@id": "https://resonaevents.com",
               "name": "ReSona Events",
-              "image": "https://resonaweb.vercel.app/logo.png",
+              "image": "https://resonaevents.com/logo.png",
               "telephone": "+34613881414",
               "email": "info@resonaevents.com",
               "address": {
@@ -145,13 +145,13 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Inicio",
-                "item": "https://resonaweb.vercel.app"
+                "item": "https://resonaevents.com"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Servicios",
-                "item": "https://resonaweb.vercel.app/servicios"
+                "item": "https://resonaevents.com/servicios"
               },
               {
                 "@type": "ListItem",

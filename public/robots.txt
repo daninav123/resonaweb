@@ -22,7 +22,7 @@ Allow: /calculadora-eventos
 Allow: /contacto
 
 # Sitemaps
-Sitemap: https://resonaweb.vercel.app/sitemap.xml
+Sitemap: https://resonaevents.com/sitemap.xml
 
 # Crawl-delay (seconds)
 Crawl-delay: 0

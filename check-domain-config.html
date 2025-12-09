@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación Dominio resonaevents.com</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #5ebbff;
+            padding-bottom: 10px;
+        }
+        .check-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #5ebbff;
+            border-radius: 5px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.ok { background: #4CAF50; color: white; }
+        .status.warning { background: #FF9800; color: white; }
+        .status.error { background: #f44336; color: white; }
+        .status.loading { background: #2196F3; color: white; }
+        button {
+            background: #5ebbff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4a9fd6;
+        }
+        .result {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .link {
+            color: #5ebbff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación: resonaevents.com vs resonaweb.vercel.app</h1>
+        
+        <div class="check-item">
+            <h3>1. DNS Configuration <span class="status loading" id="dns-status">Checking...</span></h3>
+            <p>Verificando si resonaevents.com apunta correctamente a Vercel</p>
+            <button onclick="checkDNS()">Verificar DNS</button>
+            <div class="result" id="dns-result" style="display:none;"></div>
+        </div>
+
+        <div class="check-item">
+            <h3>2. SSL Certificate <span class="status loading" id="ssl-status">Checking...</span></h3>
+            <p>Verificando certificado SSL y configuración HTTPS</p>
+            <button onclick="checkSSL()">Verificar SSL</button>
+            <div class="result" id="ssl-result" style="display:none;"></div>
+        </div>
+
+        <div class="check-item">
+            <h3>3. Response Time Comparison</h3>
+            <p>Comparando tiempos de respuesta entre ambos dominios</p>
+            <button onclick="compareResponseTime()">Comparar Tiempos</button>
+            <div class="result" id="time-result" style="display:none;"></div>
+        </div>
+
+        <div class="check-item">
+            <h3>4. Headers Comparison</h3>
+            <p>Verificando headers de caché y optimización</p>
+            <button onclick="compareHeaders()">Comparar Headers</button>
+            <div class="result" id="headers-result" style="display:none;"></div>
+        </div>
+
+        <div class="check-item">
+            <h3>5. PageSpeed Insights</h3>
+            <p>Analizar ambos dominios en Google PageSpeed</p>
+            <button onclick="openPageSpeed('https://resonaevents.com')">Analizar resonaevents.com</button>
+            <button onclick="openPageSpeed('https://resonaweb.vercel.app')">Analizar resonaweb.vercel.app</button>
+        </div>
+
+        <div class="check-item">
+            <h3>6. Vercel Domain Settings</h3>
+            <p>Configuración recomendada en Vercel:</p>
+            <div class="result">
+✅ Domain: resonaevents.com
+✅ Redirect: www.resonaevents.com → resonaevents.com
+✅ SSL: Automatic (Let's Encrypt)
+✅ DNS: Vercel nameservers o CNAME a cname.vercel-dns.com
+            </div>
+            <button onclick="window.open('https://vercel.com/dashboard', '_blank')">Abrir Vercel Dashboard</button>
+        </div>
+
+        <div class="check-item">
+            <h3>📊 Resumen de Diferencias Comunes:</h3>
+            <ul>
+                <li><strong>DNS Lookup:</strong> resonaevents.com puede tener latencia DNS adicional si no usa Vercel DNS</li>
+                <li><strong>CDN:</strong> Vercel CDN está optimizado globalmente, pero necesita configuración correcta</li>
+                <li><strong>Redirects:</strong> www → non-www puede añadir ~100-200ms</li>
+                <li><strong>SSL Handshake:</strong> Certificado debe estar bien configurado</li>
+            </ul>
+        </div>
+
+        <div class="check-item">
+            <h3>🔧 Solución Recomendada:</h3>
+            <ol>
+                <li><strong>Vercel Dashboard:</strong> Añadir "resonaevents.com" como dominio custom</li>
+                <li><strong>DNS:</strong> Configurar CNAME o A records según Vercel indique</li>
+                <li><strong>SSL:</strong> Esperar ~24h para provisión automática</li>
+                <li><strong>Redirect:</strong> Configurar www → non-www en Vercel</li>
+                <li><strong>Verificar:</strong> Ambos dominios deben dar mismo resultado en PageSpeed</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function checkDNS() {
+            const result = document.getElementById('dns-result');
+            result.style.display = 'block';
+            result.textContent = 'Comprobando DNS...';
+            
+            fetch('https://dns.google/resolve?name=resonaevents.com&type=A')
+                .then(r => r.json())
+                .then(data => {
+                    result.textContent = JSON.stringify(data, null, 2);
+                    document.getElementById('dns-status').textContent = 'Checked';
+                    document.getElementById('dns-status').className = 'status ok';
+                })
+                .catch(err => {
+                    result.textContent = 'Error: ' + err.message;
+                    document.getElementById('dns-status').className = 'status error';
+                });
+        }
+
+        function checkSSL() {
+            const result = document.getElementById('ssl-result');
+            result.style.display = 'block';
+            result.textContent = 'Verificando SSL...';
+            
+            fetch('https://resonaevents.com', { method: 'HEAD' })
+                .then(response => {
+                    const protocol = response.url.startsWith('https') ? 'HTTPS ✅' : 'HTTP ❌';
+                    result.textContent = `Protocolo: ${protocol}\nStatus: ${response.status}\nRedirects: ${response.redirected ? 'Yes' : 'No'}`;
+                    document.getElementById('ssl-status').textContent = 'OK';
+                    document.getElementById('ssl-status').className = 'status ok';
+                })
+                .catch(err => {
+                    result.textContent = 'Error: ' + err.message;
+                    document.getElementById('ssl-status').className = 'status error';
+                });
+        }
+
+        async function compareResponseTime() {
+            const result = document.getElementById('time-result');
+            result.style.display = 'block';
+            result.textContent = 'Midiendo tiempos de respuesta...';
+            
+            const domains = [
+                'https://resonaevents.com',
+                'https://resonaweb.vercel.app'
+            ];
+            
+            const times = [];
+            
+            for (const domain of domains) {
+                const start = performance.now();
+                try {
+                    await fetch(domain, { method: 'HEAD', cache: 'no-cache' });
+                    const end = performance.now();
+                    times.push({ domain, time: (end - start).toFixed(2) });
+                } catch (err) {
+                    times.push({ domain, time: 'Error: ' + err.message });
+                }
+            }
+            
+            result.textContent = times.map(t => 
+                `${t.domain}\nTiempo: ${t.time}ms\n`
+            ).join('\n');
+        }
+
+        async function compareHeaders() {
+            const result = document.getElementById('headers-result');
+            result.style.display = 'block';
+            result.textContent = 'Comparando headers...';
+            
+            const domains = [
+                'https://resonaevents.com',
+                'https://resonaweb.vercel.app'
+            ];
+            
+            let comparison = '';
+            
+            for (const domain of domains) {
+                try {
+                    const response = await fetch(domain, { method: 'HEAD' });
+                    comparison += `\n${domain}:\n`;
+                    comparison += `Cache-Control: ${response.headers.get('cache-control') || 'No header'}\n`;
+                    comparison += `Server: ${response.headers.get('server') || 'No header'}\n`;
+                    comparison += `X-Vercel-Cache: ${response.headers.get('x-vercel-cache') || 'No header'}\n`;
+                    comparison += `Content-Encoding: ${response.headers.get('content-encoding') || 'No header'}\n\n`;
+                } catch (err) {
+                    comparison += `${domain}: Error - ${err.message}\n\n`;
+                }
+            }
+            
+            result.textContent = comparison;
+        }
+
+        function openPageSpeed(url) {
+            window.open(`https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        // Auto-check on load
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('dns-status').textContent = 'Ready';
+                document.getElementById('dns-status').className = 'status ok';
+                document.getElementById('ssl-status').textContent = 'Ready';
+                document.getElementById('ssl-status').className = 'status ok';
+            }, 500);
+        };
+    </script>
+</body>
+</html>
