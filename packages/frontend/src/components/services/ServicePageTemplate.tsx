@@ -65,11 +65,12 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
 
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-purple-700 to-purple-900 text-white py-20">
-          <div className="container mx-auto px-4">
+        <section className="relative bg-resona text-white py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+          <div className="relative container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">{heroTitle}</h1>
-              <p className="text-xl md:text-2xl mb-8 text-purple-100">{heroSubtitle}</p>
+              <p className="text-xl md:text-2xl mb-8 text-white/90">{heroSubtitle}</p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -81,7 +82,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 </a>
                 <a
                   href="/calculadora-eventos"
-                  className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-purple-700 font-bold py-4 px-8 rounded-lg transition-all"
+                  className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
                 >
                   <Calculator className="w-5 h-5 mr-2" />
                   Calculadora Online
@@ -127,11 +128,11 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 <div
                   key={index}
                   className={`relative bg-white rounded-lg shadow-lg overflow-hidden ${
-                    pkg.highlighted ? 'ring-4 ring-purple-600 transform scale-105' : 'border border-gray-200'
+                    pkg.highlighted ? 'ring-4 ring-primary-500 transform scale-105' : 'border border-gray-200'
                   }`}
                 >
                   {pkg.highlighted && (
-                    <div className="absolute top-0 right-0 bg-purple-600 text-white px-4 py-1 text-sm font-bold">
+                    <div className="absolute top-0 right-0 bg-primary-500 text-white px-4 py-1 text-sm font-bold">
                       POPULAR
                     </div>
                   )}
@@ -140,7 +141,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                     <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
                     <p className="text-gray-600 mb-4">{pkg.subtitle}</p>
                     <div className="mb-6">
-                      <span className="text-4xl font-bold text-purple-600">{pkg.price}</span>
+                      <span className="text-4xl font-bold text-primary-600">{pkg.price}</span>
                     </div>
                     
                     <ul className="space-y-3 mb-6">
@@ -156,7 +157,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                       href={`https://wa.me/34613881414?text=Quiero presupuesto para ${pkg.name}`}
                       className={`block text-center font-bold py-3 px-6 rounded-lg transition-all ${
                         pkg.highlighted
-                          ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                          ? 'bg-primary-500 hover:bg-primary-600 text-white'
                           : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                       }`}
                     >
@@ -177,11 +178,11 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 {technicalSpecs.map((spec, index) => (
                   <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-bold mb-4 text-purple-700">{spec.title}</h3>
+                    <h3 className="text-xl font-bold mb-4 text-primary-600">{spec.title}</h3>
                     <ul className="space-y-2">
                       {spec.items.map((item, idx) => (
                         <li key={idx} className="flex items-start">
-                          <span className="text-purple-600 mr-2">▪</span>
+                          <span className="text-primary-500 mr-2">▪</span>
                           <span className="text-gray-700">{item}</span>
                         </li>
                       ))}
@@ -218,7 +219,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                   <a
                     key={index}
                     href={service.url}
-                    className="bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-400 px-6 py-3 rounded-lg font-semibold text-purple-700 transition-all"
+                    className="bg-white hover:bg-primary-50 border-2 border-primary-200 hover:border-primary-400 px-6 py-3 rounded-lg font-semibold text-primary-600 transition-all"
                   >
                     {service.title}
                   </a>
@@ -229,10 +230,11 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         )}
 
         {/* CTA Final */}
-        <section className="py-20 bg-gradient-to-br from-purple-700 to-purple-900 text-white">
-          <div className="container mx-auto px-4 text-center">
+        <section className="relative py-20 bg-resona text-white overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+          <div className="relative container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">¿Listo para tu evento perfecto?</h2>
-            <p className="text-xl mb-8 text-purple-100">Presupuesto gratuito en menos de 24 horas</p>
+            <p className="text-xl mb-8 text-white/90">Presupuesto gratuito en menos de 24 horas</p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -244,14 +246,14 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               </a>
               <a
                 href="mailto:info@resonaevents.com"
-                className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-purple-700 font-bold py-4 px-8 rounded-lg transition-all"
+                className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 Email
               </a>
             </div>
             
-            <p className="mt-8 text-purple-200">
+            <p className="mt-8 text-white/80">
               📞 613 88 14 14 | 📧 info@resonaevents.com
             </p>
           </div>
