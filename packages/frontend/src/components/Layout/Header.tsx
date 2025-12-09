@@ -83,7 +83,7 @@ const Header = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.svg" alt="ReSona Events" className="h-12 w-auto" />
+            <img src="/logo-resona.svg" alt="ReSona Events" width="180" height="48" className="h-12 w-auto" />
             <div className="flex flex-col">
               <span
                 className="text-2xl font-bold"
