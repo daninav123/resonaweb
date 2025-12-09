@@ -43,10 +43,10 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Resona Events - Alquiler de Material para Eventos | Sonido, Iluminación, Foto y Video"
-        description="Alquiler profesional de equipos de sonido, iluminación, fotografía y video para eventos. Bodas, conciertos, conferencias. Calculadora de presupuesto online. Mejores precios garantizados."
-        keywords="alquiler material eventos valencia, alquiler sonido valencia, alquiler iluminación valencia, alquiler equipos audiovisuales valencia, bodas, conciertos, eventos corporativos"
-        ogImage="https://resonaevents.com/og-image.jpg"
+        title="ReSona Events Valencia - Producción Técnica y Servicios para Eventos"
+        description="Ofrecemos una amplia gama de equipos profesionales para todo tipo de eventos. Servicio completo de decoración, iluminación y montaje para tu día especial. Hacemos realidad tu boda o evento en Valencia."
+        keywords="producción eventos valencia, servicios audiovisuales valencia, eventos corporativos valencia, bodas valencia, sonido iluminación valencia, técnico de sonido valencia"
+        ogImage="https://resonaweb.vercel.app/og-image.jpg"
         schema={getLocalBusinessSchema()}
       />
       {/* Hero Section */}
