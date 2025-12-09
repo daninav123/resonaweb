@@ -58,9 +58,108 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <title>{title}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={keywords} />
+        <link rel="canonical" href={`https://resonaweb.vercel.app${window.location.pathname}`} />
+        
+        {/* Open Graph */}
         <meta property="og:title" content={title} />
         <meta property="og:description" content={metaDescription} />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://resonaweb.vercel.app${window.location.pathname}`} />
+        <meta property="og:locale" content="es_ES" />
+        <meta property="og:site_name" content="ReSona Events Valencia" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={metaDescription} />
+        
+        {/* Schema FAQPage */}
+        {faqs && faqs.length > 0 && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.question,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": faq.answer
+                }
+              }))
+            })}
+          </script>
+        )}
+        
+        {/* Schema Service + LocalBusiness */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "serviceType": heroTitle,
+            "provider": {
+              "@type": "LocalBusiness",
+              "@id": "https://resonaweb.vercel.app",
+              "name": "ReSona Events",
+              "image": "https://resonaweb.vercel.app/logo.png",
+              "telephone": "+34613881414",
+              "email": "info@resonaevents.com",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Valencia",
+                "addressRegion": "Valencia",
+                "addressCountry": "ES"
+              },
+              "areaServed": {
+                "@type": "City",
+                "name": "Valencia"
+              },
+              "priceRange": "€€"
+            },
+            "areaServed": {
+              "@type": "City",
+              "name": "Valencia"
+            },
+            "availableChannel": {
+              "@type": "ServiceChannel",
+              "serviceUrl": `https://resonaweb.vercel.app${window.location.pathname}`,
+              "servicePhone": {
+                "@type": "ContactPoint",
+                "telephone": "+34613881414",
+                "contactType": "customer service",
+                "availableLanguage": ["Spanish", "English"]
+              }
+            }
+          })}
+        </script>
+        
+        {/* Schema BreadcrumbList */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Inicio",
+                "item": "https://resonaweb.vercel.app"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Servicios",
+                "item": "https://resonaweb.vercel.app/servicios"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": heroTitle,
+                "item": `https://resonaweb.vercel.app${window.location.pathname}`
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
