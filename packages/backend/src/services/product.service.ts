@@ -112,6 +112,8 @@ export class ProductService {
         return {
           ...product,
           averageRating: avgRating._avg.rating || 0,
+          // Asegurar que images siempre sea un array
+          images: product.images || [],
         };
       })
     );
@@ -153,7 +155,11 @@ export class ProductService {
       },
     });
 
-    return products;
+    // Asegurar que images se devuelva
+    return products.map(product => ({
+      ...product,
+      images: product.images || [],
+    }));
   }
 
   /**
