@@ -19,10 +19,23 @@ export const useCalculatorConfig = () => {
     // Primero intentar cargar desde BD
     const loadConfigFromBD = async () => {
       try {
-        const response = await api.get('/calculator-config');
+        const response = await api.get('/calculator-config') as AdvancedCalculatorConfig;
         if (response && response.eventTypes) {
           console.log('✅ Configuración cargada desde BD');
-          setConfig(response);
+          
+          // Inicializar extraCategories para eventos que no las tengan
+          const processedConfig: AdvancedCalculatorConfig = {
+            ...response,
+            eventTypes: response.eventTypes.map((event: EventTypeConfig) => {
+              if (!event.extraCategories || event.extraCategories.length === 0) {
+                console.log(`✅ Inicializando extraCategories vacías para ${event.name}`);
+                return { ...event, extraCategories: [] };
+              }
+              return event;
+            })
+          };
+          
+          setConfig(processedConfig);
           return;
         }
       } catch (error) {
@@ -39,22 +52,34 @@ export const useCalculatorConfig = () => {
         const mergedEventTypes = parsed.eventTypes.map((savedEvent: EventTypeConfig) => {
           const defaultEvent = DEFAULT_CALCULATOR_CONFIG.eventTypes.find(e => e.id === savedEvent.id);
           
+          const updates: Partial<EventTypeConfig> = {};
+          
+          // Restaurar partes si están vacías
           if ((!savedEvent.parts || savedEvent.parts.length === 0) && defaultEvent && defaultEvent.parts.length > 0) {
             console.log(`✅ Restaurando partes para ${savedEvent.name}`);
-            return {
-              ...savedEvent,
-              parts: defaultEvent.parts,
-            };
+            updates.parts = defaultEvent.parts;
           }
           
-          return savedEvent;
+          // Inicializar extraCategories vacías si no existen
+          if (!savedEvent.extraCategories || savedEvent.extraCategories.length === 0) {
+            console.log(`✅ Inicializando extraCategories vacías para ${savedEvent.name}`);
+            updates.extraCategories = [];
+          }
+          
+          return {
+            ...savedEvent,
+            ...updates,
+          };
         });
         
         // 2. Añadir eventos nuevos del default que no estén guardados
         const savedEventIds = new Set(parsed.eventTypes.map((e: EventTypeConfig) => e.id));
         const newEventsFromDefault = DEFAULT_CALCULATOR_CONFIG.eventTypes.filter(
           defaultEvent => !savedEventIds.has(defaultEvent.id)
-        );
+        ).map(event => ({
+          ...event,
+          extraCategories: event.extraCategories || [] // Inicializar extraCategories vacías
+        }));
         
         if (newEventsFromDefault.length > 0) {
           console.log(`✅ Añadiendo ${newEventsFromDefault.length} eventos nuevos:`, newEventsFromDefault.map(e => e.name));
