@@ -65,16 +65,27 @@ export const ImageUploader = ({ currentImages, onImagesChange, maxImages = 5 }: 
           continue;
         }
 
-        // Construir URL completa
-        // Para imágenes, usar la URL base sin /api/v1
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
-        const baseUrl = apiUrl.replace('/api/v1', '');
+        // El backend devuelve rutas como: /uploads/products/filename.jpg
+        // En producción: https://resona-backend.onrender.com/uploads/products/filename.jpg
+        // En desarrollo: http://localhost:3001/uploads/products/filename.jpg
         const imagePath = responseData.imageUrl;
         
-        // Si la imagen ya tiene URL completa, usarla directamente
-        const imageUrl = imagePath.startsWith('http') 
-          ? imagePath 
-          : `${baseUrl}${imagePath}`;
+        // Si ya es URL completa, usar directamente
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+          uploadedUrls.push(imagePath);
+          console.log('✅ URL completa:', imagePath);
+          continue;
+        }
+        
+        // Construir URL completa del backend
+        // En producción, el backend está en resona-backend.onrender.com
+        // En desarrollo, está en localhost:3001
+        const isDevelopment = window.location.hostname === 'localhost';
+        const backendUrl = isDevelopment 
+          ? 'http://localhost:3001'
+          : 'https://resona-backend.onrender.com';
+        
+        const imageUrl = `${backendUrl}${imagePath}`;
         
         console.log('✅ URL de imagen generada:', imageUrl);
         uploadedUrls.push(imageUrl);
