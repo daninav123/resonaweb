@@ -1,58 +1,9 @@
-// Schemas avanzados para SEO óptimo
+// ⚠️ DEPRECATED: Este archivo contiene schemas VIEJOS
+// Usar en su lugar: /components/SEO/schemas.ts
+// Este archivo se mantiene temporalmente para compatibilidad con código legacy
 
-export const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "ReSona Events",
-  "description": "Alquiler profesional de equipos de sonido, iluminación, fotografía y video para eventos en Valencia. Bodas, conciertos, conferencias y eventos corporativos.",
-  "image": "https://resonaevents.com/logo.png",
-  "logo": "https://resonaevents.com/logo.png",
-  "@id": "https://resonaevents.com",
-  "url": "https://resonaevents.com",
-  "telephone": "+34-XXX-XXX-XXX",
-  "email": "info@resonaevents.com",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Calle Principal",
-    "addressLocality": "Montesinos",
-    "addressRegion": "Valencia",
-    "postalCode": "46XXX",
-    "addressCountry": "ES"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "39.4699",
-    "longitude": "-0.3763"
-  },
-  "openingHoursSpecification": {
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    "opens": "09:00",
-    "closes": "18:00"
-  },
-  "sameAs": [
-    "https://www.facebook.com/resonaevents",
-    "https://www.instagram.com/resonaevents",
-    "https://www.linkedin.com/company/resonaevents"
-  ],
-  "priceRange": "€€",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "127",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
-  "serviceArea": {
-    "@type": "GeoCircle",
-    "geoMidpoint": {
-      "@type": "GeoCoordinates",
-      "latitude": "39.4699",
-      "longitude": "-0.3763"
-    },
-    "geoRadius": "100000"
-  }
-};
+// NO USAR - Schema LocalBusiness viejo (usar getLocalBusinessSchema de /components/SEO/schemas.ts)
+export const localBusinessSchema = {}; // Vacío intencionalmente para forzar error si se usa
 
 export const organizationSchema = {
   "@context": "https://schema.org",
