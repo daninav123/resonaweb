@@ -225,6 +225,160 @@ const ServicesPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Servicios Especializados - Enlaces a las 20 páginas */}
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Servicios Especializados</h2>
+            <p className="text-lg text-gray-600">
+              Explora nuestra gama completa de servicios profesionales
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {/* Sonido */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">🔊</span>
+                <h3 className="text-xl font-bold text-gray-900">Sonido</h3>
+              </div>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/servicios/alquiler-sonido-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Alquiler de Sonido Valencia
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-altavoces-profesionales" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Altavoces Profesionales
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-microfonos-inalambricos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Micrófonos Inalámbricos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/sonido-bodas-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Sonido para Bodas
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/sonido-eventos-corporativos-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Sonido Eventos Corporativos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-mesa-mezclas-dj" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Mesa de Mezclas DJ
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-subwoofers-graves" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Subwoofers
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Iluminación */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">💡</span>
+                <h3 className="text-xl font-bold text-gray-900">Iluminación</h3>
+              </div>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/servicios/alquiler-iluminacion-bodas-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Iluminación para Bodas
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/iluminacion-led-profesional" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Iluminación LED Profesional
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/iluminacion-escenarios-eventos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Iluminación para Escenarios
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-moving-heads" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Moving Heads
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/iluminacion-arquitectonica-eventos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Iluminación Arquitectónica
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-laser-eventos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Láser Profesional
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Video y Pantallas */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">🎥</span>
+                <h3 className="text-xl font-bold text-gray-900">Video</h3>
+              </div>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/servicios/alquiler-pantallas-led-eventos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Pantallas LED
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-proyectores-profesionales" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Proyectores Profesionales
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/videoescenarios-streaming-eventos" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Videoescenarios y Streaming
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Otros Servicios */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">🎭</span>
+                <h3 className="text-xl font-bold text-gray-900">Otros</h3>
+              </div>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/servicios/alquiler-dj-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → DJ Profesional
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/produccion-tecnica-eventos-valencia" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Producción Técnica Completa
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-estructuras-truss" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Estructuras Truss
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/servicios/alquiler-maquinas-fx-humo-confeti" className="text-blue-600 hover:text-blue-800 text-sm transition">
+                    → Máquinas FX
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
