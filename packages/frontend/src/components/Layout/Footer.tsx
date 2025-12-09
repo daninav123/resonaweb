@@ -17,7 +17,7 @@ const Footer = () => {
           <div>
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 mb-4 group hover:opacity-90 transition-opacity">
-              <img src="/logo-resona.svg" alt="ReSona Events" width="180" height="48" className="h-12 w-auto" />
+              <img src="/logo-resona.svg" alt="ReSona Events" width="48" height="48" className="h-12 w-12" />
               <div className="flex flex-col">
                 <span
                   className="text-2xl font-bold leading-tight"
