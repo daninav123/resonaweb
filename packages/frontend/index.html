@@ -1,23 +1,6 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <!-- Google tag (gtag.js) - Solo en producción - Defer para mejor performance -->
-    <script defer>
-      // Solo cargar GA si NO estamos en localhost
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        const script = document.createElement('script');
-        script.defer = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-4F522M345Z');
-      } else {
-        console.log('📊 Google Analytics desactivado en desarrollo');
-      }
-    </script>
 
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo-resona.svg" />
@@ -68,7 +51,15 @@
     
     <title>ReSona Events - Tu Partner en Eventos y Alquiler Profesional | Valencia</title>
     
-    <!-- Schema.org Structured Data -->
+    <!-- Inline Critical CSS for faster FCP -->
+    <style>
+      /* Critical CSS inlined */
+      body{margin:0;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+      #root{min-height:100vh}
+      .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:1.5rem;color:#5ebbff}
+    </style>
+    
+    <!-- Schema.org Structured Data - Defer para no bloquear -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -241,7 +232,25 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div class="loading">Cargando...</div></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Google Analytics - Load at end for better performance -->
+    <script>
+      // Solo cargar GA después de que la página se haya cargado
+      window.addEventListener('load', function() {
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
+          document.head.appendChild(script);
+          
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-4F522M345Z');
+        }
+      });
+    </script>
   </body>
 </html>

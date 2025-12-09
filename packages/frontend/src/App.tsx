@@ -8,13 +8,13 @@ import { useAuthStore } from './stores/authStore';
 import Layout from './components/Layout/Layout';
 import AdminLayout from './components/AdminLayout';
 
-// Pages
-import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import LoginPage from './pages/auth/LoginPage';
-
-// Lazy load other pages to improve initial load
+// Lazy load ALL pages for optimal initial load performance
 import { lazy, Suspense } from 'react';
+
+// Critical pages - También lazy para reducir bundle inicial
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const PackDetailPage = lazy(() => import('./pages/PackDetailPage'));
@@ -58,6 +58,7 @@ const BackupManager = lazy(() => import('./pages/admin/BackupManager'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
 const AdminQuoteRequestsPage = lazy(() => import('./pages/admin/QuoteRequestsManager'));
+const SimpleBudgetManager = lazy(() => import('./pages/admin/SimpleBudgetManager'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
@@ -76,6 +77,7 @@ const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
 const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
+const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 
 // Service Pages (20 páginas)
 const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonidoValencia'));
@@ -214,6 +216,7 @@ function App() {
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/debug-auth" element={<DebugAuth />} />
             
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
@@ -258,6 +261,7 @@ function App() {
               <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
               <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
+              <Route path="/admin/presupuestos" element={<AdminLayout><SimpleBudgetManager /></AdminLayout>} />
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
               <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
@@ -305,7 +309,6 @@ function App() {
               },
             },
           }}
-          limit={3}
         />
         
         {import.meta.env?.DEV && (

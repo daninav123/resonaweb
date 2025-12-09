@@ -52,18 +52,43 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core vendors
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'query-vendor': ['@tanstack/react-query'],
           'ui-vendor': ['lucide-react'],
+          // Form libraries
+          'form-vendor': ['react-hook-form', 'zod'],
+          // Utils
+          'utils-vendor': ['axios', 'date-fns'],
+          // UI libraries
+          'toast-vendor': ['react-hot-toast'],
         },
+        // Nombrar chunks para mejor cache
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
     cssCodeSplit: true,
     assetsInlineLimit: 4096,
   },
   // Optimizaciones de performance
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@tanstack/react-query',
+      'axios',
+      'zustand',
+    ],
+    exclude: ['@react-three/fiber', '@react-three/drei'], // Excluir si no se usan
+  },
+  // Compresión adicional
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    legalComments: 'none',
+    treeShaking: true,
   },
 });
