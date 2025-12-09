@@ -1,0 +1,625 @@
+[
+  {
+    "id": "04806543-14dc-4d0b-9c07-8383e09bf590",
+    "name": "2x altavoces 415a +pioneer rx2",
+    "sku": "PACK-7CF8EC26",
+    "oldDescription": "(vacía)",
+    "newDescription": "Controlador DJ Pioneer RX2. Mesa de mezclas profesional de 2 canales con efectos integrados y conectividad Rekordbox. Jog wheels de alta precisión, filtros de color y pads multifunción. Ideal para DJs móviles, cabinas y eventos en vivo. Construcción robusta con interfaz de audio USB integrada."
+  },
+  {
+    "id": "d0f09eaf-d614-43db-a2c9-a02a7a4e7683",
+    "name": "2x altavoces 415a +pioneer rx2+iluminacion basic",
+    "sku": "PACK-D986A9FF",
+    "oldDescription": "(vacía)",
+    "newDescription": "Controlador DJ Pioneer RX2. Mesa de mezclas profesional de 2 canales con efectos integrados y conectividad Rekordbox. Jog wheels de alta precisión, filtros de color y pads multifunción. Ideal para DJs móviles, cabinas y eventos en vivo. Construcción robusta con interfaz de audio USB integrada."
+  },
+  {
+    "id": "0f92c85b-6558-40be-9844-ba582c09dc27",
+    "name": "2x altavoces 415a +pioneer rx2+iluminacion basic+puente 1",
+    "sku": "PACK-87E6D54E",
+    "oldDescription": "(vacía)",
+    "newDescription": "Controlador DJ Pioneer RX2. Mesa de mezclas profesional de 2 canales con efectos integrados y conectividad Rekordbox. Jog wheels de alta precisión, filtros de color y pads multifunción. Ideal para DJs móviles, cabinas y eventos en vivo. Construcción robusta con interfaz de audio USB integrada."
+  },
+  {
+    "id": "955ee0d4-510d-4a1a-9b33-7027f5abad8e",
+    "name": "2x das audio 215a",
+    "sku": "PACK-857EAA04",
+    "oldDescription": "(vacía)",
+    "newDescription": "Altavoz activo DAS Audio ALTEA 215A de 12\" de alta calidad. Sistema autoamplificado con driver de compresión de 1\" y amplificación Clase D eficiente. Diseñado para aplicaciones de PA profesional, ofrece excelente relación potencia/peso. Ideal para eventos pequeños y medianos, instalaciones fijas y sonorización móvil. Construcción robusta con asas ergonómicas y múltiples puntos de montaje."
+  },
+  {
+    "id": "5ff0cf83-2af2-49ab-8856-904d2472a4f6",
+    "name": "2x das audio 215a 1x sub 218a",
+    "sku": "PACK-C62C0933",
+    "oldDescription": "(vacía)",
+    "newDescription": "Altavoz activo DAS Audio ALTEA 215A de 12\" de alta calidad. Sistema autoamplificado con driver de compresión de 1\" y amplificación Clase D eficiente. Diseñado para aplicaciones de PA profesional, ofrece excelente relación potencia/peso. Ideal para eventos pequeños y medianos, instalaciones fijas y sonorización móvil. Construcción robusta con asas ergonómicas y múltiples puntos de montaje."
+  },
+  {
+    "id": "97f5ddc8-7e34-45fb-a1a1-ff33418daef0",
+    "name": "2x das audio 415a",
+    "sku": "PACK-0AAEEE7B",
+    "oldDescription": "(vacía)",
+    "newDescription": "Altavoz activo DAS Audio ALTEA 415A de 15\" autoamplificado. Sistema de sonido profesional con 800W de potencia pico, SPL máximo de 128 dB y motor de compresión M-32 de 1\". Amplificador Clase D de doble canal con procesamiento FIR para máxima precisión acústica. Dispersión controlada 90°x60°, ideal para eventos medianos y grandes, conciertos y como monitor de escenario. Construcción en polipropileno resistente con diseño multiángulo, peso 17.5kg. Incluye controles de EQ, modos de voz, delay y ganancia mediante pantalla LCD."
+  },
+  {
+    "id": "c1952b81-3500-4f70-b747-049b26b0949c",
+    "name": "2x icoa 15a",
+    "sku": "PACK-85E2DD19",
+    "oldDescription": "(vacía)",
+    "newDescription": "Altavoz activo ICOA 15A de 15\" profesional. Sistema autoamplificado con driver de compresión de alta calidad para eventos en vivo. Amplificación eficiente Clase D con procesamiento DSP integrado. Construcción ligera y robusta, ideal para instalaciones móviles y fijas. Excelente respuesta en frecuencias medias y altas."
+  },
+  {
+    "id": "4f2a8a69-a874-4f19-b472-aa575a7f65e6",
+    "name": "Adapador trípode/mariposa",
+    "sku": "EST-0027",
+    "oldDescription": "Adapador trípode/mariposa - ESTRUCTURAS\n\nPrecio individual - IVA no incluido",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "37531509-5eb5-4d66-8247-dcabb220b16c",
+    "name": "Adaptador trípode/truss",
+    "sku": "EST-0028",
+    "oldDescription": "Adaptador trípode/truss - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "ee97ca97-7bef-48e9-bcb8-b5e02110f536",
+    "name": "Alargadores shucko",
+    "sku": "CAB-0056",
+    "oldDescription": "Alargadores shucko - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "6f612402-643b-4096-a4fd-76ce8df9d4d2",
+    "name": "Alimentación",
+    "sku": "CAB-0054",
+    "oldDescription": "Alimentación - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "c05c167a-6547-46ef-ad7f-c10b56846500",
+    "name": "Behringheir xair18",
+    "sku": "Behringheir x air18",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "00b102c6-cc30-4e93-8798-8867de3d4e2c",
+    "name": "Boda Basic",
+    "sku": "PACK-7B49F9BB",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "3f6609c8-594d-4676-ab80-b1d9900ddf72",
+    "name": "Cabina jardin",
+    "sku": "ELE-0032",
+    "oldDescription": "Cabina jardin - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "cfbf8e70-eb38-4155-824d-57072008ecc3",
+    "name": "Cabina palets",
+    "sku": "ELE-0031",
+    "oldDescription": "Cabina palets - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "a0aaf7d4-ea1c-4c11-9718-91f60c4c1aed",
+    "name": "Carga confeti",
+    "sku": "FX-CARGA-CONFETI",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "5c448f7b-0550-447f-b0af-50a4935d05e9",
+    "name": "DJ",
+    "sku": "PERSONAL-DJ-001",
+    "oldDescription": "Servicio de DJ profesional para eventos",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "7be2f4e6-5c98-4d25-9ff8-bdd9181d53dc",
+    "name": "DMX wirelss",
+    "sku": "dmx-wireless",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "b0ab88b8-aa79-473f-90b2-e756a0d08a33",
+    "name": "Das Altea 415a",
+    "sku": "SON-0001",
+    "oldDescription": "das Altea 415a - SONIDO",
+    "newDescription": "Altavoz profesional de alta calidad para eventos. Sistema de sonido con amplificación eficiente y excelente respuesta en frecuencias. Ideal para conciertos, bodas, eventos corporativos y aplicaciones de PA. Construcción robusta y transportable."
+  },
+  {
+    "id": "094ec3a1-e2c3-4054-8dbd-d15a79d9da8c",
+    "name": "Das action 215a",
+    "sku": "SON-0004",
+    "oldDescription": "das action 215a - SONIDO",
+    "newDescription": "Altavoz profesional de alta calidad para eventos. Sistema de sonido con amplificación eficiente y excelente respuesta en frecuencias. Ideal para conciertos, bodas, eventos corporativos y aplicaciones de PA. Construcción robusta y transportable."
+  },
+  {
+    "id": "61b44fa4-c4e6-458e-816a-2a182964d391",
+    "name": "Dmx",
+    "sku": "CAB-0052",
+    "oldDescription": "Dmx - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "2eba7417-4173-439e-8b38-5a542ba35c23",
+    "name": "Guirlanda bombilla incandesdecente 25m",
+    "sku": "guirnalda",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "7a123f62-4b3d-4938-9cf9-ef754c055d82",
+    "name": "Guirnalda led",
+    "sku": "guirnalda-led",
+    "oldDescription": "(vacía)",
+    "newDescription": "Sistema de iluminación LED profesional para eventos. Control DMX512 con efectos programables y modos automáticos. Bajo consumo energético y sin mantenimiento de lámparas. Ideal para bodas, fiestas y eventos corporativos."
+  },
+  {
+    "id": "a2a80159-7fcc-4ff7-b2f1-ab285e0e6974",
+    "name": "LC 8 kinson",
+    "sku": "SON-0006",
+    "oldDescription": "LC 8 kinson - SONIDO",
+    "newDescription": "Altavoz line array LC-8 Kinson de 8\". Sistema de alta fidelidad para line arrays pequeños y medianos. Diseño compacto con driver de neodimio de alto rendimiento. Ideal para teatros, auditorios y eventos corporativos que requieran cobertura controlada y proyección de largo alcance."
+  },
+  {
+    "id": "2158c26b-e932-42ff-930a-8dc20f76ffc9",
+    "name": "Letras",
+    "sku": "ELE-0033",
+    "oldDescription": "Letras - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "43c8ad8c-1839-4fe2-a97c-428d9ea422be",
+    "name": "Manguera trifasica 20 metros",
+    "sku": "CAB-0059",
+    "oldDescription": "Manguera trifasica 20 metros - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "8d35e6be-4be1-421a-9399-f079382be841",
+    "name": "Maquinas de humo vertical 1500w",
+    "sku": "FX-0016",
+    "oldDescription": "Maquina de humo vertical 1500w",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "0d561b25-c619-4d00-853f-c1b1769abb83",
+    "name": "Minijack/jack",
+    "sku": "CAB-0058",
+    "oldDescription": "Minijack/jack - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "7e780d1b-c39e-4a9d-8c41-548127e28bb4",
+    "name": "Montador",
+    "sku": "PERSONAL-MONTADOR-001",
+    "oldDescription": "Montador profesional para instalación y montaje de equipos",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "020ba788-c65d-4989-a256-9e10189857b4",
+    "name": "Máquina fuego frío 700w",
+    "sku": "FX-0015",
+    "oldDescription": "máquinas fuego frío - FX",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "db5c11ae-5c2e-4fd0-a345-bc1f08dae3d6",
+    "name": "PACK CONCIERTO BASIC",
+    "sku": "PACK-8040F141",
+    "oldDescription": "PA +MIXER+TECNICO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "4724ba82-27cb-441e-8d14-1ab72027091d",
+    "name": "Pack Altavoces +dj",
+    "sku": "PACK-B58541B1",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "793c797c-9706-4fc2-b6ad-e59a9b87bea6",
+    "name": "Pack altavoces dj 2",
+    "sku": "PACK-673563F3",
+    "oldDescription": "Pack altavoces dj icoa negros 4 horas dj",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "9a722950-706b-407d-b6a0-4f49a526e8c4",
+    "name": "Pack fuego frio",
+    "sku": "PACK-6E5CF83A",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "40d66de5-2452-4ee4-824f-e4d0dd6f882f",
+    "name": "Pack fuego frio 4",
+    "sku": "PACK-7729818B",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "a65873fd-8682-4645-9021-34836f9a0024",
+    "name": "Pack sonido 215",
+    "sku": "PACK-4329009D",
+    "oldDescription": "Pack sonido 215 dj 4h",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "572115c6-6ea4-45ee-a1c4-963d18e0cf56",
+    "name": "Polvo Fuego Frio",
+    "sku": "FX-polvo-fuego-frio",
+    "oldDescription": "Polvo fuego frio 200 g",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "30fe81b5-f89e-4a89-90b2-7e3a7f96b60d",
+    "name": "Rca/rca",
+    "sku": "CAB-0057",
+    "oldDescription": "Rca/rca - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "49bdf98e-bf67-4778-9c8f-58d08e18683f",
+    "name": "Soporte Gravity Blanco",
+    "sku": "EST-0026",
+    "oldDescription": "soportes blancos - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "c0374fa6-88a4-4b66-a1d7-7dd6373c4954",
+    "name": "Soundcraft 8",
+    "sku": "soundcraft",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "ccc6719e-8363-4219-a55b-29e5b955cdf5",
+    "name": "Totem madera 1m",
+    "sku": "DECORACION-TOTEM-1M",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "f558eb45-15ce-4304-9ea9-de33c0429f54",
+    "name": "Totems madera 2m",
+    "sku": "DECORACION-TOTEMS-2M",
+    "oldDescription": "totems de madera de 2m",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "fe03b9ce-4aa8-49da-9146-840578821e7f",
+    "name": "Trípodes negros",
+    "sku": "EST-0025",
+    "oldDescription": "Trípodes negros - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "370b670c-76c0-4afb-bbf7-3700a9133b0f",
+    "name": "Técnico Audiovisual",
+    "sku": "PERSONAL-TECH-AUDIO-001",
+    "oldDescription": "Técnico especializado en sistemas de audio y sonido",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "f9e9467a-38d7-4b80-ac65-9f42d30d936e",
+    "name": "Ventiladores",
+    "sku": "ELE-0035",
+    "oldDescription": "ventiladores - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "999ec7a2-3f46-48a5-b33e-7b63a0838be0",
+    "name": "Xlr",
+    "sku": "CAB-0053",
+    "oldDescription": "Xlr - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "79d86420-efcb-4210-8a61-561cfb2f9fe8",
+    "name": "Zapatillas",
+    "sku": "CAB-0055",
+    "oldDescription": "Zapatillas - CABLEADO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "55baaf2c-0250-4121-bced-f468706de3db",
+    "name": "alimentacion powercon",
+    "sku": "powercon",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "1b297612-a69b-4985-994d-4181bee88cf3",
+    "name": "bases",
+    "sku": "EST-0019",
+    "oldDescription": "bases - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "4afc2b93-ee1a-431b-9ed3-2aebae722cc2",
+    "name": "beam 7r",
+    "sku": "ILU-0008",
+    "oldDescription": "Cabeza movil beam 7r - 230w",
+    "newDescription": "Cabeza móvil Beam 7R compacta de 230W. Haz luminoso concentrado con prisma y rueda de gobos. Sistema de color CMY + rueda de colores fijos. Movimiento rápido y preciso pan/tilt. Perfecta para eventos medianos, bodas premium y discotecas pequeñas. Bajo consumo y peso reducido facilitan transporte e instalación."
+  },
+  {
+    "id": "fbcf8f09-5a28-4fbb-ad8f-d701c178f5f5",
+    "name": "cabezas 3en1 17r",
+    "sku": "ILU-0007",
+    "oldDescription": "Cabeza movil 3en1 17r - 350W",
+    "newDescription": "Cabeza móvil profesional con efectos beam concentrados. Iluminación dinámica con gobos, prismas y mezcla de colores. Sistema DMX512 con movimiento pan/tilt preciso. Ideal para discotecas, conciertos y eventos de gran impacto visual."
+  },
+  {
+    "id": "854703b3-7c7e-4910-8430-b18dab66beb5",
+    "name": "cajetín usb dmx",
+    "sku": "CON-0046",
+    "oldDescription": "cajetín usb dmx - CONTROL ILUMINACION",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "dee6596e-7a77-4957-aeb0-a4e695f8525e",
+    "name": "cubos",
+    "sku": "EST-0022",
+    "oldDescription": "cubos - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "eecd0318-ed89-471a-85e1-6eb1868b9bb5",
+    "name": "distribuidor 32a",
+    "sku": "GEN-0048",
+    "oldDescription": "distribuidor 32a - GENERACIÓN Y DISTRIBUCIÓN",
+    "newDescription": "Altavoz profesional de alta calidad para eventos. Sistema de sonido con amplificación eficiente y excelente respuesta en frecuencias. Ideal para conciertos, bodas, eventos corporativos y aplicaciones de PA. Construcción robusta y transportable."
+  },
+  {
+    "id": "f59ddc5b-2f0d-4c85-b6c7-5b3dc71a5448",
+    "name": "fdsf",
+    "sku": "PACK-C5D29FA8",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "0f337696-12a3-4a43-8a75-f60af7519ba4",
+    "name": "flash rgb 1000w",
+    "sku": "ILU-0012",
+    "oldDescription": "flash rgb 1000w - ILUMINACION",
+    "newDescription": "Sistema de iluminación LED profesional para eventos. Control DMX512 con efectos programables y modos automáticos. Bajo consumo energético y sin mantenimiento de lámparas. Ideal para bodas, fiestas y eventos corporativos."
+  },
+  {
+    "id": "b6d62b26-06c7-4885-8e35-6cd09d803da3",
+    "name": "flash rgb smd",
+    "sku": "ILU-0014",
+    "oldDescription": "flash rgb smd - ILUMINACION",
+    "newDescription": "Sistema de iluminación LED profesional para eventos. Control DMX512 con efectos programables y modos automáticos. Bajo consumo energético y sin mantenimiento de lámparas. Ideal para bodas, fiestas y eventos corporativos."
+  },
+  {
+    "id": "2e96c586-a42f-458c-a74f-13095856deaf",
+    "name": "focos rgb decoración",
+    "sku": "ELE-0034",
+    "oldDescription": "focos rgb decoración - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "caf1d47e-a1ca-4889-a2f8-044a21b36514",
+    "name": "focos spot pequeños",
+    "sku": "ILU-0011",
+    "oldDescription": "focos spot pequeños - ILUMINACION",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "cbbebac4-c105-4837-af2b-9080beffa82b",
+    "name": "fsdfs",
+    "sku": "PACK-6AFA6CD4",
+    "oldDescription": "fds",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "99d108dc-60be-4e4f-a5d5-45d364830976",
+    "name": "generador 6500w",
+    "sku": "GEN-0047",
+    "oldDescription": "generador 6500w - GENERACIÓN Y DISTRIBUCIÓN",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "25875a1b-147e-4141-aa39-b89be5ddea68",
+    "name": "hexágono",
+    "sku": "ELE-0036",
+    "oldDescription": "hexágono - ELEMENTOS DECORATIVOS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a",
+    "name": "icoa 12a blancos",
+    "sku": "SON-0002",
+    "oldDescription": "icoa 12a blancos - SONIDO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a",
+    "name": "icoa 15a negros",
+    "sku": "SON-0003",
+    "oldDescription": "icoa 15a negros - SONIDO",
+    "newDescription": "Altavoz activo ICOA 15A de 15\" profesional. Sistema autoamplificado con driver de compresión de alta calidad para eventos en vivo. Amplificación eficiente Clase D con procesamiento DSP integrado. Construcción ligera y robusta, ideal para instalaciones móviles y fijas. Excelente respuesta en frecuencias medias y altas."
+  },
+  {
+    "id": "25ef5d44-9c06-45f2-92ac-419240140605",
+    "name": "lanzador confeti",
+    "sku": "Confeti",
+    "oldDescription": "\n\nPrecio individual - IVA no incluido",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "581e1b29-fd53-4cdc-81a3-7c07bfa9960d",
+    "name": "láser rgb 10w",
+    "sku": "ILU-0013",
+    "oldDescription": "láser rgb 10w - ILUMINACION",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "17e7bcfc-4998-442e-8e92-84e9846bd79a",
+    "name": "mesa 2x1",
+    "sku": "ELE-0029",
+    "oldDescription": "mesa 2x1 - ELEMENTOS ESCENARIO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "c6f38a15-d75d-4c90-832a-029698d34985",
+    "name": "mesa quick20",
+    "sku": "CON-0045",
+    "oldDescription": "mesa quick20 - CONTROL ILUMINACION",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "93665f7e-7fe6-4d4d-9f05-4eaf6debea7c",
+    "name": "micro Behringer BA 19A",
+    "sku": "MIC-0039",
+    "oldDescription": "micro Behringer BA 19A - MICROFONIA",
+    "newDescription": "Altavoz profesional de alta calidad para eventos. Sistema de sonido con amplificación eficiente y excelente respuesta en frecuencias. Ideal para conciertos, bodas, eventos corporativos y aplicaciones de PA. Construcción robusta y transportable."
+  },
+  {
+    "id": "c7173f0b-b32e-4232-877f-a0bf316663cc",
+    "name": "micro audibax sm570",
+    "sku": "MIC-0038",
+    "oldDescription": "micro audibax sm570 - MICROFONIA",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "650bf3a1-84b1-40aa-94f7-551abf341139",
+    "name": "micros audibax sm580",
+    "sku": "MIC-0037",
+    "oldDescription": "micros audibax sm580 - MICROFONIA",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "6f608ba5-1cf8-4935-9680-91d2e649eeda",
+    "name": "micros inalámbrico",
+    "sku": "MIC-0040",
+    "oldDescription": "micros inalámbrico - MICROFONIA",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "a34a0eec-c251-4a5a-b9dd-2c017458a641",
+    "name": "mini beam",
+    "sku": "ILU-0009",
+    "oldDescription": "mini beam - ILUMINACION",
+    "newDescription": "Cabeza móvil profesional con efectos beam concentrados. Iluminación dinámica con gobos, prismas y mezcla de colores. Sistema DMX512 con movimiento pan/tilt preciso. Ideal para discotecas, conciertos y eventos de gran impacto visual."
+  },
+  {
+    "id": "a308b6d5-1299-424a-8590-f91c7a62a8d8",
+    "name": "mini truss 2m",
+    "sku": "EST-0024",
+    "oldDescription": "mini truss 2m - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "d09f4477-aab0-4909-89dc-c820779b5c0d",
+    "name": "mini wash",
+    "sku": "ILU-0010",
+    "oldDescription": "mini wash - ILUMINACION",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "9a7b4175-59c1-4b64-9f74-10e95cc7075a",
+    "name": "pantalla",
+    "sku": "PAN-0051",
+    "oldDescription": "pantalla - PANTALLAS Y PROYECCIÓN",
+    "newDescription": "Sistema completo de proyección profesional para presentaciones y eventos. Proyector de alta luminosidad con pantalla de calidad. Conectividad múltiple HDMI/VGA/USB. Ideal para conferencias, formaciones y eventos corporativos."
+  },
+  {
+    "id": "cac170ee-37f1-4262-b348-13636e627cb0",
+    "name": "patas 1 m",
+    "sku": "ELE-0030",
+    "oldDescription": "patas 1 m - ELEMENTOS ESCENARIO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "01b87849-cfb6-4e24-8369-c6a763b427af",
+    "name": "pioneer rx2",
+    "sku": "EQU-0049",
+    "oldDescription": "pioneer rx2 - EQUIPAMIENTO DJ",
+    "newDescription": "Controlador DJ Pioneer RX2. Mesa de mezclas profesional de 2 canales con efectos integrados y conectividad Rekordbox. Jog wheels de alta precisión, filtros de color y pads multifunción. Ideal para DJs móviles, cabinas y eventos en vivo. Construcción robusta con interfaz de audio USB integrada."
+  },
+  {
+    "id": "5a5d034f-fba1-45a6-a413-ac6a80508085",
+    "name": "procesador t racks 204",
+    "sku": "CON-0044",
+    "oldDescription": "procesador t racks 204 - CONTROL SONIDO",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "cbd57efa-4d29-4451-80c0-c46fb7dd25fd",
+    "name": "proyector",
+    "sku": "PAN-0050",
+    "oldDescription": "proyector - PANTALLAS Y PROYECCIÓN",
+    "newDescription": "Sistema completo de proyección profesional para presentaciones y eventos. Proyector de alta luminosidad con pantalla de calidad. Conectividad múltiple HDMI/VGA/USB. Ideal para conferencias, formaciones y eventos corporativos."
+  },
+  {
+    "id": "2f08f346-30bf-4d8f-b567-11b6aeee18ac",
+    "name": "semicírculos 4m diametro",
+    "sku": "EST-0021",
+    "oldDescription": "semicírculos 4m diametro - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "9a6a77bb-d593-4bb0-9346-d00921d4e8c9",
+    "name": "set micro 2 micros inalámbricos",
+    "sku": "MIC-0041",
+    "oldDescription": "set micro 2 micros inalámbricos - MICROFONIA",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "308b83ae-42fa-425b-a632-52ed45343acb",
+    "name": "sub das 218a",
+    "sku": "SON-0005",
+    "oldDescription": "sub das 218a - SONIDO",
+    "newDescription": "Altavoz profesional de alta calidad para eventos. Sistema de sonido con amplificación eficiente y excelente respuesta en frecuencias. Ideal para conciertos, bodas, eventos corporativos y aplicaciones de PA. Construcción robusta y transportable."
+  },
+  {
+    "id": "913344d7-9f99-4d57-be75-3e6c4b0890c7",
+    "name": "top",
+    "sku": "EST-0020",
+    "oldDescription": "top - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "920b6f32-23ad-4af9-af03-14d9b1f0cef0",
+    "name": "truss 1 m",
+    "sku": "EST-0017",
+    "oldDescription": "truss 1 m - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "00bf1552-c807-4b5c-bd41-1c17b11c2365",
+    "name": "truss 1.5m",
+    "sku": "truss-1.5",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "57b24b43-ef0a-4ea0-9232-4040f40b4b4c",
+    "name": "truss 2 m",
+    "sku": "EST-0018",
+    "oldDescription": "truss 2 m - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "e8744400-e4c4-45fc-814c-da1e80b4f59e",
+    "name": "trípodes grandes",
+    "sku": "EST-0023",
+    "oldDescription": "trípodes grandes - ESTRUCTURAS",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  },
+  {
+    "id": "a56e4292-1687-4a7c-ab63-79130d76cdc3",
+    "name": "vxcvcv",
+    "sku": "PACK-DA9C5FF5",
+    "oldDescription": "(vacía)",
+    "newDescription": "Equipo profesional de alta calidad para eventos. Producto técnico especializado con excelentes prestaciones. Ideal para sonorización, iluminación y producción de eventos profesionales. Disponible para alquiler con servicio de instalación y asistencia técnica."
+  }
+]
