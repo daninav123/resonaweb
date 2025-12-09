@@ -1,4 +1,13 @@
 /**
+ * Decodifica entidades HTML
+ */
+const decodeHtmlEntities = (text: string): string => {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
+/**
  * Construye la URL completa de una imagen
  * @param imagePath - Ruta relativa de la imagen (ej: /uploads/products/imagen.webp)
  * @returns URL completa (ej: http://localhost:3001/uploads/products/imagen.webp)
@@ -8,20 +17,23 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
     return '';
   }
 
+  // SIEMPRE decodificar entidades HTML primero
+  const cleanPath = decodeHtmlEntities(imagePath);
+
   // Detectar automáticamente el entorno
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '';
 
   // Si ya es una URL completa
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
     // En producción, reemplazar localhost por el dominio de producción
-    if (isProduction && imagePath.includes('localhost')) {
+    if (isProduction && cleanPath.includes('localhost')) {
       // Extraer la ruta después de localhost:3001
-      const path = imagePath.replace(/https?:\/\/localhost:\d+/, '');
-      return `https://${hostname}${path}`;
+      const path = cleanPath.replace(/https?:\/\/localhost:\d+/, '');
+      return `https://resona-backend.onrender.com${path}`;
     }
     // Si no es localhost, devolverla tal cual
-    return imagePath;
+    return cleanPath;
   }
 
   // Obtener la URL base del backend
@@ -36,19 +48,10 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
     baseUrl = apiUrl.replace('/api/v1', '');
   }
 
-  // Asegurar que imagePath empiece con /
-  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  // Asegurar que cleanPath empiece con /
+  const normalizedPath = cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`;
 
   return `${baseUrl}${normalizedPath}`;
-};
-
-/**
- * Decodifica entidades HTML
- */
-const decodeHtmlEntities = (text: string): string => {
-  const textarea = document.createElement('textarea');
-  textarea.innerHTML = text;
-  return textarea.value;
 };
 
 /**
@@ -61,11 +64,8 @@ export const getRelativePath = (imageUrl: string | null | undefined): string => 
     return '';
   }
 
-  // Decodificar entidades HTML por si acaso
-  let cleanUrl = imageUrl;
-  if (imageUrl.includes('&#x')) {
-    cleanUrl = decodeHtmlEntities(imageUrl);
-  }
+  // SIEMPRE decodificar entidades HTML
+  let cleanUrl = decodeHtmlEntities(imageUrl);
 
   // Si ya es una ruta relativa, devolverla
   if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
