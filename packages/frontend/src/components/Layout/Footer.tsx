@@ -136,8 +136,62 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Servicios Profesionales Section */}
         <div className="border-t border-gray-700/50 mt-12 pt-8">
+          <h4 className="text-lg font-semibold mb-6 text-resona text-center">Servicios Profesionales</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Sonido */}
+            <div>
+              <h5 className="text-sm font-semibold mb-3 text-gray-400">🔊 Sonido</h5>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/servicios/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona transition">Sonido Valencia</Link></li>
+                <li><Link to="/servicios/alquiler-altavoces-profesionales" className="text-gray-300 hover:text-resona transition">Altavoces Pro</Link></li>
+                <li><Link to="/servicios/alquiler-microfonos-inalambricos" className="text-gray-300 hover:text-resona transition">Micrófonos</Link></li>
+                <li><Link to="/servicios/sonido-bodas-valencia" className="text-gray-300 hover:text-resona transition">Sonido Bodas</Link></li>
+                <li><Link to="/servicios/sonido-eventos-corporativos-valencia" className="text-gray-300 hover:text-resona transition">Eventos Corp.</Link></li>
+                <li><Link to="/servicios/alquiler-mesa-mezclas-dj" className="text-gray-300 hover:text-resona transition">Mesa DJ</Link></li>
+                <li><Link to="/servicios/alquiler-subwoofers-graves" className="text-gray-300 hover:text-resona transition">Subwoofers</Link></li>
+              </ul>
+            </div>
+            
+            {/* Iluminación */}
+            <div>
+              <h5 className="text-sm font-semibold mb-3 text-gray-400">💡 Iluminación</h5>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/servicios/alquiler-iluminacion-bodas-valencia" className="text-gray-300 hover:text-resona transition">Iluminación Bodas</Link></li>
+                <li><Link to="/servicios/iluminacion-led-profesional" className="text-gray-300 hover:text-resona transition">LED Profesional</Link></li>
+                <li><Link to="/servicios/iluminacion-escenarios-eventos" className="text-gray-300 hover:text-resona transition">Escenarios</Link></li>
+                <li><Link to="/servicios/alquiler-moving-heads" className="text-gray-300 hover:text-resona transition">Moving Heads</Link></li>
+                <li><Link to="/servicios/iluminacion-arquitectonica-eventos" className="text-gray-300 hover:text-resona transition">Arquitectónica</Link></li>
+                <li><Link to="/servicios/alquiler-laser-eventos" className="text-gray-300 hover:text-resona transition">Láser</Link></li>
+              </ul>
+            </div>
+            
+            {/* Video */}
+            <div>
+              <h5 className="text-sm font-semibold mb-3 text-gray-400">🎥 Video</h5>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/servicios/alquiler-pantallas-led-eventos" className="text-gray-300 hover:text-resona transition">Pantallas LED</Link></li>
+                <li><Link to="/servicios/alquiler-proyectores-profesionales" className="text-gray-300 hover:text-resona transition">Proyectores</Link></li>
+                <li><Link to="/servicios/videoescenarios-streaming-eventos" className="text-gray-300 hover:text-resona transition">Streaming</Link></li>
+              </ul>
+            </div>
+            
+            {/* Otros */}
+            <div>
+              <h5 className="text-sm font-semibold mb-3 text-gray-400">🎭 Otros</h5>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/servicios/alquiler-dj-valencia" className="text-gray-300 hover:text-resona transition">DJ Profesional</Link></li>
+                <li><Link to="/servicios/produccion-tecnica-eventos-valencia" className="text-gray-300 hover:text-resona transition">Producción Técnica</Link></li>
+                <li><Link to="/servicios/alquiler-estructuras-truss" className="text-gray-300 hover:text-resona transition">Estructuras Truss</Link></li>
+                <li><Link to="/servicios/alquiler-maquinas-fx-humo-confeti" className="text-gray-300 hover:text-resona transition">Máquinas FX</Link></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-700/50 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-resona rounded-full animate-pulse"></div>
