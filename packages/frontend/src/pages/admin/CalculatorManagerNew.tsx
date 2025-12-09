@@ -298,7 +298,8 @@ const CalculatorManagerNew = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          updateEventType(index, 'isActive', eventType.isActive === false);
+                          const currentState = eventType.isActive === false ? false : true;
+                          updateEventType(index, 'isActive', !currentState);
                         }}
                         className={`p-1 rounded hover:bg-white/20 ${
                           selectedEventIndex === index ? 'text-white' : 'text-gray-500 hover:text-gray-700'
