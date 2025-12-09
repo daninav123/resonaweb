@@ -89,21 +89,43 @@ class ResendProvider implements EmailProvider {
   private resend: Resend;
 
   constructor() {
-    this.resend = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY;
+    logger.info('🔧 [RESEND] Inicializando Resend Provider:', {
+      hasApiKey: !!apiKey,
+      apiKeyLength: apiKey?.length,
+      emailFrom: process.env.EMAIL_FROM
+    });
+    this.resend = new Resend(apiKey);
   }
 
   async send(options: EmailOptions): Promise<void> {
     try {
-      await this.resend.emails.send({
+      logger.info('📧 [RESEND] Preparando email:', {
+        to: options.to,
+        subject: options.subject,
+        from: process.env.EMAIL_FROM || 'noreply@resona.com',
+        hasHtml: !!options.html
+      });
+      
+      const result = await this.resend.emails.send({
         from: process.env.EMAIL_FROM || 'noreply@resona.com',
         to: options.to,
         subject: options.subject,
         html: options.html || '',
         text: options.text,
       });
-      logger.info(`Email sent via Resend to ${options.to}`);
-    } catch (error) {
-      logger.error('Resend error:', error);
+      
+      logger.info('✅ [RESEND] Email enviado correctamente:', {
+        to: options.to,
+        result: result
+      });
+    } catch (error: any) {
+      logger.error('❌ [RESEND] Error al enviar email:', {
+        error: error.message,
+        statusCode: error.statusCode,
+        to: options.to,
+        apiKey: process.env.RESEND_API_KEY ? '✅ Configurada' : '❌ NO configurada'
+      });
       throw error;
     }
   }
@@ -128,21 +150,32 @@ export class EmailService {
     // Select provider based on environment
     const emailProvider = process.env.EMAIL_PROVIDER || 'console';
     
+    logger.info('🔧 [EMAIL SERVICE] Inicializando servicio de email:', {
+      provider: emailProvider,
+      emailFrom: process.env.EMAIL_FROM,
+      hasResendKey: !!process.env.RESEND_API_KEY,
+      hasSendGridKey: !!process.env.SENDGRID_API_KEY,
+      hasSMTPConfig: !!(process.env.SMTP_HOST && process.env.SMTP_USER)
+    });
+    
     switch (emailProvider) {
       case 'sendgrid':
         this.provider = new SendGridProvider();
+        logger.info('✅ [EMAIL SERVICE] Usando SendGrid Provider');
         break;
       case 'resend':
         this.provider = new ResendProvider();
+        logger.info('✅ [EMAIL SERVICE] Usando Resend Provider');
         break;
       case 'smtp':
         this.provider = new NodemailerProvider();
+        logger.info('✅ [EMAIL SERVICE] Usando SMTP Provider');
         break;
       default:
         this.provider = new ConsoleProvider();
+        logger.info('⚠️ [EMAIL SERVICE] Usando Console Provider (solo para desarrollo)');
     }
     
-    logger.info(`Email service initialized with ${emailProvider} provider`);
     this.loadTemplates();
   }
 
