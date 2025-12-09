@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <!-- Google tag (gtag.js) - Solo en producción -->
-    <script>
+    <!-- Google tag (gtag.js) - Solo en producción - Defer para mejor performance -->
+    <script defer>
       // Solo cargar GA si NO estamos en localhost
       if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         const script = document.createElement('script');
-        script.async = true;
+        script.defer = true;
         script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
         document.head.appendChild(script);
         
@@ -53,6 +53,10 @@
     <meta property="twitter:description" content="Organización integral de eventos y alquiler profesional de sonido, iluminación y audiovisuales. Desde bodas hasta conciertos. Tu partner de confianza en Valencia." />
     <meta name="twitter:site" content="@resonaevents" />
     <meta property="twitter:image" content="/og-image.jpg" />
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://resonaweb.vercel.app">
+    <link rel="dns-prefetch" href="https://resonaweb.vercel.app">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
