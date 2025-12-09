@@ -18,7 +18,7 @@
     <meta name="geo.region" content="ES-VC" />
     <meta name="geo.placename" content="Valencia" />
     <meta name="geo.position" content="39.4699;-0.3763" />
-    <link rel="canonical" href="https://resonaevents.com/" />
+    <link rel="canonical" href="https://www.resonaevents.com/" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -38,25 +38,40 @@
     <meta property="twitter:image" content="/og-image.jpg" />
     
     <!-- Performance Optimizations - ORDEN CORRECTO -->
-    <!-- 1. Backend API (CRÍTICO - Ahorra 320ms LCP) -->
-    <link rel="preconnect" href="https://resona-backend.onrender.com" crossorigin>
+    <!-- 1. Preload CSS crítico PRIMERO -->
+    <link rel="preload" href="/assets/index-Lxgr6x5_.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/assets/index-Lxgr6x5_.css"></noscript>
+    
+    <!-- 2. Backend API (CRÍTICO - Ahorra 300ms LCP) -->
+    <link rel="preconnect" href="https://resona-backend.onrender.com" crossorigin="anonymous">
     <link rel="dns-prefetch" href="https://resona-backend.onrender.com">
     
-    <!-- 2. Fuentes (con crossorigin) -->
+    <!-- 3. Fuentes (con crossorigin y optimizadas) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
+    <!-- 4. Preconnect a Google Tag Manager -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    
     <title>ReSona Events - Tu Partner en Eventos y Alquiler Profesional | Valencia</title>
     
     <!-- Inline Critical CSS for faster FCP -->
     <style>
-      /* Critical CSS inlined */
-      body{margin:0;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-      #root{min-height:100vh}
-      .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:1.5rem;color:#5ebbff}
+      /* Critical CSS inlined - Expandido para cubrir más elementos */
+      *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+      body{margin:0;line-height:inherit;background:#fff;color:#1f2937}
+      #root{min-height:100vh;display:flex;flex-direction:column}
+      .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:1.5rem;color:#5ebbff;background:#f9fafb}
+      .animate-spin{animation:spin 1s linear infinite}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      h1,h2,h3{font-weight:700;line-height:1.2;margin:0}
+      img{display:block;max-width:100%;height:auto}
+      button{cursor:pointer;background:transparent;border:0;padding:0}
     </style>
     
     <!-- Schema.org Structured Data - Defer para no bloquear -->
@@ -235,11 +250,18 @@
     <div id="root"><div class="loading">Cargando...</div></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Google Analytics - Load at end for better performance -->
+    <!-- Google Analytics - Carga diferida para mejor performance -->
     <script>
-      // Solo cargar GA después de que la página se haya cargado
-      window.addEventListener('load', function() {
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // Cargar GA solo después de interacción del usuario o 3 segundos (lo que ocurra primero)
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        let gaLoaded = false;
+        
+        function loadGA() {
+          if (gaLoaded) return;
+          gaLoaded = true;
+          
           const script = document.createElement('script');
           script.async = true;
           script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
@@ -250,7 +272,15 @@
           gtag('js', new Date());
           gtag('config', 'G-4F522M345Z');
         }
-      });
+        
+        // Cargar en primera interacción
+        ['mousedown', 'touchstart', 'scroll', 'keydown'].forEach(function(event) {
+          window.addEventListener(event, loadGA, { once: true, passive: true });
+        });
+        
+        // O después de 3 segundos si no hay interacción
+        setTimeout(loadGA, 3000);
+      })();
     </script>
   </body>
 </html>
