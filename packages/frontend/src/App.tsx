@@ -77,6 +77,28 @@ const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 
+// Service Pages (20 páginas)
+const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonidoValencia'));
+const AlquilerAltavocesProfesionales = lazy(() => import('./pages/services/AlquilerAltavocesProfesionales'));
+const AlquilerMicrofonosInalambricos = lazy(() => import('./pages/services/AlquilerMicrofonosInalambricos'));
+const SonidoBodasValencia = lazy(() => import('./pages/services/SonidoBodasValencia'));
+const SonidoEventosCorporativos = lazy(() => import('./pages/services/SonidoEventosCorporativos'));
+const AlquilerMesaMezclaDJ = lazy(() => import('./pages/services/AlquilerMesaMezclaDJ'));
+const AlquilerSubwoofers = lazy(() => import('./pages/services/AlquilerSubwoofers'));
+const AlquilerIluminacionBodas = lazy(() => import('./pages/services/AlquilerIluminacionBodas'));
+const IluminacionLEDProfesional = lazy(() => import('./pages/services/IluminacionLEDProfesional'));
+const IluminacionEscenarios = lazy(() => import('./pages/services/IluminacionEscenarios'));
+const AlquilerMovingHeads = lazy(() => import('./pages/services/AlquilerMovingHeads'));
+const IluminacionArquitectonica = lazy(() => import('./pages/services/IluminacionArquitectonica'));
+const AlquilerLaser = lazy(() => import('./pages/services/AlquilerLaser'));
+const AlquilerPantallasLED = lazy(() => import('./pages/services/AlquilerPantallasLED'));
+const AlquilerProyectores = lazy(() => import('./pages/services/AlquilerProyectores'));
+const VideoescenariosStreaming = lazy(() => import('./pages/services/VideoescenariosStreaming'));
+const AlquilerDJValencia = lazy(() => import('./pages/services/AlquilerDJValencia'));
+const ProduccionTecnicaEventos = lazy(() => import('./pages/services/ProduccionTecnicaEventos'));
+const AlquilerEstructurasTruss = lazy(() => import('./pages/services/AlquilerEstructurasTruss'));
+const AlquilerMaquinasFX = lazy(() => import('./pages/services/AlquilerMaquinasFX'));
+
 // Cookie Banner
 import CookieBanner from './components/CookieBanner';
 
@@ -149,6 +171,29 @@ function App() {
             <Route path="/calculadora-evento" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/calculadora" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/servicios" element={<Layout><ServicesPage /></Layout>} />
+            
+            {/* Service Pages - 20 páginas optimizadas SEO */}
+            <Route path="/servicios/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValencia /></Layout>} />
+            <Route path="/servicios/alquiler-altavoces-profesionales" element={<Layout><AlquilerAltavocesProfesionales /></Layout>} />
+            <Route path="/servicios/alquiler-microfonos-inalambricos" element={<Layout><AlquilerMicrofonosInalambricos /></Layout>} />
+            <Route path="/servicios/sonido-bodas-valencia" element={<Layout><SonidoBodasValencia /></Layout>} />
+            <Route path="/servicios/sonido-eventos-corporativos-valencia" element={<Layout><SonidoEventosCorporativos /></Layout>} />
+            <Route path="/servicios/alquiler-mesa-mezclas-dj" element={<Layout><AlquilerMesaMezclaDJ /></Layout>} />
+            <Route path="/servicios/alquiler-subwoofers-graves" element={<Layout><AlquilerSubwoofers /></Layout>} />
+            <Route path="/servicios/alquiler-iluminacion-bodas-valencia" element={<Layout><AlquilerIluminacionBodas /></Layout>} />
+            <Route path="/servicios/iluminacion-led-profesional" element={<Layout><IluminacionLEDProfesional /></Layout>} />
+            <Route path="/servicios/iluminacion-escenarios-eventos" element={<Layout><IluminacionEscenarios /></Layout>} />
+            <Route path="/servicios/alquiler-moving-heads" element={<Layout><AlquilerMovingHeads /></Layout>} />
+            <Route path="/servicios/iluminacion-arquitectonica-eventos" element={<Layout><IluminacionArquitectonica /></Layout>} />
+            <Route path="/servicios/alquiler-laser-eventos" element={<Layout><AlquilerLaser /></Layout>} />
+            <Route path="/servicios/alquiler-pantallas-led-eventos" element={<Layout><AlquilerPantallasLED /></Layout>} />
+            <Route path="/servicios/alquiler-proyectores-profesionales" element={<Layout><AlquilerProyectores /></Layout>} />
+            <Route path="/servicios/videoescenarios-streaming-eventos" element={<Layout><VideoescenariosStreaming /></Layout>} />
+            <Route path="/servicios/alquiler-dj-valencia" element={<Layout><AlquilerDJValencia /></Layout>} />
+            <Route path="/servicios/produccion-tecnica-eventos-valencia" element={<Layout><ProduccionTecnicaEventos /></Layout>} />
+            <Route path="/servicios/alquiler-estructuras-truss" element={<Layout><AlquilerEstructurasTruss /></Layout>} />
+            <Route path="/servicios/alquiler-maquinas-fx-humo-confeti" element={<Layout><AlquilerMaquinasFX /></Layout>} />
+            
             <Route path="/contacto" element={<Layout><ContactPage /></Layout>} />
             <Route path="/sobre-nosotros" element={<Layout><AboutPage /></Layout>} />
             
