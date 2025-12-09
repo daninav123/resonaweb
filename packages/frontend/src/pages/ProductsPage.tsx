@@ -51,7 +51,8 @@ const ProductsPage = () => {
         return [];
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 15 * 60 * 1000, // 15 minutos - los packs cambian poco
+    gcTime: 30 * 60 * 1000, // 30 minutos
   });
 
   // Fetch products
@@ -84,8 +85,8 @@ const ProductsPage = () => {
       const result = await productService.getCategories();
       return result || [];
     },
-    staleTime: 0,
-    refetchOnMount: 'always',
+    staleTime: 30 * 60 * 1000, // 30 minutos - las categorías cambian poco
+    gcTime: 60 * 60 * 1000, // 1 hora
   });
 
   const handleFilterChange = (key: string, value: any) => {
@@ -349,6 +350,7 @@ const ProductsPage = () => {
                         src={getImageUrl(product.images[0] as any)}
                         alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
                         loading="lazy"
+                        decoding="async"
                         className={`object-contain bg-white ${
                           viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
                         }`}
