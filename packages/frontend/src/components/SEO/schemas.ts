@@ -59,7 +59,7 @@ interface LocalBusinessSchema {
 /**
  * Schema principal de LocalBusiness para ReSona Events
  */
-export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
+export const getLocalBusinessSchema = (): any => ({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   '@id': 'https://resonaevents.com/#localbusiness',
@@ -117,7 +117,17 @@ export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
           name: 'Alquiler de Equipos de Sonido',
           description:
             'Altavoces profesionales, mesas de mezclas, micrófonos y sistemas de sonido completos para eventos.',
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'ReSona Events',
+          },
         },
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'EUR',
+          price: '0',
+        },
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -126,7 +136,17 @@ export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
           name: 'Alquiler de Iluminación',
           description:
             'Focos LED, barras de iluminación, efectos especiales y sistemas de iluminación profesional.',
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'ReSona Events',
+          },
         },
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'EUR',
+          price: '0',
+        },
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -135,7 +155,17 @@ export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
           name: 'Alquiler de Pantallas LED',
           description:
             'Pantallas LED de alta resolución, proyectores y sistemas de vídeo para presentaciones y eventos.',
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'ReSona Events',
+          },
         },
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'EUR',
+          price: '0',
+        },
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -144,7 +174,17 @@ export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
           name: 'Equipos DJ Profesionales',
           description:
             'Controladoras, CDJs, mesas de mezclas DJ y equipos completos para DJs profesionales.',
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'ReSona Events',
+          },
         },
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'EUR',
+          price: '0',
+        },
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -153,7 +193,17 @@ export const getLocalBusinessSchema = (): LocalBusinessSchema => ({
           name: 'Montaje e Instalación',
           description:
             'Servicio técnico completo con montaje, instalación y soporte durante el evento.',
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'ReSona Events',
+          },
         },
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'EUR',
+          price: '0',
+        },
+        availability: 'https://schema.org/InStock',
       },
     ],
   },
