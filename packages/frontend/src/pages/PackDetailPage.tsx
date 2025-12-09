@@ -267,6 +267,7 @@ const PackDetailPage = () => {
               <div className="mt-2 text-sm text-gray-600">
                 <p>Precio incluye todos los componentes del pack</p>
               </div>
+              <p className="mt-2 text-xs text-gray-500 italic">Precio por unidad y día. IVA no incluido</p>
             </div>
 
             {/* Quantity - Mismo estilo que ProductDetailPage */}

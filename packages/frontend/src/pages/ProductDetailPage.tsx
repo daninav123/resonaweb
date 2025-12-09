@@ -242,10 +242,6 @@ const ProductDetailPage = () => {
                 <span className="text-3xl font-bold text-blue-600">€{product.pricePerDay}</span>
                 <span className="text-gray-600">por día</span>
               </div>
-              <div className="mt-2 text-sm text-gray-600">
-                <p>Fin de semana (viernes-lunes): €{product.pricePerDay}</p>
-                <p>Semana completa: €{product.pricePerWeek}</p>
-              </div>
               <p className="mt-2 text-xs text-gray-500 italic">Precio por unidad y día. IVA no incluido</p>
             </div>
 
