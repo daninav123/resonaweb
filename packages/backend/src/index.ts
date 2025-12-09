@@ -2,6 +2,7 @@ import 'dotenv/config';
 import 'express-async-errors';
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -171,10 +172,21 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../public/uploads')));
 
-// Servir imágenes de productos subidas
+// Servir imágenes de productos subidas con soporte WebP automático
 app.use('/uploads/products', (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
   res.header('Access-Control-Allow-Origin', '*'); // Permitir acceso desde frontend
+  
+  // Intentar servir versión WebP si existe
+  const originalPath = path.join(__dirname, '../uploads/products', req.path);
+  const ext = path.extname(originalPath);
+  const webpPath = originalPath.replace(ext, '.webp');
+  
+  // Si piden .jpg/.png y existe .webp, servir WebP
+  if (['.jpg', '.jpeg', '.png'].includes(ext.toLowerCase()) && fs.existsSync(webpPath)) {
+    return res.sendFile(webpPath);
+  }
+  
   next();
 }, express.static(path.join(__dirname, '../uploads/products')));
 
