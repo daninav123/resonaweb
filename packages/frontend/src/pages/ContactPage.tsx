@@ -18,15 +18,10 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
-      // TODO: Implementar envío al backend
-      // await api.post('/contact', formData);
+      const api = (await import('../services/api')).default;
+      await api.post('/contact', formData);
       
-      console.log('📧 Enviando mensaje de contacto:', formData);
-      
-      // Simular envío
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
+      toast.success('Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');
       setFormData({
         name: '',
         email: '',
@@ -34,9 +29,10 @@ const ContactPage = () => {
         subject: '',
         message: '',
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al enviar mensaje:', error);
-      toast.error('Error al enviar el mensaje. Por favor, intenta de nuevo.');
+      const errorMsg = error.response?.data?.error || 'Error al enviar el mensaje. Por favor, intenta de nuevo.';
+      toast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -45,10 +41,10 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <SEOHead
-        title="Contacto - Solicita tu Presupuesto | Resona Events"
-        description="Solicita presupuesto personalizado para tu evento. Atención profesional y respuesta en 24h. Teléfono, email y formulario de contacto."
-        keywords="contacto resona, presupuesto eventos, solicitar presupuesto alquiler material"
-        canonicalUrl="https://resona.com/contacto"
+        title="Contacto Valencia - Presupuesto para Eventos y Alquiler de Material | ReSona Events"
+        description="Contáctanos en Valencia para presupuesto personalizado de alquiler de sonido, iluminación y equipos audiovisuales. Respuesta en 24h. Teléfono: +34 613881414"
+        keywords="contacto resona valencia, presupuesto alquiler equipos valencia, presupuesto sonido eventos valencia, alquiler material eventos valencia"
+        canonicalUrl="https://www.resonaevents.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>

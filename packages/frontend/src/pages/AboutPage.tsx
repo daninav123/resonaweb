@@ -5,10 +5,10 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Sobre Nosotros - Resona Events | Empresa de Alquiler de Material"
-        description="Conoce Resona Events, empresa líder en alquiler de material para eventos. Equipos profesionales, servicio de calidad y experiencia garantizada."
-        keywords="sobre resona, empresa alquiler material eventos, servicio profesional eventos"
-        canonicalUrl="https://resona.com/sobre-nosotros"
+        title="Sobre Nosotros - Alquiler de Equipos para Eventos en Valencia | ReSona Events"
+        description="ReSona Events, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
+        keywords="resona events valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
+        canonicalUrl="https://www.resonaevents.com/sobre-nosotros"
       />
 
       {/* Hero Section */}

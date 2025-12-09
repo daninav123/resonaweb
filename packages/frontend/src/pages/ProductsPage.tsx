@@ -198,23 +198,23 @@ const ProductsPage = () => {
 
   const categoryName = categories?.find((c: Category) => c.slug === filters.category)?.name;
   const pageTitle = categoryName 
-    ? `${categoryName} - Catálogo de Alquiler | ReSona` 
-    : 'Catálogo de Productos - Alquiler de Equipos | ReSona';
+    ? `Alquiler de ${categoryName} Valencia - Equipos Profesionales | ReSona Events` 
+    : 'Alquiler de Equipos para Eventos en Valencia - Catálogo Completo | ReSona Events';
 
   const pageDescription = categoryName
-    ? `Alquiler de ${categoryName.toLowerCase()} para eventos. Equipos profesionales con disponibilidad en tiempo real. Reserva online.`
-    : 'Explora nuestro catálogo completo de equipos profesionales: sonido, iluminación, fotografía y video. Reserva online con disponibilidad en tiempo real.';
+    ? `Alquiler de ${categoryName.toLowerCase()} en Valencia para eventos. Equipos profesionales con disponibilidad en tiempo real. Servicio técnico incluido y entrega en 24h.`
+    : 'Catálogo completo de alquiler de equipos para eventos en Valencia: sonido profesional, iluminación LED, fotografía y video. Disponibilidad en tiempo real y reserva online.';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title={pageTitle}
         description={pageDescription}
-        keywords="catálogo alquiler, equipos eventos, sonido profesional, iluminación, fotografía, video"
-        canonicalUrl="https://resona.com/productos"
+        keywords="alquiler equipos eventos valencia, sonido profesional valencia, iluminación eventos valencia, alquiler altavoces valencia, equipos audiovisuales valencia"
+        canonicalUrl="https://www.resonaevents.com/productos"
         schema={breadcrumbSchema([
-          { name: 'Inicio', url: 'https://resona.com' },
-          { name: 'Catálogo', url: 'https://resona.com/productos' }
+          { name: 'Inicio', url: 'https://www.resonaevents.com' },
+          { name: 'Catálogo', url: 'https://www.resonaevents.com/productos' }
         ])}
       />
       
