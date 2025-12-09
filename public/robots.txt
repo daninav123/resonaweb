@@ -22,7 +22,7 @@ Allow: /calculadora-eventos
 Allow: /contacto
 
 # Sitemaps
-Sitemap: https://resonaevents.com/sitemap.xml
+Sitemap: https://www.resonaevents.com/sitemap.xml
 
 # Crawl-delay (seconds)
 Crawl-delay: 0

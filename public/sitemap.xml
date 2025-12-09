@@ -2,49 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Páginas principales -->
   <url>
-    <loc>https://resonaevents.com/</loc>
+    <loc>https://www.resonaevents.com/</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/productos</loc>
+    <loc>https://www.resonaevents.com/productos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/packs</loc>
+    <loc>https://www.resonaevents.com/packs</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/calculadora-eventos</loc>
+    <loc>https://www.resonaevents.com/calculadora-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/blog</loc>
+    <loc>https://www.resonaevents.com/blog</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios</loc>
+    <loc>https://www.resonaevents.com/servicios</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/contacto</loc>
+    <loc>https://www.resonaevents.com/contacto</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/sobre-nosotros</loc>
+    <loc>https://www.resonaevents.com/sobre-nosotros</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -52,25 +52,25 @@
   
   <!-- Categorías de productos -->
   <url>
-    <loc>https://resonaevents.com/productos?category=sonido</loc>
+    <loc>https://www.resonaevents.com/productos?category=sonido</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/productos?category=iluminacion</loc>
+    <loc>https://www.resonaevents.com/productos?category=iluminacion</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/productos?category=fotografia</loc>
+    <loc>https://www.resonaevents.com/productos?category=fotografia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/productos?category=video</loc>
+    <loc>https://www.resonaevents.com/productos?category=video</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -78,19 +78,19 @@
   
   <!-- Páginas legales -->
   <url>
-    <loc>https://resonaevents.com/legal/terminos</loc>
+    <loc>https://www.resonaevents.com/legal/terminos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/legal/privacidad</loc>
+    <loc>https://www.resonaevents.com/legal/privacidad</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/legal/cookies</loc>
+    <loc>https://www.resonaevents.com/legal/cookies</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -98,121 +98,121 @@
   
   <!-- Páginas de Servicio (20) -->
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-sonido-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-sonido-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-altavoces-profesionales</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-altavoces-profesionales</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-microfonos-inalambricos</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-microfonos-inalambricos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/sonido-bodas-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/sonido-bodas-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/sonido-eventos-corporativos-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/sonido-eventos-corporativos-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-mesa-mezclas-dj</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-mesa-mezclas-dj</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-subwoofers-graves</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-subwoofers-graves</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-iluminacion-bodas-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-iluminacion-bodas-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/iluminacion-led-profesional</loc>
+    <loc>https://www.resonaevents.com/servicios/iluminacion-led-profesional</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/iluminacion-escenarios-eventos</loc>
+    <loc>https://www.resonaevents.com/servicios/iluminacion-escenarios-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-moving-heads</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-moving-heads</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/iluminacion-arquitectonica-eventos</loc>
+    <loc>https://www.resonaevents.com/servicios/iluminacion-arquitectonica-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-laser-eventos</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-laser-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-pantallas-led-eventos</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-pantallas-led-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-proyectores-profesionales</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-proyectores-profesionales</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/videoescenarios-streaming-eventos</loc>
+    <loc>https://www.resonaevents.com/servicios/videoescenarios-streaming-eventos</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-dj-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-dj-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/produccion-tecnica-eventos-valencia</loc>
+    <loc>https://www.resonaevents.com/servicios/produccion-tecnica-eventos-valencia</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-estructuras-truss</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-estructuras-truss</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://resonaevents.com/servicios/alquiler-maquinas-fx-humo-confeti</loc>
+    <loc>https://www.resonaevents.com/servicios/alquiler-maquinas-fx-humo-confeti</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
