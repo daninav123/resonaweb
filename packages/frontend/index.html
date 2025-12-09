@@ -57,18 +57,74 @@
     
     <!-- Inline Critical CSS for faster FCP -->
     <style>
-      /* Critical CSS inlined - Expandido para cubrir más elementos */
+      /* Critical CSS inlined - Expandido significativamente */
       *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
-      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
       body{margin:0;line-height:inherit;background:#fff;color:#1f2937}
       #root{min-height:100vh;display:flex;flex-direction:column}
       .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:1.5rem;color:#5ebbff;background:#f9fafb}
       .animate-spin{animation:spin 1s linear infinite}
       @keyframes spin{to{transform:rotate(360deg)}}
-      h1,h2,h3{font-weight:700;line-height:1.2;margin:0}
+      h1,h2,h3,h4,h5,h6{font-weight:700;line-height:1.2;margin:0}
+      h1{font-size:2.25rem}h2{font-size:1.875rem}h3{font-size:1.5rem}
+      p{margin:0;line-height:1.625}
       img{display:block;max-width:100%;height:auto}
-      button{cursor:pointer;background:transparent;border:0;padding:0}
+      button{cursor:pointer;background:transparent;border:0;padding:0;font-family:inherit}
+      a{color:inherit;text-decoration:none}
+      /* Tailwind utilities críticos */
+      .container{width:100%;margin-left:auto;margin-right:auto;padding-left:1rem;padding-right:1rem}
+      @media(min-width:640px){.container{max-width:640px}}
+      @media(min-width:768px){.container{max-width:768px}}
+      @media(min-width:1024px){.container{max-width:1024px}}
+      @media(min-width:1280px){.container{max-width:1280px}}
+      .flex{display:flex}.grid{display:grid}.hidden{display:none}
+      .items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}
+      .gap-4{gap:1rem}.gap-8{gap:2rem}
+      .rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}
+      .bg-white{background-color:#fff}.bg-gray-50{background-color:#f9fafb}.bg-blue-600{background-color:#2563eb}
+      .text-white{color:#fff}.text-gray-900{color:#111827}.text-gray-600{color:#4b5563}
+      .shadow{box-shadow:0 1px 3px 0 rgba(0,0,0,.1)}.shadow-md{box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+      .px-4{padding-left:1rem;padding-right:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}
+      .mb-4{margin-bottom:1rem}.mb-8{margin-bottom:2rem}.mt-4{margin-top:1rem}
+      .font-bold{font-weight:700}.font-semibold{font-weight:600}
+      .text-2xl{font-size:1.5rem}.text-3xl{font-size:1.875rem}
     </style>
+    
+    <!-- Script para cargar CSS de Vite de forma asíncrona -->
+    <script>
+      (function() {
+        // Interceptar y convertir CSS de Vite a carga asíncrona ANTES de que bloquee
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.tagName === 'LINK' && node.rel === 'stylesheet' && node.href.includes('/assets/')) {
+                // Media print trick: cargar como print, luego cambiar a all cuando termine
+                node.media = 'print';
+                node.onload = function() {
+                  this.onload = null;
+                  this.media = 'all';
+                };
+                // Fallback para navegadores sin onload
+                setTimeout(function() {
+                  if (node.media === 'print') node.media = 'all';
+                }, 1000);
+              }
+            });
+          });
+        });
+        
+        // Observar cambios en el head para interceptar CSS de Vite
+        observer.observe(document.head, {
+          childList: true,
+          subtree: false
+        });
+        
+        // También procesar cualquier CSS ya existente (por si acaso)
+        document.addEventListener('DOMContentLoaded', function() {
+          observer.disconnect(); // Ya no necesitamos observar más
+        });
+      })();
+    </script>
     
     <!-- Schema.org Structured Data - Defer para no bloquear -->
     <script type="application/ld+json">

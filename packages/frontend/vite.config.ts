@@ -66,12 +66,20 @@ export default defineConfig({
         // Nombrar chunks para mejor cache
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
+        assetFileNames: (assetInfo) => {
+          // Separar CSS en chunks nombrados para mejor caching
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'assets/css/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
       },
     },
     chunkSizeWarningLimit: 500,
-    cssCodeSplit: true,
+    cssCodeSplit: true, // Split CSS por ruta para cargar solo lo necesario
+    cssMinify: 'esbuild', // Minificación CSS agresiva con esbuild
     assetsInlineLimit: 4096,
+    reportCompressedSize: false, // Desactivar para builds más rápidos
   },
   // Optimizaciones de performance
   optimizeDeps: {
