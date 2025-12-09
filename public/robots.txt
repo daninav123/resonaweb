@@ -1,5 +1,5 @@
 # Robots.txt for ReSona Events
-# Generated: 2025-11-18
+# Updated: 2025-12-09
 
 User-agent: *
 Disallow: /admin/
@@ -10,13 +10,22 @@ Disallow: /reset-password
 Disallow: /checkout
 Disallow: /mis-pedidos
 Disallow: /perfil
+Disallow: /carrito
+Disallow: /favoritos
+Disallow: /test*
 Allow: /
+Allow: /productos/
+Allow: /packs/
+Allow: /blog/
+Allow: /servicios
+Allow: /calculadora-eventos
+Allow: /contacto
 
 # Sitemaps
-Sitemap: https://resona.com/sitemap.xml
+Sitemap: https://resonaevents.com/sitemap.xml
 
 # Crawl-delay (seconds)
-Crawl-delay: 1
+Crawl-delay: 0
 
 # Specific bot rules
 User-agent: Googlebot
