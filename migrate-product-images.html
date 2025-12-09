@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrar Imágenes de Productos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #5ebbff;
+            padding-bottom: 10px;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #5ebbff;
+            border-radius: 5px;
+        }
+        button {
+            background: #5ebbff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4a9fd6;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .warning {
+            color: #FF9800;
+            font-weight: bold;
+        }
+        .info {
+            color: #2196F3;
+            font-weight: bold;
+        }
+        .progress {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5ebbff, #4a9fd6);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Migrar Imágenes de Productos</h1>
+        
+        <div class="step">
+            <h3>📋 ¿Qué hace este script?</h3>
+            <p>Migra las imágenes de productos que solo tienen <code>mainImageUrl</code> al nuevo formato con array <code>images[]</code>.</p>
+            <ul>
+                <li>✅ Lee todos los productos</li>
+                <li>✅ Encuentra los que tienen <code>mainImageUrl</code> pero NO <code>images[]</code></li>
+                <li>✅ Crea el array con la imagen existente</li>
+                <li>✅ Actualiza automáticamente en la base de datos</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔐 Credenciales de Admin</h3>
+            <div>
+                <label>Email: <input type="email" id="email" value="admin@resona.com" style="padding:8px; margin-left:10px; width:250px;"></label>
+            </div>
+            <div style="margin-top:10px;">
+                <label>Password: <input type="password" id="password" value="" style="padding:8px; margin-left:10px; width:250px;"></label>
+            </div>
+            <button onclick="startMigration()">🚀 Iniciar Migración</button>
+        </div>
+
+        <div id="progress-section" style="display:none;">
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar">0%</div>
+            </div>
+            <div id="progress-text" class="info"></div>
+        </div>
+
+        <div class="result" id="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://resona-backend.onrender.com/api/v1';
+        let authToken = '';
+
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = message + '\n';
+            result.appendChild(span);
+            
+            // Auto-scroll
+            result.scrollTop = result.scrollHeight;
+        }
+
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-bar').textContent = percent + '%';
+            document.getElementById('progress-text').textContent = 
+                `Procesando: ${current} de ${total} productos`;
+        }
+
+        async function login(email, password) {
+            log('🔐 Iniciando sesión...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Credenciales incorrectas');
+                }
+
+                const data = await response.json();
+                authToken = data.token;
+                log('✅ Sesión iniciada correctamente\n', 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Error al iniciar sesión: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function getProducts() {
+            log('📦 Obteniendo lista de productos...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/products?includeHidden=true`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener productos');
+                }
+
+                const data = await response.json();
+                const products = data.data || [];
+                log(`✅ ${products.length} productos encontrados\n`, 'success');
+                return products;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        async function migrateProduct(product) {
+            // Si ya tiene images con contenido, skip
+            if (product.images && product.images.length > 0) {
+                log(`⏭️  "${product.name}": Ya tiene images (${product.images.length})`, 'info');
+                return 'skip';
+            }
+
+            // Si NO tiene mainImageUrl, skip
+            if (!product.mainImageUrl) {
+                log(`⚠️  "${product.name}": No tiene imágenes`, 'warning');
+                return 'skip';
+            }
+
+            // Migrar
+            log(`🔄 "${product.name}": Migrando...`, 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/products/${product.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        images: [product.mainImageUrl]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al actualizar');
+                }
+
+                log(`✅ "${product.name}": Migrado correctamente`, 'success');
+                return 'success';
+            } catch (error) {
+                log(`❌ "${product.name}": ${error.message}`, 'error');
+                return 'error';
+            }
+        }
+
+        async function startMigration() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!password) {
+                alert('Por favor ingresa la contraseña');
+                return;
+            }
+
+            // Limpiar resultado anterior
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('progress-section').style.display = 'block';
+
+            log('═══════════════════════════════════════════════════', 'info');
+            log('🔧 MIGRACIÓN DE IMÁGENES: mainImageUrl → images[]', 'info');
+            log('═══════════════════════════════════════════════════\n', 'info');
+
+            // 1. Login
+            const loggedIn = await login(email, password);
+            if (!loggedIn) {
+                log('\n❌ No se pudo iniciar sesión. Abortando.\n', 'error');
+                return;
+            }
+
+            // 2. Obtener productos
+            const products = await getProducts();
+            if (products.length === 0) {
+                log('\n❌ No se pudieron obtener productos.\n', 'error');
+                return;
+            }
+
+            log('───────────────────────────────────────────────────\n', 'info');
+
+            // 3. Migrar cada producto
+            const results = { success: 0, skip: 0, error: 0 };
+            
+            for (let i = 0; i < products.length; i++) {
+                updateProgress(i + 1, products.length);
+                const result = await migrateProduct(products[i]);
+                results[result]++;
+                
+                // Esperar 100ms entre requests
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            // 4. Resumen
+            log('\n═══════════════════════════════════════════════════', 'info');
+            log('📊 RESUMEN DE MIGRACIÓN', 'info');
+            log('═══════════════════════════════════════════════════\n', 'info');
+            
+            log(`✅ Migrados correctamente: ${results.success}`, 'success');
+            log(`⏭️  Omitidos (ya tenían images): ${results.skip}`, 'warning');
+            log(`❌ Errores: ${results.error}`, 'error');
+            
+            log('\n═══════════════════════════════════════════════════\n', 'info');
+            
+            if (results.success > 0) {
+                log('🎉 ¡Migración completada! Las imágenes ahora deberían aparecer en el catálogo.', 'success');
+                log('🔄 Recarga la página del catálogo para ver los cambios.', 'info');
+            }
+        }
+    </script>
+</body>
+</html>
