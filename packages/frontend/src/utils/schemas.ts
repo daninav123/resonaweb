@@ -83,32 +83,39 @@ export const localBusinessSchema = {
 };
 
 // Schema para producto individual
-export const productSchema = (product: any) => ({
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: product.name,
-  description: product.description,
-  image: product.imageUrl,
-  brand: {
-    '@type': 'Brand',
-    name: product.brand || 'Resona Events',
-  },
-  offers: {
-    '@type': 'Offer',
-    url: `https://resona.com/productos/${product.slug}`,
-    priceCurrency: 'EUR',
-    price: product.pricePerDay,
-    availability: product.isActive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-    priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    seller: {
-      '@type': 'Organization',
-      name: 'Resona Events',
+export const productSchema = (product: any) => {
+  // Fecha dinámica: siempre un año en el futuro
+  const nextYear = new Date();
+  nextYear.setFullYear(nextYear.getFullYear() + 1);
+  const priceValidUntil = nextYear.toISOString().split('T')[0];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: product.imageUrl,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand || 'Resona Events',
     },
-  },
-  ...(product.category && {
-    category: product.category.name,
-  }),
-});
+    offers: {
+      '@type': 'Offer',
+      url: `https://resona.com/productos/${product.slug}`,
+      priceCurrency: 'EUR',
+      price: product.pricePerDay,
+      availability: product.isActive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      priceValidUntil: priceValidUntil,
+      seller: {
+        '@type': 'Organization',
+        name: 'Resona Events',
+      },
+    },
+    ...(product.category && {
+      category: product.category.name,
+    }),
+  };
+};
 
 // Schema para lista de productos
 export const productListSchema = (products: any[]) => ({

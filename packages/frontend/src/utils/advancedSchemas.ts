@@ -49,57 +49,64 @@ export const websiteSchema = {
   }
 };
 
-// Schema para productos con reseñas
-export const createProductSchema = (product: any) => ({
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": product.name,
-  "description": product.description || `Alquiler de ${product.name} para eventos profesionales`,
-  "image": product.mainImageUrl || "https://resonaevents.com/placeholder.jpg",
-  "sku": product.sku,
-  "mpn": product.sku,
-  "brand": {
-    "@type": "Brand",
-    "name": "ReSona Events"
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": `https://resonaevents.com/productos/${product.slug}`,
-    "priceCurrency": "EUR",
-    "price": product.pricePerDay,
-    "priceValidUntil": "2025-12-31",
-    "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    "itemCondition": "https://schema.org/UsedCondition",
-    "seller": {
-      "@type": "Organization",
+// Schema para producto individual (SEO)
+export const advancedProductSchema = (product: any) => {
+  // Fecha dinámica: siempre un año en el futuro
+  const nextYear = new Date();
+  nextYear.setFullYear(nextYear.getFullYear() + 1);
+  const priceValidUntil = nextYear.toISOString().split('T')[0]; // YYYY-MM-DD
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description || `Alquiler de ${product.name} para eventos profesionales`,
+    "image": product.mainImageUrl || "https://resonaevents.com/placeholder.jpg",
+    "sku": product.sku,
+    "mpn": product.sku,
+    "brand": {
+      "@type": "Brand",
       "name": "ReSona Events"
-    }
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.7",
-    "reviewCount": "23",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
-  "review": [
-    {
-      "@type": "Review",
-      "author": {
-        "@type": "Person",
-        "name": "María García"
-      },
-      "datePublished": "2024-11-15",
-      "reviewBody": "Excelente equipo, sonido perfecto para nuestra boda. Muy profesionales.",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "5",
-        "bestRating": "5",
-        "worstRating": "1"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://resonaevents.com/productos/${product.slug}`,
+      "priceCurrency": "EUR",
+      "price": product.pricePerDay,
+      "priceValidUntil": priceValidUntil,
+      "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "itemCondition": "https://schema.org/UsedCondition",
+      "seller": {
+        "@type": "Organization",
+        "name": "ReSona Events"
       }
-    }
-  ]
-});
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.7",
+      "reviewCount": "23",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "María García"
+        },
+        "datePublished": "2024-11-15",
+        "reviewBody": "Excelente equipo, sonido perfecto para nuestra boda. Muy profesionales.",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      }
+    ]
+  };
+};
 
 // Schema para eventos/servicios
 export const serviceSchema = {

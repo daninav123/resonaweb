@@ -110,6 +110,11 @@ const ProductDetailPage = () => {
     ? imageUrl 
     : `https://resonaevents.com${imageUrl || '/placeholder.jpg'}`;
 
+  // Fecha dinámica: siempre un año en el futuro
+  const nextYear = new Date();
+  nextYear.setFullYear(nextYear.getFullYear() + 1);
+  const priceValidUntil = nextYear.toISOString().split('T')[0]; // YYYY-MM-DD
+
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -127,7 +132,7 @@ const ProductDetailPage = () => {
       "url": `https://resonaevents.com/productos/${product.slug}`,
       "priceCurrency": "EUR",
       "price": String(product.pricePerDay),
-      "priceValidUntil": "2025-12-31",
+      "priceValidUntil": priceValidUntil,
       "priceSpecification": {
         "@type": "UnitPriceSpecification",
         "price": String(product.pricePerDay),
