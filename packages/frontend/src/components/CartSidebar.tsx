@@ -81,7 +81,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     if (!user || !user.userLevel) return 0;
     
     if (user.userLevel === 'VIP') {
-      return subtotal * 0.50; // 50% descuento
+      return subtotal * 0.25; // 25% descuento
     } else if (user.userLevel === 'VIP_PLUS') {
       return subtotal * 0.70; // 70% descuento
     }
@@ -247,7 +247,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                   )}
                 </p>
                 <p className="text-xs text-yellow-800 mt-1">
-                  {user.userLevel === 'VIP' ? '25%' : '50%'} descuento
+                  {user.userLevel === 'VIP' ? '25%' : '70%'} descuento
                 </p>
               </div>
             )}
