@@ -4,41 +4,55 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Ruta pública - Crear solicitud de presupuesto (DEBE IR PRIMERO)
+// ============================================
+// RUTAS PÚBLICAS (SIN AUTENTICACIÓN)
+// ============================================
+
+// Crear solicitud de presupuesto - PÚBLICO (cualquier usuario)
 router.post(
-  '/',
+  '/public',
   quoteRequestController.createQuoteRequest.bind(quoteRequestController)
 );
 
-// Rutas protegidas - Solo admin (todas las demás rutas requieren autenticación)
+// ============================================
+// RUTAS PROTEGIDAS (SOLO ADMIN)
+// ============================================
+
+// Aplicar middlewares de autenticación a todas las rutas siguientes
 router.use(authenticate);
 router.use(authorize('ADMIN', 'SUPERADMIN'));
 
+// Obtener todas las solicitudes
 router.get(
   '/',
   quoteRequestController.getAllQuoteRequests.bind(quoteRequestController)
 );
 
+// Obtener estadísticas
 router.get(
   '/stats',
   quoteRequestController.getQuoteStats.bind(quoteRequestController)
 );
 
+// Convertir solicitud a pedido
 router.post(
   '/:id/convert-to-order',
   quoteRequestController.convertToOrder.bind(quoteRequestController)
 );
 
+// Obtener solicitud por ID
 router.get(
   '/:id',
   quoteRequestController.getQuoteRequestById.bind(quoteRequestController)
 );
 
+// Actualizar solicitud
 router.put(
   '/:id',
   quoteRequestController.updateQuoteRequest.bind(quoteRequestController)
 );
 
+// Eliminar solicitud
 router.delete(
   '/:id',
   quoteRequestController.deleteQuoteRequest.bind(quoteRequestController)

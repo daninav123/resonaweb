@@ -554,11 +554,10 @@ const EventCalculatorPage = () => {
       const token = useAuthStore.getState().token || localStorage.getItem('token');
       
       // Enviar solicitud
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests/public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` }),
         },
         body: JSON.stringify(quoteData),
       });
@@ -658,7 +657,7 @@ const EventCalculatorPage = () => {
       };
 
       // Enviar solicitud de contacto
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests/public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
