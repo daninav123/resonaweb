@@ -65,7 +65,6 @@ export const calculatePaymentBreakdown = (
   if (isEligibleForInstallments) {
     payNow = total * 0.25; // 25% de reserva
     payLater = total * 0.75; // 75% restante
-    console.log('💳 PAGO A PLAZOS ACTIVADO:', { total, payNow, payLater, threshold: 500 });
   }
   
   // La fianza se cobra en tienda (no online)
