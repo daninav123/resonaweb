@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "resona",
   "version": "1.0.0",
   "private": true,
@@ -39,7 +39,7 @@
     "docker:logs": "docker-compose logs -f",
     "clean": "npm run clean --workspaces && rm -rf node_modules",
     "install:all": "npm install",
-    "prepare": "node -e \"try { if (process.env.NODE_ENV !== "production" && process.env.VERCEL !== "true") require('husky').install() } catch(e) {}\""
+    "prepare": "node -e \"try { if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== 'true') require('husky').install() } catch(e) {}\""
   },
   "keywords": ["rental", "events", "management", "resona"],
   "author": "ReSona",
