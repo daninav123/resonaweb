@@ -77,7 +77,6 @@ const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
 const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
-const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 
 // Service Pages (20 páginas)
 const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonidoValencia'));
@@ -216,7 +215,6 @@ function App() {
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/debug-auth" element={<DebugAuth />} />
             
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
