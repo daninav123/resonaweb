@@ -73,8 +73,8 @@ export class OrderService {
     logger.info(`💰 Subtotal SOLO productos normales (para descuento VIP): €${subtotalProductosNormales.toFixed(2)}`);
 
     // Aplicar descuento según nivel SOLO sobre productos normales
-    // VIP: 25% de descuento, VIP_PLUS: 50% de descuento
-    const discountRate = userLevel === 'VIP' ? 0.25 : 0.50;
+    // VIP: 25% de descuento, VIP_PLUS: 70% de descuento
+    const discountRate = userLevel === 'VIP' ? 0.25 : 0.70;
     const discount = subtotalProductosNormales * discountRate;
     
     if (subtotalProductosNormales === 0) {
@@ -218,7 +218,7 @@ export class OrderService {
 
       // Log VIP discount if applied
       if (vipDiscount > 0) {
-        logger.info(`VIP discount applied: ${user.userLevel} - €${vipDiscount.toFixed(2)} (${user.userLevel === 'VIP' ? '50%' : '70%'})`);      }
+        logger.info(`VIP discount applied: ${user.userLevel} - €${vipDiscount.toFixed(2)} (${user.userLevel === 'VIP' ? '25%' : '70%'})`);      }
 
       // Use transaction to prevent race conditions
       const order = await prisma.$transaction(async (tx) => {

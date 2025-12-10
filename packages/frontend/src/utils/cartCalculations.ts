@@ -132,7 +132,7 @@ export function calculateCartTotals(params: CartCalculationParams): CartTotals {
     
     // Aplicar descuento SOLO sobre productos normales (NO sobre calculadora)
     if (userLevel === 'VIP') {
-      vipDiscount = subtotalWithoutMontajes * 0.50; // 50%
+      vipDiscount = subtotalWithoutMontajes * 0.25; // 25%
     } else if (userLevel === 'VIP_PLUS') {
       vipDiscount = subtotalWithoutMontajes * 0.70; // 70%
     }

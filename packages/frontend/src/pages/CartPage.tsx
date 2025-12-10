@@ -1325,7 +1325,7 @@ const CartPage = () => {
                     <div className="flex justify-between text-sm font-semibold bg-yellow-50 p-2 rounded">
                       <span className="text-yellow-700 flex items-center gap-1">
                         {user?.userLevel === 'VIP' ? (
-                          <><Star className="w-4 h-4" /> Descuento VIP (50%)</>
+                          <><Star className="w-4 h-4" /> Descuento VIP (25%)</>
                         ) : (
                           <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
                         )}

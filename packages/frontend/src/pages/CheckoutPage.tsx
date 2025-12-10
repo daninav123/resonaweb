@@ -416,7 +416,7 @@ const CheckoutPage = () => {
     const subtotal = calculateSubtotal();
     
     if (user.userLevel === 'VIP') {
-      return subtotal * 0.50; // 50% descuento
+      return subtotal * 0.25; // 25% descuento
     } else if (user.userLevel === 'VIP_PLUS') {
       return subtotal * 0.70; // 70% descuento
     }
@@ -1114,7 +1114,7 @@ const CheckoutPage = () => {
                   <div className="flex justify-between text-sm font-semibold mb-2">
                     <span className="text-yellow-700 flex items-center gap-1">
                       {user?.userLevel === 'VIP' ? (
-                        <><Star className="w-4 h-4" /> Descuento VIP (50%)</>
+                        <><Star className="w-4 h-4" /> Descuento VIP (25%)</>
                       ) : (
                         <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
                       )}
