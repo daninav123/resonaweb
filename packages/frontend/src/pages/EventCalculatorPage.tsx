@@ -400,6 +400,13 @@ const EventCalculatorPage = () => {
       // 5. Marcar que los productos ya incluyen transporte/montaje
       localStorage.setItem('cartIncludesShippingInstallation', 'true');
       localStorage.setItem('cartFromCalculator', 'true');
+      
+      // 💳 LOGGING: Verificar que se guardó correctamente
+      console.log('💳 CALCULADORA: Marcando carrito como de calculadora', {
+        cartFromCalculator: localStorage.getItem('cartFromCalculator'),
+        cartIncludesShipping: localStorage.getItem('cartIncludesShippingInstallation'),
+        totalEvento: totalFinal
+      });
 
       // 6. Guardar fechas del evento para el carrito
       // Los eventos son SIEMPRE 1 día (fecha inicio = fecha fin)

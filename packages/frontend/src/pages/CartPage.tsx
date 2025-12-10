@@ -919,6 +919,17 @@ const CartPage = () => {
   // 💳 Detectar si viene de calculadora
   const fromCalculator = localStorage.getItem('cartFromCalculator') === 'true';
   
+  // DEBUG: Logging para diagnóstico
+  console.log('💳 DEBUG PAGO A PLAZOS:', {
+    fromCalculator,
+    subtotal,
+    shippingCost,
+    total: subtotal + shippingCost,
+    totalConIVA: (subtotal + shippingCost) * 1.21,
+    localStorage_cartFromCalculator: localStorage.getItem('cartFromCalculator'),
+    localStorage_cartIncludesShipping: localStorage.getItem('cartIncludesShippingInstallation')
+  });
+  
   // Calcular desglose de pago (señal, fianza, etc.)
   const paymentBreakdown = calculatePaymentBreakdown(
     subtotal,
