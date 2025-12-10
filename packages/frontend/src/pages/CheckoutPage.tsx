@@ -881,17 +881,17 @@ const CheckoutPage = () => {
                   {/* Para eventos: mostrar info del evento */}
                   {isEventOrder ? (
                     <>
-                      <div className="mb-4 p-3 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg">
-                        <p className="text-sm text-purple-700 flex items-center gap-2">
+                      <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                        <p className="text-sm text-green-700 flex items-center gap-2">
                           <Info className="w-4 h-4" />
                           Evento configurado - Montaje incluido
                         </p>
                       </div>
 
-                      <div className="mb-6 p-5 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border-2 border-purple-200">
+                      <div className="mb-6 p-5 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border-2 border-green-200">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <MapPin className="w-6 h-6 text-purple-600" />
+                          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <MapPin className="w-6 h-6 text-green-600" />
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-lg text-gray-900 mb-1">
@@ -909,8 +909,8 @@ const CheckoutPage = () => {
                         </div>
                       </div>
 
-                      <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                        <p className="text-xs text-purple-700">
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-xs text-green-700">
                           💡 La ubicación del evento se estableció en la calculadora. Para cambiarla, debes volver a configurar el evento.
                         </p>
                       </div>
