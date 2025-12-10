@@ -1767,23 +1767,33 @@ const EventCalculatorPage = () => {
                   });
                   
                   // IMPORTANTE: Los eventos son SIEMPRE 1 día, NO multiplicar
-                  const totalFinal = total;
+                  const subtotal = total;
+                  const iva = subtotal * 0.21;
+                  const totalFinal = subtotal + iva;
                   
                   return total > 0 ? (
                     <>
                       {/* Total del Evento */}
                       <div className="p-5 bg-green-50 rounded-lg border-2 border-green-300 mb-4">
                         <div className="pt-2">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-gray-600">Subtotal (sin IVA):</span>
+                            <span className="text-sm text-gray-600">€{subtotal.toFixed(2)}</span>
+                          </div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-gray-600">IVA (21%):</span>
+                            <span className="text-sm text-gray-600">€{iva.toFixed(2)}</span>
+                          </div>
+                          <div className="flex items-center justify-between pt-2 border-t border-green-300">
                             <span className="text-lg font-bold text-gray-900">TOTAL EVENTO:</span>
                             <span className="text-2xl font-bold text-green-600">€{totalFinal.toFixed(2)}</span>
                           </div>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
-                          * Incluye transporte y montaje. IVA no incluido. Precio final puede variar según disponibilidad.
+                          * Incluye transporte, montaje e IVA. Precio final puede variar según disponibilidad.
                         </p>
                       </div>
-
+                      
                       {/* Información de Pago a Plazos (solo si > 500€) */}
                       {totalFinal > 500 && (
                         <div className="p-5 bg-blue-50 rounded-lg border-2 border-blue-300">
