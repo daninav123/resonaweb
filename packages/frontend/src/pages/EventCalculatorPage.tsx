@@ -10,6 +10,7 @@ import { DEFAULT_CALCULATOR_CONFIG } from '../types/calculator.types';
 import { productService } from '../services/product.service';
 import { validateEventData, type EventValidation } from '../utils/eventValidation';
 import { guestCart } from '../utils/guestCart';
+import { decodeHTMLEntities } from '../utils/htmlDecode';
 import { api } from '../services/api';
 
 // Helper para construir URLs completas de imágenes
@@ -903,7 +904,9 @@ const EventCalculatorPage = () => {
                       <div className="flex items-center gap-4">
                         <div className="text-4xl">{part.icon}</div>
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-900 text-lg">{part.name}</div>
+                          <div className="font-semibold text-gray-900 text-lg">
+                            {decodeHTMLEntities(part.name)}
+                          </div>
                           <div className="text-sm text-gray-600">{part.description}</div>
                           <div className="text-xs text-gray-500 mt-1">
                             Duración: {part.defaultDuration}h • Sonido: {part.soundLevel} • Iluminación: {part.lightingLevel}
@@ -1625,13 +1628,7 @@ const EventCalculatorPage = () => {
                           : partPrice;
                         
                         // Decodificar entidades HTML en el nombre
-                        const decodedName = part.name
-                          .replace(/&#x2F;/g, '/')
-                          .replace(/&amp;/g, '&')
-                          .replace(/&lt;/g, '<')
-                          .replace(/&gt;/g, '>')
-                          .replace(/&quot;/g, '"')
-                          .replace(/&#x27;/g, "'");
+                        const decodedName = decodeHTMLEntities(part.name);
                         
                         return (
                           <div key={part.id}>

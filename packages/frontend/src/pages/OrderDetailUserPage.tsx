@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { decodeHTMLEntities } from '../utils/htmlDecode';
 import { invoiceService } from '../services/invoice.service';
 import { orderModificationService } from '../services/orderModification.service';
 import { Package, Calendar, MapPin, CreditCard, Download, ArrowLeft, Loader2, Edit, XCircle } from 'lucide-react';
@@ -508,7 +509,7 @@ const OrderDetailUserPage = () => {
                         <ul className="space-y-1 text-sm ml-4">
                           {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
                             <li key={idx} className="flex justify-between">
-                              <span>• {part.name}</span>
+                              <span>• {decodeHTMLEntities(part.name)}</span>
                               {part.price > 0 && <span className="font-medium">€{Number(part.price).toFixed(2)}</span>}
                             </li>
                           ))}
