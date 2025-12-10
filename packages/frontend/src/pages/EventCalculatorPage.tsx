@@ -1624,10 +1624,19 @@ const EventCalculatorPage = () => {
                           ? Number(selectedPackData.pricePerDay) 
                           : partPrice;
                         
+                        // Decodificar entidades HTML en el nombre
+                        const decodedName = part.name
+                          .replace(/&#x2F;/g, '/')
+                          .replace(/&amp;/g, '&')
+                          .replace(/&lt;/g, '<')
+                          .replace(/&gt;/g, '>')
+                          .replace(/&quot;/g, '"')
+                          .replace(/&#x27;/g, "'");
+                        
                         return (
                           <div key={part.id}>
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-gray-700">{part.icon} {part.name}</span>
+                              <span className="text-sm text-gray-700">{part.icon} {decodedName}</span>
                               <span className="text-sm font-semibold text-purple-600">€{displayPrice.toFixed(2)}</span>
                             </div>
                             
