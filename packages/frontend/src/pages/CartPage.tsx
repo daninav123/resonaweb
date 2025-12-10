@@ -1271,14 +1271,7 @@ const CartPage = () => {
                     <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-sm font-semibold text-blue-900">🏪 Recogida en tienda</p>
                       <p className="text-xs text-blue-700 mt-1">
-                        {companySettings ? (
-                          <>
-                            {companySettings.address && <>{companySettings.address}<br /></>}
-                            {companySettings.postalCode} {companySettings.city}, {companySettings.province || 'Valencia'}
-                          </>
-                        ) : (
-                          shippingConfig?.baseAddress || 'Madrid, España'
-                        )}
+                        C/ de l'Illa Cabrera, 13, 46026 València
                         {' • Gratis'}
                       </p>
                     </div>
