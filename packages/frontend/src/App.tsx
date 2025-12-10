@@ -58,7 +58,6 @@ const BackupManager = lazy(() => import('./pages/admin/BackupManager'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
 const AdminQuoteRequestsPage = lazy(() => import('./pages/admin/QuoteRequestsManager'));
-// const SimpleBudgetManager = lazy(() => import('./pages/admin/SimpleBudgetManager')); // Comentado temporalmente para fix Vercel build
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
@@ -259,7 +258,6 @@ function App() {
               <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
               <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
-              {/* <Route path="/admin/presupuestos" element={<AdminLayout><SimpleBudgetManager /></AdminLayout>} /> */}
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
               <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
