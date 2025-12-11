@@ -47,6 +47,7 @@ import diagnosticRouter from './routes/diagnostic.routes';
 import calculatorConfigRouter from './routes/calculatorConfig.routes';
 import contactRouter from './routes/contact.routes';
 import budgetRouter from './routes/budget.routes';
+import gdprRouter from './routes/gdpr.routes'; // RGPD: Derechos de protección de datos
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -275,6 +276,7 @@ app.use('/api/v1/contabilidad', contabilidadRouter);
 app.use('/api/v1/calculator-config', calculatorConfigRouter);
 app.use('/api/v1/contact', contactRouter);
 app.use('/api/v1/budgets', budgetRouter);
+app.use('/api/v1/gdpr', gdprRouter); // RGPD: Derechos de protección de datos
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling

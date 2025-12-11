@@ -35,6 +35,9 @@ interface RegisterData {
   firstName: string;
   lastName: string;
   phone?: string;
+  // RGPD
+  acceptPrivacy?: boolean; // Política de Privacidad (obligatorio)
+  acceptMarketing?: boolean; // Comunicaciones comerciales (opcional)
 }
 
 export const useAuthStore = create<AuthState>()(

@@ -24,7 +24,8 @@ export default function LegalNotice() {
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
                 <p className="text-sm text-gray-700 space-y-1">
                   <strong>Denominación Social:</strong> ReSona Events<br />
-                  <strong>NIF/CIF:</strong> [Pendiente de completar]<br />
+                  <strong>Titular:</strong> Daniel Navarro Campos<br />
+                  <strong>DNI:</strong> 03152623J<br />
                   <strong>Domicilio Social:</strong> Valencia, España<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
                   <strong>Email:</strong> info@resonaevents.com<br />

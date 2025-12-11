@@ -28,7 +28,8 @@ export default function TermsAndConditions() {
                 <p className="text-sm text-gray-700">
                   <strong>Datos de la Empresa:</strong><br />
                   ReSona Events<br />
-                  NIF: [Pendiente]<br />
+                  <strong>Titular:</strong> Daniel Navarro Campos<br />
+                  DNI: 03152623J<br />
                   Dirección: Valencia, España<br />
                   Email: info@resonaevents.com<br />
                   Teléfono: 613 88 14 14

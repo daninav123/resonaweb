@@ -213,10 +213,16 @@ model User {
   isActive      Boolean @default(true)
   emailVerified Boolean @default(false)
 
-  // Legal
+  // Legal y RGPD
   acceptedTermsAt   DateTime?
   acceptedPrivacyAt DateTime?
   termsVersion      String?
+  
+  // RGPD: Consentimientos
+  acceptedMarketingAt DateTime? // Fecha de consentimiento para comunicaciones comerciales
+  marketingConsent    Boolean   @default(false) // Acepta recibir marketing
+  dataProcessingConsent Boolean @default(true) // Consentimiento general para tratamiento de datos
+  lastConsentUpdate   DateTime? // Última actualización de consentimientos
 
   // Fechas
   createdAt   DateTime  @default(now())

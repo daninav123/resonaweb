@@ -15,6 +15,8 @@ const RegisterPage = () => {
     lastName: '',
     phone: '',
     acceptTerms: false,
+    acceptPrivacy: false, // RGPD: Política de Privacidad (obligatorio)
+    acceptMarketing: false, // RGPD: Comunicaciones comerciales (opcional)
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -38,6 +40,9 @@ const RegisterPage = () => {
     if (!formData.acceptTerms) {
       errors.push('Debes aceptar los términos y condiciones');
     }
+    if (!formData.acceptPrivacy) {
+      errors.push('Debes aceptar la Política de Privacidad (obligatorio por RGPD)');
+    }
     
     setValidationErrors(errors);
     return errors.length === 0;
@@ -54,6 +59,9 @@ const RegisterPage = () => {
       firstName: formData.firstName,
       lastName: formData.lastName,
       phone: formData.phone || undefined,
+      // RGPD: Enviar consentimientos
+      acceptPrivacy: formData.acceptPrivacy,
+      acceptMarketing: formData.acceptMarketing,
     });
     
     if (success) {
@@ -232,25 +240,63 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="accept-terms"
-                name="accept-terms"
-                type="checkbox"
-                checked={formData.acceptTerms}
-                onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="accept-terms" className="ml-2 block text-sm text-gray-900">
-                Acepto los{' '}
-                <Link to="/terminos" className="text-blue-600 hover:text-blue-500">
-                  términos y condiciones
-                </Link>{' '}
-                y la{' '}
-                <Link to="/privacidad" className="text-blue-600 hover:text-blue-500">
-                  política de privacidad
-                </Link>
-              </label>
+            {/* RGPD: Política de Privacidad + Condiciones (OBLIGATORIO) */}
+            <div className="space-y-3 border-t pt-4">
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="accept-privacy"
+                    name="accept-privacy"
+                    type="checkbox"
+                    required
+                    checked={formData.acceptPrivacy}
+                    onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
+                    className="h-4 w-4 text-resona focus:ring-resona border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor="accept-privacy" className="font-medium text-gray-900">
+                    He leído y acepto la{' '}
+                    <Link to="/politica-privacidad" target="_blank" className="text-resona hover:text-resona/80 underline">
+                      Política de Privacidad
+                    </Link>
+                    {' '}y las{' '}
+                    <Link to="/terminos-condiciones" target="_blank" className="text-resona hover:text-resona/80 underline">
+                      Condiciones de Contratación
+                    </Link>
+                    {' '}<span className="text-red-600">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Obligatorio según RGPD para crear tu cuenta y gestionar pedidos.
+                  </p>
+                </div>
+              </div>
+
+              {/* RGPD: Comunicaciones Comerciales (OPCIONAL) */}
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="accept-marketing"
+                    name="accept-marketing"
+                    type="checkbox"
+                    checked={formData.acceptMarketing}
+                    onChange={(e) => setFormData({ ...formData, acceptMarketing: e.target.checked })}
+                    className="h-4 w-4 text-resona focus:ring-resona border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor="accept-marketing" className="font-medium text-gray-700">
+                    Acepto recibir comunicaciones comerciales y promociones
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Opcional. Puedes darte de baja en cualquier momento.
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 italic">
+                🔒 Tus datos están protegidos según el RGPD. Nunca compartiremos tu información con terceros.
+              </p>
             </div>
 
             <div>

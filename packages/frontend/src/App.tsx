@@ -74,6 +74,7 @@ const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions')
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
 const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
+const MyDataPage = lazy(() => import('./pages/MyDataPage')); // RGPD: Mis Datos
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 
@@ -206,6 +207,11 @@ function App() {
             <Route path="/politica-privacidad" element={<Layout><PrivacyPolicy /></Layout>} />
             <Route path="/politica-cookies" element={<Layout><CookiesPolicy /></Layout>} />
             <Route path="/aviso-legal" element={<Layout><LegalNotice /></Layout>} />
+            
+            {/* RGPD: Mis Datos */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/mis-datos" element={<Layout><MyDataPage /></Layout>} />
+            </Route>
             {/* Rutas legacy */}
             <Route path="/legal/terminos" element={<Layout><TermsAndConditions /></Layout>} />
             <Route path="/legal/privacidad" element={<Layout><PrivacyPolicy /></Layout>} />

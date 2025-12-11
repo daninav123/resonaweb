@@ -11,6 +11,9 @@ interface RegisterData {
   firstName: string;
   lastName: string;
   phone?: string;
+  // RGPD
+  acceptPrivacy?: boolean; // Política de Privacidad (obligatorio)
+  acceptMarketing?: boolean; // Comunicaciones comerciales (opcional)
 }
 
 interface LoginData {
@@ -36,6 +39,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
     // Create user
+    const now = new Date();
     const user = await prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
@@ -44,6 +48,12 @@ export class AuthService {
         lastName: data.lastName,
         phone: data.phone,
         role: 'CLIENT',
+        // RGPD: Guardar consentimientos
+        acceptedPrivacyAt: data.acceptPrivacy ? now : null,
+        dataProcessingConsent: data.acceptPrivacy ?? true,
+        acceptedMarketingAt: data.acceptMarketing ? now : null,
+        marketingConsent: data.acceptMarketing ?? false,
+        lastConsentUpdate: now,
       },
     });
 

@@ -18,7 +18,8 @@ export default function PrivacyPolicy() {
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Identidad:</strong> ReSona Events<br />
-                  <strong>NIF:</strong> [Pendiente]<br />
+                  <strong>Titular:</strong> Daniel Navarro Campos<br />
+                  <strong>DNI:</strong> 03152623J<br />
                   <strong>Dirección:</strong> Valencia, España<br />
                   <strong>Email:</strong> info@resonaevents.com<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
