@@ -5,7 +5,7 @@ import { productService } from '../services/product.service';
 import { Product, Category } from '../types';
 import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
-import { getLocalBusinessSchema, getOrganizationSchema } from '../components/SEO/schemas';
+import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 
 const HomePage = () => {
@@ -43,11 +43,16 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="ReSona Events Valencia - Producción Técnica y Servicios para Eventos"
-        description="Ofrecemos una amplia gama de equipos profesionales para todo tipo de eventos. Servicio completo de decoración, iluminación y montaje para tu día especial. Hacemos realidad tu boda o evento en Valencia."
-        keywords="producción eventos valencia, servicios audiovisuales valencia, eventos corporativos valencia, bodas valencia, sonido iluminación valencia, técnico de sonido valencia"
-        ogImage="https://resonaevents.com/og-image.jpg"
-        schema={getLocalBusinessSchema()}
+        title="ReSona Events Valencia - Alquiler Profesional de Equipos Audiovisuales"
+        description="Alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED, equipos DJ. Servicio técnico completo con montaje e instalación. Presupuesto online gratis."
+        keywords="alquiler sonido valencia, alquiler iluminación valencia, alquiler material eventos valencia, equipos audiovisuales valencia, sonido profesional valencia, iluminación eventos valencia, pantallas LED valencia, equipos DJ valencia, bodas valencia, conciertos valencia, eventos corporativos valencia"
+        ogImage="https://resonaweb.vercel.app/og-image.jpg"
+        canonicalUrl="https://resonaweb.vercel.app/"
+        schema={[
+          getLocalBusinessSchema(),
+          getOrganizationSchema(),
+          getWebSiteSchema(),
+        ]}
       />
       {/* Hero Section */}
       <section className="relative bg-resona text-white overflow-hidden">

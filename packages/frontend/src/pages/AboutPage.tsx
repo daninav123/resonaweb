@@ -8,7 +8,7 @@ const AboutPage = () => {
         title="Sobre Nosotros - Alquiler de Equipos para Eventos en Valencia | ReSona Events"
         description="ReSona Events, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
         keywords="resona events valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
-        canonicalUrl="https://www.resonaevents.com/sobre-nosotros"
+        canonicalUrl="https://resonaevents.com/sobre-nosotros"
       />
 
       {/* Hero Section */}

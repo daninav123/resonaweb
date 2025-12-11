@@ -44,7 +44,7 @@ const ContactPage = () => {
         title="Contacto Valencia - Presupuesto para Eventos y Alquiler de Material | ReSona Events"
         description="Contáctanos en Valencia para presupuesto personalizado de alquiler de sonido, iluminación y equipos audiovisuales. Respuesta en 24h. Teléfono: +34 613881414"
         keywords="contacto resona valencia, presupuesto alquiler equipos valencia, presupuesto sonido eventos valencia, alquiler material eventos valencia"
-        canonicalUrl="https://www.resonaevents.com/contacto"
+        canonicalUrl="https://resonaevents.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>

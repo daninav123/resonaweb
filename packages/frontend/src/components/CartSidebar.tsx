@@ -6,6 +6,7 @@ import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
+import { calculateCartTotals } from '../utils/cartCalculations';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -54,43 +55,18 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
   const cartItems = guestCartItems;
 
-  const calculateItemPrice = (item: any) => {
-    // Si es un item de evento (calculadora), usar su total calculado
-    if (item.eventMetadata) {
-      const partsTotal = Number(item.eventMetadata.partsTotal) || 0;
-      const extrasTotal = Number(item.eventMetadata.extrasTotal) || 0;
-      return partsTotal + extrasTotal;
-    }
-    
-    // Si tiene fechas, calcular por días
-    if (item.startDate && item.endDate) {
-      const start = new Date(item.startDate);
-      const end = new Date(item.endDate);
-      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) || 1;
-      return item.product.pricePerDay * days * item.quantity;
-    }
-    
-    // Si no tiene fechas, usar precio por día × cantidad (precio base)
-    return item.product.pricePerDay * item.quantity;
-  };
+  // ⭐ USAR FUNCIÓN CENTRALIZADA PARA TODOS LOS CÁLCULOS
+  const cartTotals = calculateCartTotals({
+    items: guestCartItems,
+    deliveryOption: 'pickup', // CartSidebar siempre asume pickup
+    distance: 0,
+    includeInstallation: false,
+    shippingIncludedInPrice: false,
+    userLevel: user?.userLevel as any,
+    appliedCoupon: null,
+  });
 
-  const subtotal = cartItems.reduce((sum, item) => sum + calculateItemPrice(item), 0);
-
-  // Calcular descuento VIP
-  const calculateVIPDiscount = () => {
-    if (!user || !user.userLevel) return 0;
-    
-    if (user.userLevel === 'VIP') {
-      return subtotal * 0.25; // 25% descuento
-    } else if (user.userLevel === 'VIP_PLUS') {
-      return subtotal * 0.70; // 70% descuento
-    }
-    
-    return 0;
-  };
-
-  const vipDiscount = calculateVIPDiscount();
-  const total = subtotal - vipDiscount;
+  const { subtotal, vipDiscount, total } = cartTotals;
 
   const handleViewCart = () => {
     onClose();

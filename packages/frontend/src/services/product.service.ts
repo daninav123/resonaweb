@@ -80,10 +80,14 @@ class ProductService {
    */
   async getCategories() {
     const response: any = await api.get('/products/categories');
+    console.log('📡 Response de /products/categories:', response);
     const categories = response?.data || [];
+    console.log('📦 Total categorías antes de filtrar:', categories.length);
     
     // Filtrar categoría "Personal" (solo visible en admin)
-    return categories.filter((cat: any) => cat.name.toLowerCase() !== 'personal');
+    const filtered = categories.filter((cat: any) => cat.name.toLowerCase() !== 'personal');
+    console.log('✨ Categorías después de filtrar "Personal":', filtered.length);
+    return filtered;
   }
 
   /**

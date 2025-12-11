@@ -8,6 +8,10 @@ import { guestCart } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 import { cartCountManager } from '../hooks/useCartCount';
+import SEOHead from '../components/SEO/SEOHead';
+import Breadcrumbs from '../components/SEO/Breadcrumbs';
+import OptimizedImage from '../components/common/OptimizedImage';
+import { generateProductSchema } from '../utils/seo/schemaGenerator';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -104,115 +108,78 @@ const ProductDetailPage = () => {
     );
   }
 
-  // Schema.org Product JSON-LD
+  // SEO: Metadatos dinámicos
+  const baseUrl = 'https://resonaweb.vercel.app';
+  const canonicalUrl = `${baseUrl}/productos/${product.slug}`;
   const imageUrl = product.mainImageUrl || product.images?.[0];
   const fullImageUrl = imageUrl?.startsWith('http') 
     ? imageUrl 
-    : `https://resonaevents.com${imageUrl || '/placeholder.jpg'}`;
+    : `${baseUrl}${imageUrl || '/og-image.jpg'}`;
 
-  // Fecha dinámica: siempre un año en el futuro
-  const nextYear = new Date();
-  nextYear.setFullYear(nextYear.getFullYear() + 1);
-  const priceValidUntil = nextYear.toISOString().split('T')[0]; // YYYY-MM-DD
+  const seoTitle = `Alquiler ${product.name} | Equipos Profesionales para Eventos`;
+  const seoDescription = product.description 
+    ? `${product.description.substring(0, 150)}... Desde €${product.pricePerDay}/día. Alquiler profesional en Valencia.`
+    : `Alquiler de ${product.name} para eventos. ${product.category?.name || 'Equipo profesional'}. Desde €${product.pricePerDay}/día. Disponibilidad inmediata.`;
+  const seoKeywords = `alquiler ${product.name.toLowerCase()}, ${product.category?.name?.toLowerCase() || 'equipos eventos'}, alquiler material eventos valencia, ${product.name.toLowerCase()} profesional, equipos audiovisuales alquiler`;
 
-  const productSchema = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": product.name,
-    "description": product.description || `Alquiler de ${product.name} para eventos profesionales en Valencia`,
-    "sku": product.sku,
-    "mpn": product.sku,
-    "image": [fullImageUrl],
-    "brand": {
-      "@type": "Brand",
-      "name": "ReSona Events"
-    },
-    "offers": {
-      "@type": "Offer",
-      "url": `https://resonaevents.com/productos/${product.slug}`,
-      "priceCurrency": "EUR",
-      "price": String(product.pricePerDay),
-      "priceValidUntil": priceValidUntil,
-      "priceSpecification": {
-        "@type": "UnitPriceSpecification",
-        "price": String(product.pricePerDay),
-        "priceCurrency": "EUR",
-        "unitText": "DAY"
-      },
-      "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      "itemCondition": "https://schema.org/UsedCondition",
-      "seller": {
-        "@type": "Organization",
-        "name": "ReSona Events"
-      }
-    },
-    "category": product.category?.name || "Equipos Audiovisuales",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.7",
-      "reviewCount": "23",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": [
-      {
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "María García"
-        },
-        "datePublished": "2024-11-15",
-        "reviewBody": `Excelente equipo de ${product.category?.name || 'audiovisuales'}, ideal para eventos. Muy profesionales en ReSona Events.`,
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "5",
-          "bestRating": "5",
-          "worstRating": "1"
-        }
-      }
-    ]
-  };
+  // Schema.org usando el generador
+  const productSchema = generateProductSchema({
+    id: product.id,
+    name: product.name,
+    description: product.description || `Alquiler de ${product.name} para eventos profesionales`,
+    pricePerDay: product.pricePerDay,
+    image: fullImageUrl,
+    category: product.category?.name,
+    brand: 'Resona Events',
+    sku: product.sku,
+    availability: product.stock > 0 ? 'InStock' : 'OutOfStock',
+    rating: 4.7,
+    reviewCount: 23,
+  }, baseUrl);
+
+  // Breadcrumbs para navegación y SEO
+  const breadcrumbItems = [
+    { name: 'Inicio', url: '/' },
+    { name: 'Productos', url: '/productos' },
+    ...(product.category ? [{ name: product.category.name, url: `/productos?category=${product.category.slug}` }] : []),
+    { name: product.name, url: canonicalUrl },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      {/* Schema.org Product Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+    <>
+      {/* SEO Head con todos los metatags */}
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        ogImage={fullImageUrl}
+        ogType="product"
+        canonicalUrl={canonicalUrl}
+        schema={productSchema}
+        product={{
+          price: product.pricePerDay,
+          currency: 'EUR',
+          availability: product.stock > 0 ? 'InStock' : 'OutOfStock',
+        }}
       />
-      
-      <div className="container mx-auto px-4">
-        {/* Breadcrumb */}
-        <nav className="text-sm mb-6">
-          <ol className="list-none p-0 inline-flex">
-            <li className="flex items-center">
-              <a href="/" className="text-gray-500 hover:text-gray-700">Inicio</a>
-              <svg className="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/>
-              </svg>
-            </li>
-            <li className="flex items-center">
-              <a href="/productos" className="text-gray-500 hover:text-gray-700">Productos</a>
-              <svg className="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/>
-              </svg>
-            </li>
-            <li className="text-gray-700">{product.name}</li>
-          </ol>
-        </nav>
+
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          {/* Breadcrumbs con Schema integrado */}
+          <Breadcrumbs items={breadcrumbItems} className="mb-6" />
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Product Images */}
           <div>
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               {product.mainImageUrl ? (
-                <img
+                <OptimizedImage
                   src={getImageUrl(product.mainImageUrl)}
                   alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
                   className="w-full h-96 object-contain bg-white"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = placeholderImage;
-                  }}
+                  height={384}
+                  priority={true}
+                  objectFit="contain"
                 />
               ) : (
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
@@ -223,14 +190,14 @@ const ProductDetailPage = () => {
             {product.images && product.images.length > 0 && (
               <div className="mt-4 grid grid-cols-4 gap-2">
                 {product.images.map((img: string, idx: number) => (
-                  <img
+                  <OptimizedImage
                     key={idx}
                     src={getImageUrl(img)}
-                    alt={`${product.name} ${idx + 1}`}
+                    alt={`${product.name} vista ${idx + 1} - Detalle del equipo`}
                     className="w-full h-24 object-contain bg-white rounded-lg cursor-pointer hover:opacity-75"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = placeholderImage;
-                    }}
+                    height={96}
+                    loading="lazy"
+                    objectFit="contain"
                   />
                 ))}
               </div>
@@ -425,8 +392,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

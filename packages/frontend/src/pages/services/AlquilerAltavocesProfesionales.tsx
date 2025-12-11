@@ -3,10 +3,10 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerAltavocesProfesionales = () => {
   const pageData = {
-    title: "Alquiler de Altavoces Profesionales | JBL, QSC, EV | ReSona Events",
-    metaDescription: "Alquiler de altavoces profesionales en Valencia. JBL, QSC, EV. Desde 200W hasta Line Array. Técnico incluido. ☎️ 613 88 14 14",
-    keywords: "alquiler altavoces, altavoces profesionales valencia, alquiler altavoces JBL",
-    heroTitle: "Alquiler de Altavoces Profesionales",
+    title: "Alquiler de Altavoces Profesionales en Valencia | JBL, QSC, EV | ReSona Events",
+    metaDescription: "Alquiler de altavoces profesionales en Valencia. JBL, QSC, EV. Desde 200W hasta Line Array. Técnico incluido. Servicio en Valencia y provincia. ☎️ 613 88 14 14",
+    keywords: "alquiler altavoces valencia, altavoces profesionales valencia, alquiler altavoces JBL valencia, alquiler sonido valencia",
+    heroTitle: "Alquiler de Altavoces Profesionales en Valencia",
     heroSubtitle: "JBL, QSC, EV - Potencia y calidad para tu evento",
     introduction: `El <strong>alquiler de altavoces profesionales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento. En ReSona Events disponemos del catálogo más completo de <strong>altavoces profesionales</strong> de las marcas líderes del mercado: JBL PRX Series, QSC K Series, Electro-Voice ZLX y EKX, y sistemas Line Array L-Acoustics. Nuestros <strong>altavoces profesionales</strong> cubren desde eventos íntimos de 50 personas hasta grandes conciertos de 5.000+ asistentes. Disponemos de sistemas portátiles autoamplificados desde 200W hasta potentes sistemas Line Array de 2.000W+ por módulo. Todos nuestros <strong>altavoces</strong> están calibrados profesionalmente y se entregan con técnico especializado. El servicio de <strong>alquiler de altavoces en Valencia</strong> incluye transporte, montaje, calibración acústica y asistencia técnica durante todo el evento. Trabajamos con estudios de sonido certificados para garantizar la mejor calidad en bodas, conciertos, eventos corporativos y festivales en Valencia y provincia.`,
    

@@ -1,0 +1,60 @@
+# robots.txt optimizado para Resona Events
+# Mejora el rastreo de Google y otros motores de búsqueda
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /carrito
+Disallow: /checkout
+Disallow: /perfil
+Disallow: /mis-pedidos
+Disallow: /private/
+
+# Permitir APIs públicas importantes
+Allow: /api/v1/products
+Allow: /api/v1/packs
+Allow: /api/v1/blog
+Allow: /sitemap.xml
+Allow: /rss
+
+# Sitemap
+Sitemap: https://resonaweb.vercel.app/sitemap.xml
+
+# Crawl-delay (cortesía)
+Crawl-delay: 1
+
+# Googlebot específico
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /carrito
+Disallow: /checkout
+Disallow: /perfil
+
+# Imágenes (permitir indexación)
+User-agent: Googlebot-Image
+Allow: /
+Allow: /uploads/
+Allow: /images/
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Crawl-delay: 2
+
+# Bad bots (bloquear)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Categorías</title>
+</head>
+<body>
+    <h1>Test de Categorías Frontend</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testCategories() {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/products/categories');
+                const data = await response.json();
+                console.log('Respuesta completa:', data);
+                
+                const categories = data?.data || [];
+                console.log(`Total categorías: ${categories.length}`);
+                
+                // Aplicar los mismos filtros que Header.tsx
+                const filtered = categories.filter((cat) => 
+                    !cat.name?.toLowerCase().includes('eventos personalizados') &&
+                    !cat.name?.toLowerCase().includes('personal') &&
+                    !cat.isHidden
+                );
+                
+                console.log(`Categorías después del filtro: ${filtered.length}`);
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>Resultados:</h2>
+                    <p>Total categorías del backend: ${categories.length}</p>
+                    <p>Categorías después de filtros: ${filtered.length}</p>
+                    <h3>Categorías filtradas:</h3>
+                    <ul>
+                        ${filtered.map(cat => `
+                            <li><strong>${cat.name}</strong> (slug: ${cat.slug}, isHidden: ${cat.isHidden})</li>
+                        `).join('')}
+                    </ul>
+                    <h3>Categorías eliminadas por filtros:</h3>
+                    <ul>
+                        ${categories.filter(cat => 
+                            cat.name?.toLowerCase().includes('eventos personalizados') ||
+                            cat.name?.toLowerCase().includes('personal') ||
+                            cat.isHidden
+                        ).map(cat => `
+                            <li><strong>${cat.name}</strong> - Razón: ${
+                                cat.isHidden ? 'isHidden=true' : 
+                                cat.name?.toLowerCase().includes('personal') ? 'nombre contiene "personal"' :
+                                'nombre contiene "eventos personalizados"'
+                            }</li>
+                        `).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        testCategories();
+    </script>
+</body>
+</html>

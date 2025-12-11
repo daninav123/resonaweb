@@ -62,29 +62,32 @@ interface LocalBusinessSchema {
 export const getLocalBusinessSchema = (): any => ({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://resonaevents.com/#localbusiness',
+  '@id': 'https://resonaweb.vercel.app/#localbusiness',
   name: 'ReSona Events',
-  url: 'https://resonaevents.com',
-  logo: 'https://resonaevents.com/logo.png',
+  alternateName: 'ReSona Events Valencia',
+  url: 'https://resonaweb.vercel.app',
+  logo: 'https://resonaweb.vercel.app/logo.png',
   image: [
-    'https://resonaevents.com/og-image.jpg',
-    'https://resonaevents.com/images/equipos-audiovisuales.jpg',
+    'https://resonaweb.vercel.app/og-image.jpg',
+    'https://resonaweb.vercel.app/images/equipos-audiovisuales.jpg',
   ],
   description:
-    'Empresa especializada en alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED y equipos DJ.',
+    'Empresa especializada en alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED y equipos DJ. Servicio en Valencia y provincia.',
   priceRange: '€€',
+  telephone: '+34613881414',
+  email: 'info@resonaevents.com',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Valencia',
-    addressLocality: 'Valencia',
-    postalCode: '46000',
+    streetAddress: "C/ de l'Illa Cabrera, 13",
+    addressLocality: 'València',
+    postalCode: '46026',
     addressRegion: 'Comunidad Valenciana',
     addressCountry: 'ES',
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: '39.4699',
-    longitude: '-0.3763',
+    latitude: '39.4523',
+    longitude: '-0.3744',
   },
   openingHoursSpecification: [
     {
@@ -100,10 +103,16 @@ export const getLocalBusinessSchema = (): any => ({
       closes: '14:00',
     },
   ],
-  areaServed: {
-    '@type': 'City',
-    name: 'Valencia y provincia',
-  },
+  areaServed: [
+    {
+      '@type': 'City',
+      name: 'Valencia',
+    },
+    {
+      '@type': 'State',
+      name: 'Comunidad Valenciana',
+    },
+  ],
   sameAs: [
     // Añadir enlaces a redes sociales cuando estén disponibles
     'https://resonaevents.com',
@@ -217,10 +226,10 @@ export const getLocalBusinessSchema = (): any => ({
 export const getOrganizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  '@id': 'https://resonaevents.com/#organization',
+  '@id': 'https://resonaweb.vercel.app/#organization',
   name: 'ReSona Events',
-  url: 'https://resonaevents.com',
-  logo: 'https://resonaevents.com/logo.png',
+  url: 'https://resonaweb.vercel.app',
+  logo: 'https://resonaweb.vercel.app/logo.png',
   description:
     'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   foundingDate: '2009',
@@ -228,6 +237,31 @@ export const getOrganizationSchema = () => ({
     '@type': 'City',
     name: 'Valencia',
   },
+});
+
+/**
+ * Schema para WebSite con SearchAction
+ * Permite que Google muestre un cuadro de búsqueda en los resultados
+ */
+export const getWebSiteSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://resonaweb.vercel.app/#website',
+  name: 'ReSona Events',
+  url: 'https://resonaweb.vercel.app',
+  description: 'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
+  publisher: {
+    '@id': 'https://resonaweb.vercel.app/#organization',
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://resonaweb.vercel.app/productos?search={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+  inLanguage: 'es-ES',
 });
 
 /**

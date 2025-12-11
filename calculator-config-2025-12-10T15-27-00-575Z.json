@@ -1,0 +1,516 @@
+{
+  "eventTypes": [
+    {
+      "id": "boda",
+      "icon": "💒",
+      "name": "Boda",
+      "parts": [
+        {
+          "id": "ceremony",
+          "icon": "💒",
+          "name": "Ceremonia",
+          "soundLevel": "professional",
+          "description": "Ceremonia religiosa o civil",
+          "lightingLevel": "basic",
+          "pricingRanges": [
+            {
+              "price": 100,
+              "maxAttendees": 80,
+              "minAttendees": 0,
+              "recommendedProducts": [
+                {
+                  "quantity": 2,
+                  "productId": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a"
+                }
+              ]
+            },
+            {
+              "price": 150,
+              "maxAttendees": 150,
+              "minAttendees": 81,
+              "recommendedProducts": [
+                {
+                  "quantity": 4,
+                  "productId": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a"
+                }
+              ]
+            },
+            {
+              "price": 250,
+              "maxAttendees": 400,
+              "minAttendees": 151,
+              "recommendedProducts": [
+                {
+                  "quantity": 6,
+                  "productId": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a"
+                }
+              ]
+            }
+          ],
+          "defaultDuration": 1
+        },
+        {
+          "id": "cocktail",
+          "icon": "🍸",
+          "name": "Cóctel",
+          "soundLevel": "intermediate",
+          "description": "Aperitivo y bebidas entre ceremonia y banquete",
+          "lightingLevel": "intermediate",
+          "pricingRanges": [
+            {
+              "price": 100,
+              "maxAttendees": 80,
+              "minAttendees": 0,
+              "recommendedProducts": [
+                {
+                  "quantity": 4,
+                  "productId": "a2a80159-7fcc-4ff7-b2f1-ab285e0e6974"
+                }
+              ]
+            },
+            {
+              "price": 120,
+              "maxAttendees": 150,
+              "minAttendees": 81,
+              "recommendedProducts": [
+                {
+                  "quantity": 4,
+                  "productId": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a"
+                }
+              ]
+            },
+            {
+              "price": 180,
+              "maxAttendees": 400,
+              "minAttendees": 151,
+              "recommendedProducts": [
+                {
+                  "quantity": 6,
+                  "productId": "a4e9a0c2-fff9-45b1-b38e-5281ade01f4a"
+                }
+              ]
+            }
+          ],
+          "defaultDuration": 2
+        },
+        {
+          "id": "banquet",
+          "icon": "🍽️",
+          "name": "Banquete",
+          "soundLevel": "professional",
+          "description": "Comida o cena principal",
+          "lightingLevel": "professional",
+          "pricingRanges": [
+            {
+              "price": 150,
+              "maxAttendees": 80,
+              "minAttendees": 0,
+              "recommendedProducts": [
+                {
+                  "quantity": 4,
+                  "productId": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a"
+                }
+              ]
+            },
+            {
+              "price": 200,
+              "maxAttendees": 150,
+              "minAttendees": 81,
+              "recommendedProducts": [
+                {
+                  "quantity": 4,
+                  "productId": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a"
+                }
+              ]
+            },
+            {
+              "price": 250,
+              "maxAttendees": 250,
+              "minAttendees": 151,
+              "recommendedProducts": [
+                {
+                  "quantity": 6,
+                  "productId": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a"
+                }
+              ]
+            },
+            {
+              "price": 300,
+              "maxAttendees": 400,
+              "minAttendees": 251,
+              "recommendedProducts": [
+                {
+                  "quantity": 8,
+                  "productId": "064cb229-84cf-4b0a-8b36-b0dfb8483b5a"
+                }
+              ]
+            }
+          ],
+          "defaultDuration": 4
+        },
+        {
+          "id": "disco",
+          "icon": "🎵",
+          "name": "Disco&#x2F;Fiesta",
+          "soundLevel": "premium",
+          "description": "Música y baile después del banquete",
+          "lightingLevel": "premium",
+          "defaultDuration": 4
+        }
+      ],
+      "multiplier": 1.5,
+      "availablePacks": [
+        "767d47e8-498c-4679-a5e5-545eb584a9be",
+        "f8ce0b52-c734-4b4d-8c0a-f047f7c2a2e6",
+        "4ca0d5a3-b0ef-433b-b872-69b83be9be17",
+        "d870c72b-d882-4865-8097-4cb4cd3fea1a",
+        "cb58f4c4-d038-4b7d-8a47-5b8be6f84d1a",
+        "bb180ae8-3595-4f2b-a164-ea2e7d8a29cb",
+        "83d33c4a-f0ba-46d3-a108-db0a1b7554dd",
+        "b9ecbc41-2041-49a8-afdd-a8b25bc4e088"
+      ],
+      "availableExtras": [
+        "dc846940-a287-4af1-b00d-67b18158d387",
+        "7c841508-7dff-43eb-a11f-52d89acb7bf6",
+        "d6bfb729-a526-4238-b35b-240d1cf1c41d",
+        "b29e89bc-8c61-414f-9cd4-5d6d035e574a",
+        "22772a68-d79d-4462-8c77-8aed43b69964",
+        "252e3a90-10e4-46d1-b8ee-ba75053b735e",
+        "83032ee7-35f9-4165-b3ab-f16218887851",
+        "3f7e1a5c-bf8d-4833-bc73-6f0c49d6c1d3",
+        "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c"
+      ],
+      "extraCategories": [
+        {
+          "id": "cat-1764957771068",
+          "icon": "📦",
+          "name": "Disco",
+          "color": "purple",
+          "order": 1,
+          "extrasIds": [
+            "dc846940-a287-4af1-b00d-67b18158d387",
+            "7c841508-7dff-43eb-a11f-52d89acb7bf6"
+          ]
+        },
+        {
+          "id": "cat-1764957776223",
+          "icon": "📦",
+          "name": "FX",
+          "color": "purple",
+          "order": 2,
+          "extrasIds": [
+            "d6bfb729-a526-4238-b35b-240d1cf1c41d",
+            "b29e89bc-8c61-414f-9cd4-5d6d035e574a",
+            "22772a68-d79d-4462-8c77-8aed43b69964"
+          ]
+        },
+        {
+          "id": "cat-1764957782990",
+          "icon": "📦",
+          "name": "DECORACION",
+          "color": "purple",
+          "order": 3,
+          "extrasIds": [
+            "252e3a90-10e4-46d1-b8ee-ba75053b735e",
+            "83032ee7-35f9-4165-b3ab-f16218887851",
+            "3f7e1a5c-bf8d-4833-bc73-6f0c49d6c1d3"
+          ]
+        },
+        {
+          "id": "cat-1764957795894",
+          "icon": "📦",
+          "name": "OTROS",
+          "color": "purple",
+          "order": 4,
+          "extrasIds": [
+            "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c"
+          ]
+        }
+      ],
+      "recommendedPacks": [
+        {
+          "packId": "cb58f4c4-d038-4b7d-8a47-5b8be6f84d1a",
+          "reason": "",
+          "priority": 1,
+          "maxAttendees": 120,
+          "minAttendees": 0,
+          "requiredParts": [
+            "disco"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "conferencia",
+      "icon": "🎤",
+      "name": "Conferencia",
+      "parts": [
+        {
+          "id": "registration",
+          "icon": "📋",
+          "name": "Registro",
+          "soundLevel": "none",
+          "description": "Acreditación de asistentes",
+          "lightingLevel": "basic",
+          "defaultDuration": 1
+        },
+        {
+          "id": "presentations",
+          "icon": "🎤",
+          "name": "Ponencias",
+          "soundLevel": "professional",
+          "description": "Charlas y presentaciones principales",
+          "lightingLevel": "professional",
+          "defaultDuration": 4
+        },
+        {
+          "id": "coffee-break",
+          "icon": "☕",
+          "name": "Coffee Break",
+          "soundLevel": "basic",
+          "description": "Descanso y networking",
+          "lightingLevel": "basic",
+          "defaultDuration": 0.5
+        }
+      ],
+      "isActive": false,
+      "multiplier": 1.2,
+      "availableExtras": [
+        "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c"
+      ],
+      "extraCategories": [
+        {
+          "id": "cat-1765321244972",
+          "icon": "✨",
+          "name": "Pantallas y proyeccion ",
+          "color": "purple",
+          "extrasIds": [
+            "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "concierto",
+      "icon": "🎵",
+      "name": "Concierto",
+      "parts": [
+        {
+          "id": "soundcheck",
+          "icon": "🔧",
+          "name": "Prueba de Sonido",
+          "soundLevel": "premium",
+          "description": "Preparación técnica y ajustes",
+          "lightingLevel": "professional",
+          "defaultDuration": 2
+        },
+        {
+          "id": "concert",
+          "icon": "🎵",
+          "name": "Concierto",
+          "soundLevel": "premium",
+          "description": "Actuación principal",
+          "lightingLevel": "premium",
+          "defaultDuration": 2
+        }
+      ],
+      "multiplier": 1.8,
+      "availablePacks": [
+        "31368563-4952-4ae9-9abb-d5699db8cb59",
+        "e1812d86-fe87-470f-95ce-58c687c415c1"
+      ],
+      "extraCategories": []
+    },
+    {
+      "id": "corporativo",
+      "icon": "💼",
+      "name": "Evento Corporativo",
+      "parts": [
+        {
+          "id": "welcome",
+          "icon": "👋",
+          "name": "Bienvenida",
+          "soundLevel": "basic",
+          "description": "Recepción inicial",
+          "lightingLevel": "intermediate",
+          "defaultDuration": 0.5
+        },
+        {
+          "id": "presentation",
+          "icon": "📊",
+          "name": "Presentación",
+          "soundLevel": "professional",
+          "description": "Presentación corporativa principal",
+          "lightingLevel": "professional",
+          "defaultDuration": 2
+        },
+        {
+          "id": "teambuilding",
+          "icon": "🤝",
+          "name": "Team Building",
+          "soundLevel": "intermediate",
+          "description": "Actividades de equipo",
+          "lightingLevel": "intermediate",
+          "defaultDuration": 3
+        }
+      ],
+      "isActive": false,
+      "multiplier": 1.3,
+      "extraCategories": []
+    },
+    {
+      "id": "fiesta",
+      "icon": "🎉",
+      "name": "Fiesta Privada",
+      "parts": [
+        {
+          "id": "part-1764644694288",
+          "icon": "📦",
+          "name": "sonirzacion comida",
+          "soundLevel": "basic",
+          "description": "Descripción de la parte del evento",
+          "lightingLevel": "basic",
+          "pricingRanges": [
+            {
+              "price": 50,
+              "maxAttendees": 501,
+              "minAttendees": 0,
+              "recommendedProducts": []
+            }
+          ],
+          "defaultDuration": 2
+        },
+        {
+          "id": "part-1764644694913",
+          "icon": "📦",
+          "name": "Fiesta",
+          "soundLevel": "basic",
+          "description": "Descripción de la parte del evento",
+          "lightingLevel": "basic",
+          "defaultDuration": 2
+        }
+      ],
+      "multiplier": 1,
+      "availablePacks": [
+        "673563f3-9a37-4693-bee9-fec5c4f78791",
+        "4329009d-e32c-4fc6-956a-4995ead7d120",
+        "b58541b1-5f25-472c-9782-121cb41b8dd9",
+        "63513de2-15bc-45c4-b38c-a90f0d0fb9a4",
+        "e583cdb2-db56-4356-a9a5-dfc56a5c9af7",
+        "ff850638-db20-485d-8799-46f7303d43b7"
+      ],
+      "availableExtras": [
+        "252e3a90-10e4-46d1-b8ee-ba75053b735e",
+        "83032ee7-35f9-4165-b3ab-f16218887851",
+        "3f7e1a5c-bf8d-4833-bc73-6f0c49d6c1d3",
+        "7c841508-7dff-43eb-a11f-52d89acb7bf6",
+        "d6bfb729-a526-4238-b35b-240d1cf1c41d",
+        "22772a68-d79d-4462-8c77-8aed43b69964",
+        "b29e89bc-8c61-414f-9cd4-5d6d035e574a",
+        "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c",
+        "06aefb96-8d29-474f-ad9b-2f2c4fa8740a",
+        "c491ee17-ad07-4c91-b69f-83ecb940b628"
+      ],
+      "extraCategories": [
+        {
+          "id": "cat-1765321763882",
+          "icon": "✨",
+          "name": "DECORACION ",
+          "color": "purple",
+          "extrasIds": [
+            "252e3a90-10e4-46d1-b8ee-ba75053b735e",
+            "83032ee7-35f9-4165-b3ab-f16218887851",
+            "3f7e1a5c-bf8d-4833-bc73-6f0c49d6c1d3"
+          ]
+        },
+        {
+          "id": "cat-1765321772638",
+          "icon": "✨",
+          "name": "FX",
+          "color": "purple",
+          "extrasIds": [
+            "7c841508-7dff-43eb-a11f-52d89acb7bf6",
+            "d6bfb729-a526-4238-b35b-240d1cf1c41d",
+            "22772a68-d79d-4462-8c77-8aed43b69964",
+            "b29e89bc-8c61-414f-9cd4-5d6d035e574a"
+          ]
+        },
+        {
+          "id": "cat-1765321777890",
+          "icon": "✨",
+          "name": "PANTALLAS Y PROYECCION",
+          "color": "purple",
+          "extrasIds": [
+            "558eea0a-b0ad-43e1-8a76-ed9e1ccbf02c"
+          ]
+        },
+        {
+          "id": "cat-1765321790459",
+          "icon": "✨",
+          "name": "DISCO",
+          "color": "purple",
+          "extrasIds": [
+            "06aefb96-8d29-474f-ad9b-2f2c4fa8740a",
+            "c491ee17-ad07-4c91-b69f-83ecb940b628"
+          ]
+        }
+      ],
+      "recommendedPacks": [
+        {
+          "packId": "b58541b1-5f25-472c-9782-121cb41b8dd9",
+          "reason": "",
+          "priority": 1,
+          "maxAttendees": 50,
+          "minAttendees": 0
+        },
+        {
+          "packId": "673563f3-9a37-4693-bee9-fec5c4f78791",
+          "reason": "",
+          "priority": 2,
+          "maxAttendees": 80,
+          "minAttendees": 0
+        },
+        {
+          "packId": "673563f3-9a37-4693-bee9-fec5c4f78791",
+          "reason": "",
+          "priority": 3,
+          "maxAttendees": 120,
+          "minAttendees": 0
+        }
+      ]
+    },
+    {
+      "id": "otro",
+      "icon": "📅",
+      "name": "Otro",
+      "parts": [
+        {
+          "id": "event",
+          "icon": "📅",
+          "name": "Evento",
+          "soundLevel": "intermediate",
+          "description": "Evento general",
+          "lightingLevel": "intermediate",
+          "defaultDuration": 4
+        }
+      ],
+      "isActive": false,
+      "multiplier": 1,
+      "extraCategories": []
+    }
+  ],
+  "servicePrices": {
+    "sound": {
+      "basic": 100,
+      "premium": 600,
+      "intermediate": 200,
+      "professional": 350
+    },
+    "lighting": {
+      "basic": 80,
+      "premium": 500,
+      "intermediate": 150,
+      "professional": 280
+    }
+  }
+}

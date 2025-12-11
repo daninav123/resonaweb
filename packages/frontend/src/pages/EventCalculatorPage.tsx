@@ -708,7 +708,7 @@ const EventCalculatorPage = () => {
         title="Calculadora de Presupuesto para Eventos Valencia - Calcula tu Alquiler | ReSona Events"
         description="Calculadora online gratuita para presupuesto de alquiler de equipos de eventos en Valencia. Sonido, iluminación, audiovisuales para bodas, conciertos y eventos corporativos. Presupuesto instantáneo."
         keywords="calculadora presupuesto eventos valencia, calcular alquiler sonido valencia, presupuesto boda valencia, precio alquiler equipos eventos valencia, calculadora alquiler material"
-        canonicalUrl="https://www.resonaevents.com/calculadora-eventos"
+        canonicalUrl="https://resonaevents.com/calculadora-eventos"
         schema={[serviceSchema, calculatorFAQSchema]}
       />
       <div className="container mx-auto px-4 max-w-4xl">

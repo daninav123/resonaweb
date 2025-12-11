@@ -20,15 +20,20 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Fetch categories for menu dropdown
-  const { data: categories = [] } = useQuery<any>({
+  const { data: categories = [], isLoading, error } = useQuery<any>({
     queryKey: ['menu-categories'],
     queryFn: async () => {
+      console.log('🔍 Cargando categorías...');
       const result = await productService.getCategories();
+      console.log('✅ Categorías recibidas:', result);
       return result || [];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos de cachÃ©
-    refetchOnMount: false,
+    staleTime: 0, // Sin caché para debug
+    refetchOnMount: true, // Recargar siempre
   });
+  
+  // Debug log
+  console.log('📊 Header - Categorías:', categories.length, categories);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

@@ -211,10 +211,10 @@ const ProductsPage = () => {
         title={pageTitle}
         description={pageDescription}
         keywords="alquiler equipos eventos valencia, sonido profesional valencia, iluminación eventos valencia, alquiler altavoces valencia, equipos audiovisuales valencia"
-        canonicalUrl="https://www.resonaevents.com/productos"
+        canonicalUrl="https://resonaevents.com/productos"
         schema={breadcrumbSchema([
-          { name: 'Inicio', url: 'https://www.resonaevents.com' },
-          { name: 'Catálogo', url: 'https://www.resonaevents.com/productos' }
+          { name: 'Inicio', url: 'https://resonaevents.com' },
+          { name: 'Catálogo', url: 'https://resonaevents.com/productos' }
         ])}
       />
       

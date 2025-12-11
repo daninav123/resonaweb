@@ -5,9 +5,9 @@ const IluminacionLEDProfesional = () => {
   const pageData = {
     title: "Iluminación LED Profesional para Eventos | RGB, RGBW | Valencia",
     metaDescription: "Iluminación LED profesional para eventos. Focos PAR LED RGB/RGBW, barras LED, uplights. Control DMX. ☎️ 613 88 14 14",
-    keywords: "iluminación led eventos, luces led profesionales valencia, focos par led",
-    heroTitle: "Iluminación LED Profesional",
-    heroSubtitle: "Millones de colores para tu evento",
+    keywords: "iluminación led eventos valencia, luces led profesionales valencia, focos par led valencia, iluminación profesional valencia",
+    heroTitle: "Iluminación LED Profesional para Eventos en Valencia",
+    heroSubtitle: "Millones de colores para tu evento - Servicio en Valencia y provincia",
     introduction: `El <strong>iluminación LED profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación LED profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Chauvet, Martin, ADJ, Showtec, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación LED profesional en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: eventos, conciertos, teatro, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [

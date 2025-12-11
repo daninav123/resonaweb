@@ -159,7 +159,17 @@ app.use(cors({
   credentials: true,
 }));
 
-// Serve static files (uploaded images) - ANTES de otros middlewares
+// Servir archivos públicos (robots.txt, etc.) - ANTES de otros middlewares
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: '1d', // Cache por 1 día para robots.txt, etc.
+  setHeaders: (res, path) => {
+    if (path.endsWith('robots.txt')) {
+      res.setHeader('Content-Type', 'text/plain; charset=UTF-8');
+    }
+  }
+}));
+
+// Serve static files (uploaded images)
 app.use('/uploads', (req, res, next) => {
   // Use specific origins instead of '*'
   const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];

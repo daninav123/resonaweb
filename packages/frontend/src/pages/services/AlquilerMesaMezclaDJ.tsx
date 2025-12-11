@@ -5,9 +5,9 @@ const AlquilerMesaMezclaDJ = () => {
   const pageData = {
     title: "Alquiler de Mesa de Mezclas DJ | Pioneer, Allen & Heath | Valencia",
     metaDescription: "Alquiler de mesas de mezclas DJ profesionales. Pioneer DJM-900, Allen & Heath. Con CDJs. Técnico incluido. ☎️ 613 88 14 14",
-    keywords: "alquiler mesa mezclas dj, mesa pioneer valencia, alquiler djm-900",
-    heroTitle: "Alquiler de Mesa de Mezclas DJ",
-    heroSubtitle: "Pioneer, Allen & Heath - Mezcla profesional",
+    keywords: "alquiler mesa mezclas dj valencia, mesa pioneer valencia, alquiler djm-900 valencia, controladora dj valencia",
+    heroTitle: "Alquiler de Mesa de Mezclas DJ en Valencia",
+    heroSubtitle: "Pioneer, Allen & Heath - Mezcla profesional - Servicio en Valencia",
     introduction: `El <strong>alquiler de mesa de mezclas DJ en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de mesa de mezclas DJ en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Pioneer DJM-900, Allen & Heath Xone, Native Instruments, Denon DJ, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de mesa de mezclas DJ en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, fiestas, eventos privados, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [

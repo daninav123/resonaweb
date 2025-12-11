@@ -100,19 +100,23 @@ export function calculateCartTotals(params: CartCalculationParams): CartTotals {
     }, 0);
   }
 
-  // 4. CALCULAR DESCUENTO VIP (EXCLUIR CALCULADORA COMPLETA)
+  // 4. CALCULAR DESCUENTO VIP (INCLUIR CALCULADORA)
   let vipDiscount = 0;
   if (userLevel === 'VIP' || userLevel === 'VIP_PLUS') {
-    // Calcular subtotal SOLO de productos normales (NO de calculadora)
-    const subtotalWithoutMontajes = items.reduce((sum, item) => {
+    // Calcular subtotal de TODOS los items (incluyendo calculadora)
+    const subtotalForDiscount = items.reduce((sum, item) => {
       let itemTotal = 0;
       
-      // IMPORTANTE: Items de calculadora NO tienen descuento VIP (ni equipos ni montajes)
+      // ✅ Items de calculadora SÍ tienen descuento VIP
       if ((item as any).eventMetadata) {
-        // NO incluir NADA de la calculadora en el descuento VIP
-        itemTotal = 0;
+        // Incluir calculadora en el descuento VIP
+        const metadata = (item as any).eventMetadata;
+        const partsTotal = Number(metadata.partsTotal || 0);
+        const extrasTotal = Number(metadata.extrasTotal || 0);
+        const packBasePrice = Number(metadata.packBasePrice || 0);
+        itemTotal = partsTotal + extrasTotal + packBasePrice;
       } else {
-        // Para productos normales (NO de calculadora), SÍ aplicar descuento VIP
+        // Para productos normales, también aplicar descuento VIP
         itemTotal = (item as any).totalPrice;
         
         if (!itemTotal) {
@@ -130,11 +134,11 @@ export function calculateCartTotals(params: CartCalculationParams): CartTotals {
       return sum + (Number(itemTotal) || 0);
     }, 0);
     
-    // Aplicar descuento SOLO sobre productos normales (NO sobre calculadora)
+    // Aplicar descuento sobre TODOS los productos (incluyendo calculadora)
     if (userLevel === 'VIP') {
-      vipDiscount = subtotalWithoutMontajes * 0.25; // 25%
+      vipDiscount = subtotalForDiscount * 0.25; // 25%
     } else if (userLevel === 'VIP_PLUS') {
-      vipDiscount = subtotalWithoutMontajes * 0.70; // 70%
+      vipDiscount = subtotalForDiscount * 0.70; // 70%
     }
   }
 
