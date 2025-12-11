@@ -126,8 +126,8 @@ const EventCalculatorPage = () => {
       const packsResponse: any = await api.get('/packs?includeMontajes=true');
       const packsData = packsResponse?.packs || packsResponse || [];
       
-      // Filtrar solo packs ACTIVOS
-      const activePacks = Array.isArray(packsData) ? packsData.filter((pack: any) => pack.isActive !== false) : [];
+      // Filtrar solo packs ACTIVOS (comparación explícita para Safari)
+      const activePacks = Array.isArray(packsData) ? packsData.filter((pack: any) => pack.isActive === true) : [];
       
       // Mapear packs al formato esperado (incluye montajes y otros packs)
       const mappedPacks = activePacks.map((pack: any) => {
@@ -150,7 +150,7 @@ const EventCalculatorPage = () => {
           category: pack.category ? 
             (typeof pack.category === 'string' ? { name: pack.category } : pack.category) 
             : { name: 'Packs' },
-          isActive: pack.isActive !== false,
+          isActive: pack.isActive === true,
           isPack: true, // Marcar como pack
           isMontaje, // Flag para identificar montajes
           packData: pack.packData, // Datos adicionales del pack (transportCost, etc.)
@@ -182,7 +182,7 @@ const EventCalculatorPage = () => {
         
         // Filtrar solo packs que son montajes (categoryRef.name === 'Montaje')
         const montajePacks = allPacks.filter((pack: any) => 
-          pack.categoryRef?.name?.toLowerCase() === 'montaje' && pack.isActive !== false
+          pack.categoryRef?.name?.toLowerCase() === 'montaje' && pack.isActive === true
         );
         
         return montajePacks;
