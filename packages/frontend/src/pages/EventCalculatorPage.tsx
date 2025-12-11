@@ -126,8 +126,11 @@ const EventCalculatorPage = () => {
       const packsResponse: any = await api.get('/packs?includeMontajes=true');
       const packsData = packsResponse?.packs || packsResponse || [];
       
+      // Filtrar solo packs ACTIVOS
+      const activePacks = Array.isArray(packsData) ? packsData.filter((pack: any) => pack.isActive !== false) : [];
+      
       // Mapear packs al formato esperado (incluye montajes y otros packs)
-      const mappedPacks = Array.isArray(packsData) ? packsData.map((pack: any) => {
+      const mappedPacks = activePacks.map((pack: any) => {
         // Un montaje se identifica por tener categoryRef.name === 'Montaje'
         const isMontaje = pack.categoryRef?.name?.toLowerCase() === 'montaje';
         
@@ -152,7 +155,7 @@ const EventCalculatorPage = () => {
           isMontaje, // Flag para identificar montajes
           packData: pack.packData, // Datos adicionales del pack (transportCost, etc.)
         };
-      }) : [];
+      });
       
       // NO cargar productos normales - solo mostrar montajes en la calculadora
       return mappedPacks; // Solo devolver packs (que incluyen montajes)
