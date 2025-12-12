@@ -10,9 +10,11 @@ interface AuthRequest extends Request {
 class CalculatorConfigController {
   /**
    * GET /api/v1/calculator-config
-   * Obtener configuración de la calculadora
+   * Obtener configuración de la calculadora (ENDPOINT PÚBLICO)
+   * IMPORTANTE: Filtra eventos con isActive === false antes de devolver
    */
   async getConfig(req: AuthRequest, res: Response, next: NextFunction) {
+    console.log('🌐 GET /calculator-config - Endpoint PÚBLICO accedido');
     try {
       const config = await calculatorConfigService.getConfig();
 

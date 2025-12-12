@@ -6,7 +6,8 @@ const router = Router();
 
 /**
  * GET /api/v1/calculator-config
- * Obtener configuración (público, para cargar en frontend)
+ * Obtener configuración (PÚBLICO - sin autenticación, para cargar en frontend)
+ * IMPORTANTE: No añadir authenticate ni authorize a esta ruta
  */
 router.get('/', calculatorConfigController.getConfig.bind(calculatorConfigController));
 
