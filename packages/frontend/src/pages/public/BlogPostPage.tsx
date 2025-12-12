@@ -166,7 +166,12 @@ const BlogPostPage = () => {
           <div className="w-full aspect-[21/9] overflow-hidden bg-gray-200">
             <img
               src={imageUrl}
-              alt={post.title}
+              alt={`${post.title} - Guía sobre alquiler de equipos audiovisuales para eventos | ReSona Events Valencia`}
+              width={1200}
+              height={514}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               className="w-full h-full object-cover"
             />
           </div>
