@@ -107,9 +107,9 @@ const EventCalculatorPage = () => {
     loadConfig();
   }, []);
 
-  // Filtrar solo tipos de evento activos (comparación explícita para Safari)
+  // Filtrar solo tipos de evento activos (ocultar los que tienen isActive === false)
   const eventTypes = calculatorConfig.eventTypes
-    .filter((et: any) => et.isActive === true)
+    .filter((et: any) => et.isActive !== false)
     .map((et: any) => ({
       id: et.id,
       name: et.name,
