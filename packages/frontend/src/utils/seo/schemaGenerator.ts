@@ -5,6 +5,7 @@
 
 export interface Product {
   id: string;
+  slug?: string; // Slug para URLs amigables
   name: string;
   description: string;
   price?: number;
@@ -85,12 +86,25 @@ export const generateOrganizationSchema = (org: Organization) => {
 export const generateProductSchema = (product: Product, baseUrl: string) => {
   const price = product.pricePerDay || product.price || 0;
   
+  // Asegurar que la imagen sea una URL completa
+  const imageUrl = product.image?.startsWith('http') 
+    ? product.image 
+    : product.image 
+      ? `${baseUrl}${product.image}` 
+      : `${baseUrl}/og-image.jpg`;
+  
+  // Usar slug si está disponible, de lo contrario usar id
+  const productUrl = product.slug 
+    ? `${baseUrl}/productos/${product.slug}` 
+    : `${baseUrl}/productos/${product.id}`;
+  
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: product.image,
+    image: [imageUrl], // Google requiere array de imágenes
+    url: productUrl, // URL del producto
     ...(product.sku && { sku: product.sku }),
     ...(product.brand && {
       brand: {
@@ -104,6 +118,7 @@ export const generateProductSchema = (product: Product, baseUrl: string) => {
       priceCurrency: 'EUR',
       availability: `https://schema.org/${product.availability || 'InStock'}`,
       priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      url: productUrl, // URL de la oferta
       seller: {
         '@type': 'Organization',
         name: 'Resona Events',

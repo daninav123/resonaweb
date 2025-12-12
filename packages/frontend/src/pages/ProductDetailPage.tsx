@@ -125,6 +125,7 @@ const ProductDetailPage = () => {
   // Schema.org usando el generador
   const productSchema = generateProductSchema({
     id: product.id,
+    slug: product.slug, // Pasar slug para URLs correctas
     name: product.name,
     description: product.description || `Alquiler de ${product.name} para eventos profesionales`,
     pricePerDay: product.pricePerDay,

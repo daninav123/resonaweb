@@ -229,7 +229,12 @@ export const getOrganizationSchema = () => ({
   '@id': 'https://resonaevents.com/#organization',
   name: 'ReSona Events',
   url: 'https://resonaevents.com',
-  logo: 'https://resonaevents.com/logo.png',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://resonaevents.com/logo.png',
+    width: 600,
+    height: 200,
+  },
   description:
     'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   foundingDate: '2009',
