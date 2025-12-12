@@ -39,6 +39,13 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const EventCalculatorPage = lazy(() => import('./pages/EventCalculatorPage'));
+
+// Páginas SEO Landing Locales
+const AlquilerSonidoValenciaPage = lazy(() => import('./pages/AlquilerSonidoValenciaPage'));
+const AlquilerIluminacionValenciaPage = lazy(() => import('./pages/AlquilerIluminacionValenciaPage'));
+const SonidoBodasValenciaPage = lazy(() => import('./pages/SonidoBodasValenciaPage'));
+const AlquilerSonidoTorrentPage = lazy(() => import('./pages/AlquilerSonidoTorrentPage'));
+
 const AdminDashboard = lazy(() => import('./pages/admin/DashboardEnhanced'));
 const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
@@ -172,6 +179,12 @@ function App() {
             <Route path="/calculadora-evento" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/calculadora" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/servicios" element={<Layout><ServicesPage /></Layout>} />
+            
+            {/* Páginas SEO Landing Locales */}
+            <Route path="/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValenciaPage /></Layout>} />
+            <Route path="/alquiler-iluminacion-valencia" element={<Layout><AlquilerIluminacionValenciaPage /></Layout>} />
+            <Route path="/sonido-bodas-valencia" element={<Layout><SonidoBodasValenciaPage /></Layout>} />
+            <Route path="/alquiler-sonido-torrent" element={<Layout><AlquilerSonidoTorrentPage /></Layout>} />
             
             {/* Service Pages - 20 páginas optimizadas SEO */}
             <Route path="/servicios/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValencia /></Layout>} />

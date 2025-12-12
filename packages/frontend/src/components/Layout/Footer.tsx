@@ -65,33 +65,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Servicios Locales SEO */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Categorías</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona">Servicios en Valencia</h4>
             <ul className="space-y-2">
+              <li><Link to="/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+                Alquiler Sonido Valencia
+              </Link></li>
+              <li><Link to="/alquiler-iluminacion-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+                Iluminación Valencia
+              </Link></li>
+              <li><Link to="/sonido-bodas-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+                Sonido para Bodas
+              </Link></li>
+              <li><Link to="/alquiler-sonido-torrent" className="text-gray-300 hover:text-resona transition flex items-center group">
+                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+                Alquiler Sonido Torrent
+              </Link></li>
               <li><Link to="/productos?category=sonido" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Sonido
+                Ver Equipos de Sonido
               </Link></li>
               <li><Link to="/productos?category=iluminacion" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Iluminación
-              </Link></li>
-              <li><Link to="/productos?category=fotografia-y-video" className="text-gray-300 hover:text-resona transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Fotografía y Video
-              </Link></li>
-              <li><Link to="/productos?category=mobiliario" className="text-gray-300 hover:text-resona transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Mobiliario
-              </Link></li>
-              <li><Link to="/productos?category=elementos-decorativos" className="text-gray-300 hover:text-resona transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Decoración
-              </Link></li>
-              <li><Link to="/productos" className="text-gray-300 hover:text-resona transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                Ver Todas
+                Ver Iluminación
               </Link></li>
             </ul>
           </div>
