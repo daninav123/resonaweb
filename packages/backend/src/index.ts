@@ -241,6 +241,20 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Version check - IMPORTANTE: verificar que el backend se actualizó
+app.get('/api/v1/version', (_req, res) => {
+  res.json({
+    version: '2.0-calculator-public',
+    buildTime: new Date().toISOString(),
+    message: 'Backend actualizado - calculator-config debe ser publico',
+    routes: {
+      calculatorConfig: '/api/v1/calculator-config (GET=PUBLIC, POST=AUTH)',
+      health: '/health',
+      version: '/api/v1/version'
+    }
+  });
+});
+
 // Diagnostic endpoint (público, sin autenticación)
 app.use('/api/v1/diagnostic', diagnosticRouter);
 
