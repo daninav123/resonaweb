@@ -19,7 +19,7 @@ Allow: /sitemap.xml
 Allow: /rss
 
 # Sitemap
-Sitemap: https://resonaweb.vercel.app/sitemap.xml
+Sitemap: https://www.resonaevents.com/sitemap.xml
 
 # Crawl-delay (cortesía)
 Crawl-delay: 1

@@ -180,7 +180,7 @@ export const generateBlogPostSchema = (post: {
       name: 'Resona Events',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://resonaweb.vercel.app/logo.png',
+        url: 'https://www.resonaevents.com/logo.png',
       },
     },
     datePublished: post.publishedDate,

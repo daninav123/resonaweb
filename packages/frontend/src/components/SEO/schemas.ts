@@ -62,14 +62,14 @@ interface LocalBusinessSchema {
 export const getLocalBusinessSchema = (): any => ({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://resonaweb.vercel.app/#localbusiness',
+  '@id': 'https://www.resonaevents.com/#localbusiness',
   name: 'ReSona Events',
   alternateName: 'ReSona Events Valencia',
-  url: 'https://resonaweb.vercel.app',
-  logo: 'https://resonaweb.vercel.app/logo.png',
+  url: 'https://www.resonaevents.com',
+  logo: 'https://www.resonaevents.com/logo.png',
   image: [
-    'https://resonaweb.vercel.app/og-image.jpg',
-    'https://resonaweb.vercel.app/images/equipos-audiovisuales.jpg',
+    'https://www.resonaevents.com/og-image.jpg',
+    'https://www.resonaevents.com/images/equipos-audiovisuales.jpg',
   ],
   description:
     'Empresa especializada en alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED y equipos DJ. Servicio en Valencia y provincia.',
@@ -226,10 +226,10 @@ export const getLocalBusinessSchema = (): any => ({
 export const getOrganizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  '@id': 'https://resonaweb.vercel.app/#organization',
+  '@id': 'https://www.resonaevents.com/#organization',
   name: 'ReSona Events',
-  url: 'https://resonaweb.vercel.app',
-  logo: 'https://resonaweb.vercel.app/logo.png',
+  url: 'https://www.resonaevents.com',
+  logo: 'https://www.resonaevents.com/logo.png',
   description:
     'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   foundingDate: '2009',
@@ -246,18 +246,18 @@ export const getOrganizationSchema = () => ({
 export const getWebSiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': 'https://resonaweb.vercel.app/#website',
+  '@id': 'https://www.resonaevents.com/#website',
   name: 'ReSona Events',
-  url: 'https://resonaweb.vercel.app',
+  url: 'https://www.resonaevents.com',
   description: 'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   publisher: {
-    '@id': 'https://resonaweb.vercel.app/#organization',
+    '@id': 'https://www.resonaevents.com/#organization',
   },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://resonaweb.vercel.app/productos?search={search_term_string}',
+      urlTemplate: 'https://www.resonaevents.com/productos?search={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -319,7 +319,7 @@ export const getBlogPostSchema = (post: {
     name: 'ReSona Events',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://resonaevents.com/logo.png',
+      url: 'https://www.resonaevents.com/logo.png',
     },
   },
   datePublished: post.datePublished,

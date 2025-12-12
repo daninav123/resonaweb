@@ -46,8 +46,8 @@ const HomePage = () => {
         title="ReSona Events Valencia - Alquiler Profesional de Equipos Audiovisuales"
         description="Alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED, equipos DJ. Servicio técnico completo con montaje e instalación. Presupuesto online gratis."
         keywords="alquiler sonido valencia, alquiler iluminación valencia, alquiler material eventos valencia, equipos audiovisuales valencia, sonido profesional valencia, iluminación eventos valencia, pantallas LED valencia, equipos DJ valencia, bodas valencia, conciertos valencia, eventos corporativos valencia"
-        ogImage="https://resonaweb.vercel.app/og-image.jpg"
-        canonicalUrl="https://resonaweb.vercel.app/"
+        ogImage="https://www.resonaevents.com/og-image.jpg"
+        canonicalUrl="https://www.resonaevents.com/"
         schema={[
           getLocalBusinessSchema(),
           getOrganizationSchema(),
