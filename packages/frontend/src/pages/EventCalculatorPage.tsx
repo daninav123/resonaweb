@@ -74,28 +74,44 @@ const EventCalculatorPage = () => {
   // Cargar configuración al montar el componente
   useEffect(() => {
     const loadConfig = async () => {
+      // 🔥 FORZAR RECARGA DESDE API - Limpiar caché localStorage si está desactualizado
+      const CACHE_VERSION = 'v3'; // Incrementar esto para forzar recarga
+      const cachedVersion = localStorage.getItem('calculatorConfigVersion');
+      
+      if (cachedVersion !== CACHE_VERSION) {
+        console.log('🔄 Limpiando caché desactualizado de calculadora...');
+        localStorage.removeItem('advancedCalculatorConfig');
+        localStorage.setItem('calculatorConfigVersion', CACHE_VERSION);
+      }
+
       try {
-        // Primero intentar cargar desde BD
-        const response: any = await api.get('/calculator-config');
+        // Primero intentar cargar desde la API
+        const response = await api.get('/calculator-config') as AdvancedCalculatorConfig;
         if (response && response.eventTypes) {
-          console.log('✅ Configuración cargada desde BD (usuario)');
-          setCalculatorConfig(response as any);
+          console.log('✅ Configuración cargada desde API');
+          console.log('📋 Eventos en configuración:', response.eventTypes.map((e: any) => ({
+            name: e.name,
+            isActive: e.isActive
+          })));
+          setCalculatorConfig(response);
+          // Guardar en localStorage para offline
+          localStorage.setItem('advancedCalculatorConfig', JSON.stringify(response));
           return;
         }
       } catch (error) {
-        console.log('⚠️ No hay configuración en BD, usando localStorage o default');
+        console.log('⚠️ Error cargando desde API, intentando localStorage...');
       }
 
-      // Si no hay en BD, intentar localStorage
-      const saved = localStorage.getItem('advancedCalculatorConfig');
-      if (saved) {
+      // Si falla la API, intentar cargar desde localStorage
+      const savedConfig = localStorage.getItem('advancedCalculatorConfig');
+      if (savedConfig) {
         try {
-          const parsed = JSON.parse(saved);
-          setCalculatorConfig(parsed as any);
+          const parsed = JSON.parse(savedConfig);
           console.log('✅ Configuración cargada desde localStorage');
+          setCalculatorConfig(parsed);
           return;
-        } catch (e) {
-          console.error('Error al parsear localStorage:', e);
+        } catch (error) {
+          console.error('❌ Error parseando localStorage:', error);
         }
       }
 
@@ -108,8 +124,18 @@ const EventCalculatorPage = () => {
   }, []);
 
   // Filtrar solo tipos de evento activos (ocultar los que tienen isActive === false)
+  // IMPORTANTE: Filtro explícito - solo mostrar si isActive es true O undefined (retrocompatibilidad)
   const eventTypes = calculatorConfig.eventTypes
-    .filter((et: any) => et.isActive !== false)
+    .filter((et: any) => {
+      // Si isActive es explícitamente false, NO mostrar
+      if (et.isActive === false) {
+        console.log(`🚫 Evento OCULTO (isActive=false): ${et.name}`);
+        return false;
+      }
+      // Si isActive es true o undefined, SÍ mostrar
+      console.log(`✅ Evento VISIBLE (isActive=${et.isActive}): ${et.name}`);
+      return true;
+    })
     .map((et: any) => ({
       id: et.id,
       name: et.name,
