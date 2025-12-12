@@ -74,49 +74,49 @@ const EventCalculatorPage = () => {
   // Cargar configuración al montar el componente
   useEffect(() => {
     const loadConfig = async () => {
-      // 🔥 FORZAR RECARGA DESDE API - Limpiar caché localStorage si está desactualizado
-      const CACHE_VERSION = 'v4'; // Incrementar esto para forzar recarga
+      // 🔥🔥🔥 LIMPIEZA AGRESIVA DE CACHÉ - SIEMPRE RECARGA DESDE API
+      const CACHE_VERSION = 'v5_force_api'; // Cambiar para forzar recarga total
       const cachedVersion = localStorage.getItem('calculatorConfigVersion');
       
+      // SIEMPRE limpiar localStorage de calculadora en cada carga (hasta v6)
       if (cachedVersion !== CACHE_VERSION) {
-        console.log('🔄 Limpiando caché desactualizado de calculadora...');
+        console.log('🔥 LIMPIEZA FORZADA de caché de calculadora...');
         localStorage.removeItem('advancedCalculatorConfig');
+        localStorage.removeItem('calculatorConfigVersion'); // Limpiar también la versión
         localStorage.setItem('calculatorConfigVersion', CACHE_VERSION);
+        console.log('✅ Caché limpiado completamente');
       }
 
+      // 🎯 SIEMPRE cargar desde API (no usar localStorage antiguo)
       try {
-        // Primero intentar cargar desde la API
+        console.log('📡 Cargando configuración desde API...');
         const response = await api.get('/calculator-config') as AdvancedCalculatorConfig;
+        
         if (response && response.eventTypes) {
           console.log('✅ Configuración cargada desde API');
+          console.log(`📊 Total eventos recibidos: ${response.eventTypes.length}`);
           console.log('📋 Eventos en configuración:', response.eventTypes.map((e: any) => ({
             name: e.name,
             isActive: e.isActive
           })));
+          
+          // Verificar que no haya eventos con isActive=false
+          const hiddenEvents = response.eventTypes.filter((e: any) => e.isActive === false);
+          if (hiddenEvents.length > 0) {
+            console.error('🚨 ERROR: El backend devolvió eventos ocultos:', hiddenEvents.map((e: any) => e.name));
+          }
+          
           setCalculatorConfig(response);
-          // Guardar en localStorage para offline
-          localStorage.setItem('advancedCalculatorConfig', JSON.stringify(response));
           return;
         }
+        
+        console.error('❌ La API no devolvió configuración válida');
       } catch (error) {
-        console.log('⚠️ Error cargando desde API, intentando localStorage...');
+        console.error('❌ Error cargando desde API:', error);
       }
 
-      // Si falla la API, intentar cargar desde localStorage
-      const savedConfig = localStorage.getItem('advancedCalculatorConfig');
-      if (savedConfig) {
-        try {
-          const parsed = JSON.parse(savedConfig);
-          console.log('✅ Configuración cargada desde localStorage');
-          setCalculatorConfig(parsed);
-          return;
-        } catch (error) {
-          console.error('❌ Error parseando localStorage:', error);
-        }
-      }
-
-      // Si nada funciona, usar default
-      console.log('ℹ️ Usando configuración por defecto');
+      // Si la API falla, usar configuración por defecto (NO localStorage antiguo)
+      console.log('⚠️ Usando configuración por defecto (API falló)');
       setCalculatorConfig(DEFAULT_CALCULATOR_CONFIG);
     };
 
