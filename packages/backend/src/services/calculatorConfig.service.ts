@@ -7,6 +7,7 @@ export class CalculatorConfigService {
 
   /**
    * Obtener configuración de la calculadora desde BD
+   * IMPORTANTE: Filtra eventos con isActive === false antes de devolver
    */
   async getConfig() {
     try {
@@ -19,7 +20,27 @@ export class CalculatorConfigService {
         return null;
       }
 
-      return config.value;
+      const configValue = config.value as any;
+      
+      // 🔥 FILTRAR eventos ocultos (isActive === false) antes de devolver
+      if (configValue && configValue.eventTypes) {
+        const originalCount = configValue.eventTypes.length;
+        configValue.eventTypes = configValue.eventTypes.filter((event: any) => {
+          // Solo incluir si isActive NO es explícitamente false
+          const shouldShow = event.isActive !== false;
+          if (!shouldShow) {
+            console.log(`🚫 Evento OCULTO en backend (isActive=false): ${event.name}`);
+          }
+          return shouldShow;
+        });
+        const filteredCount = configValue.eventTypes.length;
+        
+        if (originalCount !== filteredCount) {
+          console.log(`✅ Filtrados ${originalCount - filteredCount} eventos ocultos. Devolviendo ${filteredCount} eventos activos.`);
+        }
+      }
+
+      return configValue;
     } catch (error) {
       console.error('❌ Error obteniendo configuración:', error);
       throw error;

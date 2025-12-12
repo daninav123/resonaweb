@@ -75,7 +75,7 @@ const EventCalculatorPage = () => {
   useEffect(() => {
     const loadConfig = async () => {
       // 🔥 FORZAR RECARGA DESDE API - Limpiar caché localStorage si está desactualizado
-      const CACHE_VERSION = 'v3'; // Incrementar esto para forzar recarga
+      const CACHE_VERSION = 'v4'; // Incrementar esto para forzar recarga
       const cachedVersion = localStorage.getItem('calculatorConfigVersion');
       
       if (cachedVersion !== CACHE_VERSION) {
