@@ -109,7 +109,7 @@ const ProductDetailPage = () => {
   }
 
   // SEO: Metadatos dinámicos
-  const baseUrl = 'https://www.resonaevents.com';
+  const baseUrl = 'https://resonaevents.com';
   const canonicalUrl = `${baseUrl}/productos/${product.slug}`;
   const imageUrl = product.mainImageUrl || product.images?.[0];
   const fullImageUrl = imageUrl?.startsWith('http') 

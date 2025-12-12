@@ -62,14 +62,14 @@ interface LocalBusinessSchema {
 export const getLocalBusinessSchema = (): any => ({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://www.resonaevents.com/#localbusiness',
+  '@id': 'https://resonaevents.com/#localbusiness',
   name: 'ReSona Events',
   alternateName: 'ReSona Events Valencia',
-  url: 'https://www.resonaevents.com',
-  logo: 'https://www.resonaevents.com/logo.png',
+  url: 'https://resonaevents.com',
+  logo: 'https://resonaevents.com/logo.png',
   image: [
-    'https://www.resonaevents.com/og-image.jpg',
-    'https://www.resonaevents.com/images/equipos-audiovisuales.jpg',
+    'https://resonaevents.com/og-image.jpg',
+    'https://resonaevents.com/images/equipos-audiovisuales.jpg',
   ],
   description:
     'Empresa especializada en alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED y equipos DJ. Servicio en Valencia y provincia.',
@@ -226,10 +226,10 @@ export const getLocalBusinessSchema = (): any => ({
 export const getOrganizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  '@id': 'https://www.resonaevents.com/#organization',
+  '@id': 'https://resonaevents.com/#organization',
   name: 'ReSona Events',
-  url: 'https://www.resonaevents.com',
-  logo: 'https://www.resonaevents.com/logo.png',
+  url: 'https://resonaevents.com',
+  logo: 'https://resonaevents.com/logo.png',
   description:
     'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   foundingDate: '2009',
@@ -246,18 +246,18 @@ export const getOrganizationSchema = () => ({
 export const getWebSiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': 'https://www.resonaevents.com/#website',
+  '@id': 'https://resonaevents.com/#website',
   name: 'ReSona Events',
-  url: 'https://www.resonaevents.com',
+  url: 'https://resonaevents.com',
   description: 'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   publisher: {
-    '@id': 'https://www.resonaevents.com/#organization',
+    '@id': 'https://resonaevents.com/#organization',
   },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://www.resonaevents.com/productos?search={search_term_string}',
+      urlTemplate: 'https://resonaevents.com/productos?search={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -319,7 +319,7 @@ export const getBlogPostSchema = (post: {
     name: 'ReSona Events',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://www.resonaevents.com/logo.png',
+      url: 'https://resonaevents.com/logo.png',
     },
   },
   datePublished: post.datePublished,
