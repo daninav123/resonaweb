@@ -75,6 +75,9 @@ export const prisma = new PrismaClient({
 // Create Express app
 const app = express();
 
+// Trust proxy - IMPORTANTE para Render/proxies (express-rate-limit, IPs reales)
+app.set('trust proxy', true);
+
 // Get port from environment
 const PORT = process.env.BACKEND_PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -283,6 +286,7 @@ app.use('/api/v1/product-purchases', productPurchaseRouter);
 app.use('/api/v1/installments', installmentRouter);
 app.use('/api/v1/extra-categories', extraCategoryRouter);
 app.use('/api/v1/contabilidad', contabilidadRouter);
+// Calculator config - GET es PÚBLICO, POST/DELETE requieren auth
 app.use('/api/v1/calculator-config', calculatorConfigRouter);
 app.use('/api/v1/contact', contactRouter);
 app.use('/api/v1/budgets', budgetRouter);

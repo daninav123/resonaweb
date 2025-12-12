@@ -1,0 +1,3 @@
+FORCE REBUILD - 2025-12-12 06:25 UTC
+Cambios críticos en calculator-config endpoint
+GET debe ser PÚBLICO sin autenticación
