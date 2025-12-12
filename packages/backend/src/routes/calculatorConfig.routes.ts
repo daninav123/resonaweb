@@ -4,6 +4,16 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
+// DIAGNOSTIC: Version check endpoint (temporal)
+router.get('/version', (req, res) => {
+  res.json({
+    version: 'v2.0-public-endpoint',
+    timestamp: new Date().toISOString(),
+    message: 'GET /calculator-config debe ser PUBLICO sin auth',
+    authenticated: !!req.headers.authorization
+  });
+});
+
 /**
  * GET /api/v1/calculator-config
  * Obtener configuración (PÚBLICO - sin autenticación, para cargar en frontend)
