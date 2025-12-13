@@ -121,6 +121,42 @@ export class SitemapController {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  
+  <!-- Páginas SEO Locales - ALTA PRIORIDAD -->
+  <url>
+    <loc>${baseUrl}/alquiler-sonido-valencia</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  
+  <url>
+    <loc>${baseUrl}/alquiler-altavoces-valencia</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.98</priority>
+  </url>
+  
+  <url>
+    <loc>${baseUrl}/alquiler-iluminacion-valencia</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  
+  <url>
+    <loc>${baseUrl}/sonido-bodas-valencia</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  
+  <url>
+    <loc>${baseUrl}/alquiler-sonido-torrent</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 `;
 
       // Añadir categorías

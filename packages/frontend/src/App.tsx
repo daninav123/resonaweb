@@ -42,6 +42,7 @@ const EventCalculatorPage = lazy(() => import('./pages/EventCalculatorPage'));
 
 // Páginas SEO Landing Locales
 const AlquilerSonidoValenciaPage = lazy(() => import('./pages/AlquilerSonidoValenciaPage'));
+const AlquilerAltavocesValenciaPage = lazy(() => import('./pages/AlquilerAltavocesValenciaPage'));
 const AlquilerIluminacionValenciaPage = lazy(() => import('./pages/AlquilerIluminacionValenciaPage'));
 const SonidoBodasValenciaPage = lazy(() => import('./pages/SonidoBodasValenciaPage'));
 const AlquilerSonidoTorrentPage = lazy(() => import('./pages/AlquilerSonidoTorrentPage'));
@@ -182,6 +183,7 @@ function App() {
             
             {/* Páginas SEO Landing Locales */}
             <Route path="/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValenciaPage /></Layout>} />
+            <Route path="/alquiler-altavoces-valencia" element={<Layout><AlquilerAltavocesValenciaPage /></Layout>} />
             <Route path="/alquiler-iluminacion-valencia" element={<Layout><AlquilerIluminacionValenciaPage /></Layout>} />
             <Route path="/sonido-bodas-valencia" element={<Layout><SonidoBodasValenciaPage /></Layout>} />
             <Route path="/alquiler-sonido-torrent" element={<Layout><AlquilerSonidoTorrentPage /></Layout>} />

@@ -73,6 +73,10 @@ const Footer = () => {
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Sonido Valencia
               </Link></li>
+              <li><Link to="/alquiler-altavoces-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+                Alquiler Altavoces Valencia
+              </Link></li>
               <li><Link to="/alquiler-iluminacion-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Iluminación Valencia
