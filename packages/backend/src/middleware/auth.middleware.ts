@@ -21,7 +21,11 @@ export const authenticate = async (
     secureLog.debug('Auth header presente:', authHeader ? 'Sí' : 'No');
     
     // PERMITIR ACCESO A ENDPOINTS PÚBLICOS SIN TOKEN (solo GET)
-    const isPublicEndpoint = req.path.includes('/packs') || req.path.includes('/products') || req.path.includes('/categories') || req.path.includes('/extra-categories');
+    const isPublicEndpoint = req.path.includes('/packs') || 
+                            req.path.includes('/products') || 
+                            req.path.includes('/categories') || 
+                            req.path.includes('/extra-categories') ||
+                            req.path.includes('/calculator-config'); // ✅ CALCULADORA PÚBLICA
     const isGetRequest = req.method === 'GET';
     
     // Si no hay token
