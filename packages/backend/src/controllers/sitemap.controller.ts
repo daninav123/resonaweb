@@ -75,69 +75,29 @@ export class SitemapController {
         },
       });
 
-      // Construir XML
+      // Construir XML (header)
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  
-  <!-- Homepage -->
+`;
+
+      // ⭐ AÑADIR PÁGINAS SEO PRIMERO (por prioridad) ⭐
+      seoPages.forEach(page => {
+        const lastmod = page.updatedAt.toISOString().split('T')[0];
+        // Si slug está vacío, es la homepage
+        const url = page.slug ? `${baseUrl}/${page.slug}` : baseUrl;
+        xml += `  
+  <!-- SEO Page: ${page.slug || 'Homepage'} -->
   <url>
-    <loc>${baseUrl}/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Catálogo de Productos -->
-  <url>
-    <loc>${baseUrl}/productos</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Blog Listing -->
-  <url>
-    <loc>${baseUrl}/blog</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Calculadora de Eventos -->
-  <url>
-    <loc>${baseUrl}/calculadora-evento</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Servicios -->
-  <url>
-    <loc>${baseUrl}/servicios</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Sobre Nosotros -->
-  <url>
-    <loc>${baseUrl}/sobre-nosotros</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <!-- Contacto -->
-  <url>
-    <loc>${baseUrl}/contacto</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>${url}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
   </url>
 `;
+      });
 
       // Añadir categorías
       categories.forEach(cat => {
@@ -187,20 +147,6 @@ export class SitemapController {
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-`;
-      });
-
-      // ⭐ AÑADIR PÁGINAS SEO (DINÁMICO desde BD) ⭐
-      seoPages.forEach(page => {
-        const lastmod = page.updatedAt.toISOString().split('T')[0];
-        xml += `  
-  <!-- SEO Landing Page -->
-  <url>
-    <loc>${baseUrl}/${page.slug}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
   </url>
 `;
       });
