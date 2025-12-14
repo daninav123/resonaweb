@@ -25,7 +25,8 @@ export const authenticate = async (
                             req.path.includes('/products') || 
                             req.path.includes('/categories') || 
                             req.path.includes('/extra-categories') ||
-                            req.path.includes('/calculator-config'); // ✅ CALCULADORA PÚBLICA
+                            req.path.includes('/calculator-config') || // ✅ CALCULADORA PÚBLICA
+                            req.path.includes('/seo-pages'); // ✅ SEO PAGES PÚBLICAS
     const isGetRequest = req.method === 'GET';
     
     // Si no hay token

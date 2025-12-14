@@ -1840,3 +1840,33 @@ model BudgetItem {
   @@index([productId])
   @@map("budget_items")
 }
+
+// ============= SEO PAGES =============
+
+model SeoPage {
+  id          String   @id @default(uuid())
+  
+  // URL y metadata
+  slug        String   @unique // "alquiler-altavoces-valencia"
+  title       String   // "Alquiler de Altavoces en Valencia | ReSona"
+  description String   @db.Text // Meta description
+  keywords    String[] // ["alquiler altavoces valencia", "alquiler sonido valencia"]
+  
+  // Sitemap settings
+  priority    Float    @default(0.9) // 0.0 - 1.0
+  changefreq  String   @default("weekly") // always, hourly, daily, weekly, monthly, yearly, never
+  
+  // Content (opcional - para páginas generadas dinámicamente en el futuro)
+  content     String?  @db.Text
+  
+  // Estado
+  isActive    Boolean  @default(true)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([slug])
+  @@index([isActive])
+  @@map("seo_pages")
+}

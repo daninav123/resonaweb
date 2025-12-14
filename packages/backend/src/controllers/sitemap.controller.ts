@@ -59,6 +59,22 @@ export class SitemapController {
         },
       });
 
+      // Obtener páginas SEO activas (DINÁMICO desde BD)
+      const seoPages = await prisma.seoPage.findMany({
+        where: {
+          isActive: true,
+        },
+        select: {
+          slug: true,
+          priority: true,
+          changefreq: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          priority: 'desc',
+        },
+      });
+
       // Construir XML
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -121,42 +137,6 @@ export class SitemapController {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  
-  <!-- Páginas SEO Locales - ALTA PRIORIDAD -->
-  <url>
-    <loc>${baseUrl}/alquiler-sonido-valencia</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-  
-  <url>
-    <loc>${baseUrl}/alquiler-altavoces-valencia</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.98</priority>
-  </url>
-  
-  <url>
-    <loc>${baseUrl}/alquiler-iluminacion-valencia</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-  
-  <url>
-    <loc>${baseUrl}/sonido-bodas-valencia</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-  
-  <url>
-    <loc>${baseUrl}/alquiler-sonido-torrent</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>
 `;
 
       // Añadir categorías
@@ -207,6 +187,20 @@ export class SitemapController {
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+`;
+      });
+
+      // ⭐ AÑADIR PÁGINAS SEO (DINÁMICO desde BD) ⭐
+      seoPages.forEach(page => {
+        const lastmod = page.updatedAt.toISOString().split('T')[0];
+        xml += `  
+  <!-- SEO Landing Page -->
+  <url>
+    <loc>${baseUrl}/${page.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
   </url>
 `;
       });
