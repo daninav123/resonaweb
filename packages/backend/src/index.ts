@@ -321,6 +321,18 @@ async function startServer() {
     await prisma.$connect();
     logger.info('✅ Database connected successfully');
 
+    // Auto-seed SEO pages (solo en producción)
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        logger.info('🌱 Ejecutando auto-seed de páginas SEO...');
+        const { autoSeed } = await import('./scripts/auto-seed');
+        await autoSeed();
+        logger.info('✅ Auto-seed de páginas SEO completado');
+      } catch (e: any) {
+        logger.warn('⚠️  Auto-seed falló (no crítico):', e.message);
+      }
+    }
+
     // Setup cron jobs for email reminders
     // DESACTIVADO TEMPORALMENTE - Causaba crash en startup
     // try {
