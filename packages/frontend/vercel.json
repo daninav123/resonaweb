@@ -16,6 +16,14 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "https://resona-backend.onrender.com/api/v1/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://resona-backend.onrender.com/robots.txt"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
