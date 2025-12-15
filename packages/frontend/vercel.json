@@ -24,6 +24,10 @@
       "destination": "https://resona-backend.onrender.com/robots.txt"
     },
     {
+      "source": "/packs/:slug",
+      "destination": "/packs/:slug.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
