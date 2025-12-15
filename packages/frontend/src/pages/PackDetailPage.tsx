@@ -8,6 +8,7 @@ import { guestCart } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 import { cartCountManager } from '../hooks/useCartCount';
+import { generateProductSchema } from '../utils/seo/schemaGenerator';
 
 const PackDetailPage = () => {
   const { slug } = useParams();
@@ -124,63 +125,29 @@ const PackDetailPage = () => {
 
   const price = Number(pack.pricePerDay || pack.finalPrice || 0);
 
-  // Schema.org Product JSON-LD para Packs
+  // Schema.org Product JSON-LD usando el generador centralizado
+  const baseUrl = 'https://resonaevents.com';
   const imageUrl = pack.imageUrl || pack.mainImageUrl || pack.images?.[0];
   const fullImageUrl = imageUrl?.startsWith('http') 
     ? imageUrl 
-    : `https://resonaevents.com${imageUrl || '/placeholder.jpg'}`;
+    : `${baseUrl}${imageUrl || '/placeholder.jpg'}`;
 
-  const packSchema = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": pack.name,
-    "description": pack.description || `Pack ${pack.name} - Alquiler completo para eventos profesionales en Valencia`,
-    "sku": pack.sku || `PACK-${pack.id}`,
-    "mpn": pack.sku || `PACK-${pack.id}`,
-    "image": [fullImageUrl],
-    "brand": {
-      "@type": "Brand",
-      "name": "ReSona Events"
-    },
-    "offers": {
-      "@type": "Offer",
-      "url": `https://resonaevents.com/packs/${pack.slug}`,
-      "priceCurrency": "EUR",
-      "price": String(price),
-      "priceValidUntil": "2025-12-31",
-      "availability": "https://schema.org/InStock",
-      "itemCondition": "https://schema.org/UsedCondition",
-      "seller": {
-        "@type": "Organization",
-        "name": "ReSona Events"
-      }
-    },
-    "category": pack.category?.name || "Packs para Eventos",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "15",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": [
-      {
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "Carlos Martínez"
-        },
-        "datePublished": "2024-10-22",
-        "reviewBody": `Pack completo y profesional. Todo el equipo necesario para nuestro evento. Servicio excelente de ReSona Events.`,
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "5",
-          "bestRating": "5",
-          "worstRating": "1"
-        }
-      }
-    ]
-  };
+  // Usar el generador centralizado con todos los campos requeridos
+  const packSchema = generateProductSchema({
+    id: pack.id,
+    slug: pack.slug,
+    name: pack.name,
+    description: pack.description || `Pack ${pack.name} - Alquiler completo para eventos profesionales en Valencia`,
+    price: price, // Usar price en lugar de pricePerDay para packs
+    image: fullImageUrl,
+    category: pack.category?.name || 'Packs para Eventos',
+    brand: 'ReSona Events',
+    sku: pack.sku || `PACK-${pack.id}`,
+    availability: 'InStock',
+    rating: 4.8, // Rating para rich snippets
+    reviewCount: 15, // Número de reseñas
+    isPack: true, // Indicar que es un pack para la URL correcta
+  }, baseUrl);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

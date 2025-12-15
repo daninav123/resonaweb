@@ -17,6 +17,7 @@ export interface Product {
   availability?: 'InStock' | 'OutOfStock' | 'PreOrder';
   rating?: number;
   reviewCount?: number;
+  isPack?: boolean; // Identificar si es un pack
 }
 
 export interface Organization {
@@ -94,9 +95,11 @@ export const generateProductSchema = (product: Product, baseUrl: string) => {
       : `${baseUrl}/og-image.jpg`;
   
   // Usar slug si está disponible, de lo contrario usar id
+  // Diferenciar entre packs y productos para la URL correcta
+  const basePath = product.isPack ? '/packs' : '/productos';
   const productUrl = product.slug 
-    ? `${baseUrl}/productos/${product.slug}` 
-    : `${baseUrl}/productos/${product.id}`;
+    ? `${baseUrl}${basePath}/${product.slug}` 
+    : `${baseUrl}${basePath}/${product.id}`;
   
   return {
     '@context': 'https://schema.org',
