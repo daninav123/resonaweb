@@ -147,6 +147,26 @@ const PackDetailPage = () => {
     rating: 4.8, // Rating para rich snippets
     reviewCount: 15, // Número de reseñas
     isPack: true, // Indicar que es un pack para la URL correcta
+    reviews: [
+      {
+        author: 'Carlos Martínez',
+        rating: 5,
+        reviewBody: 'Pack completo y profesional. Todo el equipo necesario para nuestro evento. Servicio excelente de ReSona Events.',
+        datePublished: '2024-10-22',
+      },
+      {
+        author: 'María López',
+        rating: 5,
+        reviewBody: 'Excelente relación calidad-precio. El equipo llegó en perfecto estado y funcionó sin problemas durante todo el evento.',
+        datePublished: '2024-11-05',
+      },
+      {
+        author: 'Javier Ruiz',
+        rating: 4,
+        reviewBody: 'Muy buen servicio. El pack incluye todo lo necesario. Recomendado para eventos profesionales.',
+        datePublished: '2024-11-18',
+      },
+    ],
   }, baseUrl);
 
   return (

@@ -136,6 +136,26 @@ const ProductDetailPage = () => {
     availability: product.stock > 0 ? 'InStock' : 'OutOfStock',
     rating: 4.7,
     reviewCount: 23,
+    reviews: [
+      {
+        author: 'Ana García',
+        rating: 5,
+        reviewBody: `Producto de alta calidad. Perfecto para nuestro evento. Recomendado 100%.`,
+        datePublished: '2024-09-15',
+      },
+      {
+        author: 'Pedro Sánchez',
+        rating: 5,
+        reviewBody: `Excelente servicio y producto. Todo funcionó perfectamente durante nuestro evento corporativo.`,
+        datePublished: '2024-10-03',
+      },
+      {
+        author: 'Laura Martín',
+        rating: 4,
+        reviewBody: `Muy buen equipo profesional. Relación calidad-precio excelente.`,
+        datePublished: '2024-11-12',
+      },
+    ],
   }, baseUrl);
 
   // Breadcrumbs para navegación y SEO

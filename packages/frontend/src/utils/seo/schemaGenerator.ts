@@ -18,6 +18,12 @@ export interface Product {
   rating?: number;
   reviewCount?: number;
   isPack?: boolean; // Identificar si es un pack
+  reviews?: Array<{
+    author: string;
+    rating: number;
+    reviewBody: string;
+    datePublished: string;
+  }>; // Reseñas individuales opcionales
 }
 
 export interface Organization {
@@ -133,6 +139,23 @@ export const generateProductSchema = (product: Product, baseUrl: string) => {
         ratingValue: product.rating.toString(),
         reviewCount: product.reviewCount.toString(),
       },
+    }),
+    ...(product.reviews && product.reviews.length > 0 && {
+      review: product.reviews.map(review => ({
+        '@type': 'Review',
+        author: {
+          '@type': 'Person',
+          name: review.author,
+        },
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: review.rating.toString(),
+          bestRating: '5',
+          worstRating: '1',
+        },
+        reviewBody: review.reviewBody,
+        datePublished: review.datePublished,
+      })),
     }),
   };
 };
