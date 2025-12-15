@@ -110,7 +110,9 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               "email": "info@resonaevents.com",
               "address": {
                 "@type": "PostalAddress",
+                "streetAddress": "C/ de l'Illa Cabrera, 13",
                 "addressLocality": "Valencia",
+                "postalCode": "46026",
                 "addressRegion": "Valencia",
                 "addressCountry": "ES"
               },
