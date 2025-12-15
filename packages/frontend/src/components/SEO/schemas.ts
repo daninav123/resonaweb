@@ -129,7 +129,8 @@ export const getLocalBusinessSchema = (): any => ({
           description:
             'Altavoces profesionales, mesas de mezclas, micrófonos y sistemas de sonido completos para eventos.',
           provider: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': 'https://resonaevents.com/#organization',
             name: 'ReSona Events',
           },
         },
@@ -148,7 +149,8 @@ export const getLocalBusinessSchema = (): any => ({
           description:
             'Focos LED, barras de iluminación, efectos especiales y sistemas de iluminación profesional.',
           provider: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': 'https://resonaevents.com/#organization',
             name: 'ReSona Events',
           },
         },
@@ -167,7 +169,8 @@ export const getLocalBusinessSchema = (): any => ({
           description:
             'Pantallas LED de alta resolución, proyectores y sistemas de vídeo para presentaciones y eventos.',
           provider: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': 'https://resonaevents.com/#organization',
             name: 'ReSona Events',
           },
         },
@@ -186,7 +189,8 @@ export const getLocalBusinessSchema = (): any => ({
           description:
             'Controladoras, CDJs, mesas de mezclas DJ y equipos completos para DJs profesionales.',
           provider: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': 'https://resonaevents.com/#organization',
             name: 'ReSona Events',
           },
         },
@@ -205,7 +209,8 @@ export const getLocalBusinessSchema = (): any => ({
           description:
             'Servicio técnico completo con montaje, instalación y soporte durante el evento.',
           provider: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': 'https://resonaevents.com/#organization',
             name: 'ReSona Events',
           },
         },
