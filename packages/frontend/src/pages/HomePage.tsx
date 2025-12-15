@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { productService } from '../services/product.service';
 import { Product, Category } from '../types';
-import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle } from 'lucide-react';
+import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, CheckCircle, MapPin, ArrowRight } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
@@ -266,6 +266,107 @@ const HomePage = () => {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Servicios Locales Valencia */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 flex items-center justify-center gap-2">
+              <MapPin className="text-resona" size={32} />
+              Alquiler de Equipos en Valencia
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Servicio profesional de alquiler de sonido, iluminación y audiovisuales en Valencia y área metropolitana. Entrega e instalación GRATIS.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Alquiler Altavoces */}
+            <Link 
+              to="/alquiler-altavoces-valencia"
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-purple-300"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Music className="text-purple-600" size={28} />
+                <ArrowRight className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Altavoces Valencia</h3>
+              <p className="text-gray-600 text-sm mb-3">JBL, QSC, Yamaha. Desde 35€/día</p>
+              <span className="text-purple-600 text-sm font-semibold">Ver más →</span>
+            </Link>
+
+            {/* Alquiler Sonido */}
+            <Link 
+              to="/alquiler-sonido-valencia"
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-blue-300"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Music className="text-blue-600" size={28} />
+                <ArrowRight className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Sonido Valencia</h3>
+              <p className="text-gray-600 text-sm mb-3">Equipos completos para eventos, bodas, fiestas</p>
+              <span className="text-blue-600 text-sm font-semibold">Ver más →</span>
+            </Link>
+
+            {/* Alquiler Iluminación */}
+            <Link 
+              to="/alquiler-iluminacion-valencia"
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-orange-300"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Lightbulb className="text-orange-600" size={28} />
+                <ArrowRight className="text-gray-400 group-hover:text-orange-600 group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Iluminación Valencia</h3>
+              <p className="text-gray-600 text-sm mb-3">Focos LED, cabezas móviles, láseres. Desde 25€/día</p>
+              <span className="text-orange-600 text-sm font-semibold">Ver más →</span>
+            </Link>
+
+            {/* Sonido Bodas */}
+            <Link 
+              to="/sonido-bodas-valencia"
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-pink-300"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Music className="text-pink-600" size={28} />
+                <ArrowRight className="text-gray-400 group-hover:text-pink-600 group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">Sonido para Bodas Valencia</h3>
+              <p className="text-gray-600 text-sm mb-3">Ceremonia, banquete y disco. Packs completos</p>
+              <span className="text-pink-600 text-sm font-semibold">Ver más →</span>
+            </Link>
+
+            {/* Alquiler Sonido Torrent */}
+            <Link 
+              to="/alquiler-sonido-torrent"
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-green-300"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <MapPin className="text-green-600" size={28} />
+                <ArrowRight className="text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Sonido Torrent</h3>
+              <p className="text-gray-600 text-sm mb-3">Servicio en Torrent y comarca. Entrega gratis</p>
+              <span className="text-green-600 text-sm font-semibold">Ver más →</span>
+            </Link>
+
+            {/* Calculadora */}
+            <Link 
+              to="/calculadora-evento"
+              className="group bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-xl shadow-md hover:shadow-xl transition-all p-6"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Calculator className="text-white" size={28} />
+                <ArrowRight className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" size={20} />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Calcula tu Presupuesto</h3>
+              <p className="text-white/90 text-sm mb-3">Presupuesto online en 2 minutos. GRATIS</p>
+              <span className="text-white font-semibold">Calcular ahora →</span>
+            </Link>
+          </div>
         </div>
       </section>
 
