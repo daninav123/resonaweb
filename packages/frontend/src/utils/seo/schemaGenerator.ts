@@ -155,6 +155,10 @@ export const generateProductSchema = (product: Product, baseUrl: string) => {
         },
         reviewBody: review.reviewBody,
         datePublished: review.datePublished,
+        itemReviewed: {
+          '@type': 'Product',
+          name: product.name,
+        },
       })),
     }),
   };

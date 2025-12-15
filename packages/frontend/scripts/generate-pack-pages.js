@@ -81,7 +81,11 @@ function generatePackSchema(pack) {
           "worstRating": "1"
         },
         "reviewBody": "Pack completo y profesional. Todo el equipo necesario para nuestro evento. Servicio excelente de ReSona Events.",
-        "datePublished": "2024-10-22"
+        "datePublished": "2024-10-22",
+        "itemReviewed": {
+          "@type": "Product",
+          "name": pack.name
+        }
       },
       {
         "@type": "Review",
@@ -96,7 +100,11 @@ function generatePackSchema(pack) {
           "worstRating": "1"
         },
         "reviewBody": "Excelente relación calidad-precio. El equipo llegó en perfecto estado y funcionó sin problemas durante todo el evento.",
-        "datePublished": "2024-11-05"
+        "datePublished": "2024-11-05",
+        "itemReviewed": {
+          "@type": "Product",
+          "name": pack.name
+        }
       },
       {
         "@type": "Review",
@@ -111,7 +119,11 @@ function generatePackSchema(pack) {
           "worstRating": "1"
         },
         "reviewBody": "Muy buen servicio. El pack incluye todo lo necesario. Recomendado para eventos profesionales.",
-        "datePublished": "2024-11-18"
+        "datePublished": "2024-11-18",
+        "itemReviewed": {
+          "@type": "Product",
+          "name": pack.name
+        }
       }
     ]
   };

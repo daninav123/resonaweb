@@ -140,6 +140,10 @@ export const getLocalBusinessSchema = (): any => ({
       reviewBody:
         'Servicio excepcional para nuestra boda en Valencia. Los equipos de sonido e iluminación fueron perfectos. El equipo técnico muy profesional y atento. ¡Totalmente recomendado!',
       datePublished: '2024-11-15',
+      itemReviewed: {
+        '@type': 'LocalBusiness',
+        name: 'ReSona Events',
+      },
     },
     {
       '@type': 'Review',
@@ -156,6 +160,10 @@ export const getLocalBusinessSchema = (): any => ({
       reviewBody:
         'Alquilamos equipos para un evento corporativo. Entrega puntual, equipos de primera calidad y precio muy competitivo. El mejor servicio de alquiler de Valencia.',
       datePublished: '2024-10-22',
+      itemReviewed: {
+        '@type': 'LocalBusiness',
+        name: 'ReSona Events',
+      },
     },
     {
       '@type': 'Review',
@@ -172,6 +180,10 @@ export const getLocalBusinessSchema = (): any => ({
       reviewBody:
         'Profesionales de primera. Montaron toda la iluminación LED para nuestro concierto en Valencia. Todo funcionó perfecto durante las 8 horas del evento.',
       datePublished: '2024-09-30',
+      itemReviewed: {
+        '@type': 'LocalBusiness',
+        name: 'ReSona Events',
+      },
     },
     {
       '@type': 'Review',
@@ -188,6 +200,10 @@ export const getLocalBusinessSchema = (): any => ({
       reviewBody:
         'Muy buen servicio de alquiler de altavoces. Relación calidad-precio excelente. Los recomendaría para cualquier tipo de evento en Valencia.',
       datePublished: '2024-08-18',
+      itemReviewed: {
+        '@type': 'LocalBusiness',
+        name: 'ReSona Events',
+      },
     },
     {
       '@type': 'Review',
@@ -204,6 +220,10 @@ export const getLocalBusinessSchema = (): any => ({
       reviewBody:
         'Increíble experiencia con ReSona Events. Alquilamos todo el equipo audiovisual para nuestra fiesta privada. El técnico estuvo presente todo el evento. 100% recomendable.',
       datePublished: '2024-07-25',
+      itemReviewed: {
+        '@type': 'LocalBusiness',
+        name: 'ReSona Events',
+      },
     },
   ],
   hasOfferCatalog: {
