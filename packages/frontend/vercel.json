@@ -17,7 +17,7 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "https://resona-backend.onrender.com/api/v1/sitemap.xml"
+      "destination": "https://resona-backend.onrender.com/sitemap.xml"
     },
     {
       "source": "/robots.txt",
