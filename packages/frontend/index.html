@@ -90,21 +90,19 @@
       .text-2xl{font-size:1.5rem}.text-3xl{font-size:1.875rem}
     </style>
     
-    <!-- Script para cargar CSS de Vite de forma asíncrona -->
+    <!-- Script para cargar CSS de Vite de forma asíncrona - DESACTIVADO TEMPORALMENTE -->
+    <!--
     <script>
       (function() {
-        // Interceptar y convertir CSS de Vite a carga asíncrona ANTES de que bloquee
         var observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
             mutation.addedNodes.forEach(function(node) {
               if (node.tagName === 'LINK' && node.rel === 'stylesheet' && node.href.includes('/assets/')) {
-                // Media print trick: cargar como print, luego cambiar a all cuando termine
                 node.media = 'print';
                 node.onload = function() {
                   this.onload = null;
                   this.media = 'all';
                 };
-                // Fallback para navegadores sin onload
                 setTimeout(function() {
                   if (node.media === 'print') node.media = 'all';
                 }, 1000);
@@ -113,18 +111,17 @@
           });
         });
         
-        // Observar cambios en el head para interceptar CSS de Vite
         observer.observe(document.head, {
           childList: true,
           subtree: false
         });
         
-        // También procesar cualquier CSS ya existente (por si acaso)
         document.addEventListener('DOMContentLoaded', function() {
-          observer.disconnect(); // Ya no necesitamos observar más
+          observer.disconnect();
         });
       })();
     </script>
+    -->
     
     <!-- Schema.org Structured Data - Defer para no bloquear -->
     <script type="application/ld+json">
