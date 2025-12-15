@@ -7,10 +7,10 @@
       "has": [
         {
           "type": "host",
-          "value": "resonaevents.com"
+          "value": "www.resonaevents.com"
         }
       ],
-      "destination": "https://www.resonaevents.com/:path*",
+      "destination": "https://resonaevents.com/:path*",
       "permanent": true
     }
   ],
