@@ -26,6 +26,18 @@ const AlquilerIluminacionValenciaPage = () => {
       question: '¿Hacéis entregas en salones de eventos y fincas de Valencia?',
       answer: 'Sí, realizamos entregas en toda Valencia capital, área metropolitana y provincia. Hemos trabajado en las principales fincas (Mas de San Pablo, La Hacienda, Alquería de Morayma), salones (La Finca del Duque, La Hacienda), y espacios únicos como La Marina de Valencia y Jardines de Viveros.',
     },
+    {
+      question: '¿Qué marcas de iluminación profesional tenéis?',
+      answer: 'Trabajamos con las mejores marcas del mercado: Chauvet Professional, American DJ, Showtec, Beamz, y equipos LED de última generación. Todos nuestros focos son LED de bajo consumo, iluminación RGB de amplio espectro cromático y cabezas móviles con efectos prism y gobo. Equipos profesionales homologados para eventos en Valencia.',
+    },
+    {
+      question: '¿Podéis iluminar edificios y fachadas en Valencia?',
+      answer: 'Sí, ofrecemos servicio de iluminación arquitectónica para edificios, fachadas, monumentos y espacios exteriores en Valencia. Utilizamos proyectores LED de alta potencia, iluminación RGB programable y sistemas wireless DMX. Ideal para eventos corporativos, inauguraciones y celebraciones especiales en Valencia.',
+    },
+    {
+      question: '¿Incluye el alquiler de iluminación el montaje y desmontaje?',
+      answer: 'El transporte está siempre incluido en Valencia capital. El montaje e instalación técnica es opcional con coste adicional según la complejidad. Para eventos grandes (bodas, conciertos, eventos corporativos) recomendamos nuestro servicio completo que incluye diseño lumínico, montaje, programación, operación y desmontaje. Presupuesto sin compromiso en 24 horas.',
+    },
   ];
 
   return (

@@ -30,6 +30,14 @@ const AlquilerAltavocesValenciaPage = () => {
       question: '¿Qué potencia de altavoces necesito para mi evento?',
       answer: 'Depende del tipo de evento y número de asistentes: Para eventos pequeños (hasta 50 personas): 2x 400W-600W. Para eventos medianos (50-150 personas): 2x 800W-1200W + subwoofer. Para eventos grandes (150-300 personas): 2x 1500W-2000W + 2 subwoofers. Para más de 300 personas: Sistema line array o múltiples torres. Te asesoramos gratis según tus necesidades.',
     },
+    {
+      question: '¿Alquiláis altavoces para bodas en Valencia?',
+      answer: 'Sí, somos especialistas en alquiler de altavoces para bodas en Valencia. Ofrecemos sistemas completos que incluyen altavoces para ceremonia (discretos y potentes), equipos para cocktail/aperitivo, y sistema profesional para el banquete y fiesta. Trabajamos con más de 150 bodas al año en Valencia. Incluimos asesoramiento, montaje, técnico durante el evento si lo necesitas, y recogida. Paquetes desde 250€.',
+    },
+    {
+      question: '¿Los altavoces están asegurados?',
+      answer: 'Sí, todos nuestros equipos tienen seguro a todo riesgo. Solicitamos un depósito reembolsable (100-200€ según el equipo) que se devuelve íntegramente tras comprobar el estado del material. Para eventos en exteriores o con alto riesgo, recomendamos contratar seguro adicional. Nuestros altavoces profesionales son robustos y están diseñados para uso intensivo en eventos.',
+    },
   ];
 
   return (

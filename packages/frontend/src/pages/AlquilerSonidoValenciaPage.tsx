@@ -26,6 +26,18 @@ const AlquilerSonidoValenciaPage = () => {
       question: '¿Cuál es el plazo mínimo de reserva?',
       answer: 'Aceptamos reservas desde 24 horas antes (sujeto a disponibilidad), pero recomendamos reservar con 1-2 semanas de antelación, especialmente para fines de semana y temporada alta (mayo-octubre). El alquiler mínimo es de 1 día.',
     },
+    {
+      question: '¿Qué incluye el servicio de alquiler de sonido en Valencia?',
+      answer: 'Nuestro servicio incluye el transporte y entrega de equipos en Valencia, asesoramiento técnico gratuito, equipos probados y certificados, cables y conectores necesarios. Opcionalmente ofrecemos montaje, instalación técnica, operador de sonido durante el evento y recogida post-evento.',
+    },
+    {
+      question: '¿Alquilan sonido para bodas en Valencia?',
+      answer: 'Sí, somos especialistas en sonido para bodas en Valencia. Ofrecemos paquetes completos que incluyen sistema de sonido para ceremonia (micrófonos inalámbricos), equipo para banquete y sistema de altavoces profesionales para la fiesta. Más de 200 bodas realizadas con éxito en Valencia y provincia.',
+    },
+    {
+      question: '¿Tienen seguro para los equipos de sonido?',
+      answer: 'Todos nuestros equipos están asegurados y en perfecto estado de funcionamiento. Solicitamos un depósito de seguridad reembolsable. En caso de daño accidental durante el evento, el depósito cubre reparaciones menores. Para eventos grandes, recomendamos contratar seguro de responsabilidad civil adicional.',
+    },
   ];
 
   return (
