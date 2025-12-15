@@ -98,7 +98,9 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Service",
+            "name": heroTitle,
             "serviceType": heroTitle,
+            "description": heroSubtitle || `Servicio profesional de ${heroTitle} en Valencia`,
             "provider": {
               "@type": "LocalBusiness",
               "@id": "https://resonaevents.com",

@@ -112,7 +112,9 @@ export const advancedProductSchema = (product: any) => {
 export const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
+  "name": "Alquiler de Equipos Audiovisuales para Eventos",
   "serviceType": "Alquiler de Equipos Audiovisuales para Eventos",
+  "description": "Servicio profesional de alquiler de equipos de sonido, iluminación y audiovisuales para todo tipo de eventos en Valencia",
   "provider": {
     "@type": "LocalBusiness",
     "name": "ReSona Events",
