@@ -50,6 +50,8 @@ uploads/*
 backups/*.sql
 backups/*.sql.gz
 backups/database/temp_read_*/
+backups/database/*.json
+backups/database/*.zip
 
 # Temporary files
 *.tmp
