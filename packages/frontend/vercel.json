@@ -34,6 +34,34 @@
       "destination": "https://resona-backend.onrender.com/robots.txt"
     },
     {
+      "source": "/calculadora-evento",
+      "destination": "/calculadora-evento.html"
+    },
+    {
+      "source": "/faqs",
+      "destination": "/faqs.html"
+    },
+    {
+      "source": "/alquiler-altavoces-valencia",
+      "destination": "/alquiler-altavoces-valencia.html"
+    },
+    {
+      "source": "/alquiler-sonido-valencia",
+      "destination": "/alquiler-sonido-valencia.html"
+    },
+    {
+      "source": "/alquiler-iluminacion-valencia",
+      "destination": "/alquiler-iluminacion-valencia.html"
+    },
+    {
+      "source": "/sonido-bodas-valencia",
+      "destination": "/sonido-bodas-valencia.html"
+    },
+    {
+      "source": "/alquiler-sonido-torrent",
+      "destination": "/alquiler-sonido-torrent.html"
+    },
+    {
       "source": "/packs/:slug",
       "destination": "/packs/:slug.html"
     },
