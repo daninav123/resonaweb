@@ -178,6 +178,7 @@ function App() {
             <Route path="/test-checkout-e2e" element={<Layout><TestCheckoutE2EPage /></Layout>} />
             <Route path="/test-full-order" element={<Layout><TestFullOrderFlowPage /></Layout>} />
             <Route path="/calculadora-evento" element={<Layout><EventCalculatorPage /></Layout>} />
+            <Route path="/calculadora-eventos" element={<Navigate to="/calculadora-evento" replace />} />
             <Route path="/calculadora" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/servicios" element={<Layout><ServicesPage /></Layout>} />
             
