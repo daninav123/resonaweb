@@ -39,6 +39,7 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const EventCalculatorPage = lazy(() => import('./pages/EventCalculatorPage'));
+const FAQsPage = lazy(() => import('./pages/FAQsPage'));
 
 // Páginas SEO Landing Locales
 const AlquilerSonidoValenciaPage = lazy(() => import('./pages/AlquilerSonidoValenciaPage'));
@@ -182,6 +183,7 @@ function App() {
             <Route path="/calculadora-eventos" element={<Navigate to="/calculadora-evento" replace />} />
             <Route path="/calculadora" element={<Navigate to="/calculadora-evento" replace />} />
             <Route path="/servicios" element={<Layout><ServicesPage /></Layout>} />
+            <Route path="/faqs" element={<Layout><FAQsPage /></Layout>} />
             
             {/* Páginas SEO Landing Locales */}
             <Route path="/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValenciaPage /></Layout>} />
