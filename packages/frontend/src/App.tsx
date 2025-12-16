@@ -171,6 +171,7 @@ function App() {
             <Route path="/" element={<Layout><HomePage /></Layout>} />
             <Route path="/productos" element={<Layout><ProductsPage /></Layout>} />
             <Route path="/productos/:slug" element={<Layout><ProductDetailPage /></Layout>} />
+            <Route path="/packs" element={<Navigate to="/productos?category=packs" replace />} />
             <Route path="/packs/:slug" element={<Layout><PackDetailPage /></Layout>} />
             <Route path="/carrito" element={<Layout><CartPage /></Layout>} />
             <Route path="/test-stock" element={<Layout><TestStockPage /></Layout>} />

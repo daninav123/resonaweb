@@ -12,6 +12,11 @@
       ],
       "destination": "https://resonaevents.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/packs",
+      "destination": "/productos?category=packs",
+      "permanent": true
     }
   ],
   "rewrites": [
