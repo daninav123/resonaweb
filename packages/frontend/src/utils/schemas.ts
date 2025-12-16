@@ -7,8 +7,8 @@ export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Resona Events',
-  url: 'https://resona.com',
-  logo: 'https://resona.com/logo-resona.svg',
+  url: 'https://resonaevents.com',
+  logo: 'https://resonaevents.com/logo.png',
   description: 'Alquiler profesional de equipos de sonido, iluminación y audiovisuales para eventos',
   contactPoint: {
     '@type': 'ContactPoint',
@@ -32,12 +32,12 @@ export const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Resona Events',
-  url: 'https://resona.com',
+  url: 'https://resonaevents.com',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://resona.com/productos?q={search_term_string}',
+      urlTemplate: 'https://resonaevents.com/productos?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -47,9 +47,9 @@ export const websiteSchema = {
 export const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://resona.com',
+  '@id': 'https://resonaevents.com/#localbusiness',
   name: 'Resona Events',
-  image: 'https://resona.com/logo-resona.svg',
+  image: 'https://resonaevents.com/logo.png',
   description: 'Alquiler de material profesional para eventos: sonido, iluminación, fotografía y video',
   address: {
     '@type': 'PostalAddress',
@@ -101,7 +101,7 @@ export const productSchema = (product: any) => {
     },
     offers: {
       '@type': 'Offer',
-      url: `https://resona.com/productos/${product.slug}`,
+      url: `https://resonaevents.com/productos/${product.slug}`,
       priceCurrency: 'EUR',
       price: product.pricePerDay,
       availability: product.isActive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -127,7 +127,7 @@ export const productListSchema = (products: any[]) => ({
     item: {
       '@type': 'Product',
       name: product.name,
-      url: `https://resona.com/productos/${product.slug}`,
+      url: `https://resonaevents.com/productos/${product.slug}`,
       image: product.imageUrl,
       offers: {
         '@type': 'Offer',
@@ -173,7 +173,7 @@ export const serviceSchema = {
   provider: {
     '@type': 'Organization',
     name: 'Resona Events',
-    url: 'https://resona.com',
+    url: 'https://resonaevents.com',
   },
   areaServed: {
     '@type': 'Country',
@@ -197,11 +197,11 @@ export const eventSchema = (eventType: string, attendees: number) => ({
   organizer: {
     '@type': 'Organization',
     name: 'Resona Events',
-    url: 'https://resona.com',
+    url: 'https://resonaevents.com',
   },
   offers: {
     '@type': 'Offer',
-    url: 'https://resona.com/calculadora-evento',
+    url: 'https://resonaevents.com/calculadora-eventos',
     priceCurrency: 'EUR',
   },
 });

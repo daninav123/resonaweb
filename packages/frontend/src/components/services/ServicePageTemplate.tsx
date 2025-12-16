@@ -103,8 +103,9 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             "description": heroSubtitle || `Servicio profesional de ${heroTitle} en Valencia`,
             "provider": {
               "@type": "LocalBusiness",
-              "@id": "https://resonaevents.com",
+              "@id": "https://resonaevents.com/#localbusiness",
               "name": "ReSona Events",
+              "url": "https://resonaevents.com",
               "image": "https://resonaevents.com/logo.png",
               "telephone": "+34613881414",
               "email": "info@resonaevents.com",
@@ -113,7 +114,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 "streetAddress": "C/ de l'Illa Cabrera, 13",
                 "addressLocality": "Valencia",
                 "postalCode": "46026",
-                "addressRegion": "Valencia",
+                "addressRegion": "Comunidad Valenciana",
                 "addressCountry": "ES"
               },
               "areaServed": {

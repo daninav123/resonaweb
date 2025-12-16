@@ -5,6 +5,7 @@ import { blogService } from '../../services/blog.service';
 import SEOHead from '../../components/SEO/SEOHead';
 import { Calendar, User, ArrowLeft, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { getImageUrl as buildImageUrl } from '../../utils/imageUrl';
 
 interface BlogPost {
   id: string;
@@ -99,7 +100,7 @@ const BlogPostPage = () => {
   const getImageUrl = (imagePath: string | undefined) => {
     if (!imagePath) return null;
     if (imagePath.startsWith('http')) return imagePath;
-    return `http://localhost:3001${imagePath}`;
+    return buildImageUrl(imagePath);
   };
 
   const imageUrl = getImageUrl(post.featuredImage);

@@ -3,7 +3,24 @@
 // Este archivo se mantiene temporalmente para compatibilidad con código legacy
 
 // NO USAR - Schema LocalBusiness viejo (usar getLocalBusinessSchema de /components/SEO/schemas.ts)
-export const localBusinessSchema = {}; // Vacío intencionalmente para forzar error si se usa
+export const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://resonaevents.com/#localbusiness",
+  "name": "ReSona Events",
+  "url": "https://resonaevents.com",
+  "image": "https://resonaevents.com/logo.png",
+  "telephone": "+34613881414",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "C/ de l'Illa Cabrera, 13",
+    "addressLocality": "València",
+    "postalCode": "46026",
+    "addressRegion": "Comunidad Valenciana",
+    "addressCountry": "ES"
+  },
+  "priceRange": "€€"
+}; // Vacío intencionalmente para forzar error si se usa
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -15,7 +32,7 @@ export const organizationSchema = {
   "description": "Líder en alquiler de equipos audiovisuales para eventos en Valencia. Sonido, iluminación, fotografía y video profesional.",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+34-XXX-XXX-XXX",
+    "telephone": "+34613881414",
     "contactType": "customer service",
     "email": "info@resonaevents.com",
     "areaServed": "ES",
@@ -102,6 +119,10 @@ export const advancedProductSchema = (product: any) => {
           "ratingValue": "5",
           "bestRating": "5",
           "worstRating": "1"
+        },
+        "itemReviewed": {
+          "@type": "Product",
+          "name": product.name
         }
       }
     ]
