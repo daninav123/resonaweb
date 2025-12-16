@@ -102,6 +102,30 @@ const seoLandings = [
     ogDescription:
       'Sonido profesional en Torrent para eventos. Presupuesto rápido.',
   },
+  {
+    route: '/servicios/alquiler-sonido-valencia',
+    file: 'servicios-alquiler-sonido-valencia.html',
+    title: 'Alquiler Sonido Valencia 🔊 Desde 35€/día | Eventos, Bodas, Fiestas',
+    description:
+      '✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación GRATIS. 15 años de experiencia. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414',
+    keywords:
+      'alquiler sonido valencia, alquiler altavoces valencia, alquiler equipos sonido valencia, sonido profesional valencia, alquiler PA valencia, sistema sonido eventos valencia, alquiler subwoofer valencia',
+    canonical: `${baseUrl}/alquiler-sonido-valencia`,
+    ogTitle: 'Alquiler Sonido Valencia | ReSona Events',
+    ogDescription: 'Sonido profesional en Valencia para eventos. Presupuesto rápido.',
+  },
+  {
+    route: '/servicios/sonido-bodas-valencia',
+    file: 'servicios-sonido-bodas-valencia.html',
+    title: 'Sonido para Bodas en Valencia | Alquiler Equipos Profesionales',
+    description:
+      'Alquiler de sonido profesional para bodas en Valencia. Ceremonia, banquete y fiesta con equipos de alta calidad. Microfonía inalámbrica y técnico incluido. Más de 500 bodas realizadas. ☎️ 613881414',
+    keywords:
+      'sonido bodas valencia, alquiler sonido boda valencia, equipos audio bodas valencia, microfono boda valencia, sonido ceremonia valencia, sonido banquete valencia, musica boda valencia',
+    canonical: `${baseUrl}/sonido-bodas-valencia`,
+    ogTitle: 'Sonido para Bodas Valencia | ReSona Events',
+    ogDescription: 'Sonido profesional para bodas en Valencia. Presupuesto rápido.',
+  },
 ];
 
 function ensureReplaced(html, replacer) {

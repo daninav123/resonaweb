@@ -62,6 +62,14 @@
       "destination": "/alquiler-sonido-torrent.html"
     },
     {
+      "source": "/servicios/alquiler-sonido-valencia",
+      "destination": "/servicios-alquiler-sonido-valencia.html"
+    },
+    {
+      "source": "/servicios/sonido-bodas-valencia",
+      "destination": "/servicios-sonido-bodas-valencia.html"
+    },
+    {
       "source": "/packs/equipos-audiovisuales-completos",
       "destination": "/packs/equipos-audiovisuales-completos.html"
     },

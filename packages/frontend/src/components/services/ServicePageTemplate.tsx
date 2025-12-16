@@ -14,6 +14,7 @@ interface ServicePageProps {
   title: string;
   metaDescription: string;
   keywords: string;
+  canonicalUrl?: string;
   heroTitle: string;
   heroSubtitle: string;
   heroImage?: string;
@@ -42,6 +43,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   title,
   metaDescription,
   keywords,
+  canonicalUrl,
   heroTitle,
   heroSubtitle,
   heroImage,
@@ -53,6 +55,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   relatedServices,
 }) => {
   const currentUrl = typeof window !== 'undefined' ? `https://resonaevents.com${window.location.pathname}` : '';
+  const canonicalHref = canonicalUrl || currentUrl;
   
   return (
     <>
@@ -60,13 +63,13 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <title>{title}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={keywords} />
-        <link rel="canonical" href={currentUrl} />
+        <link rel="canonical" href={canonicalHref} />
         
         {/* Open Graph */}
         <meta property="og:title" content={title} />
         <meta property="og:description" content={metaDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={currentUrl} />
+        <meta property="og:url" content={canonicalHref} />
         <meta property="og:locale" content="es_ES" />
         <meta property="og:site_name" content="ReSona Events Valencia" />
         
@@ -74,6 +77,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={metaDescription} />
+        <meta property="twitter:url" content={canonicalHref} />
         
         {/* Schema FAQPage */}
         {faqs && faqs.length > 0 && (
@@ -187,7 +191,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                   WhatsApp: 613 88 14 14
                 </a>
                 <a
-                  href="/calculadora-eventos"
+                  href="/calculadora-evento"
                   className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
                 >
                   <Calculator className="w-5 h-5 mr-2" />

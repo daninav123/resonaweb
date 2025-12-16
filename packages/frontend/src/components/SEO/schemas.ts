@@ -371,7 +371,7 @@ export const getWebSiteSchema = () => ({
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://resonaevents.com/productos?search={search_term_string}',
+      urlTemplate: 'https://resonaevents.com/productos?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
