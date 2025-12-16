@@ -17,6 +17,11 @@
       "source": "/packs",
       "destination": "/productos?category=packs",
       "permanent": true
+    },
+    {
+      "source": "/calculadora",
+      "destination": "/calculadora-evento",
+      "permanent": true
     }
   ],
   "rewrites": [
