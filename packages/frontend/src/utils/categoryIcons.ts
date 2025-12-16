@@ -14,6 +14,7 @@ export const categoryIcons: Record<string, string> = {
   'mobiliario': '🪑',
   'backline': '🎸',
   'pantallas-proyeccion': '📺',
+  'pantallas-y-proyeccion': '📺',
   'efectos-especiales': '🎆',
   'comunicaciones': '📡',
   'energia-distribucion': '⚡',
@@ -31,5 +32,6 @@ export const categoryIcons: Record<string, string> = {
  * Obtiene el icono de una categoría por su slug
  */
 export const getCategoryIcon = (slug: string): string => {
-  return categoryIcons[slug] || '🎉';
+  const normalized = (slug || '').toLowerCase().trim();
+  return categoryIcons[normalized] || '🎉';
 };

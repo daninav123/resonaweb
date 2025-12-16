@@ -21,6 +21,7 @@ const categoryIconMap: Record<string, any> = {
   'mobiliario': Armchair,
   'backline': Music2,
   'pantallas-proyeccion': Monitor,
+  'pantallas-y-proyeccion': Monitor,
   'efectos-especiales': Zap,
   'comunicaciones': Radio,
   'energia-distribucion': Plug,
@@ -57,7 +58,8 @@ export const CategoryIcon: FC<CategoryIconProps> = ({
   size = 48,
   strokeWidth = 1.5
 }) => {
-  const IconComponent = categoryIconMap[slug] || Package;
+  const normalizedSlug = (slug || '').toLowerCase().trim();
+  const IconComponent = categoryIconMap[normalizedSlug] || Package;
   
   return (
     <IconComponent 
@@ -72,5 +74,6 @@ export const CategoryIcon: FC<CategoryIconProps> = ({
  * Obtiene el componente de icono para una categoría por su slug
  */
 export const getCategoryIconComponent = (slug: string) => {
-  return categoryIconMap[slug] || Package;
+  const normalizedSlug = (slug || '').toLowerCase().trim();
+  return categoryIconMap[normalizedSlug] || Package;
 };
