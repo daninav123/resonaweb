@@ -172,6 +172,30 @@ ${JSON.stringify(schema, null, 2)}
     .replace(
       /<link rel="canonical".*?>/,
       `<link rel="canonical" href="${baseUrl}/packs/${pack.slug}" />`
+    )
+    .replace(
+      /<meta property="og:url".*?>/,
+      `<meta property="og:url" content="${baseUrl}/packs/${pack.slug}" />`
+    )
+    .replace(
+      /<meta property="twitter:url".*?>/,
+      `<meta property="twitter:url" content="${baseUrl}/packs/${pack.slug}" />`
+    )
+    .replace(
+      /<meta property="og:title".*?>/,
+      `<meta property="og:title" content="${pack.name} | ReSona Events" />`
+    )
+    .replace(
+      /<meta property="twitter:title".*?>/,
+      `<meta property="twitter:title" content="${pack.name} | ReSona Events" />`
+    )
+    .replace(
+      /<meta property="og:description".*?>/,
+      `<meta property="og:description" content="${pack.description}" />`
+    )
+    .replace(
+      /<meta property="twitter:description".*?>/,
+      `<meta property="twitter:description" content="${pack.description}" />`
     );
   
   return packHTML;

@@ -62,8 +62,16 @@
       "destination": "/alquiler-sonido-torrent.html"
     },
     {
-      "source": "/packs/:slug",
-      "destination": "/packs/:slug.html"
+      "source": "/packs/equipos-audiovisuales-completos",
+      "destination": "/packs/equipos-audiovisuales-completos.html"
+    },
+    {
+      "source": "/packs/equipos-de-iluminacion-profesional",
+      "destination": "/packs/equipos-de-iluminacion-profesional.html"
+    },
+    {
+      "source": "/packs/altavoces-profesionales-para-eventos",
+      "destination": "/packs/altavoces-profesionales-para-eventos.html"
     },
     {
       "source": "/(.*)",
