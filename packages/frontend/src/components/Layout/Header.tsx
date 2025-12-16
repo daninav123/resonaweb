@@ -292,13 +292,23 @@ const Header = () => {
                 Contacto
               </Link>
             </li>
-            {isAuthenticated && user?.role === 'ADMIN' && (
+            {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') && (
               <li>
                 <Link
                   to="/admin"
                   className="block py-2 md:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
                 >
                   Panel Admin
+                </Link>
+              </li>
+            )}
+            {isAuthenticated && user?.role === 'COMMERCIAL' && (
+              <li>
+                <Link
+                  to="/comercial"
+                  className="block py-2 md:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
+                >
+                  Panel Comercial
                 </Link>
               </li>
             )}

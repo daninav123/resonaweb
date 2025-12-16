@@ -2,7 +2,7 @@ import {
   Video, Camera, Lightbulb, Volume2, Mic, Sliders,
   Headphones, Theater, Sparkles, Armchair, Music2,
   Monitor, Zap, Radio, Cable, Package,
-  Building2, Settings, Lamp, Plug, Shield, Link
+  Building2, Settings, Gauge, Plug, Shield, Link
 } from 'lucide-react';
  import type { FC } from 'react';
 
@@ -29,7 +29,7 @@ const categoryIconMap: Record<string, any> = {
   'packs': Package,
   'estructuras': Building2,
   'control-sonido': Settings,
-  'control-iluminacion': Lamp,
+  'control-iluminacion': Gauge,
   'generacion-y-distribucion': Plug,
   'pantallas-y-proteccion': Shield,
   'cableado': Link,

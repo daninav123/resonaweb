@@ -98,7 +98,7 @@ export class UserService {
     firstName: string;
     lastName: string;
     phone?: string;
-    role?: 'CLIENT' | 'ADMIN' | 'SUPERADMIN';
+    role?: 'CLIENT' | 'ADMIN' | 'SUPERADMIN' | 'COMMERCIAL';
   }) {
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -149,7 +149,7 @@ export class UserService {
       lastName: string;
       phone: string;
       address: any;
-      role: 'CLIENT' | 'ADMIN' | 'SUPERADMIN';
+      role: 'CLIENT' | 'ADMIN' | 'SUPERADMIN' | 'COMMERCIAL';
       isActive: boolean;
     }>,
     isAdmin: boolean = false

@@ -87,6 +87,12 @@ const MyDataPage = lazy(() => import('./pages/MyDataPage')); // RGPD: Mis Datos
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 
+// Commercial Panel
+const CommercialLayout = lazy(() => import('./layouts/CommercialLayout'));
+const CommercialDashboard = lazy(() => import('./pages/commercial/CommercialDashboard'));
+const LeadsManager = lazy(() => import('./pages/commercial/LeadsManager'));
+const CommissionsPage = lazy(() => import('./pages/commercial/CommissionsPage'));
+
 // Service Pages (20 páginas)
 const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonidoValencia'));
 const AlquilerAltavocesProfesionales = lazy(() => import('./pages/services/AlquilerAltavocesProfesionales'));
@@ -260,6 +266,20 @@ function App() {
             {/* POS Route (sin AdminLayout para fullscreen en móvil) */}
             <Route element={<PrivateRoute requireAdmin />}>
               <Route path="/pos/:orderId" element={<POSPage />} />
+            </Route>
+
+            {/* Commercial Panel Routes */}
+            <Route element={<PrivateRoute requireCommercial />}>
+              <Route path="/comercial" element={<CommercialLayout />}>
+                <Route index element={<Navigate to="/comercial/dashboard" replace />} />
+                <Route path="dashboard" element={<CommercialDashboard />} />
+                <Route path="presupuestos" element={<AdminQuoteRequestsPage apiBasePath="/commercial/quotes" />} />
+                <Route path="leads" element={<LeadsManager />} />
+                <Route path="comisiones" element={<CommissionsPage />} />
+                <Route path="calculadora" element={<EventCalculatorPage />} />
+                <Route path="catalogo" element={<ProductsPage />} />
+                <Route path="pedidos" element={<OrdersPage />} />
+              </Route>
             </Route>
 
             {/* Admin Routes */}

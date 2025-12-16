@@ -3,9 +3,10 @@ import { useAuthStore } from '../stores/authStore';
 
 interface PrivateRouteProps {
   requireAdmin?: boolean;
+  requireCommercial?: boolean;
 }
 
-const PrivateRoute = ({ requireAdmin = false }: PrivateRouteProps) => {
+const PrivateRoute = ({ requireAdmin = false, requireCommercial = false }: PrivateRouteProps) => {
   const { isAuthenticated, user, loading } = useAuthStore();
 
   if (loading) {
@@ -21,6 +22,10 @@ const PrivateRoute = ({ requireAdmin = false }: PrivateRouteProps) => {
   }
 
   if (requireAdmin && user?.role !== 'ADMIN' && user?.role !== 'SUPERADMIN') {
+    return <Navigate to="/" replace />;
+  }
+
+  if (requireCommercial && user?.role !== 'COMMERCIAL' && user?.role !== 'ADMIN' && user?.role !== 'SUPERADMIN') {
     return <Navigate to="/" replace />;
   }
 

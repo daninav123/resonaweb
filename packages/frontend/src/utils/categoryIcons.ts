@@ -22,7 +22,7 @@ export const categoryIcons: Record<string, string> = {
   'packs': '📦',
   'estructuras': '🏗️',
   'control-sonido': '🎚️',
-  'control-iluminacion': '🕯️',
+  'control-iluminacion': '🎛️',
   'generacion-y-distribucion': '🔌',
   'pantallas-y-proteccion': '🛡️',
   'cableado': '🔗',
