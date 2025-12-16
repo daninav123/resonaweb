@@ -23,7 +23,7 @@ Disallow: /carrito
 Disallow: /api/
 
 # Sitemap Dinámico (generado automáticamente con productos y blog)
-Sitemap: https://api.resonaevents.com/sitemap.xml
+Sitemap: https://resonaevents.com/sitemap.xml
 
 # RSS Feed del Blog
 # https://api.resonaevents.com/rss
