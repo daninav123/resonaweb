@@ -38,58 +38,6 @@ const pages = [
 
 const seoLandings = [
   {
-    route: '/alquiler-altavoces-valencia',
-    file: 'alquiler-altavoces-valencia.html',
-    title: 'Alquiler Altavoces Valencia 🔊 Desde 35€/día | JBL, QSC, Yamaha',
-    description:
-      '✅ Altavoces profesionales Valencia: JBL, QSC, Yamaha 400W-2000W. Instalación GRATIS en Valencia y área metropolitana. ⭐ 4.9/5. Eventos, bodas, fiestas. Presupuesto 24h ☎️ 613881414',
-    keywords:
-      'alquiler altavoces valencia, alquiler altavoces profesionales valencia, alquiler altavoces activos valencia, alquiler altavoces eventos valencia, alquiler PA valencia, alquiler altavoces JBL valencia, alquiler altavoces baratos valencia, alquiler sonido valencia',
-    canonical: `${baseUrl}/alquiler-altavoces-valencia`,
-    ogTitle: 'Alquiler Altavoces Valencia | ReSona Events',
-    ogDescription:
-      'Altavoces profesionales en Valencia con entrega e instalación. Presupuesto rápido.',
-  },
-  {
-    route: '/alquiler-sonido-valencia',
-    file: 'alquiler-sonido-valencia.html',
-    title: 'Alquiler Sonido Valencia 🎵 Equipos Profesionales | ReSona Events',
-    description:
-      'Alquiler de sonido profesional en Valencia para bodas, eventos y conciertos. Equipos de alta gama, montaje y soporte técnico. Presupuesto en 24h.',
-    keywords:
-      'alquiler sonido valencia, alquiler equipos sonido valencia, alquiler PA valencia, sonido eventos valencia',
-    canonical: `${baseUrl}/alquiler-sonido-valencia`,
-    ogTitle: 'Alquiler Sonido Valencia | ReSona Events',
-    ogDescription:
-      'Sonido profesional en Valencia para eventos. Presupuesto rápido.',
-  },
-  {
-    route: '/alquiler-iluminacion-valencia',
-    file: 'alquiler-iluminacion-valencia.html',
-    title: 'Alquiler Iluminación Valencia 💡 Iluminación Profesional | ReSona Events',
-    description:
-      'Alquiler de iluminación profesional en Valencia: focos LED, moving heads, control DMX y ambientación. Montaje y soporte técnico. Presupuesto en 24h.',
-    keywords:
-      'alquiler iluminacion valencia, iluminacion eventos valencia, alquiler luces valencia, iluminacion bodas valencia',
-    canonical: `${baseUrl}/alquiler-iluminacion-valencia`,
-    ogTitle: 'Alquiler Iluminación Valencia | ReSona Events',
-    ogDescription:
-      'Iluminación profesional en Valencia para eventos. Presupuesto rápido.',
-  },
-  {
-    route: '/sonido-bodas-valencia',
-    file: 'sonido-bodas-valencia.html',
-    title: 'Sonido para Bodas en Valencia 💍 | ReSona Events',
-    description:
-      'Sonido profesional para bodas en Valencia: ceremonia, cóctel, banquete y fiesta. Equipos y técnico. Montaje incluido. Presupuesto en 24h.',
-    keywords:
-      'sonido bodas valencia, alquiler sonido boda valencia, sonido ceremonia valencia, dj boda valencia',
-    canonical: `${baseUrl}/sonido-bodas-valencia`,
-    ogTitle: 'Sonido para Bodas Valencia | ReSona Events',
-    ogDescription:
-      'Sonido profesional para bodas en Valencia. Presupuesto rápido.',
-  },
-  {
     route: '/alquiler-sonido-torrent',
     file: 'alquiler-sonido-torrent.html',
     title: 'Alquiler Sonido Torrent 🎵 | ReSona Events',
@@ -105,26 +53,53 @@ const seoLandings = [
   {
     route: '/servicios/alquiler-sonido-valencia',
     file: 'servicios-alquiler-sonido-valencia.html',
-    title: 'Alquiler Sonido Valencia 🔊 Desde 35€/día | Eventos, Bodas, Fiestas',
+    title: 'Alquiler de Sonido Profesional en Valencia | ReSona Events',
     description:
-      '✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación GRATIS. 15 años de experiencia. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414',
+      'Alquiler de sonido profesional en Valencia. Equipos JBL, QSC, Pioneer. Técnico incluido. Presupuesto gratis en 24h. ☎️ 613 88 14 14',
     keywords:
-      'alquiler sonido valencia, alquiler altavoces valencia, alquiler equipos sonido valencia, sonido profesional valencia, alquiler PA valencia, sistema sonido eventos valencia, alquiler subwoofer valencia',
-    canonical: `${baseUrl}/alquiler-sonido-valencia`,
-    ogTitle: 'Alquiler Sonido Valencia | ReSona Events',
-    ogDescription: 'Sonido profesional en Valencia para eventos. Presupuesto rápido.',
+      'alquiler sonido valencia, equipos audio valencia, sonido profesional eventos, alquiler altavoces valencia',
+    canonical: `${baseUrl}/servicios/alquiler-sonido-valencia`,
+    ogTitle: 'Alquiler de Sonido Profesional en Valencia | ReSona Events',
+    ogDescription:
+      'Alquiler de sonido profesional en Valencia. Equipos JBL, QSC, Pioneer. Técnico incluido. Presupuesto gratis en 24h.',
   },
   {
     route: '/servicios/sonido-bodas-valencia',
     file: 'servicios-sonido-bodas-valencia.html',
-    title: 'Sonido para Bodas en Valencia | Alquiler Equipos Profesionales',
+    title: 'Sonido Profesional para Bodas en Valencia | Ceremonia + Banquete + Fiesta',
     description:
-      'Alquiler de sonido profesional para bodas en Valencia. Ceremonia, banquete y fiesta con equipos de alta calidad. Microfonía inalámbrica y técnico incluido. Más de 500 bodas realizadas. ☎️ 613881414',
+      'Sonido completo para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos profesionales + técnico. Desde 600€. ☎️ 613 88 14 14',
+    keywords: 'sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia',
+    canonical: `${baseUrl}/servicios/sonido-bodas-valencia`,
+    ogTitle: 'Sonido Profesional para Bodas en Valencia | Ceremonia + Banquete + Fiesta',
+    ogDescription:
+      'Sonido completo para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos profesionales + técnico.',
+  },
+  {
+    route: '/servicios/alquiler-altavoces-profesionales',
+    file: 'servicios-alquiler-altavoces-profesionales.html',
+    title: 'Alquiler de Altavoces Profesionales en Valencia | JBL, QSC, EV | ReSona Events',
+    description:
+      'Alquiler de altavoces profesionales en Valencia. JBL, QSC, EV. Desde 200W hasta Line Array. Técnico incluido. Servicio en Valencia y provincia. ☎️ 613 88 14 14',
     keywords:
-      'sonido bodas valencia, alquiler sonido boda valencia, equipos audio bodas valencia, microfono boda valencia, sonido ceremonia valencia, sonido banquete valencia, musica boda valencia',
-    canonical: `${baseUrl}/sonido-bodas-valencia`,
-    ogTitle: 'Sonido para Bodas Valencia | ReSona Events',
-    ogDescription: 'Sonido profesional para bodas en Valencia. Presupuesto rápido.',
+      'alquiler altavoces valencia, altavoces profesionales valencia, alquiler altavoces JBL valencia, alquiler sonido valencia',
+    canonical: `${baseUrl}/servicios/alquiler-altavoces-profesionales`,
+    ogTitle: 'Alquiler de Altavoces Profesionales en Valencia | JBL, QSC, EV | ReSona Events',
+    ogDescription:
+      'Alquiler de altavoces profesionales en Valencia. JBL, QSC, EV. Desde 200W hasta Line Array. Técnico incluido.',
+  },
+  {
+    route: '/servicios/iluminacion-led-profesional',
+    file: 'servicios-iluminacion-led-profesional.html',
+    title: 'Iluminación LED Profesional para Eventos | RGB, RGBW | Valencia',
+    description:
+      'Iluminación LED profesional para eventos. Focos PAR LED RGB/RGBW, barras LED, uplights. Control DMX. ☎️ 613 88 14 14',
+    keywords:
+      'iluminación led eventos valencia, luces led profesionales valencia, focos par led valencia, iluminación profesional valencia',
+    canonical: `${baseUrl}/servicios/iluminacion-led-profesional`,
+    ogTitle: 'Iluminación LED Profesional para Eventos | RGB, RGBW | Valencia',
+    ogDescription:
+      'Iluminación LED profesional para eventos. Focos PAR LED RGB/RGBW, barras LED, uplights. Control DMX.',
   },
 ];
 

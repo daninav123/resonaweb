@@ -69,19 +69,19 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-resona">Servicios en Valencia</h4>
             <ul className="space-y-2">
-              <li><Link to="/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Sonido Valencia
               </Link></li>
-              <li><Link to="/alquiler-altavoces-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/alquiler-altavoces-profesionales" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Altavoces Valencia
               </Link></li>
-              <li><Link to="/alquiler-iluminacion-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/iluminacion-led-profesional" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Iluminación Valencia
               </Link></li>
-              <li><Link to="/sonido-bodas-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/sonido-bodas-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Sonido para Bodas
               </Link></li>

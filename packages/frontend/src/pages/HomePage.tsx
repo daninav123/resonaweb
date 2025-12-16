@@ -293,7 +293,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Alquiler Altavoces */}
             <Link 
-              to="/alquiler-altavoces-valencia"
+              to="/servicios/alquiler-altavoces-profesionales"
               className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-purple-300"
             >
               <div className="flex items-start justify-between mb-3">
@@ -307,7 +307,7 @@ const HomePage = () => {
 
             {/* Alquiler Sonido */}
             <Link 
-              to="/alquiler-sonido-valencia"
+              to="/servicios/alquiler-sonido-valencia"
               className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-blue-300"
             >
               <div className="flex items-start justify-between mb-3">
@@ -321,7 +321,7 @@ const HomePage = () => {
 
             {/* Alquiler Iluminación */}
             <Link 
-              to="/alquiler-iluminacion-valencia"
+              to="/servicios/iluminacion-led-profesional"
               className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-orange-300"
             >
               <div className="flex items-start justify-between mb-3">
@@ -335,7 +335,7 @@ const HomePage = () => {
 
             {/* Sonido Bodas */}
             <Link 
-              to="/sonido-bodas-valencia"
+              to="/servicios/sonido-bodas-valencia"
               className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100 hover:border-pink-300"
             >
               <div className="flex items-start justify-between mb-3">

@@ -186,10 +186,10 @@ function App() {
             <Route path="/faqs" element={<Layout><FAQsPage /></Layout>} />
             
             {/* Páginas SEO Landing Locales */}
-            <Route path="/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValenciaPage /></Layout>} />
-            <Route path="/alquiler-altavoces-valencia" element={<Layout><AlquilerAltavocesValenciaPage /></Layout>} />
-            <Route path="/alquiler-iluminacion-valencia" element={<Layout><AlquilerIluminacionValenciaPage /></Layout>} />
-            <Route path="/sonido-bodas-valencia" element={<Layout><SonidoBodasValenciaPage /></Layout>} />
+            <Route path="/alquiler-sonido-valencia" element={<Navigate to="/servicios/alquiler-sonido-valencia" replace />} />
+            <Route path="/alquiler-altavoces-valencia" element={<Navigate to="/servicios/alquiler-altavoces-profesionales" replace />} />
+            <Route path="/alquiler-iluminacion-valencia" element={<Navigate to="/servicios/iluminacion-led-profesional" replace />} />
+            <Route path="/sonido-bodas-valencia" element={<Navigate to="/servicios/sonido-bodas-valencia" replace />} />
             <Route path="/alquiler-sonido-torrent" element={<Layout><AlquilerSonidoTorrentPage /></Layout>} />
             
             {/* Service Pages - 20 páginas optimizadas SEO */}

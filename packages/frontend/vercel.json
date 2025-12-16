@@ -22,6 +22,26 @@
       "source": "/calculadora",
       "destination": "/calculadora-evento",
       "permanent": true
+    },
+    {
+      "source": "/alquiler-sonido-valencia",
+      "destination": "/servicios/alquiler-sonido-valencia",
+      "permanent": true
+    },
+    {
+      "source": "/sonido-bodas-valencia",
+      "destination": "/servicios/sonido-bodas-valencia",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler-altavoces-valencia",
+      "destination": "/servicios/alquiler-altavoces-profesionales",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler-iluminacion-valencia",
+      "destination": "/servicios/iluminacion-led-profesional",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -42,22 +62,6 @@
       "destination": "/faqs.html"
     },
     {
-      "source": "/alquiler-altavoces-valencia",
-      "destination": "/alquiler-altavoces-valencia.html"
-    },
-    {
-      "source": "/alquiler-sonido-valencia",
-      "destination": "/alquiler-sonido-valencia.html"
-    },
-    {
-      "source": "/alquiler-iluminacion-valencia",
-      "destination": "/alquiler-iluminacion-valencia.html"
-    },
-    {
-      "source": "/sonido-bodas-valencia",
-      "destination": "/sonido-bodas-valencia.html"
-    },
-    {
       "source": "/alquiler-sonido-torrent",
       "destination": "/alquiler-sonido-torrent.html"
     },
@@ -68,6 +72,14 @@
     {
       "source": "/servicios/sonido-bodas-valencia",
       "destination": "/servicios-sonido-bodas-valencia.html"
+    },
+    {
+      "source": "/servicios/alquiler-altavoces-profesionales",
+      "destination": "/servicios-alquiler-altavoces-profesionales.html"
+    },
+    {
+      "source": "/servicios/iluminacion-led-profesional",
+      "destination": "/servicios-iluminacion-led-profesional.html"
     },
     {
       "source": "/packs/equipos-audiovisuales-completos",
