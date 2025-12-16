@@ -7,6 +7,7 @@ import { Calendar, Users, Package, Shield, Music, Lightbulb, Video, Calculator, 
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
+import { CategoryIcon } from '../components/CategoryIcon';
 
 const HomePage = () => {
   const [searchDates, setSearchDates] = useState({
@@ -194,7 +195,7 @@ const HomePage = () => {
                   to={`/productos?category=${category.slug}`}
                   className="group"
                 >
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                  <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-resona/30">
                     {category.imageUrl ? (
                       <img
                         src={category.imageUrl}
@@ -202,12 +203,19 @@ const HomePage = () => {
                         className="w-full h-32 object-cover group-hover:scale-105 transition"
                       />
                     ) : (
-                      <div className="w-full h-32 bg-gray-200 flex items-center justify-center">
-                        <Package className="w-12 h-12 text-gray-400" />
+                      <div className="w-full h-32 bg-gradient-to-br from-gray-50 to-resona/5 flex items-center justify-center transition-all duration-300">
+                        <div className="bg-resona/10 w-20 h-20 rounded-full flex items-center justify-center group-hover:bg-resona/20 transition-all duration-300 group-hover:scale-110">
+                          <CategoryIcon
+                            slug={category.slug}
+                            size={40}
+                            strokeWidth={2}
+                            className="text-resona transition-transform duration-300 group-hover:scale-110"
+                          />
+                        </div>
                       </div>
                     )}
                     <div className="p-4">
-                      <h3 className="font-semibold text-center">{category.name}</h3>
+                      <h3 className="font-semibold text-center text-gray-800 group-hover:text-resona transition-colors duration-300">{category.name}</h3>
                     </div>
                   </div>
                 </Link>
