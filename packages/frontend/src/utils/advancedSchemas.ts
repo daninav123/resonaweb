@@ -117,8 +117,19 @@ export const serviceSchema = {
   "description": "Servicio profesional de alquiler de equipos de sonido, iluminación y audiovisuales para todo tipo de eventos en Valencia",
   "provider": {
     "@type": "LocalBusiness",
+    "@id": "https://resonaevents.com/#localbusiness",
     "name": "ReSona Events",
-    "image": "https://resonaevents.com/logo.png"
+    "image": "https://resonaevents.com/logo.png",
+    "telephone": "+34613881414",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C/ de l'Illa Cabrera, 13",
+      "addressLocality": "Valencia",
+      "postalCode": "46026",
+      "addressRegion": "Comunidad Valenciana",
+      "addressCountry": "ES"
+    },
+    "priceRange": "€€"
   },
   "areaServed": {
     "@type": "State",
