@@ -51,6 +51,17 @@ const UsersManager = () => {
     }
   };
 
+  const handleUserRoleChange = async (userId: string, newRole: string) => {
+    try {
+      await api.put(`/users/${userId}`, { role: newRole });
+      toast.success(`Rol de usuario actualizado a ${newRole}`);
+      loadUsers();
+    } catch (error: any) {
+      console.error('Error al actualizar rol:', error);
+      toast.error('Error al actualizar rol de usuario');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -161,15 +172,38 @@ const UsersManager = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'SUPERADMIN' 
-                            ? 'bg-red-100 text-red-800' 
-                            : user.role === 'ADMIN'
-                            ? 'bg-resona/10 text-resona' 
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {user.role === 'SUPERADMIN' ? 'Super Admin' : user.role === 'ADMIN' ? 'Admin' : 'Cliente'}
-                        </span>
+                        <div className="flex flex-col gap-2">
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full w-fit ${
+                            user.role === 'SUPERADMIN' 
+                              ? 'bg-red-100 text-red-800' 
+                              : user.role === 'ADMIN'
+                              ? 'bg-resona/10 text-resona' 
+                              : user.role === 'COMMERCIAL'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {user.role === 'SUPERADMIN'
+                              ? 'Super Admin'
+                              : user.role === 'ADMIN'
+                              ? 'Admin'
+                              : user.role === 'COMMERCIAL'
+                              ? 'Comercial'
+                              : 'Cliente'}
+                          </span>
+
+                          {(user.role === 'ADMIN' || user.role === 'SUPERADMIN') ? (
+                            <span className="text-xs text-gray-400">Rol protegido</span>
+                          ) : (
+                            <select
+                              value={user.role}
+                              onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
+                              className="px-3 py-2 text-sm font-semibold rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-gray-100 text-gray-700 border-gray-300 min-w-[180px]"
+                            >
+                              <option value="CLIENT" className="bg-white text-gray-900">Cliente</option>
+                              <option value="COMMERCIAL" className="bg-white text-gray-900">Comercial</option>
+                            </select>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <select

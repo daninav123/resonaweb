@@ -22,6 +22,12 @@ router.post(
 router.use(authenticate);
 router.use(authorize('ADMIN', 'SUPERADMIN'));
 
+// Crear solicitud de presupuesto desde panel (ADMIN/SUPERADMIN)
+router.post(
+  '/',
+  quoteRequestController.createQuoteRequest.bind(quoteRequestController)
+);
+
 // Obtener todas las solicitudes
 router.get(
   '/',

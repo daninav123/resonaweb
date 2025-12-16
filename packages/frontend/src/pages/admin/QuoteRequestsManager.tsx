@@ -50,7 +50,7 @@ interface QuoteSection {
   items: QuoteItem[];
 }
 
-const QuoteRequestsManager = () => {
+const QuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { apiBasePath?: string }) => {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
@@ -170,8 +170,9 @@ const QuoteRequestsManager = () => {
   const loadQuoteRequests = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/quote-requests');
-      setQuoteRequests(response.data || []);
+      const response: any = await api.get(apiBasePath);
+      const list = Array.isArray(response) ? response : (response?.data || []);
+      setQuoteRequests(Array.isArray(list) ? list : []);
     } catch (error) {
       console.error('Error cargando solicitudes:', error);
       alert('Error al cargar las solicitudes de presupuesto');
@@ -182,7 +183,7 @@ const QuoteRequestsManager = () => {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await api.put(`/quote-requests/${id}`, { status: newStatus });
+      await api.put(`${apiBasePath}/${id}`, { status: newStatus });
       await loadQuoteRequests();
       alert('✅ Estado actualizado correctamente');
     } catch (error) {
@@ -195,7 +196,7 @@ const QuoteRequestsManager = () => {
     if (!confirm('¿Seguro que quieres eliminar esta solicitud?')) return;
     
     try {
-      await api.delete(`/quote-requests/${id}`);
+      await api.delete(`${apiBasePath}/${id}`);
       await loadQuoteRequests();
       alert('✅ Solicitud eliminada');
     } catch (error) {
@@ -401,7 +402,7 @@ const QuoteRequestsManager = () => {
     const totalWithIVA = subtotal * 1.21;
 
     try {
-      await api.post('/quote-requests', {
+      await api.post(apiBasePath, {
         ...formData,
         status: 'PENDING',
         estimatedTotal: totalWithIVA,
