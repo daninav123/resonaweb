@@ -10,6 +10,7 @@ import { getImageUrl, placeholderImage } from '../utils/imageUrl';
 import { cartCountManager } from '../hooks/useCartCount';
 import { generateProductSchema } from '../utils/seo/schemaGenerator';
 import Breadcrumbs from '../components/SEO/Breadcrumbs';
+import SEOHead from '../components/SEO/SEOHead';
 
 const PackDetailPage = () => {
   const { slug } = useParams();
@@ -126,12 +127,19 @@ const PackDetailPage = () => {
 
   const price = Number(pack.pricePerDay || pack.finalPrice || 0);
 
-  // Schema.org Product JSON-LD usando el generador centralizado
+  // SEO: URLs y metadatos
   const baseUrl = 'https://resonaevents.com';
+  const canonicalUrl = `${baseUrl}/packs/${pack.slug}`;
   const imageUrl = pack.imageUrl || pack.mainImageUrl || pack.images?.[0];
   const fullImageUrl = imageUrl?.startsWith('http') 
     ? imageUrl 
     : `${baseUrl}${imageUrl || '/placeholder.jpg'}`;
+
+  const seoTitle = `${pack.name} | Pack Completo para Eventos | ReSona Events`;
+  const seoDescription = pack.description 
+    ? `${pack.description.substring(0, 150)}... Pack desde €${price}/evento. Alquiler profesional en Valencia.`
+    : `Pack ${pack.name} para eventos. Equipo completo profesional desde €${price}. Disponibilidad inmediata en Valencia.`;
+  const seoKeywords = `pack ${pack.name.toLowerCase()}, alquiler pack eventos valencia, equipos completos eventos, ${pack.name.toLowerCase()} valencia, pack audiovisual eventos`;
 
   // Usar el generador centralizado con todos los campos requeridos
   const packSchema = generateProductSchema({
@@ -178,14 +186,25 @@ const PackDetailPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      {/* Schema.org Product Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(packSchema) }}
+    <>
+      {/* SEO Head con canonical y meta tags */}
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        ogImage={fullImageUrl}
+        ogType="product"
+        canonicalUrl={canonicalUrl}
+        schema={packSchema}
+        product={{
+          price: price,
+          currency: 'EUR',
+          availability: 'InStock',
+        }}
       />
-      
-      <div className="container mx-auto px-4">
+
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
         {/* Breadcrumbs con Schema integrado */}
         <Breadcrumbs items={breadcrumbItems} className="mb-6" />
 
@@ -357,7 +376,8 @@ const PackDetailPage = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
