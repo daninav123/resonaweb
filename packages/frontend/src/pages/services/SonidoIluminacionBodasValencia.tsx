@@ -3,8 +3,8 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const SonidoIluminacionBodasValencia = () => {
   const pageData = {
-    title: "Sonido e Iluminación para Bodas en Valencia | ReSona Events",
-    metaDescription: "Especialistas en sonido e iluminación para bodas en Valencia. Equipos profesionales, montaje incluido, técnico especializado. Más de 500 bodas realizadas. ☎️ 613 88 14 14",
+    title: "Sonido Bodas Valencia ✨ Desde 450€ | +500 Bodas | ReSona Events",
+    metaDescription: "⭐ Sonido e Iluminación Profesional para Bodas en Valencia desde 450€ → Técnico incluido durante toda la boda ✓ +500 bodas realizadas ✓ La Hacienda, Mas San Antonio ☎️ 613 88 14 14 Presupuesto en 24h",
     keywords: "bodas valencia, sonido bodas valencia, iluminación bodas valencia, audio bodas valencia, equipos bodas valencia, dj bodas valencia",
     canonicalUrl: "https://resonaevents.com/servicios/sonido-iluminacion-bodas-valencia",
     heroTitle: "Sonido e Iluminación Profesional para Bodas en Valencia",

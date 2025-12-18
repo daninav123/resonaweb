@@ -3,9 +3,9 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const ProduccionEventosValencia = () => {
   const pageData = {
-    title: "Producción de Eventos en Valencia | Sonido, Iluminación y Audiovisuales | ReSona Events",
-    metaDescription: "Producción técnica completa para eventos en Valencia. Sonido, iluminación, pantallas LED, streaming. Eventos corporativos, conciertos, festivales. ☎️ 613 88 14 14",
-    keywords: "eventos valencia, producción eventos valencia, alquiler equipos eventos valencia, sonido eventos valencia, iluminación eventos valencia, audiovisuales eventos valencia",
+    title: "Producción Eventos Valencia 🎪 Desde 800€ | +1000 Eventos | ReSona",
+    metaDescription: "⭐ Producción Integral de Eventos en Valencia desde 800€ → Sonido, Iluminación, Vídeo, Streaming ✓ +1000 eventos producidos ✓ Corporativos, Conciertos, Conferencias ☎️ 613 88 14 14 Respuesta 24h",
+    keywords: "eventos valencia, producción eventos valencia, eventos corporativos valencia, sonido eventos valencia, iluminación eventos valencia, streaming eventos valencia",
     canonicalUrl: "https://resonaevents.com/servicios/produccion-eventos-valencia",
     heroTitle: "Producción Técnica Completa para Eventos en Valencia",
     heroSubtitle: "Sonido, Iluminación, Vídeo y Streaming. Más de 1.000 eventos producidos en Valencia",
