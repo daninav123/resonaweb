@@ -98,7 +98,9 @@ const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonid
 const AlquilerAltavocesProfesionales = lazy(() => import('./pages/services/AlquilerAltavocesProfesionales'));
 const AlquilerMicrofonosInalambricos = lazy(() => import('./pages/services/AlquilerMicrofonosInalambricos'));
 const SonidoBodasValencia = lazy(() => import('./pages/services/SonidoBodasValencia'));
+const SonidoIluminacionBodasValencia = lazy(() => import('./pages/services/SonidoIluminacionBodasValencia'));
 const SonidoEventosCorporativos = lazy(() => import('./pages/services/SonidoEventosCorporativos'));
+const ProduccionEventosValencia = lazy(() => import('./pages/services/ProduccionEventosValencia'));
 const AlquilerMesaMezclaDJ = lazy(() => import('./pages/services/AlquilerMesaMezclaDJ'));
 const AlquilerSubwoofers = lazy(() => import('./pages/services/AlquilerSubwoofers'));
 const AlquilerIluminacionBodas = lazy(() => import('./pages/services/AlquilerIluminacionBodas'));
@@ -203,7 +205,9 @@ function App() {
             <Route path="/servicios/alquiler-altavoces-profesionales" element={<Layout><AlquilerAltavocesProfesionales /></Layout>} />
             <Route path="/servicios/alquiler-microfonos-inalambricos" element={<Layout><AlquilerMicrofonosInalambricos /></Layout>} />
             <Route path="/servicios/sonido-bodas-valencia" element={<Layout><SonidoBodasValencia /></Layout>} />
+            <Route path="/servicios/sonido-iluminacion-bodas-valencia" element={<Layout><SonidoIluminacionBodasValencia /></Layout>} />
             <Route path="/servicios/sonido-eventos-corporativos-valencia" element={<Layout><SonidoEventosCorporativos /></Layout>} />
+            <Route path="/servicios/produccion-eventos-valencia" element={<Layout><ProduccionEventosValencia /></Layout>} />
             <Route path="/servicios/alquiler-mesa-mezclas-dj" element={<Layout><AlquilerMesaMezclaDJ /></Layout>} />
             <Route path="/servicios/alquiler-subwoofers-graves" element={<Layout><AlquilerSubwoofers /></Layout>} />
             <Route path="/servicios/alquiler-iluminacion-bodas-valencia" element={<Layout><AlquilerIluminacionBodas /></Layout>} />
