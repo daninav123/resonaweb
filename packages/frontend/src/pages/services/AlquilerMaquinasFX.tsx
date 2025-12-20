@@ -3,12 +3,21 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerMaquinasFX = () => {
   const pageData = {
-    title: "Alquiler de Máquinas FX | Humo, CO2, Confeti | Valencia",
-    metaDescription: "Alquiler de máquinas de efectos especiales. Humo, niebla baja, CO2, confeti, burbujas. Efectos espectaculares. ☎️ 613 88 14 14",
+    title: "Máquinas FX Valencia | Humo, CO2, Confeti | ReSona",
+    metaDescription: "Máquinas de efectos especiales. Humo, niebla baja, CO2, confeti, burbujas. Efectos espectaculares. ☎️ 613 88 14 14",
     keywords: "alquiler máquinas humo valencia, máquinas fx, efectos especiales eventos",
     heroTitle: "Alquiler de Máquinas FX en Valencia",
-    heroSubtitle: "Efectos especiales para momentos únicos - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de máquinas de efectos especiales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de máquinas de efectos especiales en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: humo, neblina, CO2, confeti, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de máquinas de efectos especiales en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, eventos, conciertos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Flash RGB 1000W, Humo, Efectos - Momentos especiales impactantes, momentos únicos - Servicio en Valencia y provincia",
+    introduction: `El <strong>alquiler de máquinas de efectos especiales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>alquiler de máquinas de efectos especiales en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: Flash Estroboscópico RGB 1000W (efectos explosivos de luz para momentos clave), más máquinas de humo, niebla, confeti disponibles bajo pedido para eventos especiales.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, eventos, conciertos en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a>.`,
+
    
     whyChooseUs: [
       {

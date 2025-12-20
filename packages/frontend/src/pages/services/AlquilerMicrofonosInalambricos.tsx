@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerMicrofonosInalambricos = () => {
   const pageData = {
-    title: "Alquiler de Micrófonos Inalámbricos | Shure, Sennheiser | Valencia",
-    metaDescription: "Alquiler de micrófonos inalámbricos profesionales. Shure, Sennheiser. Mano, solapa, diadema. Técnico incluido. ☎️ 613 88 14 14",
+    title: "Micrófonos Inalámbricos Valencia | Shure | ReSona",
+    metaDescription: "Micrófonos inalámbricos profesionales. Shure SM58, Sennheiser. Mano, solapa, diadema. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler micrófonos inalámbricos valencia, micrófonos shure valencia, alquiler micros valencia, sennheiser valencia",
     heroTitle: "Alquiler de Micrófonos Inalámbricos en Valencia",
-    heroSubtitle: "Shure y Sennheiser - Libertad y calidad de audio - Servicio en Valencia",
-    introduction: `El <strong>alquiler de micrófonos inalámbricos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de micrófonos inalámbricos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Shure SM58, Sennheiser EW, Shure Beta, sistemas UHF, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de micrófonos inalámbricos en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, conferencias, karaoke, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Shure SM58 Inalámbrico - Calidad profesional sin cables",
+    introduction: `El <strong>alquiler de micrófonos inalámbricos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>alquiler de micrófonos inalámbricos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: Shure SM58 Inalámbrico (dinámico cardioide, estándar mundial), ideal para ceremonias, discursos, presentaciones, bodas. Disponibles bajo pedido (consultar disponibilidad).
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">conferencias</a>, karaoke, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sistemas de sonido completos</a>.`,
    
     whyChooseUs: [
       {
