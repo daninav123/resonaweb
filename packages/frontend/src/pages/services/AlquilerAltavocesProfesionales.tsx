@@ -52,8 +52,8 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
     packages: [
       {
         name: "Pack Básico",
-        subtitle: "50-80 personas",
-        price: "desde 157€ (IVA incl.)",
+        subtitle: "Eventos pequeños (50-80 personas)",
+        price: "desde 160€",
         features: [
           "Equipos básicos profesionales",
           "Transporte incluido",

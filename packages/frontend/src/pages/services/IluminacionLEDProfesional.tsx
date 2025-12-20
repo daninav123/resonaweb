@@ -96,49 +96,48 @@ Hemos iluminado más de 1.000 eventos en espacios emblemáticos: Palau de la Mú
 
     packages: [
       {
-        name: "Pack Ambiente",
-        subtitle: "Iluminación decorativa (50-80 personas)",
-        price: "desde 145€ (IVA incl.)",
+        name: "Pack Básico Iluminación",
+        subtitle: "Eventos pequeños (hasta 100 personas)",
+        price: "desde 180€",
         features: [
-          "8x Focos LED RGB Decoración (18W)",
-          "Controlador DMX con escenas preprogramadas",
-          "Cambios de color automáticos",
-          "Montaje con soportes de suelo",
-          "Transporte gratis Valencia capital",
-          "Asistencia telefónica 24/7"
+          "Focos LED RGB decorativos",
+          "Iluminación ambiente personalizada",
+          "Control DMX profesional",
+          "Transporte incluido Valencia capital",
+          "Montaje y desmontaje",
+          "Programación de colores",
+          "Técnico durante el evento"
         ]
       },
       {
-        name: "Pack Fiesta",
-        subtitle: "Efectos profesionales (80-150 personas)",
-        price: "desde 435€ (IVA incl.)",
+        name: "Pack Profesional",
+        subtitle: "Eventos medianos (100-200 personas)",
+        price: "desde 350€",
         features: [
-          "2x Moving Head Beam 7R (230W)",
-          "2x Mini Beam LED + 2x Mini Wash RGBW",
-          "1x Flash Estroboscópico RGB 1000W",
-          "1x Ventilador LED RGB (efectos rotativos)",
-          "Controlador DMX profesional",
+          "Sistema completo LED profesional",
+          "Iluminación arquitectónica uplighting",
+          "Efectos dinámicos sincronizados",
+          "Programación personalizada",
           "Técnico especializado incluido",
-          "Programación personalizada de escenas",
-          "Estructura truss si es necesario"
+          "Control inalámbrico DMX",
+          "Equipos de backup",
+          "Soporte técnico 24/7"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "Máxima espectacularidad (+150 personas)",
-        price: "desde 690€ (IVA incl.)",
+        subtitle: "Eventos grandes (+200 personas)",
+        price: "desde 600€",
         features: [
-          "4x Moving Head 3en1 17R (Beam/Spot/Wash)",
-          "2x Moving Head Beam 7R adicionales",
-          "2x Flash Estroboscópico RGB 1000W",
-          "8x Focos LED RGB decorativos",
-          "2x Ventilador LED RGB",
-          "Controlador DMX profesional + backup",
+          "Iluminación espectacular completa",
+          "Moving heads profesionales",
+          "Efectos láser y especiales",
+          "Iluminación arquitectónica avanzada",
+          "Programación show completo",
           "2 técnicos especializados",
-          "Equipos redundantes",
-          "Prueba previa",
-          "Soporte 24/7"
+          "Equipos redundantes completos",
+          "Ensayo previo incluido"
         ]
       }
     ],

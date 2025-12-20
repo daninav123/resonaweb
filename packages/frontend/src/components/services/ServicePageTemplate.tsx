@@ -232,7 +232,23 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4">Paquetes y Precios</h2>
-            <p className="text-center text-gray-600 mb-12">Precios transparentes sin sorpresas</p>
+            <p className="text-center text-gray-600 mb-8">Precios orientativos - Calcula tu presupuesto exacto</p>
+            
+            {/* CTA Calculadora destacado */}
+            <div className="max-w-3xl mx-auto mb-12 bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-500 rounded-lg p-6 text-center">
+              <Calculator className="w-12 h-12 text-primary-600 mx-auto mb-3" />
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Calcula tu Presupuesto Personalizado</h3>
+              <p className="text-gray-600 mb-4">
+                Obtén un presupuesto exacto según tu evento, número de invitados y duración
+              </p>
+              <a
+                href="/calculadora-eventos"
+                className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+              >
+                <Calculator className="w-5 h-5" />
+                Calcular Presupuesto Ahora
+              </a>
+            </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {packages.map((pkg, index) => (
@@ -265,14 +281,14 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                     </ul>
                     
                     <a
-                      href={`https://wa.me/34613881414?text=Quiero presupuesto para ${pkg.name}`}
+                      href="/calculadora-eventos"
                       className={`block text-center font-bold py-3 px-6 rounded-lg transition-all ${
                         pkg.highlighted
                           ? 'bg-primary-500 hover:bg-primary-600 text-white'
                           : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                       }`}
                     >
-                      Solicitar Presupuesto
+                      Ver Precio Exacto
                     </a>
                   </div>
                 </div>

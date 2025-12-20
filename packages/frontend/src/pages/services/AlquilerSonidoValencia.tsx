@@ -54,47 +54,47 @@ Hemos trabajado en más de 2.000 eventos en Valencia: <a href="/servicios/sonido
     packages: [
       {
         name: "Pack Básico",
-        subtitle: "20-80 personas",
-        price: "desde 159€ (IVA incl.)",
+        subtitle: "Eventos pequeños (hasta 100 personas)",
+        price: "desde 200€",
         features: [
-          "2x ICOA 12A Blanco (1000W cada uno)",
-          "2x Micrófonos Shure SM58",
-          "Cables XLR y soportes incluidos",
-          "Transporte gratis Valencia capital",
-          "Montaje y desmontaje incluido",
-          "Asistencia telefónica 24/7",
-          "Equipos revisados antes del evento"
+          "Altavoces activos profesionales",
+          "Microfonía inalámbrica",
+          "Mezcladora digital",
+          "Transporte incluido Valencia capital",
+          "Montaje y desmontaje",
+          "Asistencia técnica durante el evento",
+          "Cables y soportes incluidos"
         ]
       },
       {
         name: "Pack Profesional",
-        subtitle: "80-150 personas",
-        price: "desde 326€ (IVA incl.)",
+        subtitle: "Eventos medianos (100-200 personas)",
+        price: "desde 400€",
         features: [
-          "2x DAS Audio 515A (1500W cada uno)",
-          "1x DAS Audio 215A Subwoofer (2000W)",
-          "Mezcladora Behringer X Air XR18",
-          "4x Micrófonos Shure profesionales",
-          "Monitores de escenario opcionales",
+          "Sistema de sonido DAS Audio",
+          "Subwoofer de graves profundos",
+          "Mezcladora digital profesional",
+          "Múltiples micrófonos inalámbricos",
           "Técnico especializado incluido",
           "Montaje completo y calibración",
-          "Equipos de backup disponibles"
+          "Equipos de backup disponibles",
+          "Soporte técnico 24/7"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "+150 personas",
-        price: "desde 544€ (IVA incl.)",
+        subtitle: "Eventos grandes (+200 personas)",
+        price: "desde 700€",
         features: [
-          "4x DAS Audio 515A (6000W total)",
-          "2x DAS Audio 218A Subwoofer (6400W pico)",
-          "Behringer X Air XR18 + Pioneer RX2",
-          "6+ Micrófonos Shure premium",
-          "Procesador de audio digital DSP",
-          "2 técnicos especializados incluidos",
+          "Sistema de alta potencia completo",
+          "Múltiples subwoofers profesionales",
+          "Equipamiento DJ profesional",
+          "Microfonía premium múltiple",
+          "Procesador de audio DSP",
+          "2 técnicos especializados",
           "Equipos redundantes completos",
-          "Prueba de sonido previa en el lugar"
+          "Prueba de sonido previa incluida"
         ]
       }
     ],

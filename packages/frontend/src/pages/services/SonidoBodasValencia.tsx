@@ -99,47 +99,47 @@ Hemos sonorizado más de 500 bodas en: Masias de Valencia, La Hacienda, Hotel La
     packages: [
       {
         name: "Pack Ceremonia",
-        subtitle: "Solo ceremonia (50-80 invitados)",
-        price: "desde 159€ (IVA incl.)",
+        subtitle: "Ceremonia + Cocktail (50-100 invitados)",
+        price: "desde 250€",
         features: [
-          "2x ICOA 12A Blanco (discretos y elegantes)",
-          "2x Micrófonos inalámbricos Shure (novios/sacerdote)",
-          "Conexión música (Spotify/móvil/USB)",
+          "Microfonía inalámbrica para ceremonia",
+          "Música ambiente cocktail",
+          "Altavoces discretos blancos",
+          "Transporte incluido Valencia capital",
+          "Montaje y desmontaje",
           "Técnico durante ceremonia",
-          "Montaje invisible antes de invitados",
-          "Transporte gratis Valencia capital"
+          "Coordinación con otros proveedores"
         ]
       },
       {
-        name: "Pack Boda Completa",
-        subtitle: "Ceremonia + Banquete + Fiesta (80-150 invitados)",
-        price: "desde 448€ (IVA incl.)",
+        name: "Pack Completo Boda",
+        subtitle: "Ceremonia + Banquete + Fiesta (100-200 invitados)",
+        price: "desde 550€",
         features: [
-          "2x DAS Audio 515A (ceremonia y banquete)",
-          "1x DAS Audio 215A Sub (fiesta con DJ)",
-          "Behringer X Air XR18 + Pioneer RX2",
-          "4x Micrófonos inalámbricos Shure",
-          "Técnico todo el día (8-12 horas)",
-          "Música ceremonia, discursos, fiesta",
-          "Equipos backup incluidos",
-          "Grabación audio ceremonia en USB"
+          "Sonido completo para toda la boda",
+          "Microfonía ceremonia y discursos",
+          "Música ambiente banquete",
+          "Sistema DJ profesional para fiesta",
+          "Iluminación LED decorativa",
+          "Técnico durante todo el evento",
+          "Equipos de backup incluidos",
+          "Coordinación total con timing boda"
         ],
         highlighted: true
       },
       {
-        name: "Pack Premium",
-        subtitle: "Bodas grandes (+150 invitados)",
-        price: "desde 665€ (IVA incl.)",
+        name: "Pack Premium Boda",
+        subtitle: "Experiencia completa (+200 invitados)",
+        price: "desde 900€",
         features: [
-          "4x DAS Audio 515A + 2x ICOA 15A",
-          "2x DAS Audio 218A Subwoofer (fiesta potente)",
-          "Behringer X Air + Pioneer RX2 + Backup",
-          "6+ Micrófonos profesionales",
-          "2 técnicos especializados todo el día",
-          "Iluminación ambiental LED opcional",
-          "Visita técnica previa al lugar",
+          "Sistema de sonido premium completo",
+          "Múltiples micros inalámbricos",
+          "Equipamiento DJ profesional Pioneer",
+          "Iluminación arquitectónica avanzada",
+          "Moving heads y efectos especiales",
+          "2 técnicos durante todo el evento",
           "Equipos redundantes completos",
-          "Grabación profesional ceremonia + discursos"
+          "Pruebas previas en el lugar"
         ]
       }
     ],

@@ -98,8 +98,8 @@ Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/serv
     packages: [
       {
         name: "Pack Mini",
-        subtitle: "2-4 Moving Heads (50-100 personas)",
-        price: "desde 181€ (IVA incl.)",
+        subtitle: "Eventos pequeños (50-100 personas)",
+        price: "desde 200€",
         features: [
           "2x Mini Beam LED + 2x Mini Wash RGBW",
           "Controlador DMX profesional",
@@ -111,8 +111,8 @@ Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/serv
       },
       {
         name: "Pack Profesional",
-        subtitle: "4-6 Moving Heads (100-200 personas)",
-        price: "desde 399€ (IVA incl.)",
+        subtitle: "Eventos medianos (100-200 personas)",
+        price: "desde 400€",
         features: [
           "2x Moving Head Beam 7R (230W)",
           "2x Mini Beam + 2x Mini Wash LED",
@@ -126,8 +126,8 @@ Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/serv
       },
       {
         name: "Pack Premium",
-        subtitle: "6+ Moving Heads (+200 personas)",
-        price: "desde 690€ (IVA incl.)",
+        subtitle: "Eventos grandes (+200 personas)",
+        price: "desde 700€",
         features: [
           "4x Moving Head 3en1 17R (350W)",
           "2x Moving Head Beam 7R adicionales",

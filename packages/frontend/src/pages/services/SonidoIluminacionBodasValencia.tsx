@@ -56,7 +56,7 @@ Hemos sido parte de más de 500 <strong>bodas en Valencia</strong>, ayudando a c
       {
         name: "Pack Ceremonia + Ambiente",
         subtitle: "Hasta 100 invitados",
-        price: "desde 304€ (IVA incl.)",
+        price: "desde 300€",
         features: [
           "SONIDO: 2x ICOA 12A Blanco + 2x Shure SM58",
           "ILUMINACIÓN: 8x Focos LED RGB Decoración",

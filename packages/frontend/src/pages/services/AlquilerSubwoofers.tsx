@@ -98,7 +98,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, <a href="/serv
       {
         name: "Pack 1 Subwoofer",
         subtitle: "Graves para fiestas (80-120 personas)",
-        price: "desde 115€ (IVA incl.)",
+        price: "desde 120€",
         features: [
           "1x DAS Audio 215A (doble 15\", 2000W)",
           "Cables XLR profesionales incluidos",
@@ -110,7 +110,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, <a href="/serv
       {
         name: "Pack 2 Subwoofers",
         subtitle: "Potencia media (120-200 personas)",
-        price: "desde 230€ (IVA incl.)",
+        price: "desde 230€",
         features: [
           "2x DAS Audio 215A (4000W total)",
           "Configuración stereo o mono",
@@ -124,7 +124,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, <a href="/serv
       {
         name: "Pack Premium",
         subtitle: "Máxima potencia (+200 personas)",
-        price: "desde 302€ (IVA incl.)",
+        price: "desde 300€",
         features: [
           "2x DAS Audio 218A (doble 18\", 6400W pico)",
           "2 técnicos especializados",

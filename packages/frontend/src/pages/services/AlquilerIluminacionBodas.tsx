@@ -98,7 +98,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, prime
       {
         name: "Pack Ambiente",
         subtitle: "Iluminación ambiental (50-100 invitados)",
-        price: "desde 145€ (IVA incl.)",
+        price: "desde 150€",
         features: [
           "8x Focos LED RGB Decoración",
           "Iluminación de paredes/columnas",
