@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const ProduccionTecnicaEventos = () => {
   const pageData = {
-    title: "Producción Técnica Completa de Eventos | Audiovisual | Valencia",
-    metaDescription: "Producción técnica completa: sonido, iluminación, vídeo, escenario. Gestión integral de tu evento. Técnicos especializados. ☎️ 613 88 14 14",
+    title: "Producción Técnica Valencia | Audiovisual | ReSona",
+    metaDescription: "Producción técnica completa: sonido, iluminación, vídeo. Gestión integral de eventos. Técnicos especializados. ☎️ 613 88 14 14",
     keywords: "producción eventos valencia, producción técnica audiovisual, gestión técnica eventos",
     heroTitle: "Producción Técnica Completa en Valencia",
-    heroSubtitle: "Gestión integral audiovisual de tu evento - Servicio en Valencia y provincia",
-    introduction: `El <strong>producción técnica completa de eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>producción técnica completa de eventos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: sonido completo, iluminación, vídeo, estructuras, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>producción técnica completa de eventos en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, festivales, eventos grandes, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "DAS Audio, ICOA, Moving Heads, Pioneer - Producción técnica integral completa",
+    introduction: `La <strong>producción técnica completa de eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>producción técnica completa de eventos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional completo: sonido (DAS Audio 515A/215A/218A, ICOA, Behringer X Air, Shure), iluminación (Moving Heads 17R/7R, Flash RGB, Focos LED), DJ (Pioneer RX2), estructuras truss, coordinación integral técnica.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, festivales, eventos grandes, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Integramos <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sonido</a>, <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación</a> y <a href="/servicios/alquiler-pantallas-led-eventos" class="text-primary-600 hover:underline font-semibold">pantallas LED</a>.`,
    
     whyChooseUs: [
       {

@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerPantallasLED = () => {
   const pageData = {
-    title: "Alquiler de Pantallas LED Modulares | Eventos | Valencia",
-    metaDescription: "Alquiler de pantallas LED modulares para eventos. Desde 2x2m hasta 10x6m. P2.5, P3.9, P5. Interior y exterior. ☎️ 613 88 14 14",
+    title: "Pantallas LED Valencia | Videowall Modular | ReSona",
+    metaDescription: "Pantallas LED modulares para eventos. 2x2m a 10x6m. P3, P5. Interior/exterior. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler pantallas led valencia, pantallas led eventos, videowall",
     heroTitle: "Alquiler de Pantallas LED Modulares en Valencia",
-    heroSubtitle: "Imagen perfecta en cualquier tamaño - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de pantallas LED en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de pantallas LED en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: pantallas LED P3, videowall modular, procesadores LED, pantallas gigantes, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de pantallas LED en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: eventos corporativos, conciertos, ferias, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Pantallas LED profesionales - Disponibles bajo pedido especial",
+    introduction: `El <strong>alquiler de pantallas LED en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>alquiler de pantallas LED en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Pantallas LED profesionales modulares disponibles bajo pedido para eventos especiales. Consultanos para conferencias, presentaciones, conciertos que requieran videowall, pantallas de alta resolución P2-P4, procesadores video profesionales.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: eventos corporativos, conciertos, ferias, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sonido profesional</a> y <a href="/servicios/produccion-tecnica-eventos" class="text-primary-600 hover:underline font-semibold">producción audiovisual</a>.`,
    
     whyChooseUs: [
       {

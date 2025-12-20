@@ -3,12 +3,21 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const VideoescenariosStreaming = () => {
   const pageData = {
-    title: "Videoescenarios y Streaming para Eventos | Producción Completa | Valencia",
-    metaDescription: "Videoescenarios profesionales y streaming para eventos. Múltiples cámaras, producción en vivo, streaming YouTube/Facebook. ☎️ 613 88 14 14",
+    title: "Streaming Eventos Valencia | Videoescenarios | ReSona",
+    metaDescription: "Streaming profesional multicámara - Disponible bajo pedido especial. Múltiples cámaras, producción en vivo, YouTube/Facebook. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "videoescenario eventos valencia, streaming eventos, producción video en vivo",
     heroTitle: "Videoescenarios y Streaming en Valencia",
     heroSubtitle: "Producción audiovisual completa para tu evento - Servicio en Valencia y provincia",
-    introduction: `El <strong>videoescenarios y streaming para eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>videoescenarios y streaming para eventos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: cámaras PTZ, mezclador vídeo, encoder streaming, iluminación estudio, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>videoescenarios y streaming para eventos en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: streaming, webinars, híbridos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    introduction: `El <strong>videoescenarios y streaming para eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>videoescenarios y streaming para eventos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Servicios de streaming profesional multicámara disponibles bajo pedido para eventos especiales. Consultanos para conferencias, conciertos, eventos corporativos que requieran transmisión en vivo profesional, grabación multicámara, producción de vídeo.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: streaming, webinars, híbridos en espacios emblemáticos de la ciudad. Integramos con <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">sonido corporativo</a> y <a href="/servicios/produccion-tecnica-eventos" class="text-primary-600 hover:underline font-semibold">producción técnica</a>.`,
+
    
     whyChooseUs: [
       {

@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerProyectores = () => {
   const pageData = {
-    title: "Alquiler de Proyectores Profesionales | Alta Luminosidad | Valencia",
-    metaDescription: "Alquiler de proyectores profesionales. 3.000-12.000 lúmenes. Full HD, 4K. Pantallas de proyección. Técnico incluido. ☎️ 613 88 14 14",
+    title: "Proyectores Valencia | 5000 Lúmenes Full HD | ReSona",
+    metaDescription: "Proyectores profesionales. 3000-12000 lúmenes. Full HD, 4K. Pantallas incluidas. Técnico especializado. ☎️ 613 88 14 14",
     keywords: "alquiler proyectores valencia, proyector profesional eventos, proyector alta luminosidad",
     heroTitle: "Alquiler de Proyectores Profesionales en Valencia",
-    heroSubtitle: "Alta luminosidad para presentaciones perfectas - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de proyectores profesionales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de proyectores profesionales en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: proyectores 5000 lúmenes, Epson, BenQ, pantallas tripode, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de proyectores profesionales en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, formaciones, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Proyectores profesionales de alta luminosidad - Disponibles bajo pedido - Servicio en Valencia y provincia",
+    introduction: `El <strong>alquiler de proyectores profesionales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>alquiler de proyectores profesionales en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Proyectores profesionales de alta luminosidad (5000-15000 lúmenes) disponibles bajo pedido. Consultanos para eventos que requieran proyección profesional, mapping, presentaciones corporativas, conferencias con pantallas grandes.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, formaciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-pantallas-led-eventos" class="text-primary-600 hover:underline font-semibold">pantallas LED</a> y <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">sonido corporativo</a>.`,
    
     whyChooseUs: [
       {
