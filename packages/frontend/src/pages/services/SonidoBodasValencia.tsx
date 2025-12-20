@@ -7,8 +7,8 @@ const SonidoBodasValencia = () => {
     metaDescription: "Sonido completo para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos profesionales + técnico. Desde 600€. ☎️ 613 88 14 14",
     keywords: "sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia",
     heroTitle: "Sonido Profesional para Bodas en Valencia",
-    heroSubtitle: "Ceremonia, banquete y fiesta - Sonido perfecto todo el día",
-    introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>sonido para bodas en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: JBL EON, Bose, Shure inalámbricos, mesas Pioneer, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>sonido para bodas en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, cocktail, banquete, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido perfecto para tu boda",
+    introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de tu día especial. En ReSona Events contamos con más de 15 años de experiencia en bodas en la Comunidad Valenciana. Nuestro servicio de <strong>sonido para bodas en Valencia</strong> cubre ceremonia, cóctel, banquete y fiesta: todo el día con sonido perfecto. Trabajamos con equipamiento profesional: <strong>DAS Audio 515A</strong> (altavoces 1500W), <strong>ICOA 12A/15A</strong> (acabados elegantes blanco/negro), <strong>subwoofers DAS Audio 215A/218A</strong>, <strong>Behringer X Air XR18</strong>, <strong>Pioneer RX2</strong> para DJ, y micrófonos <strong>Shure SM58</strong> inalámbricos. Todos nuestros equipos están perfectamente mantenidos y calibrados antes de cada boda. Incluimos <strong>técnico especializado</strong> que se encarga de: instalación discreta antes de la ceremonia, ajuste de niveles durante discursos, mezcla profesional en el banquete, y gestión de música DJ en la fiesta. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje invisible antes de los invitados, desmontaje al finalizar, micrófonos inalámbricos para novios/testigos/sacerdote, conexión para música ceremony/banquete, equipos de respaldo, y soporte 24/7. Hemos sonorizado más de 500 bodas en: Masias de Valencia, La Hacienda, Hotel Las Arenas, fincas en l'Horta, hoteles en la playa, y espacios únicos en toda la provincia.`,
    
     whyChooseUs: [
       {
@@ -47,32 +47,33 @@ const SonidoBodasValencia = () => {
       {
             title: "Altavoces y Sistemas de PA",
             items: [
-                  "JBL EON: Sistemas activos 1000-2000W RMS, 2-3 vías, cobertura 90x50°",
-                  "Bose: Altavoces profesionales 12\" y 15\", DSP integrado, conectividad Dante",
-                  "Shure inalámbricos: Line Array modular escalable 8-24 cajas, rango 50-20kHz",
-                  "Subwoofers activos 18\" 1000-2000W, respuesta 35-150Hz, cardioide/omnidireccional",
-                  "Sistemas portátiles batería recargable para ceremonias sin electricidad"
+                  "DAS Audio 515A: Altavoz activo 1500W, 2 vías, DSP integrado, SPL 135dB - Sonido cristalino para ceremonias",
+                  "ICOA 12A Blanco: Altavoz elegante 1000W, acabado blanco perfecto para bodas, discreto y potente",
+                  "ICOA 15A Negro: Altavoz 1200W, graves profundos, ideal para banquete y fiesta",
+                  "DAS Audio 215A: Subwoofer doble 15\", 2000W, graves potentes para la fiesta sin saturar",
+                  "DAS Audio 218A: Subwoofer premium doble 18\", 3200W pico, máxima potencia para fiestas grandes",
+                  "Altavoces portátiles con batería para ceremonias al aire libre sin electricidad"
             ]
       },
       {
-            title: "Mesas de Mezclas y Procesadores",
+            title: "Mesas de Mezclas y Control",
             items: [
-                  "mesas Pioneer: Mesas digitales 16-32 canales, efectos integrados, control remoto iPad",
-                  "Allen & Heath Qu/SQ Series: DSP avanzado, 32 entradas, matrices auxiliares",
-                  "Yamaha TF/CL Series: TouchFlow interface, recallable scene, feedback suppressor",
-                  "Procesadores Klark Teknik/DBX: Ecualizadores gráficos 31 bandas, compresores dinámicos",
-                  "Controladores Dante/AVB para redes audio digital multicasting"
+                  "Behringer X Air XR18: Mezcladora digital 18 canales, control WiFi/tablet, efectos profesionales",
+                  "Pioneer RX2: Controlador DJ profesional 2 canales, efectos FX, grabación USB de la ceremonia",
+                  "Control remoto inalámbrico para ajustes discretos durante ceremonia y discursos",
+                  "Procesador DSP integrado para ecualización automática según el espacio",
+                  "Apps iOS/Android para control total desde tablet - técnico invisible durante el evento"
             ]
       },
       {
-            title: "Micrófonos Profesionales",
+            title: "Micrófonos para Bodas",
             items: [
-                  "Shure SM58/SM57: Dinámicos cardioide, estándar mundial voces/instrumentos",
-                  "Sennheiser EW 135/145 G4: Inalámbricos UHF, 20 canales, alcance 100m",
-                  "Shure Beta 87A/58A: Condensador supercardioide, alta ganancia, rechazo feedback",
-                  "AKG C414/C451: Condensador estudio gran diafragma, múltiples patrones polares",
-                  "DI boxes Radial J48/JDI activas y pasivas para instrumentos",
-                  "Stands K&M/Manfrotto boom ajustables 1-2m, bases sólidas antivuelco"
+                  "Shure SM58 Inalámbrico: Micrófono profesional para novios, testigos, sacerdote - sin cables molestos",
+                  "Shure SM57: Micrófono para instrumentos en vivo (guitarra, piano) durante ceremonia",
+                  "Micrófonos inalámbricos UHF adicionales para discursos múltiples en el banquete",
+                  "Micrófonos de solapa discretos para ceremonias civiles o presentadores",
+                  "Soportes ajustables profesionales con bases antivuelco - instalación invisible",
+                  "Cables XLR balanceados premium - sin ruidos ni interferencias"
             ]
       },
       {
@@ -89,39 +90,48 @@ const SonidoBodasValencia = () => {
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pack Ceremonia",
+        subtitle: "Solo ceremonia (50-80 invitados)",
+        price: "desde 159€ (IVA incl.)",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
+          "2x ICOA 12A Blanco (discretos y elegantes)",
+          "2x Micrófonos inalámbricos Shure (novios/sacerdote)",
+          "Conexión música (Spotify/móvil/USB)",
+          "Técnico durante ceremonia",
+          "Montaje invisible antes de invitados",
+          "Transporte gratis Valencia capital"
         ]
       },
       {
-        name: "Pack Profesional",
-        subtitle: "Más popular",
-        price: "desde 600€",
+        name: "Pack Boda Completa",
+        subtitle: "Ceremonia + Banquete + Fiesta (80-150 invitados)",
+        price: "desde 448€ (IVA incl.)",
         features: [
-          "Equipos profesionales completos",
-          "Técnico especializado incluido",
-          "Transporte y montaje",
-          "Equipos de backup",
-          "Soporte completo"
+          "2x DAS Audio 515A (ceremonia y banquete)",
+          "1x DAS Audio 215A Sub (fiesta con DJ)",
+          "Behringer X Air XR18 + Pioneer RX2",
+          "4x Micrófonos inalámbricos Shure",
+          "Técnico todo el día (8-12 horas)",
+          "Música ceremonia, discursos, fiesta",
+          "Equipos backup incluidos",
+          "Grabación audio ceremonia en USB"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "Máxima calidad",
-        price: "desde 1.200€",
+        subtitle: "Bodas grandes (+150 invitados)",
+        price: "desde 665€ (IVA incl.)",
         features: [
-          "Equipos top de gama",
-          "2 técnicos especializados",
-          "Equipos redundantes",
-          "Prueba previa",
-          "Soporte 24/7"
+          "4x DAS Audio 515A + 2x ICOA 15A",
+          "2x DAS Audio 218A Subwoofer (fiesta potente)",
+          "Behringer X Air + Pioneer RX2 + Backup",
+          "6+ Micrófonos profesionales",
+          "2 técnicos especializados todo el día",
+          "Iluminación ambiental LED opcional",
+          "Visita técnica previa al lugar",
+          "Equipos redundantes completos",
+          "Grabación profesional ceremonia + discursos"
         ]
       }
     ],
