@@ -7,8 +7,8 @@ const AlquilerSubwoofers = () => {
     metaDescription: "Alquiler de subwoofers profesionales en Valencia. JBL, QSC. Desde 400W hasta 2000W. Graves potentes para tu evento. ☎️ 613 88 14 14",
     keywords: "alquiler subwoofers valencia, subwoofer profesional, graves eventos",
     heroTitle: "Alquiler de Subwoofers Profesionales en Valencia",
-    heroSubtitle: "Graves potentes y profundos para tu fiesta - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de subwoofers profesionales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de subwoofers profesionales en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: JBL SRX818, QSC KW181, Electro-Voice ETX, subwoofers activos 18", garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de subwoofers profesionales en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, bodas, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "DAS Audio 215A y 218A - Graves profundos y potentes para tu evento",
+    introduction: `El <strong>alquiler de subwoofers profesionales en Valencia</strong> es esencial para conseguir graves potentes y profundos en tu evento. En ReSona Events disponemos de <strong>DAS Audio 215A</strong> (subwoofer activo doble 15", 2000W) y <strong>DAS Audio 218A</strong> (subwoofer premium doble 18", 3200W pico). Nuestro servicio de <strong>alquiler de subwoofers profesionales en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los subwoofers son fundamentales para fiestas, bodas, conciertos: aportan los graves que hacen vibrar el suelo y crean esa sensación de potencia sin saturar. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de subwoofers profesionales en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, bodas, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [
       {
@@ -45,79 +45,80 @@ const AlquilerSubwoofers = () => {
 
     technicalSpecs: [
       {
-            title: "Altavoces y Sistemas de PA",
+            title: "DAS Audio 215A - Subwoofer Doble 15\"",
             items: [
-                  "JBL SRX818: Sistemas activos 1000-2000W RMS, 2-3 vías, cobertura 90x50°",
-                  "QSC KW181: Altavoces profesionales 12\" y 15\", DSP integrado, conectividad Dante",
-                  "Electro-Voice ETX: Line Array modular escalable 8-24 cajas, rango 50-20kHz",
-                  "Subwoofers activos 18\" 1000-2000W, respuesta 35-150Hz, cardioide/omnidireccional",
-                  "Sistemas portátiles batería recargable para ceremonias sin electricidad"
+                  "Doble 15\" (2x15\") - Dos altavoces de graves de 15 pulgadas",
+                  "2000W de potencia - Amplificador Clase D integrado",
+                  "Respuesta de frecuencia 35Hz-150Hz - Graves profundos sin saturar",
+                  "Activo (autoamplificado) - No requiere amplificador externo",
+                  "Ideal para fiestas, bodas, eventos de 80-150 personas"
             ]
       },
       {
-            title: "Mesas de Mezclas y Procesadores",
+            title: "DAS Audio 218A - Subwoofer Premium Doble 18\"",
             items: [
-                  "Subwoofers activos 18\": Mesas digitales 16-32 canales, efectos integrados, control remoto iPad",
-                  "Allen & Heath Qu/SQ Series: DSP avanzado, 32 entradas, matrices auxiliares",
-                  "Yamaha TF/CL Series: TouchFlow interface, recallable scene, feedback suppressor",
-                  "Procesadores Klark Teknik/DBX: Ecualizadores gráficos 31 bandas, compresores dinámicos",
-                  "Controladores Dante/AVB para redes audio digital multicasting"
+                  "Doble 18\" (2x18\") - Máxima potencia de graves",
+                  "3200W pico (2400W RMS) - Potencia brutal para grandes eventos",
+                  "Respuesta de frecuencia 30Hz-120Hz - Graves ultra profundos",
+                  "SPL 138dB - Nivel de presión sonora extremo",
+                  "Perfecto para conciertos, eventos +150 personas, fiestas grandes"
             ]
       },
       {
-            title: "Micrófonos Profesionales",
+            title: "Configuración y Uso",
             items: [
-                  "Shure SM58/SM57: Dinámicos cardioide, estándar mundial voces/instrumentos",
-                  "Sennheiser EW 135/145 G4: Inalámbricos UHF, 20 canales, alcance 100m",
-                  "Shure Beta 87A/58A: Condensador supercardioide, alta ganancia, rechazo feedback",
-                  "AKG C414/C451: Condensador estudio gran diafragma, múltiples patrones polares",
-                  "DI boxes Radial J48/JDI activas y pasivas para instrumentos",
-                  "Stands K&M/Manfrotto boom ajustables 1-2m, bases sólidas antivuelco"
+                  "Configuración cardioide disponible - Dirección controlada de graves",
+                  "Modo omnidireccional - Dispersión 360° para espacios grandes",
+                  "Crossover integrado - Se conecta fácilmente con altavoces principales",
+                  "Entrada XLR balanceada + salida thru para cadena",
+                  "Controles en panel trasero - Volumen, fase, filtro pasa-altos"
             ]
       },
       {
-            title: "Monitorización y Accesorios",
+            title: "Combinaciones Recomendadas",
             items: [
-                  "Monitores de escenario activos 12\"/15\" coaxiales, 45° ángulo proyección",
-                  "In-Ear monitoring Sennheiser/Shure, receptores belt-pack, auriculares profesionales",
-                  "Cables XLR Neutrik/Cordial balanceados 3-25m, conectores chapados oro",
-                  "Multipar 16-32 canales stage box a mixer, snake cables certificados",
-                  "Extensiones eléctricas schuko CEE profesionales 10-50m, protección térmica"
+                  "1x Sub 215A + 2x DAS Audio 515A = Sistema completo hasta 150 personas",
+                  "2x Sub 218A + 4x DAS Audio 515A = Sistema potente +200 personas",
+                  "1x Sub 215A + 2x ICOA 15A = Perfecto para fiestas medianas",
+                  "Incluye cables XLR profesionales balanceados",
+                  "Técnico especializado ajusta crossover y ecualización"
             ]
       }
 ],
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pack 1 Subwoofer",
+        subtitle: "Graves para fiestas (80-120 personas)",
+        price: "desde 115€ (IVA incl.)",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
+          "1x DAS Audio 215A (doble 15\", 2000W)",
+          "Cables XLR profesionales incluidos",
+          "Configuración y ajuste de crossover",
+          "Transporte gratis Valencia capital",
+          "Montaje y desmontaje incluido"
         ]
       },
       {
-        name: "Pack Profesional",
-        subtitle: "Más popular",
-        price: "desde 600€",
+        name: "Pack 2 Subwoofers",
+        subtitle: "Potencia media (120-200 personas)",
+        price: "desde 230€ (IVA incl.)",
         features: [
-          "Equipos profesionales completos",
+          "2x DAS Audio 215A (4000W total)",
+          "Configuración stereo o mono",
           "Técnico especializado incluido",
-          "Transporte y montaje",
-          "Equipos de backup",
-          "Soporte completo"
+          "Cables y conexiones completas",
+          "Ajuste de fase y ecualización",
+          "Transporte y montaje completo"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "Máxima calidad",
-        price: "desde 1.200€",
+        subtitle: "Máxima potencia (+200 personas)",
+        price: "desde 302€ (IVA incl.)",
         features: [
-          "Equipos top de gama",
+          "2x DAS Audio 218A (doble 18\", 6400W pico)",
           "2 técnicos especializados",
           "Equipos redundantes",
           "Prueba previa",
