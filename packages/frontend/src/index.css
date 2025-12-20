@@ -68,3 +68,13 @@ img {
     transform: rotate(360deg);
   }
 }
+
+/* Hide scrollbar for horizontal category chips on mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}

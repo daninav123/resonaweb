@@ -3,10 +3,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
 import { productService } from '../services/product.service';
 import { api } from '../services/api';
-import { ChevronDown, Grid, List, Package, Filter } from 'lucide-react';
+import { ChevronDown, Grid, List, Package } from 'lucide-react';
 import { SearchBar } from '../components/search/SearchBar';
 import { CategorySidebar } from '../components/CategorySidebar';
-import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
+import { CategoryChips } from '../components/CategoryChips';
 import type { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { breadcrumbSchema } from '../utils/schemas';
@@ -18,7 +18,6 @@ const ProductsPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || '',
@@ -231,6 +230,15 @@ const ProductsPage = () => {
           />
         </div>
 
+        {/* Category Chips - Only visible on mobile */}
+        <div className="lg:hidden">
+          <CategoryChips
+            categories={categories || []}
+            selectedCategory={filters.category}
+            onCategoryChange={(slug) => handleFilterChange('category', slug)}
+          />
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Category Sidebar - Hidden on mobile */}
           <aside className="hidden lg:block lg:w-64">
@@ -241,33 +249,13 @@ const ProductsPage = () => {
             />
           </aside>
 
-          {/* Mobile Filter Drawer */}
-          <MobileFilterDrawer
-            isOpen={isFilterDrawerOpen}
-            onClose={() => setIsFilterDrawerOpen(false)}
-            categories={categories || []}
-            selectedCategory={filters.category}
-            onCategoryChange={(slug) => handleFilterChange('category', slug)}
-          />
-
           {/* Products Grid */}
           <div className="flex-1">
             {/* Header */}
             <div className="bg-white rounded-lg shadow-md p-4 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  {/* Mobile Filter Button */}
-                  <button
-                    onClick={() => setIsFilterDrawerOpen(true)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
-                    aria-label="Abrir filtros"
-                  >
-                    <Filter className="w-4 h-4" />
-                    <span className="font-medium">Filtros</span>
-                  </button>
-
-                  <div>
-                    <h1 className="text-2xl font-bold">Catálogo de Productos</h1>
+                <div>
+                  <h1 className="text-2xl font-bold">Catálogo de Productos</h1>
                   {combinedData && combinedData.pagination && (
                     <p className="text-gray-600 mt-1">
                       {combinedData.pagination.total} productos disponibles
@@ -276,7 +264,6 @@ const ProductsPage = () => {
                       )}
                     </p>
                   )}
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
