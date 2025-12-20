@@ -35,7 +35,7 @@ const ProductsPage = () => {
       minPrice: searchParams.get('minPrice') || '',
       maxPrice: searchParams.get('maxPrice') || '',
       inStock: searchParams.get('inStock') === 'true',
-      sort: searchParams.get('sort') || 'newest',
+      sort: searchParams.get('sort') || 'price_asc',
       search: searchParams.get('q') || '',
     };
     setFilters(newFilters);
