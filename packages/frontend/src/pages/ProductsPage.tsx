@@ -41,6 +41,15 @@ const ProductsPage = () => {
     setFilters(newFilters);
   }, [searchParams]);
 
+  // Set default sort in URL if not present
+  useEffect(() => {
+    if (!searchParams.get('sort')) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('sort', 'price_asc');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   // Fetch packs (solo activos)
   const { data: packsData } = useQuery<any>({
     queryKey: ['packs-public'],
