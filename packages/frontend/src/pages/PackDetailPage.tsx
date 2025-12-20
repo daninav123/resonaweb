@@ -11,6 +11,7 @@ import { cartCountManager } from '../hooks/useCartCount';
 import { generateProductSchema } from '../utils/seo/schemaGenerator';
 import Breadcrumbs from '../components/SEO/Breadcrumbs';
 import SEOHead from '../components/SEO/SEOHead';
+import { getPriceDisplay } from '../utils/priceWithVAT';
 
 const PackDetailPage = () => {
   const { slug } = useParams();
@@ -258,14 +259,21 @@ const PackDetailPage = () => {
             
             {/* Price - Mismo estilo que ProductDetailPage */}
             <div className="mb-6">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-blue-600">€{price.toFixed(2)}</span>
-                <span className="text-gray-600">por día</span>
-              </div>
-              <div className="mt-2 text-sm text-gray-600">
-                <p>Precio incluye todos los componentes del pack</p>
-              </div>
-              <p className="mt-2 text-xs text-gray-500 italic">Precio por unidad y día. IVA no incluido</p>
+              {(() => {
+                const priceWithVAT = price * 1.21;
+                const priceDisplay = getPriceDisplay(priceWithVAT, ' por día');
+                return (
+                  <>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-blue-600">{priceDisplay.main}</span>
+                    </div>
+                    <div className="mt-2 text-sm text-gray-600">
+                      <p>Precio incluye todos los componentes del pack</p>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">{priceDisplay.sub}</p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Quantity - Mismo estilo que ProductDetailPage */}

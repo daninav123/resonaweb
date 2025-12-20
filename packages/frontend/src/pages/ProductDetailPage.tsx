@@ -12,6 +12,7 @@ import SEOHead from '../components/SEO/SEOHead';
 import Breadcrumbs from '../components/SEO/Breadcrumbs';
 import OptimizedImage from '../components/common/OptimizedImage';
 import { generateProductSchema } from '../utils/seo/schemaGenerator';
+import { getPriceDisplay } from '../utils/priceWithVAT';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -231,11 +232,18 @@ const ProductDetailPage = () => {
             
             {/* Price */}
             <div className="mb-6">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-blue-600">€{product.pricePerDay}</span>
-                <span className="text-gray-600">por día</span>
-              </div>
-              <p className="mt-2 text-xs text-gray-500 italic">Precio por unidad y día. IVA no incluido</p>
+              {(() => {
+                const priceWithVAT = Number(product.pricePerDay) * 1.21;
+                const priceDisplay = getPriceDisplay(priceWithVAT, ' por día');
+                return (
+                  <>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-blue-600">{priceDisplay.main}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">{priceDisplay.sub}</p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Quantity */}

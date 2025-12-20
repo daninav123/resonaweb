@@ -10,6 +10,7 @@ import type { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { breadcrumbSchema } from '../utils/schemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
+import { getPriceDisplay } from '../utils/priceWithVAT';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -388,10 +389,20 @@ const ProductsPage = () => {
                             </div>
                           ) : (
                             <div>
-                              <p className="text-2xl font-bold text-blue-600">
-                                €{product.pricePerDay}/día
-                              </p>
-                              <p className="text-xs text-gray-400">Precio por unidad y día. IVA no incluido</p>
+                              {(() => {
+                                const priceWithVAT = Number(product.pricePerDay) * 1.21;
+                                const priceDisplay = getPriceDisplay(priceWithVAT, '/día');
+                                return (
+                                  <>
+                                    <p className="text-2xl font-bold text-blue-600">
+                                      {priceDisplay.main}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {priceDisplay.sub}
+                                    </p>
+                                  </>
+                                );
+                              })()}
                             </div>
                           )}
                         </div>

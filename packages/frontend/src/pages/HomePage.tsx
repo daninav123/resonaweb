@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getPriceDisplay } from '../utils/priceWithVAT';
 import { useQuery } from '@tanstack/react-query';
 import { productService } from '../services/product.service';
 import { Product, Category } from '../types';
@@ -261,11 +262,20 @@ const HomePage = () => {
                       <h3 className="font-semibold mb-2 line-clamp-2">{product.name}</h3>
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-2xl font-bold text-blue-600">
-                            €{product.pricePerDay}
-                          </p>
-                          <p className="text-sm text-gray-600">por día</p>
-                          <p className="text-xs text-gray-400 mt-1">Precio por unidad y día. IVA no incluido</p>
+                          {(() => {
+                            const priceWithVAT = Number(product.pricePerDay) * 1.21;
+                            const priceDisplay = getPriceDisplay(priceWithVAT, '/día');
+                            return (
+                              <>
+                                <p className="text-2xl font-bold text-blue-600">
+                                  {priceDisplay.main}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {priceDisplay.sub}
+                                </p>
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
