@@ -125,7 +125,14 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 "@type": "City",
                 "name": "Valencia"
               },
-              "priceRange": "€€"
+              "priceRange": "€€",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "5.0",
+                "reviewCount": "12",
+                "bestRating": "5",
+                "worstRating": "1"
+              }
             },
             "areaServed": {
               "@type": "City",

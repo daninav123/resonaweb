@@ -70,8 +70,10 @@ const BodasValencia = () => {
             "priceRange": "€€",
             "aggregateRating": {
               "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "reviewCount": "127"
+              "ratingValue": "5.0",
+              "reviewCount": "12",
+              "bestRating": "5",
+              "worstRating": "1"
             }
           })}
         </script>
