@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerDJValencia = () => {
   const pageData = {
-    title: "Alquiler de DJ Profesional en Valencia | Equipos Completos | ReSona Events",
-    metaDescription: "Alquiler de DJ profesional para bodas y eventos. Equipos Pioneer CDJ + DJM. Música personalizada. Desde 400€. ☎️ 613 88 14 14",
+    title: "Alquiler DJ Valencia | Equipos Pioneer CDJ | ReSona",
+    metaDescription: "DJ profesional para bodas y eventos. Equipos Pioneer CDJ-3000 + DJM. Biblioteca 50k canciones. ☎️ 613 88 14 14",
     keywords: "alquiler dj valencia, dj profesional bodas, alquiler equipo dj",
     heroTitle: "Alquiler de DJ Profesional",
-    heroSubtitle: "Música perfecta para tu celebración",
-    introduction: `El <strong>alquiler de DJ profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de DJ profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Pioneer CDJ-3000, mesas DJM, controladores DJ, biblioteca 50k canciones, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de DJ profesional en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, eventos privados, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Pioneer RX2 - Controlador DJ profesional para tu evento",
+    introduction: `El <strong>alquiler de DJ profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>alquiler de DJ profesional en Valencia</strong> incluye <strong>Pioneer RX2</strong> (controlador DJ profesional 2 canales, efectos FX, grabación USB). Ideal para DJs que traen su propio ordenador/música o para eventos que necesitan equipamiento DJ profesional. Compatible con Rekordbox, Serato, Traktor.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, eventos privados, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Ofrecemos también <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido profesional</a> y <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a>.`,
    
     whyChooseUs: [
       {
@@ -45,31 +53,30 @@ const AlquilerDJValencia = () => {
 
     technicalSpecs: [
       {
-            title: "Estructuras Truss Certificadas",
+            title: "Pioneer RX2 - Controlador DJ Profesional",
             items: [
-                  "Truss triangular 290mm: Aluminio 6061-T6, carga 250kg/m, TÜV certificado",
-                  "Truss cuadrado 290×290mm: Heavy duty, carga 400kg/m, esquinas reforzadas",
-                  "Torres elevadoras: Cremallera manual/motor, 3-6m altura, base 1.5×1.5m",
-                  "Ground support: Vigas 6-12m, patas telescópicas, outriggers estabilizadores",
-                  "Rigging: Motores chain hoist 250-500kg, controladores DMX"
+                  "2 canales profesionales - Control completo de mezcla",
+                  "Efectos FX integrados - Beat FX, filtros, delays, reverbs",
+                  "Grabación USB - Graba tu sesión directamente en USB",
+                  "Compatible Rekordbox DJ, Serato DJ, Traktor - Funciona con software DJ popular",
+                  "Jog wheels de alta precisión - Scratching y cueing profesional"
             ]
       },
       {
-            title: "Máquinas de Efectos Especiales",
+            title: "Conexiones y Compatibilidad",
             items: [
-                  "Humo bajo/alto: Antari ICE-101, M-10E, fluido base agua no tóxico",
-                  "Fazer/neblina fina: Look Solutions Unique 2.1, Antari Z-350",
-                  "CO2 jets: 6m columna blanca fría, control DMX, cilindros 20kg",
-                  "Confeti cañones: Disparador eléctrico, papelitos biodegradables colores",
-                  "Burbujas profesionales: Antari B-200, líquido especial ultra-resistente",
-                  "Chispas frías: Máquina sparkular, 3-5m altura, sin llama, seguras interior"
+                  "Entrada USB para ordenador - Conecta tu laptop con Rekordbox/Serato",
+                  "Salidas XLR balanceadas - Conexión directa a altavoces profesionales",
+                  "Entrada auxiliar - Para conectar teléfono/tablet como backup",
+                  "Auriculares profesionales incluidos - Monitorización perfecta",
+                  "Cables y adaptadores incluidos - Todo listo para conectar"
             ]
       },
       {
-            title: "Backline y Equipamiento Musical",
+            title: "Uso y Aplicaciones",
             items: [
-                  "Baterías completas: Pearl/Yamaha, 5 piezas, platillos Zildjian/Sabian",
-                  "Amplificadores guitarra: Marshall/Fender 50-100W, combos/cabezales",
+                  "Bodas: Música fiesta con control profesional del DJ",
+                  "Eventos privados: Fiestas, cumpleaños, celebraciones",
                   "Amplificadores bajo: Ampeg SVT, Markbass, 300-500W, cajas 4×10/1×15",
                   "Teclados MIDI: Nord Stage/Yamaha Montage, 88 teclas weighted",
                   "Atriles partituras: Manhasset, iluminación LED, plegables transporte"
