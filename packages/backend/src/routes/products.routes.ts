@@ -49,7 +49,7 @@ router.get('/search', productController.searchProducts);
 router.get('/category/:categoryId', productController.getProductsByCategory);
 
 // Check availability endpoint (BEFORE :id routes to avoid conflicts)
-router.post('/check-availability', productController.checkAvailability);
+router.post('/check-availability', productController.checkAvailability.bind(productController));
 
 // Pack routes (BEFORE generic :id routes) - Con optionalAuthenticate para permitir acceso sin login (Updated 2025-12-03 17:51)
 router.get('/packs', optionalAuthenticate, productController.getAllPacks);
