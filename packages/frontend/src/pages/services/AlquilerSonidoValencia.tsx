@@ -7,14 +7,14 @@ const AlquilerSonidoValencia = () => {
     metaDescription: "Alquiler de sonido profesional en Valencia. Equipos JBL, QSC, Pioneer. Técnico incluido. Presupuesto gratis en 24h. ☎️ 613 88 14 14",
     keywords: "alquiler sonido valencia, equipos audio valencia, sonido profesional eventos, alquiler altavoces valencia",
     heroTitle: "Alquiler de Sonido Profesional en Valencia",
-    heroSubtitle: "Equipos de última generación con técnico especializado incluido",
-    introduction: `El <strong>alquiler de sonido profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de sonido profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: JBL PRX Series, QSC K-Series, Electro-Voice, Pioneer DJ, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de sonido profesional en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, eventos corporativos, conciertos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Equipos DAS Audio, ICOA, Behringer, Pioneer - Técnico especializado incluido",
+    introduction: `El <strong>alquiler de sonido profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de sonido profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 300 asistentes. Trabajamos exclusivamente con equipamiento profesional de marcas reconocidas: <strong>DAS Audio</strong> (altavoces 515A y subwoofers 215A/218A), <strong>ICOA</strong> (series 12A y 15A), <strong>Behringer X Air</strong>, <strong>Pioneer</strong> para DJ, y micrófonos <strong>Shure</strong>, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de sonido profesional en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: bodas, eventos corporativos, conciertos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [
       {
         icon: "🎵",
         title: "Equipos de Última Generación",
-        description: "JBL, QSC, EV, Pioneer - Solo marcas profesionales de confianza"
+        description: "DAS Audio, ICOA, Behringer, Pioneer, Shure - Marcas profesionales de confianza"
       },
       {
         icon: "👨‍🔧",
@@ -46,47 +46,47 @@ const AlquilerSonidoValencia = () => {
     packages: [
       {
         name: "Pack Básico",
-        subtitle: "Hasta 80 personas",
-        price: "desde 350€",
+        subtitle: "20-80 personas",
+        price: "desde 159€ (IVA incl.)",
         features: [
-          "2 altavoces activos 500W",
-          "Mesa de mezclas digital",
-          "2 micrófonos inalámbricos",
-          "Cables y soportes",
-          "Transporte Valencia",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
+          "2x ICOA 12A Blanco (1000W cada uno)",
+          "2x Micrófonos Shure SM58",
+          "Cables XLR y soportes incluidos",
+          "Transporte gratis Valencia capital",
+          "Montaje y desmontaje incluido",
+          "Asistencia telefónica 24/7",
+          "Equipos revisados antes del evento"
         ]
       },
       {
         name: "Pack Profesional",
         subtitle: "80-150 personas",
-        price: "desde 650€",
+        price: "desde 326€ (IVA incl.)",
         features: [
-          "2 altavoces profesionales 1000W",
-          "2 subwoofers potentes",
-          "Mesa mezclas Pioneer",
-          "4 micrófonos inalámbricos",
-          "Sistema monitoreo",
+          "2x DAS Audio 515A (1500W cada uno)",
+          "1x DAS Audio 215A Subwoofer (2000W)",
+          "Mezcladora Behringer X Air XR18",
+          "4x Micrófonos Shure profesionales",
+          "Monitores de escenario opcionales",
           "Técnico especializado incluido",
-          "Montaje completo",
-          "Equipos de backup"
+          "Montaje completo y calibración",
+          "Equipos de backup disponibles"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
         subtitle: "+150 personas",
-        price: "desde 1.200€",
+        price: "desde 544€ (IVA incl.)",
         features: [
-          "Line Array profesional 2000W+",
-          "Sistema subwoofer triple",
-          "Mesa Yamaha digital",
-          "6 micrófonos premium",
-          "Procesador audio digital",
-          "2 técnicos especializados",
+          "4x DAS Audio 515A (6000W total)",
+          "2x DAS Audio 218A Subwoofer (6400W pico)",
+          "Behringer X Air XR18 + Pioneer RX2",
+          "6+ Micrófonos Shure premium",
+          "Procesador de audio digital DSP",
+          "2 técnicos especializados incluidos",
           "Equipos redundantes completos",
-          "Prueba previa en el lugar"
+          "Prueba de sonido previa en el lugar"
         ]
       }
     ],
@@ -95,32 +95,33 @@ const AlquilerSonidoValencia = () => {
       {
             title: "Altavoces y Sistemas de PA",
             items: [
-                  "JBL PRX Series: Sistemas activos 1000-2000W RMS, 2-3 vías, cobertura 90x50°",
-                  "QSC K-Series: Altavoces profesionales 12\" y 15\", DSP integrado, conectividad Dante",
-                  "Electro-Voice: Line Array modular escalable 8-24 cajas, rango 50-20kHz",
-                  "Subwoofers activos 18\" 1000-2000W, respuesta 35-150Hz, cardioide/omnidireccional",
-                  "Sistemas portátiles batería recargable para ceremonias sin electricidad"
+                  "DAS Audio 515A: Altavoz activo 2 vías, 1500W potencia, procesador DSP integrado, SPL máx 135dB",
+                  "ICOA 12A: Altavoz activo 12\", 1000W, acabado blanco/negro, ideal eventos elegantes",
+                  "ICOA 15A: Altavoz activo 15\", 1200W, graves profundos, control remoto integrado",
+                  "DAS Audio 215A: Subwoofer activo doble 15\", 2000W, respuesta 35-150Hz, Clase D",
+                  "DAS Audio 218A: Subwoofer premium doble 18\", 3200W pico, respuesta 30-120Hz, SPL 138dB",
+                  "Altavoz Pasivo 10\": Versátil 400W, ideal monitores de escenario o sistemas secundarios"
             ]
       },
       {
             title: "Mesas de Mezclas y Procesadores",
             items: [
-                  "Pioneer DJ: Mesas digitales 16-32 canales, efectos integrados, control remoto iPad",
-                  "Allen & Heath Qu/SQ Series: DSP avanzado, 32 entradas, matrices auxiliares",
-                  "Yamaha TF/CL Series: TouchFlow interface, recallable scene, feedback suppressor",
-                  "Procesadores Klark Teknik/DBX: Ecualizadores gráficos 31 bandas, compresores dinámicos",
-                  "Controladores Dante/AVB para redes audio digital multicasting"
+                  "Behringer X Air XR18: Mezcladora digital 18 canales, control WiFi/tablet, efectos integrados",
+                  "Pioneer RX2: Controlador DJ profesional, 2 canales, efectos FX, USB recording",
+                  "Procesador DSP integrado en altavoces DAS Audio para ecualización automática",
+                  "Control remoto inalámbrico para ajustes en tiempo real",
+                  "Aplicaciones móviles iOS/Android para control de mezcla desde cualquier punto"
             ]
       },
       {
-            title: "Micrófonos Shure",
+            title: "Micrófonos y Accesorios",
             items: [
-                  "Shure SM58/SM57: Dinámicos cardioide, estándar mundial voces/instrumentos",
-                  "Sennheiser EW 135/145 G4: Inalámbricos UHF, 20 canales, alcance 100m",
-                  "Shure Beta 87A/58A: Condensador supercardioide, alta ganancia, rechazo feedback",
-                  "AKG C414/C451: Condensador estudio gran diafragma, múltiples patrones polares",
-                  "DI boxes Radial J48/JDI activas y pasivas para instrumentos",
-                  "Stands K&M/Manfrotto boom ajustables 1-2m, bases sólidas antivuelco"
+                  "Shure SM58: Micrófono dinámico cardioide, estándar mundial para voces, ultra resistente",
+                  "Shure SM57: Dinámico versátil para instrumentos y voces, respuesta plana 40-15kHz",
+                  "Micrófonos inalámbricos UHF disponibles bajo pedido (consultar disponibilidad)",
+                  "Soportes profesionales ajustables 1-2m con bases antivuelco",
+                  "Cables XLR balanceados Cordial/Neutrik de 3-25m incluidos",
+                  "Pop filters y antipops para grabaciones y eventos con presentadores"
             ]
       },
       {
