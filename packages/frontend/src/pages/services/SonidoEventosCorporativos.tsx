@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const SonidoEventosCorporativos = () => {
   const pageData = {
-    title: "Sonido para Eventos Corporativos Valencia | Conferencias y Presentaciones",
-    metaDescription: "Sonido profesional para eventos corporativos. Conferencias, presentaciones, cenas de empresa. Streaming incluido. ☎️ 613 88 14 14",
+    title: "Sonido Eventos Corporativos Valencia | QSC | ReSona",
+    metaDescription: "Sonido para eventos corporativos. Conferencias, presentaciones, cenas. Equipos QSC. Streaming incluido. ☎️ 613 88 14 14",
     keywords: "sonido eventos corporativos valencia, audiovisuales empresa, sonido conferencias",
     heroTitle: "Sonido para Eventos Corporativos",
-    heroSubtitle: "Profesionalidad y claridad para tu empresa",
-    introduction: `El <strong>sonido para eventos corporativos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>sonido para eventos corporativos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: QSC K-Series, Sennheiser, Allen & Heath, sistemas conferencia, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>sonido para eventos corporativos en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, convenciones, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido cristalino para eventos corporativos",
+    introduction: `El <strong>sonido para eventos corporativos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>sonido para eventos corporativos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: DAS Audio 515A (1500W), ICOA 12A/15A, Behringer X Air XR18, Shure SM58 inalámbricos para presentadores, garantizando claridad perfecta en conferencias, presentaciones y eventos corporativos.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, convenciones, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. También ofrecemos <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido</a> y <a href="/servicios/produccion-tecnica-eventos" class="text-primary-600 hover:underline font-semibold">producción técnica</a>.`,
    
     whyChooseUs: [
       {

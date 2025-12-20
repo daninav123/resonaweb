@@ -8,14 +8,14 @@ const ProduccionEventosValencia = () => {
     keywords: "eventos valencia, producción eventos valencia, eventos corporativos valencia, sonido eventos valencia, iluminación eventos valencia, streaming eventos valencia",
     canonicalUrl: "https://resonaevents.com/servicios/produccion-eventos-valencia",
     heroTitle: "Producción Técnica Completa para Eventos en Valencia",
-    heroSubtitle: "Sonido, Iluminación, Vídeo y Streaming. Más de 1.000 eventos producidos en Valencia",
+    heroSubtitle: "DAS Audio, ICOA, Moving Heads 17R/7R, Pioneer RX2 - Producción integral completa",
     introduction: `Organizar <strong>eventos en Valencia</strong> de alto nivel requiere una <strong>producción técnica profesional</strong> que garantice resultados impecables. En ReSona Events somos especialistas en <strong>producción de eventos en Valencia</strong>, ofreciendo soluciones audiovisuales completas para eventos corporativos, conciertos, festivales, conferencias, presentaciones de producto, galas, y todo tipo de celebraciones profesionales.
 
 Con más de 15 años de experiencia y más de 1.000 <strong>eventos producidos en Valencia</strong>, conocemos perfectamente los mejores espacios de la ciudad: Palau de la Música, Ciudad de las Artes y las Ciencias, Feria Valencia, Marina de Empresas, Hotel Las Arenas, La Rambleta, Centro de Congresos, Jardín Botánico, y centenares de hoteles, teatros, auditorios y espacios únicos en Valencia capital y provincia.
 
 Nuestro servicio completo de <strong>producción técnica para eventos en Valencia</strong> abarca todas las necesidades audiovisuales: sistemas de sonido profesional escalables (50-5.000 personas), iluminación escénica y arquitectónica, pantallas LED y videoescenarios, proyección y mapping, streaming profesional y grabación multicámara, estructuras y escenarios, control técnico centralizado, equipo técnico especializado, y coordinación integral con todos los proveedores.
 
-Ya sea un <strong>evento corporativo en Valencia</strong> de 100 asistentes, un concierto con 2.000 personas, o una conferencia internacional, disponemos del equipamiento profesional, la experiencia técnica y el equipo humano necesario para que tu evento sea un éxito rotundo. Trabajamos con las mejores marcas del mercado: JBL, QSC, d&b audiotechnik, Martin, Robe, Panasonic, Sony, garantizando fiabilidad y calidad audiovisual excepcional.
+Ya sea un <strong>evento corporativo en Valencia</strong> de 100 asistentes, un concierto con 2.000 personas, o una conferencia internacional, disponemos del equipamiento profesional, la experiencia técnica y el equipo humano necesario para que tu evento sea un éxito rotundo. Trabajamos con equipamiento profesional real: DAS Audio 515A/215A/218A, ICOA 12A/15A, Moving Head 3en1 17R y Beam 7R, Behringer X Air XR18, Pioneer RX2, Shure SM58, Flash RGB 1000W, Focos LED RGB, garantizando fiabilidad y calidad audiovisual excepcional.
 
 Cada <strong>evento en Valencia</strong> tiene sus particularidades técnicas. Por eso nuestro proceso incluye: visita técnica previa al espacio, diseño personalizado de producción, planificación de timeline detallado, montaje con antelación suficiente, pruebas técnicas completas, equipo técnico durante todo el evento, desmontaje eficiente, y soporte post-evento. Todo con un único interlocutor que coordina todos los aspectos técnicos.`,
    
