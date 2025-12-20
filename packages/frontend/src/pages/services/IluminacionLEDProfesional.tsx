@@ -7,8 +7,8 @@ const IluminacionLEDProfesional = () => {
     metaDescription: "Iluminación LED profesional para eventos. Focos PAR LED RGB/RGBW, barras LED, uplights. Control DMX. ☎️ 613 88 14 14",
     keywords: "iluminación led eventos valencia, luces led profesionales valencia, focos par led valencia, iluminación profesional valencia",
     heroTitle: "Iluminación LED Profesional para Eventos en Valencia",
-    heroSubtitle: "Millones de colores para tu evento - Servicio en Valencia y provincia",
-    introduction: `El <strong>iluminación LED profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación LED profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Chauvet, Martin, ADJ, Showtec, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación LED profesional en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: eventos, conciertos, teatro, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Moving Heads, Flash RGB, Focos LED - Efectos profesionales para tu evento",
+    introduction: `La <strong>iluminación LED profesional en Valencia</strong> transforma completamente cualquier evento. En ReSona Events contamos con más de 15 años de experiencia en iluminación para bodas, eventos corporativos, conciertos y fiestas en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación LED profesional</strong> está diseñado para eventos de 20 a 300 personas. Trabajamos con equipamiento profesional: <strong>Moving Head 3en1 17R</strong> (350W, Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash RGBW</strong>, <strong>Flash Estroboscópico RGB 1000W</strong>, <strong>Focos LED RGB</strong> decorativos, <strong>Ventilador LED RGB</strong> para efectos rotativos, y <strong>Focos Spot</strong> profesionales. Todos nuestros equipos LED son de última generación, bajo consumo, y perfectamente mantenidos. Incluimos <strong>técnico especializado</strong> que programa y controla toda la iluminación durante el evento, creando ambientes únicos: entrada de novios, cambios de ambiente en el banquete, efectos sincronizados en la fiesta. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje completo con estructuras truss si es necesario, controlador DMX 512 profesional, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7. Hemos iluminado más de 1.000 eventos en espacios emblemáticos: Palau de la Música, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas y espacios únicos en Valencia.`,
    
     whyChooseUs: [
       {
@@ -45,78 +45,88 @@ const IluminacionLEDProfesional = () => {
 
     technicalSpecs: [
       {
-            title: "Focos PAR LED Profesionales",
+            title: "Moving Heads Profesionales",
             items: [
-                  "Chauvet SlimPAR Pro: 12×4W RGBW, ángulo 25°, modo DMX/autónomo/master-slave",
-                  "ADJ Mega Par Profile Plus: 228W RGBWA+UV, wash uniforme, flicker-free para vídeo",
-                  "Showtec Spectral M800: 8×10W RGBA, compacto, batería litio recargable 8-12h",
-                  "Martin RUSH PAR 2 RGBW: 12×12W Zoom 15-40°, profesional touring IP20",
-                  "Eurolite LED IP PAR: 14×10W RGBWA+UV, certificación IP65 waterproof exterior"
+                  "Moving Head 3en1 17R: Lámpara 350W, Beam/Spot/Wash en uno, prisma 8+16 facetas, zoom 5-45°",
+                  "Moving Head Beam 7R: Beam concentrado 230W, 14 colores + blanco, prisma 3 facetas, efectos espectaculares",
+                  "Mini Beam LED: Compacto 60W LED, 8 colores, DMX 512, perfecto eventos pequeños/medianos",
+                  "Mini Wash LED RGBW: 80W LED, mezcla colores suave, zoom motorizado, silencioso",
+                  "Control DMX 512 profesional con escenas preprogramadas y modo music-reactive"
             ]
       },
       {
-            title: "Moving Heads y Cabezas Móviles",
+            title: "Efectos y Focos LED",
             items: [
-                  "Martin RUSH MH3 Beam: 140W LED Beam, prisma 3 facetas, 8 gobos rotación",
-                  "Chauvet Intimidator Spot 355: 90W LED Spot, 8 gobos + 8 colores dicróicos",
-                  "ADJ Focus Spot 4Z: 200W LED Spot motorized Zoom 12-30°, iris variable",
-                  "Showtec Phantom 75 LED Beam: Beam compacto 75W, prisma, velocidad pan/tilt",
-                  "American DJ Inno Pocket Wash: Mini moving wash 7×10W, compacto DJ booth"
+                  "Flash Estroboscópico RGB 1000W: Alta potencia LED RGB, velocidad variable, control DMX para momentos clave",
+                  "Ventilador LED RGB: Efectos giratorios impactantes, LED RGB full color, modo DMX/Auto/Sound",
+                  "Foco Spot Pequeño: LED 50W, haz concentrado regulable, montaje versátil para iluminación puntual",
+                  "Foco LED RGB Decoración: 18W RGB compacto, control remoto, múltiples modos, batería opcional",
+                  "Todos los equipos con control DMX sincronizado - efectos coordinados perfectamente"
             ]
       },
       {
-            title: "Controladores DMX y Efectos",
+            title: "Controladores y Programación",
             items: [
-                  "Controlador Martin M-Touch: Pantalla táctil 15\", 16 universos Art-Net, librería fixtures",
-                  "ADJ Operator 384: Mesa DMX 384 canales, 24 fixtures, 30 bancos, MIDI",
-                  "Chauvet Obey 70: Controlador compacto 192 canales, 12 escenas, fade manual",
-                  "Antari Z-350 Fazer: Máquina neblina DMX, tanque 3.5L, 700W",
-                  "Chauvet Hurricane 1800 Flex: Humo 1800W, control DMX/wireless, timer"
+                  "Controlador DMX 512 profesional: 192-384 canales, escenas preprogramables, fade manual",
+                  "Programación personalizada de escenas para cada momento del evento",
+                  "Modo automático sincronizado con música (music-reactive) para fiestas",
+                  "Control manual en tiempo real por técnico especializado",
+                  "Equipos sincronizados: cambios de ambiente instantáneos y fluidos"
             ]
       },
       {
-            title: "Iluminación Arquitectónica Exterior",
+            title: "Estructuras y Montaje",
             items: [
-                  "Bañadores LED RGBW IP65: 36×3W, alcance 20m, ángulo 25°/45°",
-                  "Uplights wireless batería: 12×18W RGBWA+UV, 12h autonomía, control WiFi",
-                  "Proyectores LED 150-300W: Iluminación fachadas, jardines, COB chip",
-                  "Tiras LED RGBW IP68: 5050/2835 SMD, 60-120 LED/m, sumergibles",
-                  "Controladores DMX wireless: 2.4GHz, alcance 300m, 512 canales"
+                  "Estructuras truss profesionales 1.5m-3m para colgar moving heads",
+                  "Soportes de suelo ajustables en altura para focos y efectos",
+                  "Cableado DMX profesional certificado con conectores Neutrik",
+                  "Extensiones eléctricas schuko CEE con protección térmica",
+                  "Montaje discreto y seguro - instalación invisible durante el evento"
             ]
       }
 ],
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pack Ambiente",
+        subtitle: "Iluminación decorativa (50-80 personas)",
+        price: "desde 145€ (IVA incl.)",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
+          "8x Focos LED RGB Decoración (18W)",
+          "Controlador DMX con escenas preprogramadas",
+          "Cambios de color automáticos",
+          "Montaje con soportes de suelo",
+          "Transporte gratis Valencia capital",
+          "Asistencia telefónica 24/7"
         ]
       },
       {
-        name: "Pack Profesional",
-        subtitle: "Más popular",
-        price: "desde 600€",
+        name: "Pack Fiesta",
+        subtitle: "Efectos profesionales (80-150 personas)",
+        price: "desde 435€ (IVA incl.)",
         features: [
-          "Equipos profesionales completos",
+          "2x Moving Head Beam 7R (230W)",
+          "2x Mini Beam LED + 2x Mini Wash RGBW",
+          "1x Flash Estroboscópico RGB 1000W",
+          "1x Ventilador LED RGB (efectos rotativos)",
+          "Controlador DMX profesional",
           "Técnico especializado incluido",
-          "Transporte y montaje",
-          "Equipos de backup",
-          "Soporte completo"
+          "Programación personalizada de escenas",
+          "Estructura truss si es necesario"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "Máxima calidad",
-        price: "desde 1.200€",
+        subtitle: "Máxima espectacularidad (+150 personas)",
+        price: "desde 690€ (IVA incl.)",
         features: [
-          "Equipos top de gama",
+          "4x Moving Head 3en1 17R (Beam/Spot/Wash)",
+          "2x Moving Head Beam 7R adicionales",
+          "2x Flash Estroboscópico RGB 1000W",
+          "8x Focos LED RGB decorativos",
+          "2x Ventilador LED RGB",
+          "Controlador DMX profesional + backup",
           "2 técnicos especializados",
           "Equipos redundantes",
           "Prueba previa",
