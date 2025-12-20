@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const IluminacionLEDProfesional = () => {
   const pageData = {
-    title: "Iluminación LED Profesional para Eventos | RGB, RGBW | Valencia",
-    metaDescription: "Iluminación LED profesional para eventos. Focos PAR LED RGB/RGBW, barras LED, uplights. Control DMX. ☎️ 613 88 14 14",
+    title: "Iluminación LED Valencia | Moving Heads RGB | ReSona",
+    metaDescription: "Iluminación LED para eventos en Valencia. Moving Heads, focos RGB/RGBW. Control DMX. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "iluminación led eventos valencia, luces led profesionales valencia, focos par led valencia, iluminación profesional valencia",
     heroTitle: "Iluminación LED Profesional para Eventos en Valencia",
     heroSubtitle: "Moving Heads, Flash RGB, Focos LED - Efectos profesionales para tu evento",
-    introduction: `La <strong>iluminación LED profesional en Valencia</strong> transforma completamente cualquier evento. En ReSona Events contamos con más de 15 años de experiencia en iluminación para bodas, eventos corporativos, conciertos y fiestas en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación LED profesional</strong> está diseñado para eventos de 20 a 300 personas. Trabajamos con equipamiento profesional: <strong>Moving Head 3en1 17R</strong> (350W, Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash RGBW</strong>, <strong>Flash Estroboscópico RGB 1000W</strong>, <strong>Focos LED RGB</strong> decorativos, <strong>Ventilador LED RGB</strong> para efectos rotativos, y <strong>Focos Spot</strong> profesionales. Todos nuestros equipos LED son de última generación, bajo consumo, y perfectamente mantenidos. Incluimos <strong>técnico especializado</strong> que programa y controla toda la iluminación durante el evento, creando ambientes únicos: entrada de novios, cambios de ambiente en el banquete, efectos sincronizados en la fiesta. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje completo con estructuras truss si es necesario, controlador DMX 512 profesional, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7. Hemos iluminado más de 1.000 eventos en espacios emblemáticos: Palau de la Música, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas y espacios únicos en Valencia.`,
+    introduction: `La <strong>iluminación LED profesional en Valencia</strong> transforma completamente cualquier evento. En ReSona Events contamos con más de 15 años de experiencia en iluminación para bodas, eventos corporativos, conciertos y fiestas en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>iluminación LED profesional</strong> está diseñado para eventos de 20 a 300 personas. Trabajamos con equipamiento profesional: <strong>Moving Head 3en1 17R</strong> (350W, Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash RGBW</strong>, <strong>Flash Estroboscópico RGB 1000W</strong>, <strong>Focos LED RGB</strong> decorativos, <strong>Ventilador LED RGB</strong> para efectos rotativos, y <strong>Focos Spot</strong> profesionales.
+
+Todos nuestros equipos LED son de última generación, bajo consumo, y perfectamente mantenidos. Incluimos <strong>técnico especializado</strong> que programa y controla toda la iluminación durante el evento, creando ambientes únicos: entrada de novios, cambios de ambiente en el banquete, efectos sincronizados en la fiesta.
+
+El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje completo con estructuras truss si es necesario, controlador DMX 512 profesional, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
+
+Hemos iluminado más de 1.000 eventos en espacios emblemáticos: Palau de la Música, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas y espacios únicos en Valencia. Ofrecemos también <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido profesional</a> y <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a>.`,
    
     whyChooseUs: [
       {

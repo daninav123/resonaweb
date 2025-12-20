@@ -3,12 +3,18 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerAltavocesProfesionales = () => {
   const pageData = {
-    title: "Alquiler de Altavoces Profesionales en Valencia | JBL, QSC, EV | ReSona Events",
-    metaDescription: "Alquiler de altavoces profesionales en Valencia. JBL, QSC, EV. Desde 200W hasta Line Array. Técnico incluido. Servicio en Valencia y provincia. ☎️ 613 88 14 14",
+    title: "Altavoces Profesionales Valencia | DAS Audio | ReSona",
+    metaDescription: "Altavoces profesionales en Valencia. DAS Audio, ICOA. 1000-1500W. Técnico incluido. Desde 159€. ☎️ 613 88 14 14",
     keywords: "alquiler altavoces valencia, altavoces profesionales valencia, alquiler altavoces JBL valencia, alquiler sonido valencia",
     heroTitle: "Alquiler de Altavoces Profesionales en Valencia",
     heroSubtitle: "DAS Audio 515A, ICOA 12A/15A - Altavoces profesionales de 1000-1500W",
-    introduction: `El <strong>alquiler de altavoces profesionales en Valencia</strong> es fundamental para el éxito de tu evento. En ReSona Events disponemos de <strong>DAS Audio 515A</strong> (1500W, 2 vías), <strong>ICOA 12A</strong> (1000W, acabado blanco), <strong>ICOA 15A</strong> (1200W, acabado negro), y <strong>Altavoz Pasivo 10"</strong> (400W). Nuestros <strong>altavoces profesionales</strong> cubren desde eventos de 50 personas hasta 300 asistentes. Todos son sistemas activos (autoamplificados) que no requieren amplificador externo. Todos nuestros <strong>altavoces</strong> están calibrados profesionalmente y se entregan con técnico especializado. El servicio de <strong>alquiler de altavoces en Valencia</strong> incluye transporte, montaje, calibración acústica y asistencia técnica durante todo el evento. Trabajamos con estudios de sonido certificados para garantizar la mejor calidad en bodas, conciertos, eventos corporativos y festivales en Valencia y provincia.`,
+    introduction: `El <strong>alquiler de altavoces profesionales en Valencia</strong> es fundamental para el éxito de tu evento. En ReSona Events disponemos de <strong>DAS Audio 515A</strong> (1500W, 2 vías), <strong>ICOA 12A</strong> (1000W, acabado blanco), <strong>ICOA 15A</strong> (1200W, acabado negro), y <strong>Altavoz Pasivo 10"</strong> (400W).
+
+Nuestros <strong>altavoces profesionales</strong> cubren desde eventos de 50 personas hasta 300 asistentes. Todos son sistemas activos (autoamplificados) que no requieren amplificador externo. Todos nuestros <strong>altavoces</strong> están calibrados profesionalmente y se entregan con técnico especializado.
+
+El servicio de <strong>alquiler de altavoces en Valencia</strong> incluye transporte, montaje, calibración acústica y asistencia técnica durante todo el evento.
+
+Trabajamos con estudios de sonido certificados para garantizar la mejor calidad en <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, conciertos, <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">eventos corporativos</a> y festivales en Valencia y provincia. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sistemas de sonido completos</a>.`,
    
     whyChooseUs: [
       {

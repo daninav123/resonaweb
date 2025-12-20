@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerIluminacionBodas = () => {
   const pageData = {
-    title: "Alquiler de Iluminación para Bodas Valencia | Ambiental + Arquitectónica",
-    metaDescription: "Iluminación profesional para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Transforma tu espacio. Desde 400€. ☎️ 613 88 14 14",
+    title: "Iluminación Bodas Valencia | LED Ambiental | ReSona",
+    metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda",
     heroTitle: "Iluminación Profesional para Bodas en Valencia",
     heroSubtitle: "Focos LED RGB, Moving Heads, Efectos - Iluminación mágica para tu boda",
-    introduction: `La <strong>iluminación para bodas en Valencia</strong> crea la atmósfera perfecta para tu día especial. En ReSona Events disponemos de <strong>Focos LED RGB Decoración</strong> (iluminación ambiental de colores), <strong>Moving Head 3en1 17R y Beam 7R</strong> (efectos dinámicos entrada de novios, primer baile), <strong>Flash Estroboscópico RGB</strong> (momentos especiales), <strong>Mini Beam y Wash LED</strong> (pista de baile). Nuestro servicio de <strong>iluminación para bodas</strong> está diseñado para bodas de 50 a 300 invitados. Transformamos espacios: masías, hoteles, fincas, carpas. Creamos ambientes para cada momento: ceremonia (luz suave), cóctel (ambiente), banquete (cálido), y fiesta (dinámico con efectos). Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación para bodas en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, primer baile, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    introduction: `La <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>iluminación para bodas en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: uplights LED, PAR LED RGBW, moving heads, proyectores gobo, garantizando rendimiento y fiabilidad máximos.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, primer baile, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. También ofrecemos <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a> y <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED general</a>.`,
    
     whyChooseUs: [
       {

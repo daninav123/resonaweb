@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const IluminacionEscenarios = () => {
   const pageData = {
-    title: "Iluminación para Escenarios | Profesional | Conciertos y Shows | Valencia",
-    metaDescription: "Iluminación profesional para escenarios. Moving heads, PAR LED, seguimientos. Para conciertos, shows, teatro. ☎️ 613 88 14 14",
+    title: "Iluminación Escenarios Valencia | Moving Heads | ReSona",
+    metaDescription: "Iluminación para escenarios. Moving heads 17R/7R, PAR LED, flash. Conciertos, shows, teatro. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "iluminación escenarios valencia, luces conciertos, iluminación shows",
     heroTitle: "Iluminación Profesional para Escenarios en Valencia",
     heroSubtitle: "Moving Head 17R/7R, Flash RGB, Focos LED - Iluminación espectacular para escenarios",
-    introduction: `El <strong>iluminación para escenarios en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación para escenarios en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: Moving Head 3en1 17R (350W Beam/Spot/Wash), Moving Head Beam 7R (230W), Mini Beam y Wash LED, Flash Estroboscópico RGB 1000W, Focos LED RGB decorativos, estructuras truss, controladores DMX 512, garantizando espectacularidad y fiabilidad. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación para escenarios en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, teatro, festivales, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    introduction: `La <strong>iluminación para escenarios en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+
+Nuestro servicio de <strong>iluminación para escenarios en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: Moving Head 3en1 17R (350W Beam/Spot/Wash), Moving Head Beam 7R (230W), Mini Beam y Wash LED, Flash Estroboscópico RGB 1000W, Focos LED RGB decorativos, estructuras truss, controladores DMX 512.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, teatro, festivales en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sonido profesional</a> y <a href="/servicios/alquiler-moving-heads" class="text-primary-600 hover:underline font-semibold">moving heads</a>.`,
    
     whyChooseUs: [
       {

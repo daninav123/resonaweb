@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerSubwoofers = () => {
   const pageData = {
-    title: "Alquiler de Subwoofers Profesionales | Graves Potentes | Valencia",
-    metaDescription: "Alquiler de subwoofers profesionales en Valencia. JBL, QSC. Desde 400W hasta 2000W. Graves potentes para tu evento. ☎️ 613 88 14 14",
+    title: "Subwoofers Valencia | DAS Audio 215A/218A | ReSona",
+    metaDescription: "Subwoofers profesionales en Valencia. DAS Audio 215A/218A. 2000-3200W. Graves potentes. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler subwoofers valencia, subwoofer profesional, graves eventos",
     heroTitle: "Alquiler de Subwoofers Profesionales en Valencia",
     heroSubtitle: "DAS Audio 215A y 218A - Graves profundos y potentes para tu evento",
-    introduction: `El <strong>alquiler de subwoofers profesionales en Valencia</strong> es esencial para conseguir graves potentes y profundos en tu evento. En ReSona Events disponemos de <strong>DAS Audio 215A</strong> (subwoofer activo doble 15", 2000W) y <strong>DAS Audio 218A</strong> (subwoofer premium doble 18", 3200W pico). Nuestro servicio de <strong>alquiler de subwoofers profesionales en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los subwoofers son fundamentales para fiestas, bodas, conciertos: aportan los graves que hacen vibrar el suelo y crean esa sensación de potencia sin saturar. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de subwoofers profesionales en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, bodas, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    introduction: `El <strong>alquiler de subwoofers profesionales en Valencia</strong> es esencial para conseguir graves potentes y profundos en tu evento. En ReSona Events disponemos de <strong>DAS Audio 215A</strong> (subwoofer activo doble 15", 2000W) y <strong>DAS Audio 218A</strong> (subwoofer premium doble 18", 3200W pico).
+
+Nuestro servicio de <strong>alquiler de subwoofers profesionales en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los subwoofers son fundamentales para fiestas, bodas, conciertos: aportan los graves que hacen vibrar el suelo y crean esa sensación de potencia sin saturar.
+
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+
+El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+
+Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, fiestas, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sistemas de sonido completos</a>.`,
    
     whyChooseUs: [
       {

@@ -206,7 +206,8 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-gray-700 leading-relaxed">{introduction}</p>
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">Sobre Nuestro Servicio</h2>
+              <div className="text-lg text-gray-700 leading-relaxed prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: introduction }} />
             </div>
           </div>
         </section>

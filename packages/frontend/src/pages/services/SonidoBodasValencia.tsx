@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const SonidoBodasValencia = () => {
   const pageData = {
-    title: "Sonido Profesional para Bodas en Valencia | Ceremonia + Banquete + Fiesta",
-    metaDescription: "Sonido completo para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos profesionales + técnico. Desde 600€. ☎️ 613 88 14 14",
+    title: "Sonido Bodas Valencia | Ceremonia + Fiesta | ReSona",
+    metaDescription: "Sonido para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos DAS Audio + técnico. Desde 159€. ☎️ 613 88 14 14",
     keywords: "sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia",
     heroTitle: "Sonido Profesional para Bodas en Valencia",
     heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido perfecto para tu boda",
-    introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de tu día especial. En ReSona Events contamos con más de 15 años de experiencia en bodas en la Comunidad Valenciana. Nuestro servicio de <strong>sonido para bodas en Valencia</strong> cubre ceremonia, cóctel, banquete y fiesta: todo el día con sonido perfecto. Trabajamos con equipamiento profesional: <strong>DAS Audio 515A</strong> (altavoces 1500W), <strong>ICOA 12A/15A</strong> (acabados elegantes blanco/negro), <strong>subwoofers DAS Audio 215A/218A</strong>, <strong>Behringer X Air XR18</strong>, <strong>Pioneer RX2</strong> para DJ, y micrófonos <strong>Shure SM58</strong> inalámbricos. Todos nuestros equipos están perfectamente mantenidos y calibrados antes de cada boda. Incluimos <strong>técnico especializado</strong> que se encarga de: instalación discreta antes de la ceremonia, ajuste de niveles durante discursos, mezcla profesional en el banquete, y gestión de música DJ en la fiesta. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje invisible antes de los invitados, desmontaje al finalizar, micrófonos inalámbricos para novios/testigos/sacerdote, conexión para música ceremony/banquete, equipos de respaldo, y soporte 24/7. Hemos sonorizado más de 500 bodas en: Masias de Valencia, La Hacienda, Hotel Las Arenas, fincas en l'Horta, hoteles en la playa, y espacios únicos en toda la provincia.`,
+    introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de tu día especial. En ReSona Events contamos con más de 15 años de experiencia en bodas en la Comunidad Valenciana.
+
+Nuestro servicio de <strong>sonido para bodas en Valencia</strong> cubre ceremonia, cóctel, banquete y fiesta: todo el día con sonido perfecto. Trabajamos con equipamiento profesional: <strong>DAS Audio 515A</strong> (altavoces 1500W), <strong>ICOA 12A/15A</strong> (acabados elegantes blanco/negro), <strong>subwoofers DAS Audio 215A/218A</strong>, <strong>Behringer X Air XR18</strong>, <strong>Pioneer RX2</strong> para DJ, y micrófonos <strong>Shure SM58</strong> inalámbricos.
+
+Todos nuestros equipos están perfectamente mantenidos y calibrados antes de cada boda. Incluimos <strong>técnico especializado</strong> que se encarga de: instalación discreta antes de la ceremonia, ajuste de niveles durante discursos, mezcla profesional en el banquete, y gestión de música DJ en la fiesta.
+
+El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje invisible antes de los invitados, desmontaje al finalizar, micrófonos inalámbricos para novios/testigos/sacerdote, conexión para música ceremony/banquete, equipos de respaldo, y soporte 24/7.
+
+Hemos sonorizado más de 500 bodas en: Masias de Valencia, La Hacienda, Hotel Las Arenas, fincas en l'Horta, hoteles en la playa, y espacios únicos en toda la provincia. También ofrecemos <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido profesional</a> para todo tipo de eventos y <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a> para crear ambientes únicos.`,
    
     whyChooseUs: [
       {

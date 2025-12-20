@@ -3,12 +3,20 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerMovingHeads = () => {
   const pageData = {
-    title: "Alquiler de Moving Heads | Luces Inteligentes | Valencia",
-    metaDescription: "Alquiler de moving heads profesionales. Luces robotizadas inteligentes. Beam, Spot, Wash. Control DMX. ☎️ 613 88 14 14",
+    title: "Moving Heads Valencia | Luces Robotizadas | ReSona",
+    metaDescription: "Moving heads profesionales. Luces robotizadas 17R, 7R. Beam, Spot, Wash. Control DMX. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler moving heads valencia, luces robotizadas, luces inteligentes eventos",
     heroTitle: "Alquiler de Moving Heads en Valencia",
     heroSubtitle: "Moving Head 17R, 7R, Mini Beam LED - Efectos profesionales Dinámicos",
-    introduction: `El <strong>alquiler de moving heads en Valencia</strong> transforma cualquier evento en un espectáculo visual impresionante. En ReSona Events disponemos de <strong>Moving Head 3en1 17R</strong> (350W Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash LED RGBW</strong>. Nuestro servicio de <strong>alquiler de moving heads en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los moving heads son cabezas móviles robotizadas que crean efectos dinámicos espectaculares: haces de luz que se mueven, cambian de color, proyectan gobos, y se sincronizan con la música. Perfectos para bodas (entrada de novios, primera baile), eventos corporativos (presentaciones, galas), conciertos, y fiestas. Incluimos <strong>técnico especializado</strong> que programa y controla los moving heads durante el evento, creando efectos sincronizados perfectamente. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7. Hemos iluminado más de 500 eventos con moving heads en Valencia: bodas, conciertos, eventos corporativos en Palau de la Música, La Hacienda, Hotel Las Arenas, y espacios únicos.`,
+    introduction: `El <strong>alquiler de moving heads en Valencia</strong> transforma cualquier evento en un espectáculo visual impresionante. En ReSona Events disponemos de <strong>Moving Head 3en1 17R</strong> (350W Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash LED RGBW</strong>.
+
+Nuestro servicio de <strong>alquiler de moving heads en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los moving heads son cabezas móviles robotizadas que crean efectos dinámicos espectaculares: haces de luz que se mueven, cambian de color, proyectan gobos, y se sincronizan con la música.
+
+Perfectos para bodas (entrada de novios, primera baile), eventos corporativos (presentaciones, galas), conciertos, y fiestas. Incluimos <strong>técnico especializado</strong> que programa y controla los moving heads durante el evento, creando efectos sincronizados perfectamente.
+
+El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
+
+Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, conciertos, eventos corporativos en Palau de la Música y espacios únicos. Combinamos con <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a>.`,
    
     whyChooseUs: [
       {
