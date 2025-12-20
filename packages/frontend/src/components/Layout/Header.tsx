@@ -51,7 +51,13 @@ const Header = () => {
 
   const handleRentalLinkClick = () => {
     setIsRentalDropdownOpen(false);
-    setIsMenuOpen(false); // Cerrar menú móvil también
+    setIsMenuOpen(false);
+  };
+
+  // Cerrar menú móvil al hacer clic en cualquier enlace
+  const handleMenuLinkClick = () => {
+    setIsMenuOpen(false);
+    setIsRentalDropdownOpen(false);
   };
 
   return (
@@ -254,6 +260,7 @@ const Header = () => {
             <li>
               <Link
                 to="/calculadora-evento"
+                onClick={handleMenuLinkClick}
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors flex items-center gap-1"
               >
                 <Calendar className="w-4 h-4" />
@@ -263,6 +270,7 @@ const Header = () => {
             <li>
               <Link
                 to="/servicios"
+                onClick={handleMenuLinkClick}
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Servicios
@@ -271,6 +279,7 @@ const Header = () => {
             <li>
               <Link
                 to="/blog"
+                onClick={handleMenuLinkClick}
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Blog
@@ -279,6 +288,7 @@ const Header = () => {
             <li>
               <Link
                 to="/sobre-nosotros"
+                onClick={handleMenuLinkClick}
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Nosotros
@@ -287,6 +297,7 @@ const Header = () => {
             <li>
               <Link
                 to="/contacto"
+                onClick={handleMenuLinkClick}
                 className="block py-2 md:py-3 text-gray-700 hover:text-resona font-medium transition-colors"
               >
                 Contacto
@@ -296,6 +307,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/admin"
+                  onClick={handleMenuLinkClick}
                   className="block py-2 md:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
                 >
                   Panel Admin
@@ -306,6 +318,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/comercial"
+                  onClick={handleMenuLinkClick}
                   className="block py-2 md:py-3 text-resona hover:text-resona-dark font-bold transition-colors"
                 >
                   Panel Comercial
