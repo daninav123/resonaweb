@@ -7,8 +7,8 @@ const AlquilerMovingHeads = () => {
     metaDescription: "Alquiler de moving heads profesionales. Luces robotizadas inteligentes. Beam, Spot, Wash. Control DMX. ☎️ 613 88 14 14",
     keywords: "alquiler moving heads valencia, luces robotizadas, luces inteligentes eventos",
     heroTitle: "Alquiler de Moving Heads en Valencia",
-    heroSubtitle: "Luces inteligentes que siguen la música - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de moving heads en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>alquiler de moving heads en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: Martin RUSH, Chauvet Intimidator, ADJ Focus Spot, Showtec Phantom, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>alquiler de moving heads en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, bodas, eventos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Moving Head 17R, 7R, Mini Beam LED - Efectos profesionales Dinámicos",
+    introduction: `El <strong>alquiler de moving heads en Valencia</strong> transforma cualquier evento en un espectáculo visual impresionante. En ReSona Events disponemos de <strong>Moving Head 3en1 17R</strong> (350W Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash LED RGBW</strong>. Nuestro servicio de <strong>alquiler de moving heads en Valencia</strong> está diseñado para eventos de 50 a 300 personas. Los moving heads son cabezas móviles robotizadas que crean efectos dinámicos espectaculares: haces de luz que se mueven, cambian de color, proyectan gobos, y se sincronizan con la música. Perfectos para bodas (entrada de novios, primera baile), eventos corporativos (presentaciones, galas), conciertos, y fiestas. Incluimos <strong>técnico especializado</strong> que programa y controla los moving heads durante el evento, creando efectos sincronizados perfectamente. El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7. Hemos iluminado más de 500 eventos con moving heads en Valencia: bodas, conciertos, eventos corporativos en Palau de la Música, La Hacienda, Hotel Las Arenas, y espacios únicos.`,
    
     whyChooseUs: [
       {
@@ -45,81 +45,89 @@ const AlquilerMovingHeads = () => {
 
     technicalSpecs: [
       {
-            title: "Focos PAR LED Profesionales",
+            title: "Moving Head 3en1 17R - Profesional",
             items: [
-                  "Chauvet SlimPAR Pro: 12×4W RGBW, ángulo 25°, modo DMX/autónomo/master-slave",
-                  "ADJ Mega Par Profile Plus: 228W RGBWA+UV, wash uniforme, flicker-free para vídeo",
-                  "Showtec Spectral M800: 8×10W RGBA, compacto, batería litio recargable 8-12h",
-                  "Martin RUSH PAR 2 RGBW: 12×12W Zoom 15-40°, profesional touring IP20",
-                  "Eurolite LED IP PAR: 14×10W RGBWA+UV, certificación IP65 waterproof exterior"
+                  "Lámpara 17R de 350W - Potencia máxima para grandes eventos",
+                  "3 en 1: Beam (haz concentrado), Spot (gobos), Wash (ángulo amplio) - Máxima versatilidad",
+                  "Prisma 8+16 facetas - Efectos multiplicados espectaculares",
+                  "Zoom motorizado 5-45° - Ajuste preciso del ángulo de proyección",
+                  "14 colores + blanco + rueda CMY para millones de combinaciones",
+                  "Gobos estáticos y rotativos - Proyección de formas y patrones"
             ]
       },
       {
-            title: "Moving Heads y Cabezas Móviles",
+            title: "Moving Head Beam 7R - Compacto y Potente",
             items: [
-                  "Martin RUSH MH3 Beam: 140W LED Beam, prisma 3 facetas, 8 gobos rotación",
-                  "Chauvet Intimidator Spot 355: 90W LED Spot, 8 gobos + 8 colores dicróicos",
-                  "ADJ Focus Spot 4Z: 200W LED Spot motorized Zoom 12-30°, iris variable",
-                  "Showtec Phantom 75 LED Beam: Beam compacto 75W, prisma, velocidad pan/tilt",
-                  "American DJ Inno Pocket Wash: Mini moving wash 7×10W, compacto DJ booth"
+                  "Lámpara 7R de 230W - Beam concentrado ultra potente",
+                  "14 colores + blanco - Rueda dicróica de alta calidad",
+                  "Prisma 3 facetas - Multiplicación de efectos beam",
+                  "Haz de luz súper concentrado - Ideal para atravesar humo/niebla",
+                  "Velocidad pan/tilt ajustable - Movimientos rápidos o suaves"
             ]
       },
       {
-            title: "Controladores DMX y Efectos",
+            title: "Mini Beam y Mini Wash LED",
             items: [
-                  "Controlador Martin M-Touch: Pantalla táctil 15\", 16 universos Art-Net, librería fixtures",
-                  "ADJ Operator 384: Mesa DMX 384 canales, 24 fixtures, 30 bancos, MIDI",
-                  "Chauvet Obey 70: Controlador compacto 192 canales, 12 escenas, fade manual",
-                  "Antari Z-350 Fazer: Máquina neblina DMX, tanque 3.5L, 700W",
-                  "Chauvet Hurricane 1800 Flex: Humo 1800W, control DMX/wireless, timer"
+                  "Mini Beam LED 60W: Compacto, 8 colores, DMX 512, perfecto para eventos pequeños",
+                  "Mini Wash LED RGBW 80W: Mezcla de colores suave, zoom motorizado, silencioso",
+                  "Bajo consumo eléctrico - Ideales para espacios con potencia limitada",
+                  "Control DMX sincronizado - Efectos coordinados con otros equipos",
+                  "Montaje versátil - Suelo, truss, o colgados del techo"
             ]
       },
       {
-            title: "Iluminación Arquitectónica Exterior",
+            title: "Control y Programación",
             items: [
-                  "Bañadores LED RGBW IP65: 36×3W, alcance 20m, ángulo 25°/45°",
-                  "Uplights wireless batería: 12×18W RGBWA+UV, 12h autonomía, control WiFi",
-                  "Proyectores LED 150-300W: Iluminación fachadas, jardines, COB chip",
-                  "Tiras LED RGBW IP68: 5050/2835 SMD, 60-120 LED/m, sumergibles",
-                  "Controladores DMX wireless: 2.4GHz, alcance 300m, 512 canales"
+                  "Controlador DMX 512 profesional - Control total de todos los moving heads",
+                  "Programación personalizada de escenas y secuencias",
+                  "Modo automático music-reactive - Se sincronizan con la música",
+                  "Estructuras truss profesionales para montaje seguro",
+                  "Técnico especializado - Operación manual durante todo el evento"
             ]
       }
 ],
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pack Mini",
+        subtitle: "2-4 Moving Heads (50-100 personas)",
+        price: "desde 181€ (IVA incl.)",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
+          "2x Mini Beam LED + 2x Mini Wash RGBW",
+          "Controlador DMX profesional",
+          "Programación de escenas básicas",
+          "Montaje con soportes de suelo",
+          "Transporte gratis Valencia capital",
           "Asistencia telefónica"
         ]
       },
       {
         name: "Pack Profesional",
-        subtitle: "Más popular",
-        price: "desde 600€",
+        subtitle: "4-6 Moving Heads (100-200 personas)",
+        price: "desde 399€ (IVA incl.)",
         features: [
-          "Equipos profesionales completos",
+          "2x Moving Head Beam 7R (230W)",
+          "2x Mini Beam + 2x Mini Wash LED",
+          "Estructura truss profesional",
+          "Controlador DMX + programación avanzada",
           "Técnico especializado incluido",
-          "Transporte y montaje",
-          "Equipos de backup",
-          "Soporte completo"
+          "Efectos sincronizados con música",
+          "Transporte y montaje completo"
         ],
         highlighted: true
       },
       {
         name: "Pack Premium",
-        subtitle: "Máxima calidad",
-        price: "desde 1.200€",
+        subtitle: "6+ Moving Heads (+200 personas)",
+        price: "desde 690€ (IVA incl.)",
         features: [
-          "Equipos top de gama",
+          "4x Moving Head 3en1 17R (350W)",
+          "2x Moving Head Beam 7R adicionales",
+          "Estructura truss completa",
           "2 técnicos especializados",
-          "Equipos redundantes",
-          "Prueba previa",
+          "Programación show completo",
+          "Equipos backup incluidos",
+          "Visita técnica previa",
           "Soporte 24/7"
         ]
       }
