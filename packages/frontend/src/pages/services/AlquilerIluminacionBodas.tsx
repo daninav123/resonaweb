@@ -174,6 +174,46 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
       {
             question: "¿Tenéis seguro de responsabilidad civil?",
             answer: "Sí, disponemos de seguro de responsabilidad civil profesional con cobertura de 600.000€ que cubre cualquier daño a terceros, equipos, instalaciones del venue, y accidentes durante montaje/desmontaje. Además, todos nuestros equipos están asegurados contra robo, daño, y mal funcionamiento. Nuestras estructuras truss están certificadas TÜV (inspección anual), cumplimos normativa UNE-EN 61439, y seguimos todos los protocolos de seguridad eléctrica y prevención de riesgos laborales. Nuestros técnicos tienen formación en prevención de riesgos, primeros auxilios, y trabajos en altura. Podemos proporcionar copia del seguro y certificados si el venue lo requiere. Tu evento está en manos profesionales y totalmente aseguradas, garantizando tranquilidad absoluta."
+      },
+      {
+            question: "¿Cuánto cuesta la iluminación para una boda en Valencia?",
+            answer: "El precio de la iluminación para bodas en Valencia depende del tipo de servicio: Pack Ambiente (50-100 invitados) desde 150€ incluye 8+ focos LED RGB para iluminar paredes/columnas. Pack Profesional (100-200 invitados) desde 350€ con iluminación arquitectónica uplighting completa + efectos dinámicos. Pack Premium (+200 invitados) desde 600€ con moving heads, efectos láser, baile en las nubes y programación show completo. Todos incluyen técnico especializado, programación de colores personalizados, transporte Valencia capital, montaje invisible y desmontaje. Sin costes ocultos."
+      },
+      {
+            question: "¿Qué tipo de iluminación ofrecéis para bodas en Valencia?",
+            answer: "Ofrecemos iluminación LED profesional completa: Uplighting (focos LED RGB para iluminar paredes, columnas, árboles en cualquier color), proyección de nombres/logotipos con gobo personalizado, iluminación de pista de baile con moving heads y efectos dinámicos, baile en las nubes (humo bajo con iluminación), iluminación arquitectónica exterior para fachadas/jardines, efectos láser profesionales (packs premium), y candilejas LED para mesas/caminos. Toda la iluminación es programable y se sincroniza con los momentos clave de tu boda: ceremonia (blanco/dorado cálido), banquete (colores suaves), primer baile (efectos especiales), fiesta (colores dinámicos)."
+      },
+      {
+            question: "¿Puedo elegir los colores de la iluminación para mi boda?",
+            answer: "Sí, totalmente personalizable. Nuestros focos LED RGB pueden crear millones de colores diferentes. Coordinamos los colores con la decoración y paleta cromática de tu boda. Ejemplos típicos: ceremonia en blanco cálido/dorado, banquete en tonos rosas/melocotón/lavanda según decoración, primer baile en azul/morado romántico, fiesta en colores vivos dinámicos. Programamos cambios de color automáticos para cada momento o puedes tener control manual durante el evento. Muchos novios eligen iluminación que combine con las flores, manteles o tema de la boda. El técnico programa todos los colores antes de que lleguen los invitados."
+      },
+      {
+            question: "¿Qué es el uplighting y para qué sirve en bodas?",
+            answer: "El uplighting son focos LED RGB colocados en el suelo que iluminan hacia arriba (paredes, columnas, cortinas, árboles, techos altos). Es la iluminación más popular en bodas porque transforma completamente el espacio con luz de color personalizada. Beneficios: cambia el ambiente del espacio según el momento de la boda, oculta paredes feas o elementos poco estéticos iluminándolos en tu color, crea profundidad y atmósfera en espacios grandes, es muy versátil (funciona en cualquier finca/hotel), y el efecto visual es espectacular en fotos y vídeo. Usamos focos LED inalámbricos con batería (sin cables visibles) que se colocan discretamente. Pack Profesional incluye 12-16 focos, Pack Premium 20-30 focos."
+      },
+      {
+            question: "¿Ofrecéis baile en las nubes para bodas en Valencia?",
+            answer: "Sí, el baile en las nubes (first dance on clouds) es uno de nuestros efectos más solicitados para bodas. Usamos máquinas de humo bajo profesionales (Antari ICE-101) que crean una capa de niebla densa a ras de suelo durante el primer baile de los novios, dando efecto mágico de bailar sobre nubes. Combinamos con iluminación LED RGB que ilumina el humo desde abajo creando colores espectaculares. El humo es frío (ice fog), no tóxico, no deja residuos, y se disipa en 3-5 minutos. Está incluido en Pack Premium o se puede añadir a cualquier pack por 120€ adicionales. Hemos hecho baile en nubes en cientos de bodas en Valencia con resultados siempre espectaculares."
+      },
+      {
+            question: "¿La iluminación funciona bien en bodas al aire libre en Valencia?",
+            answer: "Sí, nuestra iluminación LED está diseñada para exterior. Usamos equipos con certificación IP65 resistentes a lluvia, polvo y humedad. Para bodas en jardines/fincas al aire libre: uplights inalámbricos con batería 12h (sin cables), bañadores LED para iluminar fachadas/árboles, proyectores para nombres en paredes exteriores, y moving heads resistentes para efectos. La iluminación exterior es especialmente impactante al atardecer/noche. Llevamos protección extra contra lluvia. Hemos iluminado bodas en jardines de La Hacienda, patios de masías, playas, terrazas con vistas, y espacios abiertos con resultados perfectos. La iluminación exterior profesional crea ambiente mágico que no se consigue con iluminación básica."
+      },
+      {
+            question: "¿Podéis proyectar nuestros nombres o iniciales en la boda?",
+            answer: "Sí, ofrecemos proyección de nombres/iniciales personalizada con proyector gobo. Proyectamos en paredes, suelo, techo o cualquier superficie lisa. Diseñamos el gobo (plantilla metálica) con vuestros nombres, iniciales, fecha de boda, o logo personalizado. El proyector puede cambiar de color y rotar. Muy popular proyectar en: pared detrás de la mesa presidencial, suelo de la pista de baile, entrada al banquete, o fachada exterior. El diseño del gobo está incluido, solo pagas la fabricación del gobo físico (80-120€ según complejidad). Puedes conservar el gobo de recuerdo. El proyector y técnico para programarlo están incluidos en nuestros packs. Envíanos vuestros nombres/diseño y preparamos una preview antes de la boda."
+      },
+      {
+            question: "¿Qué diferencia hay entre iluminación LED y iluminación tradicional?",
+            answer: "La iluminación LED profesional que usamos tiene ventajas enormes vs. iluminación tradicional: Consumo 90% menor (importante en fincas con electricidad limitada), no genera calor (los invitados no sufren calor), cambia de color instantáneamente (millones de colores vs. filtros fijos), control DMX programable (automatizamos cambios de color/escenas), equipos más compactos y ligeros (montaje más rápido y discreto), y vida útil 10x mayor (equipos más fiables). La iluminación tradicional con halógenos consume mucha electricidad, genera calor insoportable, y solo da luz blanca/amarilla. Todas las bodas modernas usan LED. Nuestros equipos LED son profesionales (no LED domésticos baratos), garantizando colores vivos, potencia adecuada y control total."
+      },
+      {
+            question: "¿Incluís iluminación para toda la boda o solo para la fiesta?",
+            answer: "Nuestros packs incluyen iluminación para toda la boda: ceremonia (iluminación suave ceremonia/cocktail), banquete (iluminación ambiente durante cena), primer baile (efectos especiales románticos), y fiesta (iluminación dinámica completa). No solo iluminamos la fiesta. El técnico programa diferentes escenas para cada momento: ceremonia en tonos cálidos discretos, banquete con uplighting en colores de tu decoración, primer baile con efectos especiales, y fiesta con moving heads/efectos dinámicos. La iluminación evoluciona durante la boda creando ambientes diferentes. Si solo quieres iluminar la fiesta, ofrecemos packs reducidos, pero recomendamos iluminación completa porque transforma totalmente el espacio desde el inicio."
+      },
+      {
+            question: "¿Trabajáis iluminación para bodas en todas las fincas de Valencia?",
+            answer: "Sí, trabajamos en cualquier finca, hotel, masía o espacio en Valencia. Hemos iluminado más de 500 bodas en: La Hacienda, Mas de San Antonio, El Bohío, Torre del Pi, Alquería del Pi, Casa Granero, Masía Egara, Viveros Municipales, Hotel Las Arenas, y centenares de fincas en Godella, Bétera, L'Eliana, Alboraya, Torrent y toda la provincia. Conocemos las particularidades de cada finca: puntos eléctricos disponibles, restricciones de instalación, mejores ubicaciones para uplighting, y permisos necesarios. Para fincas donde no hemos trabajado antes, hacemos visita técnica previa gratuita para planificar distribución óptima de iluminación y garantizar resultado espectacular."
       }
 ],
 

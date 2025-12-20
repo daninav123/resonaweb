@@ -184,6 +184,46 @@ Hemos sonorizado más de 500 <strong>bodas en Valencia</strong>: <strong>La Haci
       {
             question: "¿Tenéis seguro de responsabilidad civil?",
             answer: "Sí, disponemos de seguro de responsabilidad civil profesional con cobertura de 600.000€ que cubre cualquier daño a terceros, equipos, instalaciones del venue, y accidentes durante montaje/desmontaje. Además, todos nuestros equipos están asegurados contra robo, daño, y mal funcionamiento. Nuestras estructuras truss están certificadas TÜV (inspección anual), cumplimos normativa UNE-EN 61439, y seguimos todos los protocolos de seguridad eléctrica y prevención de riesgos laborales. Nuestros técnicos tienen formación en prevención de riesgos, primeros auxilios, y trabajos en altura. Podemos proporcionar copia del seguro y certificados si el venue lo requiere. Tu evento está en manos profesionales y totalmente aseguradas, garantizando tranquilidad absoluta."
+      },
+      {
+            question: "¿Cuánto cuesta el sonido para una boda en Valencia?",
+            answer: "El precio del sonido para bodas en Valencia depende del número de invitados y servicios: Pack Ceremonia (50-100 invitados) desde 250€ incluye microfonía inalámbrica y música ambiente. Pack Completo Boda (100-200 invitados, ceremonia + banquete + fiesta) desde 550€ con sonido completo y técnico durante toda la boda. Pack Premium (+200 invitados) desde 900€ con equipamiento profesional completo, 2 técnicos y equipos de backup. Todos los precios incluyen equipos DAS Audio/ICOA profesionales, transporte Valencia capital, montaje, desmontaje y soporte 24/7. Sin cargos ocultos."
+      },
+      {
+            question: "¿Qué equipos de sonido usáis para bodas en Valencia?",
+            answer: "Usamos únicamente equipamiento profesional de marcas líderes: DAS Audio 515A (altavoces activos 1500W) para ceremonia y banquete, ICOA 12A/15A (altavoces blancos elegantes) perfectos para bodas, subwoofers DAS Audio 215A/218A para graves profundos en la fiesta, mezcladoras digitales Behringer X Air XR18 con control WiFi, equipos DJ Pioneer RX2 y CDJ-2000 profesionales, micrófonos inalámbricos Shure SM58/Beta 58A para novios y testigos. Todo el equipo está perfectamente mantenido, calibrado antes de cada boda y cuenta con certificaciones profesionales."
+      },
+      {
+            question: "¿Ofrecéis sonido para bodas en fincas de Valencia?",
+            answer: "Sí, somos especialistas en sonido para bodas en fincas de Valencia. Hemos trabajado en más de 500 bodas en fincas: La Hacienda, Mas de San Antonio, El Bohío, Torre del Pi, Alquería del Pi, Casa Granero, Masía Egara, y centenares de fincas en Godella, Bétera, L'Eliana, Alboraya, Torrent y toda la provincia. Conocemos las particularidades de cada finca: acústica al aire libre, puntos eléctricos disponibles, accesos para montaje, y restricciones horarias. Hacemos visita técnica previa para planificar distribución óptima de equipos y garantizar sonido perfecto en toda la finca."
+      },
+      {
+            question: "¿El sonido funciona bien en bodas al aire libre en Valencia?",
+            answer: "Sí, nuestros equipos están diseñados para bodas al aire libre. Usamos altavoces direccionales que concentran el sonido en la zona de invitados evitando dispersión, subwoofers que funcionan perfectamente en espacios abiertos, y micrófonos inalámbricos que cancelan ruido ambiental (viento, pájaros, tráfico). Calculamos la potencia necesaria según m² del espacio, número de invitados y condiciones acústicas. Para ceremonias al aire libre usamos equipos discretos ICOA blancos que se integran en la decoración. Llevamos protección contra lluvia por si acaso. Hemos sonorizado bodas en jardines, playas, patios, terrazas y espacios abiertos con resultados perfectos."
+      },
+      {
+            question: "¿Podéis conectar el sonido con mi DJ para la fiesta de la boda?",
+            answer: "Sí, totalmente. Proporcionamos equipamiento DJ profesional completo: mezcladoras Pioneer DJM, CDJs, conexiones para portátil/USB/Spotify, y sistema de monitorización para el DJ. Tu DJ solo necesita traer su música. Coordinamos con el DJ antes de la boda para conocer sus requisitos técnicos y preparar la configuración ideal. El técnico trabaja con el DJ durante la fiesta para optimizar niveles y ecualización. También podemos recomendar DJs especializados en bodas con los que colaboramos habitualmente en Valencia si aún no tienes DJ contratado."
+      },
+      {
+            question: "¿Qué pasa si llueve durante mi boda en Valencia?",
+            answer: "Todos nuestros equipos de sonido tienen protección IP contra lluvia ligera. Para lluvia moderada/fuerte, llevamos fundas impermeables profesionales y carpas de protección para equipos críticos. Los altavoces ICOA y DAS Audio funcionan perfectamente bajo lluvia con protección adecuada. Si la boda se traslada de exterior a interior por lluvia, movemos y reconfiguramos todo el equipo sin coste adicional (incluido en el servicio). El técnico especializado gestiona cualquier contingencia meteorológica. En 500+ bodas en Valencia nunca hemos cancelado por lluvia gracias a nuestra experiencia y equipos preparados."
+      },
+      {
+            question: "¿Trabajáis bodas en domingo o festivos en Valencia?",
+            answer: "Sí, trabajamos todos los días del año incluyendo domingos, festivos, Navidad, Año Nuevo, Fallas y cualquier fecha especial. No aplicamos recargo por festivos en nuestros packs estándar (el precio es el mismo). Para servicios de última hora (reserva con menos de 48h) en festivos aplicamos suplemento de urgencia +30%. Tenemos equipo técnico disponible 365 días al año. Muchas bodas en Valencia se celebran en domingo (especialmente en verano), por lo que trabajamos prácticamente todos los domingos de mayo a octubre. Consulta disponibilidad llamando al 613 88 14 14."
+      },
+      {
+            question: "¿Incluís micrófonos para la ceremonia de boda en Valencia?",
+            answer: "Sí, todos nuestros packs incluyen microfonía inalámbrica profesional Shure para la ceremonia. Proporcionamos: micrófono de solapa/diadema para el sacerdote/maestro de ceremonias (manos libres), 2 micrófonos de mano inalámbricos para lecturas y discursos, sistema de monitorización para que el oficiante se escuche perfectamente. Los micrófonos son discretos, inalámbricos (sin cables a la vista), y tienen batería para 8+ horas. El técnico coloca y prueba todos los micrófonos antes de que lleguen los invitados. También configuramos música de entrada/salida de novios y música ambiente para la ceremonia."
+      },
+      {
+            question: "¿Ofrecéis descuento si contrato sonido + iluminación para mi boda?",
+            answer: "Sí, ofrecemos packs combinados con descuento: Pack Completo Sonido + Iluminación desde 850€ (ahorro de 150€ vs. contratar separado), incluye sonido profesional completo para toda la boda + iluminación LED RGB ambiental + técnico especializado. Pack Premium Sonido + Iluminación + Moving Heads desde 1.500€ (ahorro de 300€), con equipamiento top profesional. Ver detalles en nuestra página de Sonido + Iluminación Bodas Valencia. Los packs combinados son nuestra opción más popular (70% de novios los eligen) por la relación calidad-precio y porque un solo técnico coordina todo el audiovisual perfectamente."
+      },
+      {
+            question: "¿Hacéis prueba de sonido antes de la boda en Valencia?",
+            answer: "Sí, en packs Premium incluimos visita técnica previa al espacio con prueba de sonido 1-2 semanas antes de la boda. En packs Profesional, el técnico llega 2-3 horas antes de la ceremonia para montar, calibrar y probar todo el sistema antes de que lleguen los invitados. Hacemos: prueba de cada micrófono, ajuste de niveles de música ceremonia/banquete, prueba de conexión DJ, verificación de equipos backup. En el momento que llegan los invitados todo está funcionando perfectamente. Para bodas en fincas nuevas donde no hemos trabajado antes, ofrecemos visita técnica gratuita para evaluar acústica y planificar configuración óptima."
       }
 ],
 

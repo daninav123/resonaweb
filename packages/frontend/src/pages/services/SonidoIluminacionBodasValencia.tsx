@@ -191,6 +191,42 @@ Si buscas más información sobre <a href="/bodas-valencia" class="text-primary-
       {
         question: "¿Tenéis referencias de otras bodas en Valencia?",
         answer: "Por supuesto. Portfolio con fotos y vídeos de bodas reales realizadas (con permiso de los novios). Testimonios escritos de parejas satisfechas. Referencias verificables de wedding planners con los que colaboramos habitualmente. Vídeos de montajes en espacios emblemáticos de Valencia. Contactos de parejas que aceptan ser referencia (si lo solicitas). Reseñas Google Business verificadas. Colaboraciones con: Bodas.net (perfil verificado), Wedding planners Valencia, Fincas y espacios bodas, Proveedores bodas (catering, fotografía, floristas). Puedes vernos en acción en cualquier boda donde trabajemos (pregunta si tenemos alguna próxima donde puedas visitarnos). Nuestra reputación es nuestro mayor activo."
+      },
+      {
+        question: "¿Qué equipos de sonido e iluminación usáis en bodas?",
+        answer: "Equipamiento profesional exclusivamente: SONIDO - Altavoces DAS Audio 515A (1500W) y ICOA 12A/15A blancos elegantes, subwoofers DAS Audio 215A/218A para graves, mezcladoras Behringer X Air XR18 digitales, equipos DJ Pioneer RX2/CDJ-2000 profesionales, micrófonos Shure SM58/Beta 58A inalámbricos. ILUMINACIÓN - Focos LED RGB 18W uplighting inalámbricos, moving heads beam/wash profesionales, máquinas humo bajo Antari ICE-101 para baile nubes, proyectores gobo para nombres personalizados, bañadores LED exterior IP65. Todo perfectamente mantenido, calibrado y con certificaciones profesionales."
+      },
+      {
+        question: "¿El técnico está durante toda la boda en Valencia?",
+        answer: "Sí, en TODOS nuestros packs para bodas el técnico especializado está presente durante TODO el evento: Llega 2-3 horas antes para montaje y configuración. Gestiona sonido perfecto durante ceremonia (micrófonos, música entrada/salida). Ajusta música ambiente durante cóctel. Optimiza niveles durante banquete y discursos. Opera iluminación y efectos especiales (primer baile, baile nubes). Gestiona la fiesta trabajando con el DJ. Permanece hasta el final del evento. Se encarga del desmontaje completo. No te dejamos solo en ningún momento. El técnico es discreto pero siempre atento a que todo funcione perfecto."
+      },
+      {
+        question: "¿Podemos personalizar los colores de iluminación para nuestra boda?",
+        answer: "Totalmente personalizable. Coordinamos iluminación con vuestros colores de boda: Ceremonia (blanco cálido, dorado, o color personalizado). Cóctel (tonos suaves coordinados con decoración). Banquete (colores elegantes que combinen con flores/manteles). Primer baile (colores románticos especiales). Fiesta (colores vivos dinámicos). Programamos hasta 20 escenas diferentes de colores. Podéis cambiar colores durante el evento si queréis. Enviádnos fotos de vuestra decoración/flores y preparamos paleta cromática perfecta. El técnico programa todo antes de que lleguen invitados."
+      },
+      {
+        question: "¿Funcionan bien los equipos en bodas al aire libre en Valencia?",
+        answer: "Sí, perfectamente. Equipos diseñados para exterior: SONIDO - Altavoces con protección contra humedad, micrófonos que cancelan viento/ruido ambiental, sistemas que funcionan en espacios abiertos sin eco. ILUMINACIÓN - Focos LED IP65 resistentes a lluvia/polvo, equipos inalámbricos con batería 12h (sin cables), protección anti-lluvia incluida. Hemos trabajado en cientos de bodas al aire libre: jardines de fincas, playas, patios, terrazas con vistas, espacios abiertos. Si cambia el tiempo (lluvia), movemos equipos a interior sin coste adicional. Llevamos siempre protección extra. 500+ bodas sin cancelar ninguna por meteorología."
+      },
+      {
+        question: "¿Incluís microfonía para ceremonia y discursos en la boda?",
+        answer: "Sí, totalmente incluido en todos los packs: Ceremonia - Micrófono de solapa/diadema para sacerdote/maestro ceremonias (manos libres), 2 micrófonos de mano para lecturas, sistema para que el oficiante se escuche bien. Banquete - Micrófonos inalámbricos para discursos de padres/padrinos/testigos/novios, sistema de monitorización, mezcla profesional de niveles. Los micrófonos son Shure profesionales, inalámbricos (sin cables), con batería 8+ horas. El técnico los coloca, prueba y gestiona durante todos los momentos que se necesiten. Discretos pero con sonido perfecto."
+      },
+      {
+        question: "¿Ofrecéis baile en las nubes para el primer baile?",
+        answer: "Sí, es uno de nuestros efectos más populares. Máquinas profesionales Antari ICE-101 que crean niebla densa a ras de suelo durante vuestro primer baile como pareja. Efecto mágico de bailar sobre nubes. Combinado con iluminación LED RGB que ilumina el humo creando colores espectaculares. El humo es frío (ice fog), completamente seguro, no tóxico, no mancha ropa, y se disipa en 3-5 minutos. Incluido en Pack Premium o añadible a cualquier pack por 120€. El momento más emotivo y fotografiado de muchas bodas. Hemos hecho baile nubes en centenares de bodas en Valencia con resultados siempre espectaculares."
+      },
+      {
+        question: "¿Trabajáis en domingo y festivos en Valencia sin recargo?",
+        answer: "Sí, trabajamos TODOS los días del año: domingos, festivos, Navidad, Año Nuevo, Fallas, San Juan, y cualquier fecha especial. SIN RECARGO en nuestros packs estándar para bodas (mismo precio que entre semana). Sabemos que muchas bodas en Valencia son en domingo (especialmente en verano). Tenemos equipos técnicos disponibles 365 días. Solo para servicios de última hora (menos de 72h) en festivos aplicamos pequeño suplemento urgencia. La mayoría de bodas son fines de semana y festivos, es nuestro trabajo habitual. Llama al 613 88 14 14 para confirmar disponibilidad en tu fecha."
+      },
+      {
+        question: "¿Qué pasa si mi boda se alarga más de lo previsto?",
+        answer: "Sin problema. Nuestros packs incluyen horarios generosos: Pack Básico (ceremonia + cóctel): 4-5 horas. Pack Completo (ceremonia + banquete + fiesta): 8-10 horas. Pack Premium (día completo): 12-14 horas. Si la boda se alarga 30-60 minutos, normalmente lo incluimos sin coste (el técnico se queda hasta que termine). Para extensiones mayores: 50€/hora adicional. Muchas bodas en Valencia duran hasta las 3-4 AM y no hay problema. El técnico se queda hasta el final, desmonta, y todos felices. Hablamos todo esto en la reunión previa para ajustar horarios realistas a vuestro timeline de boda."
+      },
+      {
+        question: "¿Coordinais con otros proveedores de la boda en Valencia?",
+        answer: "Totalmente. Coordinación profesional con TODOS vuestros proveedores: Wedding planner - Seguimos su timeline al detalle, coordinamos montaje/desmontaje. Catering - Sincronizamos música ambiente, avisos de servicio, momento del brindis. Fotógrafo/videógrafo - Coordinamos iluminación para fotos/vídeo perfectos, pausamos música para discursos. DJ/banda - Proporcionamos equipos, trabajamos juntos durante fiesta. Finca/hotel - Respetamos restricciones horario/ruido, coordinamos montaje. Hemos trabajado con los principales proveedores de bodas en Valencia. Conocemos cómo funciona el timing de bodas y nos integramos perfectamente en el equipo. Un proveedor menos del que preocuparse."
       }
     ],
 
