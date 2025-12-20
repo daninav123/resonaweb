@@ -116,6 +116,7 @@ const AlquilerDJValencia = lazy(() => import('./pages/services/AlquilerDJValenci
 const ProduccionTecnicaEventos = lazy(() => import('./pages/services/ProduccionTecnicaEventos'));
 const AlquilerEstructurasTruss = lazy(() => import('./pages/services/AlquilerEstructurasTruss'));
 const AlquilerMaquinasFX = lazy(() => import('./pages/services/AlquilerMaquinasFX'));
+const BodasValencia = lazy(() => import('./pages/services/BodasValencia'));
 
 // Cookie Banner
 import CookieBanner from './components/CookieBanner';
@@ -199,6 +200,9 @@ function App() {
             <Route path="/alquiler-iluminacion-valencia" element={<Navigate to="/servicios/iluminacion-led-profesional" replace />} />
             <Route path="/sonido-bodas-valencia" element={<Navigate to="/servicios/sonido-bodas-valencia" replace />} />
             <Route path="/alquiler-sonido-torrent" element={<Layout><AlquilerSonidoTorrentPage /></Layout>} />
+            
+            {/* Bodas Landing Principal */}
+            <Route path="/bodas-valencia" element={<Layout><BodasValencia /></Layout>} />
             
             {/* Service Pages - 20 páginas optimizadas SEO */}
             <Route path="/servicios/alquiler-sonido-valencia" element={<Layout><AlquilerSonidoValencia /></Layout>} />

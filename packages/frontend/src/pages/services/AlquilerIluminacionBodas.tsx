@@ -4,8 +4,8 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 const AlquilerIluminacionBodas = () => {
   const pageData = {
     title: "Iluminación Bodas Valencia | LED Ambiental | ReSona",
-    metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico incluido. ☎️ 613 88 14 14",
-    keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda",
+    metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico incluido. Desde 150€. ☎️ 613 88 14 14",
+    keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda, bodas valencia, luces bodas valencia",
     heroTitle: "Iluminación Profesional para Bodas en Valencia",
     heroSubtitle: "Focos LED RGB, Moving Heads, Efectos - Iluminación mágica para tu boda",
     introduction: `La <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
@@ -16,7 +16,7 @@ Disponemos de equipos de última generación, perfectamente mantenidos y calibra
 
 El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
 
-Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, primer baile, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. También ofrecemos <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a> y <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED general</a>.`,
+Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacienda</strong>, <strong>Mas de San Antonio</strong>, <strong>El Bohío</strong>, <strong>Viveros Municipales</strong>, <strong>Torre del Pi</strong>, <strong>Hotel Las Arenas</strong>, <strong>Casa Granero</strong>, fincas en Godella, Bétera, L'Eliana, Alboraya, y espacios únicos en toda la provincia. Si buscas un <a href="/bodas-valencia" class="text-primary-600 hover:underline font-semibold">servicio completo para bodas en Valencia</a>, también ofrecemos <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a> y <a href="/servicios/sonido-iluminacion-bodas-valencia" class="text-primary-600 hover:underline font-semibold">packs completos sonido + iluminación</a>.`,
    
     whyChooseUs: [
       {

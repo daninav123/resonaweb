@@ -8,24 +8,44 @@
     <priority>1.0</priority>
   </url>
   
+  <!-- Landing Principal Bodas (máxima prioridad SEO) -->
+  <url>
+    <loc>https://resonaevents.com/bodas-valencia</loc>
+    <lastmod>2025-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.98</priority>
+  </url>
+  
   <!-- Páginas SEO Locales (alta prioridad) -->
   <url>
     <loc>https://resonaevents.com/servicios/alquiler-sonido-valencia</loc>
-    <lastmod>2025-12-15</lastmod>
+    <lastmod>2025-12-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://resonaevents.com/servicios/iluminacion-led-profesional</loc>
-    <lastmod>2025-12-15</lastmod>
+    <lastmod>2025-12-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://resonaevents.com/servicios/sonido-bodas-valencia</loc>
-    <lastmod>2025-12-15</lastmod>
+    <lastmod>2025-12-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://resonaevents.com/servicios/sonido-iluminacion-bodas-valencia</loc>
+    <lastmod>2025-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://resonaevents.com/servicios/alquiler-iluminacion-bodas-valencia</loc>
+    <lastmod>2025-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
   </url>
   <url>
     <loc>https://resonaevents.com/servicios/alquiler-altavoces-profesionales</loc>

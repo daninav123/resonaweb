@@ -3,8 +3,8 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const SonidoIluminacionBodasValencia = () => {
   const pageData = {
-    title: "Sonido + Iluminación Bodas Valencia | Desde 450€ | ReSona",
-    metaDescription: "Sonido e iluminación para bodas Valencia desde 450€. Técnico incluido toda la boda. +500 bodas realizadas. ☎️ 613 88 14 14",
+    title: "Sonido + Iluminación Bodas Valencia | Desde 850€ | ReSona",
+    metaDescription: "Sonido e iluminación para bodas Valencia desde 850€. Técnico incluido toda la boda. +500 bodas realizadas. ☎️ 613 88 14 14",
     keywords: "bodas valencia, sonido bodas valencia, iluminación bodas valencia, audio bodas valencia, equipos bodas valencia, dj bodas valencia",
     canonicalUrl: "https://resonaevents.com/servicios/sonido-iluminacion-bodas-valencia",
     heroTitle: "Sonido e Iluminación Profesional para Bodas en Valencia",
@@ -17,7 +17,9 @@ Nuestro servicio completo de <strong>sonido para bodas en Valencia</strong> incl
 
 Trabajamos en los mejores espacios para <strong>bodas en Valencia</strong>: La Hacienda, Mas de San Antonio, El Bohío, Viveros Municipales, Palau de la Música, Hotel Las Arenas, Hotel SH Valencia Palace, Jardines de Monforte, Casa Granero, Alquería del Pi, Torre del Pi, Masía Egara, y centenares de fincas, hoteles y espacios únicos en Valencia, Alboraya, Torrent, Paterna, Bétera, Godella, Moncada, L'Eliana y toda la provincia.
 
-Hemos sido parte de más de 500 <strong>bodas en Valencia</strong>, ayudando a crear momentos inolvidables con sonido perfecto e iluminación espectacular. Tu día especial merece el mejor equipamiento profesional y un equipo técnico experimentado que garantice que todo funcione sin fallos.`,
+Hemos sido parte de más de 500 <strong>bodas en Valencia</strong>, ayudando a crear momentos inolvidables con sonido perfecto e iluminación espectacular. Tu día especial merece el mejor equipamiento profesional y un equipo técnico experimentado que garantice que todo funcione sin fallos.
+
+Si buscas más información sobre <a href="/bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas en Valencia</a>, visita nuestra página principal de bodas donde encontrarás información detallada sobre fincas, precios y servicios. También puedes ver nuestros servicios individuales de <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a> y <a href="/servicios/alquiler-iluminacion-bodas-valencia" class="text-primary-600 hover:underline font-semibold">iluminación para bodas</a>.`,
    
     whyChooseUs: [
       {

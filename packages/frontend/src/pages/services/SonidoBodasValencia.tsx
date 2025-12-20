@@ -4,8 +4,8 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 const SonidoBodasValencia = () => {
   const pageData = {
     title: "Sonido Bodas Valencia | Ceremonia + Fiesta | ReSona",
-    metaDescription: "Sonido para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos DAS Audio + técnico. Desde 159€. ☎️ 613 88 14 14",
-    keywords: "sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia",
+    metaDescription: "Sonido para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos DAS Audio + técnico. Desde 250€. ☎️ 613 88 14 14",
+    keywords: "sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia, bodas valencia, audio bodas valencia",
     heroTitle: "Sonido Profesional para Bodas en Valencia",
     heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido perfecto para tu boda",
     introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de tu día especial. En ReSona Events contamos con más de 15 años de experiencia en bodas en la Comunidad Valenciana.
@@ -16,7 +16,7 @@ Todos nuestros equipos están perfectamente mantenidos y calibrados antes de cad
 
 El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje invisible antes de los invitados, desmontaje al finalizar, micrófonos inalámbricos para novios/testigos/sacerdote, conexión para música ceremony/banquete, equipos de respaldo, y soporte 24/7.
 
-Hemos sonorizado más de 500 bodas en: Masias de Valencia, La Hacienda, Hotel Las Arenas, fincas en l'Horta, hoteles en la playa, y espacios únicos en toda la provincia. También ofrecemos <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido profesional</a> para todo tipo de eventos y <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a> para crear ambientes únicos.`,
+Hemos sonorizado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacienda</strong>, <strong>Mas de San Antonio</strong>, <strong>El Bohío</strong>, <strong>Viveros Municipales</strong>, <strong>Hotel Las Arenas</strong>, <strong>Torre del Pi</strong>, <strong>Alquería del Pi</strong>, <strong>Casa Granero</strong>, fincas en Godella, Bétera, L'Eliana, Alboraya, y espacios únicos en toda la provincia de Valencia. Si buscas un <a href="/bodas-valencia" class="text-primary-600 hover:underline font-semibold">servicio completo para bodas en Valencia</a>, también ofrecemos <a href="/servicios/alquiler-iluminacion-bodas-valencia" class="text-primary-600 hover:underline font-semibold">iluminación para bodas</a> y <a href="/servicios/sonido-iluminacion-bodas-valencia" class="text-primary-600 hover:underline font-semibold">packs completos sonido + iluminación</a>.`,
    
     whyChooseUs: [
       {
