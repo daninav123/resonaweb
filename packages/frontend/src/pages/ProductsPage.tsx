@@ -19,35 +19,39 @@ const ProductsPage = () => {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   
+  // Initialize and sync filters with searchParams
+  const sortParam = searchParams.get('sort');
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || '',
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
     inStock: searchParams.get('inStock') === 'true',
-    sort: searchParams.get('sort') || 'price_asc',
+    sort: sortParam || 'price_asc',
     search: searchParams.get('q') || '',
   });
 
-  // Sync filters with searchParams
+  // Set default sort in URL and sync filters
   useEffect(() => {
+    const currentSort = searchParams.get('sort');
+    
+    // If no sort param, set default in URL
+    if (!currentSort) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('sort', 'price_asc');
+      setSearchParams(newParams, { replace: true });
+      return; // Don't update filters yet, wait for URL update
+    }
+    
+    // Sync filters with URL params
     const newFilters = {
       category: searchParams.get('category') || '',
       minPrice: searchParams.get('minPrice') || '',
       maxPrice: searchParams.get('maxPrice') || '',
       inStock: searchParams.get('inStock') === 'true',
-      sort: searchParams.get('sort') || 'price_asc',
+      sort: currentSort,
       search: searchParams.get('q') || '',
     };
     setFilters(newFilters);
-  }, [searchParams]);
-
-  // Set default sort in URL if not present
-  useEffect(() => {
-    if (!searchParams.get('sort')) {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set('sort', 'price_asc');
-      setSearchParams(newParams, { replace: true });
-    }
   }, [searchParams, setSearchParams]);
 
   // Fetch packs (solo activos)
