@@ -8,12 +8,12 @@ const SonidoIluminacionBodasValencia = () => {
     keywords: "bodas valencia, sonido bodas valencia, iluminación bodas valencia, audio bodas valencia, equipos bodas valencia, dj bodas valencia",
     canonicalUrl: "https://resonaevents.com/servicios/sonido-iluminacion-bodas-valencia",
     heroTitle: "Sonido e Iluminación Profesional para Bodas en Valencia",
-    heroSubtitle: "Hacemos que tu boda suene y brille perfectamente. Más de 500 bodas en Valencia, Castellón y Alicante",
+    heroSubtitle: "DAS Audio + ICOA + Moving Heads + LED RGB - Sonido e iluminación perfectos para tu boda",
     introduction: `Organizar una <strong>boda en Valencia</strong> requiere atención al detalle, y el <strong>sonido e iluminación para bodas</strong> es fundamental para crear la atmósfera perfecta. En ReSona Events somos especialistas en <strong>equipamiento audiovisual para bodas en Valencia</strong>, con más de 500 bodas realizadas en espacios emblemáticos como La Hacienda, Mas de San Antonio, El Bohío, Viveros Municipales, y fincas privadas en toda la provincia de Valencia.
 
 Sabemos que cada <strong>boda en Valencia</strong> es única. Por eso ofrecemos un servicio personalizado que se adapta perfectamente a tu estilo, número de invitados y espacio del evento. Desde ceremonias íntimas de 50 personas hasta grandes celebraciones de 400 invitados, disponemos del equipo profesional y la experiencia necesaria para que todo funcione perfectamente.
 
-Nuestro servicio completo de <strong>sonido para bodas en Valencia</strong> incluye: equipos de alta calidad (JBL, QSC, Pioneer), técnico especializado durante toda la celebración, microfonía inalámbrica para ceremonia y discursos, sistema de música ambiente y DJ, iluminación decorativa LED (uplighting, proyectores, efectos), montaje y desmontaje completo, pruebas previas en el espacio, y coordinación con otros proveedores.
+Nuestro servicio completo de <strong>sonido para bodas en Valencia</strong> incluye: equipos de alta calidad (DAS Audio 515A, ICOA 12A/15A, Behringer, Pioneer RX2, Shure), técnico especializado durante toda la celebración, microfonía inalámbrica para ceremonia y discursos, sistema de música ambiente y DJ, iluminación decorativa LED (uplighting, proyectores, efectos), montaje y desmontaje completo, pruebas previas en el espacio, y coordinación con otros proveedores.
 
 Trabajamos en los mejores espacios para <strong>bodas en Valencia</strong>: La Hacienda, Mas de San Antonio, El Bohío, Viveros Municipales, Palau de la Música, Hotel Las Arenas, Hotel SH Valencia Palace, Jardines de Monforte, Casa Granero, Alquería del Pi, Torre del Pi, Masía Egara, y centenares de fincas, hoteles y espacios únicos en Valencia, Alboraya, Torrent, Paterna, Bétera, Godella, Moncada, L'Eliana y toda la provincia.
 
@@ -54,10 +54,12 @@ Hemos sido parte de más de 500 <strong>bodas en Valencia</strong>, ayudando a c
 
     packages: [
       {
-        name: "Pack Ceremonia",
+        name: "Pack Ceremonia + Ambiente",
         subtitle: "Hasta 100 invitados",
-        price: "desde 450€",
+        price: "desde 304€ (IVA incl.)",
         features: [
+          "SONIDO: 2x ICOA 12A Blanco + 2x Shure SM58",
+          "ILUMINACIÓN: 8x Focos LED RGB Decoración",
           "2 altavoces profesionales",
           "2 micrófonos inalámbricos",
           "Reproductor música ceremonia",
