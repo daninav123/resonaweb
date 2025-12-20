@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import { Mail, Lock, Eye, EyeOff, User, Phone, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Phone, AlertCircle, Home, ArrowLeft } from 'lucide-react';
 
 const RegisterPage = () => {
   // Evitar indexación de página de registro
@@ -82,7 +82,26 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Enlace volver a inicio - siempre visible */}
+      <div className="fixed top-4 left-4 z-10">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-gray-700 hover:text-primary-600 font-medium"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Volver a inicio
+        </Link>
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        {/* Logo clickable */}
+        <Link to="/" className="flex justify-center mb-6">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-primary-600">ReSona</h1>
+            <p className="text-sm text-gray-500">Events Valencia</p>
+          </div>
+        </Link>
+
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Crea tu cuenta
         </h2>
@@ -320,6 +339,18 @@ const RegisterPage = () => {
               </button>
             </div>
           </form>
+
+          {/* CTA Explorar sin cuenta */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 mb-3">¿Quieres ver nuestros servicios primero?</p>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-lg transition-all"
+            >
+              <Home className="w-5 h-5" />
+              Explorar servicios sin cuenta
+            </Link>
+          </div>
         </div>
       </div>
     </div>
