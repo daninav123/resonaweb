@@ -7,8 +7,8 @@ const AlquilerIluminacionBodas = () => {
     metaDescription: "Iluminación profesional para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Transforma tu espacio. Desde 400€. ☎️ 613 88 14 14",
     keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda",
     heroTitle: "Iluminación Profesional para Bodas en Valencia",
-    heroSubtitle: "Transforma tu espacio con luz perfecta - Servicio en Valencia y provincia",
-    introduction: `El <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante. Nuestro servicio de <strong>iluminación para bodas en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: uplights LED, PAR LED RGBW, moving heads, proyectores gobo, garantizando rendimiento y fiabilidad máximos. Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación para bodas en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, primer baile, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+    heroSubtitle: "Focos LED RGB, Moving Heads, Efectos - Iluminación mágica para tu boda",
+    introduction: `La <strong>iluminación para bodas en Valencia</strong> crea la atmósfera perfecta para tu día especial. En ReSona Events disponemos de <strong>Focos LED RGB Decoración</strong> (iluminación ambiental de colores), <strong>Moving Head 3en1 17R y Beam 7R</strong> (efectos dinámicos entrada de novios, primer baile), <strong>Flash Estroboscópico RGB</strong> (momentos especiales), <strong>Mini Beam y Wash LED</strong> (pista de baile). Nuestro servicio de <strong>iluminación para bodas</strong> está diseñado para bodas de 50 a 300 invitados. Transformamos espacios: masías, hoteles, fincas, carpas. Creamos ambientes para cada momento: ceremonia (luz suave), cóctel (ambiente), banquete (cálido), y fiesta (dinámico con efectos). Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo. El servicio completo de <strong>iluminación para bodas en Valencia</strong> incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica según las características acústicas del espacio, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7. Hemos trabajado en más de 2.000 eventos en Valencia: ceremonia, banquete, primer baile, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [
       {
@@ -45,57 +45,58 @@ const AlquilerIluminacionBodas = () => {
 
     technicalSpecs: [
       {
-            title: "Focos PAR LED Profesionales",
+            title: "Iluminación Ambiental para Bodas",
             items: [
-                  "Chauvet SlimPAR Pro: 12×4W RGBW, ángulo 25°, modo DMX/autónomo/master-slave",
-                  "ADJ Mega Par Profile Plus: 228W RGBWA+UV, wash uniforme, flicker-free para vídeo",
-                  "Showtec Spectral M800: 8×10W RGBA, compacto, batería litio recargable 8-12h",
-                  "Martin RUSH PAR 2 RGBW: 12×12W Zoom 15-40°, profesional touring IP20",
-                  "Eurolite LED IP PAR: 14×10W RGBWA+UV, certificación IP65 waterproof exterior"
+                  "Focos LED RGB Decoración 18W: Millones de colores, control remoto, compactos y discretos",
+                  "8+ focos disponibles - Iluminan paredes, columnas, mesas, rincones",
+                  "Cambio de color programado: ceremonia (blanco/dorado), banquete (cálido), fiesta (colores)",
+                  "Batería opcional - Funcionan sin cables en espacios sin electricidad",
+                  "Instalación invisible - Se colocan antes de los invitados"
             ]
       },
       {
-            title: "Moving Heads y Cabezas Móviles",
+            title: "Efectos Dinámicos - Entrada y Primer Baile",
             items: [
-                  "Martin RUSH MH3 Beam: 140W LED Beam, prisma 3 facetas, 8 gobos rotación",
-                  "Chauvet Intimidator Spot 355: 90W LED Spot, 8 gobos + 8 colores dicróicos",
-                  "ADJ Focus Spot 4Z: 200W LED Spot motorized Zoom 12-30°, iris variable",
-                  "Showtec Phantom 75 LED Beam: Beam compacto 75W, prisma, velocidad pan/tilt",
-                  "American DJ Inno Pocket Wash: Mini moving wash 7×10W, compacto DJ booth"
+                  "Moving Head 3en1 17R: Beam/Spot/Wash 350W, efectos espectaculares entrada de novios",
+                  "Moving Head Beam 7R: Haces de luz concentrados, sincronizados con música primer baile",
+                  "Flash Estroboscópico RGB 1000W: Momentos clave (entrada, brindis, corte tarta)",
+                  "Ventilador LED RGB: Efectos giratorios de luz para pista de baile",
+                  "Control DMX sincronizado - Efectos coordinados perfectamente con la música"
             ]
       },
       {
-            title: "Controladores DMX y Efectos",
+            title: "Iluminación de Pista de Baile",
             items: [
-                  "Controlador Martin M-Touch: Pantalla táctil 15\", 16 universos Art-Net, librería fixtures",
-                  "ADJ Operator 384: Mesa DMX 384 canales, 24 fixtures, 30 bancos, MIDI",
-                  "Chauvet Obey 70: Controlador compacto 192 canales, 12 escenas, fade manual",
-                  "Antari Z-350 Fazer: Máquina neblina DMX, tanque 3.5L, 700W",
-                  "Chauvet Hurricane 1800 Flex: Humo 1800W, control DMX/wireless, timer"
+                  "Mini Beam LED + Mini Wash RGBW: Efectos compactos para pista de baile",
+                  "Modo automático music-reactive - Se sincronizan con la música del DJ",
+                  "Programación de escenas personalizadas por momento (cena, baile, fiesta)",
+                  "Técnico especializado controla todo desde tablet de forma discreta",
+                  "Sin molestas luces en la cara - Orientación profesional hacia arriba/paredes"
             ]
       },
       {
-            title: "Iluminación Arquitectónica Exterior",
+            title: "Servicio Completo Bodas",
             items: [
-                  "Bañadores LED RGBW IP65: 36×3W, alcance 20m, ángulo 25°/45°",
-                  "Uplights wireless batería: 12×18W RGBWA+UV, 12h autonomía, control WiFi",
-                  "Proyectores LED 150-300W: Iluminación fachadas, jardines, COB chip",
-                  "Tiras LED RGBW IP68: 5050/2835 SMD, 60-120 LED/m, sumergibles",
-                  "Controladores DMX wireless: 2.4GHz, alcance 300m, 512 canales"
+                  "Visita previa al espacio - Diseñamos la iluminación según tu masía/finca/hotel",
+                  "Montaje invisible 2-3 horas antes - Todo listo antes de los invitados",
+                  "Cambios de ambiente programados - Ceremonia, cóctel, banquete, fiesta",
+                  "Técnico todo el día - Ajusta luces en tiempo real según necesidades",
+                  "Desmontaje al finalizar - Tú solo disfrutas, nosotros nos ocupamos de todo"
             ]
       }
 ],
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pack Ambiente",
+        subtitle: "Iluminación ambiental (50-100 invitados)",
+        price: "desde 145€ (IVA incl.)",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
+          "8x Focos LED RGB Decoración",
+          "Iluminación de paredes/columnas",
+          "Cambios de color programados",
+          "Transporte gratis Valencia capital",
+          "Montaje invisible antes de invitados"
         ]
       },
       {
