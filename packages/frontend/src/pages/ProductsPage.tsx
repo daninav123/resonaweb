@@ -230,8 +230,8 @@ const ProductsPage = () => {
           />
         </div>
 
-        {/* Category Chips - Only visible on mobile */}
-        <div className="lg:hidden">
+        {/* Category Chips - Only visible on mobile (< 768px) */}
+        <div className="md:hidden">
           <CategoryChips
             categories={categories || []}
             selectedCategory={filters.category}
