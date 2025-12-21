@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 const OrdersManager = () => {
   const navigate = useNavigate();
@@ -230,8 +231,9 @@ const OrdersManager = () => {
         </div>
 
         {/* Orders Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+        <ResponsiveTableWrapper>
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <table className="min-w-full w-full">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -352,6 +354,7 @@ const OrdersManager = () => {
             </tbody>
           </table>
         </div>
+        </ResponsiveTableWrapper>
 
         {filteredOrders.length === 0 && (
           <div className="text-center py-12 bg-white rounded-lg shadow mt-6">

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { api } from '../../services/api';
 import { useTableSort } from '../../hooks/useTableSort';
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 const PacksManager = () => {
   const navigate = useNavigate();
@@ -540,8 +541,9 @@ const PacksManager = () => {
             </button>
           </div>
         ) : (
+          <ResponsiveTableWrapper>
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="w-full">
+            <table className="min-w-full w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <SortableTableHeader
@@ -645,6 +647,7 @@ const PacksManager = () => {
               </tbody>
             </table>
           </div>
+          </ResponsiveTableWrapper>
         )}
 
         {/* Modal de Crear/Editar Pack */}

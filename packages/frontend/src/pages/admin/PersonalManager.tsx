@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, Save, X, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 interface PersonalItem {
   id: string;
@@ -354,6 +355,7 @@ const PersonalManager = () => {
       )}
 
       {/* Lista de Personal */}
+      <ResponsiveTableWrapper>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-purple-50">
@@ -502,6 +504,7 @@ const PersonalManager = () => {
           </tbody>
         </table>
       </div>
+      </ResponsiveTableWrapper>
     </div>
   );
 };

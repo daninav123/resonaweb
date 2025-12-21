@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { blogService, BlogPost, BlogCategory } from '../../services/blog.service';
 import { PenSquare, Trash2, Eye, Calendar, Send, Plus, Save, X, Clock, CheckCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 const BlogManager = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -256,7 +257,6 @@ const BlogManager = () => {
             </div>
           </div>
         )}
-      </div>
 
       {/* Editor Modal */}
       {showEditor && (
@@ -556,6 +556,7 @@ const BlogManager = () => {
             </tbody>
           </table>
         </div>
+        </ResponsiveTableWrapper>
 
         {posts.length === 0 && (
           <div className="text-center py-12">

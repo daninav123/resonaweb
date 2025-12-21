@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, Tag, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 interface Category {
   id: string;
@@ -396,8 +397,9 @@ const CategoriesManager = () => {
         )}
 
         {/* Categories Table */}
+        <ResponsiveTableWrapper>
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+          <table className="min-w-full w-full">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -588,6 +590,7 @@ const CategoriesManager = () => {
             </tbody>
           </table>
         </div>
+        </ResponsiveTableWrapper>
       </div>
     </div>
   );

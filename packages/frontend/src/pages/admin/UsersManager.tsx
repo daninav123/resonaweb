@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users, UserPlus, Shield, Mail, Star, Crown, Loader2 } from 'lucide-react';
 import { api } from '../../services/api';
 import toast from 'react-hot-toast';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 interface User {
   id: string;
@@ -137,7 +138,8 @@ const UsersManager = () => {
                 No hay usuarios registrados
               </div>
             ) : (
-              <table className="w-full">
+              <ResponsiveTableWrapper>
+              <table className="min-w-full w-full">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -239,6 +241,7 @@ const UsersManager = () => {
                   ))}
                 </tbody>
               </table>
+              </ResponsiveTableWrapper>
             )}
           </div>
         )}

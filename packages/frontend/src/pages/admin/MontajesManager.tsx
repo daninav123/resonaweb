@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit2, Package, X, Save, Calculator, Eye, EyeOff, Copy, A
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 // Helper para construir URLs completas de imágenes
 const getFullImageUrl = (imagePath: string | null | undefined): string => {
@@ -863,8 +864,9 @@ const MontajesManager = () => {
           </button>
         </div>
       ) : (
+        <ResponsiveTableWrapper>
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+          <table className="min-w-full w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
@@ -1002,6 +1004,7 @@ const MontajesManager = () => {
             </tbody>
           </table>
         </div>
+        </ResponsiveTableWrapper>
       )}
 
       {/* Modal de Crear/Editar Pack */}

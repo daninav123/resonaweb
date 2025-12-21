@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { ProductImageManager } from '../../components/admin/ProductImageManager';
 import { useTableSort } from '../../hooks/useTableSort';
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader';
+import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
 
 interface Product {
   id: string;
@@ -629,9 +630,10 @@ const ProductsManager = () => {
           </div>
         </div>
 
-        {/* Products Table - Desktop */}
-        <div className="hidden md:block bg-white rounded-lg shadow overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
-          <table className="w-full table-auto">
+        {/* Products Table */}
+        <ResponsiveTableWrapper>
+          <div className="bg-white rounded-lg shadow overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
+            <table className="min-w-full w-full table-auto">
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
                 <SortableTableHeader
@@ -759,6 +761,7 @@ const ProductsManager = () => {
             </tbody>
           </table>
         </div>
+        </ResponsiveTableWrapper>
 
         {/* Products Cards - Mobile */}
         <div className="md:hidden space-y-4 overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)' }}>
