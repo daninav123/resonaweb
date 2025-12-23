@@ -632,8 +632,8 @@ const ProductsManager = () => {
 
         {/* Products Table */}
         <ResponsiveTableWrapper>
-          <div className="bg-white rounded-lg shadow overflow-y-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
-            <table className="min-w-full w-full table-auto" style={{ minWidth: '1000px' }}>
+          <div className="bg-white rounded-lg shadow overflow-auto" style={{ maxHeight: 'calc(100vh - 450px)', minHeight: '300px' }}>
+            <table className="min-w-full w-full table-auto">
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
                 <SortableTableHeader
