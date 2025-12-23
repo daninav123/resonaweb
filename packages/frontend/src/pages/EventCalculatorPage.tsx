@@ -1170,14 +1170,14 @@ const EventCalculatorPage = () => {
                                 </div>
                               )}
                               
-                              {/* Botón para abrir imagen en móvil */}
+                              {/* Botón para abrir imagen en móvil - posicionado sobre la imagen */}
                               {(pack.imageUrl || pack.mainImageUrl) && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setImageModal({ show: true, product: pack });
                                   }}
-                                  className="lg:hidden absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                                  className="lg:hidden absolute top-8 left-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                                   aria-label="Ver imagen completa"
                                 >
                                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1420,14 +1420,14 @@ const EventCalculatorPage = () => {
                                 </div>
                               )}
                               
-                              {/* Botón para abrir imagen en móvil - Extras */}
+                              {/* Botón para abrir imagen en móvil - Extras - posicionado sobre la imagen */}
                               {(product.imageUrl || product.mainImageUrl) && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setImageModal({ show: true, product });
                                   }}
-                                  className="lg:hidden absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                                  className="lg:hidden absolute top-8 left-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                                   aria-label="Ver imagen completa"
                                 >
                                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
