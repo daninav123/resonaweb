@@ -7,7 +7,15 @@ interface ResponsiveTableWrapperProps {
 
 export const ResponsiveTableWrapper = ({ children, className = '' }: ResponsiveTableWrapperProps) => {
   return (
-    <div className={`w-full overflow-x-auto ${className}`}>
+    <div 
+      className={`w-full ${className}`}
+      style={{ 
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        display: 'block',
+        width: '100%'
+      }}
+    >
       {children}
     </div>
   );
