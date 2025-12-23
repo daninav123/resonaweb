@@ -130,7 +130,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Mobile Header */}
       <div className="lg:hidden bg-gray-900 text-white p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
         <h2 className="text-xl font-bold">Panel Admin</h2>
