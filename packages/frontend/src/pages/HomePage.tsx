@@ -139,7 +139,7 @@ const HomePage = () => {
       {/* Features */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
               <div className="bg-resona/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Package className="w-8 h-8 text-resona" />
@@ -189,7 +189,7 @@ const HomePage = () => {
           {loadingCategories ? (
             <div className="text-center">Cargando categorías...</div>
           ) : (
-            <div className="grid md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
               {categories?.slice(0, 12).map((category: Category) => (
                 <Link
                   key={category.id}
@@ -235,7 +235,7 @@ const HomePage = () => {
           {loadingProducts ? (
             <div className="text-center">Cargando productos...</div>
           ) : (
-            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
               {featuredProducts?.map((product: Product) => (
                 <Link
                   key={product.id}

@@ -5,14 +5,14 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Wave Decoration */}
-      <div className="relative">
-        <svg className="w-full h-12 text-gray-50" viewBox="0 0 1440 48" preserveAspectRatio="none">
+      <div className="relative overflow-hidden">
+        <svg className="w-full h-12 text-gray-50" viewBox="0 0 1440 48" preserveAspectRatio="none" style={{ maxWidth: '100%' }}>
           <path fill="currentColor" d="M0,32L80,29.3C160,27,320,21,480,21.3C640,21,800,27,960,32C1120,37,1280,43,1360,45.3L1440,48L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path>
         </svg>
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Company Info con Logo */}
           <div>
             {/* Logo */}

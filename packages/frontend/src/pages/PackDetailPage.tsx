@@ -237,7 +237,7 @@ const PackDetailPage = () => {
               )}
             </div>
             {pack.images && pack.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-4 gap-2">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {pack.images.map((img: string, idx: number) => (
                   <img
                     key={idx}

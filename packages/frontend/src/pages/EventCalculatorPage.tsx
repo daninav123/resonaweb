@@ -61,6 +61,7 @@ const EventCalculatorPage = () => {
   const [hoveredExtraId, setHoveredExtraId] = useState<string | null>(null);
   const [activeExtraTab, setActiveExtraTab] = useState(0); // Pestaña activa de extras
   const [showContactModal, setShowContactModal] = useState(false);
+  const [imageModal, setImageModal] = useState<{show: boolean; product: any} | null>(null);
   const [contactData, setContactData] = useState({
     name: '',
     phone: '',
@@ -1151,9 +1152,9 @@ const EventCalculatorPage = () => {
                                 </div>
                               </button>
                               
-                              {/* Preview con imagen grande y descripción al hacer hover */}
+                              {/* Preview con imagen grande - SOLO en desktop (hover) */}
                               {showImagePreview && (pack.imageUrl || pack.mainImageUrl) && (
-                                <div className="absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
+                                <div className="hidden lg:block absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
                                   <div className="w-full h-64 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                                     <img 
                                       src={pack.imageUrl || pack.mainImageUrl} 
@@ -1167,6 +1168,22 @@ const EventCalculatorPage = () => {
                                     €{Number(pack.pricePerDay || pack.finalPrice || 0).toFixed(2)}/día
                                   </div>
                                 </div>
+                              )}
+                              
+                              {/* Botón para abrir imagen en móvil */}
+                              {(pack.imageUrl || pack.mainImageUrl) && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setImageModal({ show: true, product: pack });
+                                  }}
+                                  className="lg:hidden absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                                  aria-label="Ver imagen completa"
+                                >
+                                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                  </svg>
+                                </button>
                               )}
                             </div>
                             );
@@ -1367,9 +1384,9 @@ const EventCalculatorPage = () => {
                                 </div>
                               </div>
                               
-                              {/* Preview con imagen grande y descripción al hacer hover */}
+                              {/* Preview con imagen grande - SOLO en desktop (hover) */}
                               {showImagePreview && (product.imageUrl || product.mainImageUrl) && (
-                                <div className="absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
+                                <div className="hidden lg:block absolute z-50 left-full ml-4 top-0 w-96 bg-white rounded-lg shadow-2xl border-2 border-resona p-4 pointer-events-none">
                                   <div className="w-full h-64 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                                     <img 
                                       src={product.imageUrl || product.mainImageUrl} 
@@ -1401,6 +1418,22 @@ const EventCalculatorPage = () => {
                                     })()}
                                   </div>
                                 </div>
+                              )}
+                              
+                              {/* Botón para abrir imagen en móvil - Extras */}
+                              {(product.imageUrl || product.mainImageUrl) && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setImageModal({ show: true, product });
+                                  }}
+                                  className="lg:hidden absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                                  aria-label="Ver imagen completa"
+                                >
+                                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                  </svg>
+                                </button>
                               )}
                             </div>
                             );
@@ -2152,6 +2185,99 @@ const EventCalculatorPage = () => {
                 <strong>📞 Te llamaremos en menos de 24h</strong><br/>
                 Horario: Lunes a Viernes de 9:00 a 18:00
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Imagen para Móvil */}
+      {imageModal?.show && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4"
+          onClick={() => setImageModal(null)}
+        >
+          <div 
+            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-gray-900">{imageModal.product.name}</h3>
+              <button
+                onClick={() => setImageModal(null)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Cerrar"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Imagen */}
+            <div className="p-4">
+              <div className="w-full bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden" style={{ minHeight: '300px' }}>
+                <img 
+                  src={imageModal.product.imageUrl || imageModal.product.mainImageUrl} 
+                  alt={imageModal.product.name}
+                  className="max-w-full h-auto object-contain"
+                  style={{ maxHeight: '60vh' }}
+                />
+              </div>
+              
+              {/* Descripción */}
+              <div className="space-y-3">
+                <p className="text-gray-600">{imageModal.product.description}</p>
+                
+                {/* Precio */}
+                <div className="p-3 bg-resona/5 border border-resona/20 rounded-lg">
+                  {(() => {
+                    const basePrice = Number(imageModal.product.pricePerDay || imageModal.product.finalPrice || 0);
+                    const shipping = Number((imageModal.product as any).shippingCost || 0);
+                    const installation = Number((imageModal.product as any).installationCost || 0);
+                    const totalPrice = basePrice + shipping + installation;
+                    
+                    return (
+                      <>
+                        <div className="text-2xl font-bold text-resona">
+                          €{totalPrice.toFixed(2)}/día
+                        </div>
+                        {(shipping > 0 || installation > 0) && (
+                          <p className="text-sm text-gray-600 mt-1">
+                            Incluye transporte y montaje
+                          </p>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+                
+                {/* Rango de asistentes si existe */}
+                {(() => {
+                  const specs = (imageModal.product as any).specifications 
+                    ? (typeof (imageModal.product as any).specifications === 'string' 
+                        ? JSON.parse((imageModal.product as any).specifications) 
+                        : (imageModal.product as any).specifications)
+                    : null;
+                  
+                  if (specs && (specs.minAttendees || specs.maxAttendees)) {
+                    return (
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Users className="w-5 h-5 text-resona" />
+                        <span className="font-medium">
+                          {specs.minAttendees && specs.maxAttendees 
+                            ? `${specs.minAttendees}-${specs.maxAttendees} personas`
+                            : specs.minAttendees 
+                            ? `Mínimo ${specs.minAttendees} personas`
+                            : `Máximo ${specs.maxAttendees} personas`
+                          }
+                        </span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
             </div>
           </div>
         </div>

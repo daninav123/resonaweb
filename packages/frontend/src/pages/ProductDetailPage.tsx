@@ -210,7 +210,7 @@ const ProductDetailPage = () => {
               )}
             </div>
             {product.images && product.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-4 gap-2">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {product.images.map((img: string, idx: number) => (
                   <OptimizedImage
                     key={idx}
@@ -368,7 +368,7 @@ const ProductDetailPage = () => {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Productos relacionados
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {product.relatedProducts.map((related: any) => (
                 <div
                   key={related.id}
