@@ -413,8 +413,8 @@ const EventCalculatorPage = () => {
           // Si SÍ hay parte de fiesta, el pack ya está incluido en partsTotal
           if (!hasPartyPart) {
             const basePrice = Number(pack.pricePerDay);
-            const shipping = Number(pack.shippingCost || 0);
-            const installation = Number(pack.installationCost || 0);
+            const shipping = Number(pack.packData?.shippingCost || 0);
+            const installation = Number(pack.packData?.installationCost || 0);
             totalCalculated += basePrice + shipping + installation;
           }
           
@@ -527,8 +527,8 @@ const EventCalculatorPage = () => {
               const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
               if (pack) {
                 const basePrice = Number(pack.pricePerDay);
-                const shipping = Number(pack.shippingCost || 0);
-                const installation = Number(pack.installationCost || 0);
+                const shipping = Number(pack.packData?.shippingCost || 0);
+                const installation = Number(pack.packData?.installationCost || 0);
                 partPrice = basePrice + shipping + installation;
               }
             }
@@ -543,8 +543,8 @@ const EventCalculatorPage = () => {
         const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
         if (pack) {
           const basePrice = Number(pack.pricePerDay);
-          const shipping = Number(pack.shippingCost || 0);
-          const installation = Number(pack.installationCost || 0);
+          const shipping = Number(pack.packData?.shippingCost || 0);
+          const installation = Number(pack.packData?.installationCost || 0);
           total += basePrice + shipping + installation;
         }
       }
@@ -554,8 +554,8 @@ const EventCalculatorPage = () => {
         const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
         if (product) {
           const basePrice = Number(product.pricePerDay);
-          const shipping = Number(product.shippingCost || 0);
-          const installation = Number(product.installationCost || 0);
+          const shipping = Number(product.packData?.shippingCost || 0);
+          const installation = Number(product.packData?.installationCost || 0);
           total += (basePrice + shipping + installation) * quantity;
         }
       });
@@ -1130,8 +1130,8 @@ const EventCalculatorPage = () => {
                                     <div className="mt-3">
                                       {(() => {
                                         const basePrice = Number(pack.pricePerDay);
-                                        const shipping = Number(pack.shippingCost || 0);
-                                        const installation = Number(pack.installationCost || 0);
+                                        const shipping = Number(pack.packData?.shippingCost || 0);
+                                        const installation = Number(pack.packData?.installationCost || 0);
                                         const totalPrice = basePrice + shipping + installation;
                                         
                                         return (
@@ -1165,7 +1165,7 @@ const EventCalculatorPage = () => {
                                   <h4 className="font-bold text-lg text-gray-900 mb-2">{pack.name}</h4>
                                   <p className="text-sm text-gray-600">{pack.description}</p>
                                   <div className="mt-3 text-2xl font-bold text-resona">
-                                    €{Number(pack.pricePerDay || pack.finalPrice || 0).toFixed(2)}/día
+                                    €{Number(pack.pricePerDay || pack.packData?.finalPrice || 0).toFixed(2)}/día
                                   </div>
                                 </div>
                               )}
@@ -1729,12 +1729,12 @@ const EventCalculatorPage = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="font-semibold text-gray-900">{selectedPackData.name}</span>
-                          {(Number(selectedPackData.shippingCost || 0) > 0 || Number(selectedPackData.installationCost || 0) > 0) && (
+                          {(Number(selectedPackData.packData?.shippingCost || 0) > 0 || Number(selectedPackData.packData?.installationCost || 0) > 0) && (
                             <p className="text-xs text-gray-500">Incluye transporte y montaje</p>
                           )}
                         </div>
                         <span className="font-bold text-resona">
-                          €{(Number(selectedPackData.pricePerDay) + Number(selectedPackData.shippingCost || 0) + Number(selectedPackData.installationCost || 0)).toFixed(2)}/día
+                          €{(Number(selectedPackData.pricePerDay) + Number(selectedPackData.packData?.shippingCost || 0) + Number(selectedPackData.packData?.installationCost || 0)).toFixed(2)}/día
                         </span>
                       </div>
                     </div>
@@ -1751,7 +1751,7 @@ const EventCalculatorPage = () => {
                         return product ? (
                           <div key={productId} className="flex items-center justify-between">
                             <span className="text-sm text-gray-700">{quantity}x {product.name}</span>
-                            <span className="text-sm font-semibold text-gray-900">€{((Number(product.pricePerDay) + Number(product.shippingCost || 0) + Number(product.installationCost || 0)) * quantity).toFixed(2)}/día</span>
+                            <span className="text-sm font-semibold text-gray-900">€{((Number(product.pricePerDay) + Number(product.packData?.shippingCost || 0) + Number(product.packData?.installationCost || 0)) * quantity).toFixed(2)}/día</span>
                           </div>
                         ) : null;
                       })}
@@ -1800,8 +1800,8 @@ const EventCalculatorPage = () => {
                           const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                           if (pack) {
                             const basePrice = Number(pack.pricePerDay);
-                            const shipping = Number(pack.shippingCost || 0);
-                            const installation = Number(pack.installationCost || 0);
+                            const shipping = Number(pack.packData?.shippingCost || 0);
+                            const installation = Number(pack.packData?.installationCost || 0);
                             partPrice = basePrice + shipping + installation;
                           }
                         }
@@ -1816,8 +1816,8 @@ const EventCalculatorPage = () => {
                     const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                     if (pack) {
                       const basePrice = Number(pack.pricePerDay);
-                      const shipping = Number(pack.shippingCost || 0);
-                      const installation = Number(pack.installationCost || 0);
+                      const shipping = Number(pack.packData?.shippingCost || 0);
+                      const installation = Number(pack.packData?.installationCost || 0);
                       total += basePrice + shipping + installation;
                     }
                   }
@@ -1827,8 +1827,8 @@ const EventCalculatorPage = () => {
                     const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
                     if (product) {
                       const basePrice = Number(product.pricePerDay);
-                      const shipping = Number(product.shippingCost || 0);
-                      const installation = Number(product.installationCost || 0);
+                      const shipping = Number(product.packData?.shippingCost || 0);
+                      const installation = Number(product.packData?.installationCost || 0);
                       total += (basePrice + shipping + installation) * quantity;
                     }
                   });
@@ -1965,7 +1965,7 @@ const EventCalculatorPage = () => {
                         if (isPartyPart && eventData.selectedPack) {
                           const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                           if (pack) {
-                            partPrice = Number(pack.pricePerDay) + Number(pack.shippingCost || 0) + Number(pack.installationCost || 0);
+                            partPrice = Number(pack.pricePerDay) + Number(pack.packData?.shippingCost || 0) + Number(pack.packData?.installationCost || 0);
                           }
                         }
                         
@@ -1977,14 +1977,14 @@ const EventCalculatorPage = () => {
                   if (eventData.selectedPack && !hasPartyPart) {
                     const pack = catalogProducts.find((p: any) => p.id === eventData.selectedPack || p._id === eventData.selectedPack);
                     if (pack) {
-                      total += Number(pack.pricePerDay) + Number(pack.shippingCost || 0) + Number(pack.installationCost || 0);
+                      total += Number(pack.pricePerDay) + Number(pack.packData?.shippingCost || 0) + Number(pack.packData?.installationCost || 0);
                     }
                   }
                   
                   Object.entries(eventData.selectedExtras).forEach(([productId, quantity]) => {
                     const product = catalogProducts.find((p: any) => p.id === productId || p._id === productId);
                     if (product) {
-                      total += (Number(product.pricePerDay) + Number(product.shippingCost || 0) + Number(product.installationCost || 0)) * quantity;
+                      total += (Number(product.pricePerDay) + Number(product.packData?.shippingCost || 0) + Number(product.packData?.installationCost || 0)) * quantity;
                     }
                   });
                   
