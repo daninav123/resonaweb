@@ -463,6 +463,7 @@ const BlogManager = () => {
       )}
 
       {/* Lista de Artículos */}
+      <ResponsiveTableWrapper>
       <div className="bg-white rounded-lg shadow">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -556,7 +557,8 @@ const BlogManager = () => {
             </tbody>
           </table>
         </div>
-        </ResponsiveTableWrapper>
+      </div>
+      </ResponsiveTableWrapper>
 
         {posts.length === 0 && (
           <div className="text-center py-12">
