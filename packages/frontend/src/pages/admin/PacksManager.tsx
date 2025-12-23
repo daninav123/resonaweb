@@ -542,8 +542,8 @@ const PacksManager = () => {
           </div>
         ) : (
           <ResponsiveTableWrapper>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full w-full">
+          <div className="bg-white rounded-lg shadow">
+            <table className="min-w-full w-full" style={{ minWidth: '900px' }}>
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <SortableTableHeader

@@ -398,8 +398,8 @@ const CategoriesManager = () => {
 
         {/* Categories Table */}
         <ResponsiveTableWrapper>
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full w-full">
+        <div className="bg-white rounded-lg shadow">
+          <table className="min-w-full w-full" style={{ minWidth: '800px' }}>
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
