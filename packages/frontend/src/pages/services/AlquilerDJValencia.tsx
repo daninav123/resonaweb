@@ -6,6 +6,7 @@ const AlquilerDJValencia = () => {
     title: "Alquiler DJ Valencia | Equipos Pioneer CDJ | ReSona",
     metaDescription: "DJ profesional para bodas y eventos. Equipos Pioneer CDJ-3000 + DJM. Biblioteca 50k canciones. ☎️ 613 88 14 14",
     keywords: "alquiler dj valencia, dj profesional bodas, alquiler equipo dj",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-dj-valencia",
     heroTitle: "Alquiler de DJ Profesional",
     heroSubtitle: "Pioneer RX2 - Controlador DJ profesional para tu evento",
     introduction: `El <strong>alquiler de DJ profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

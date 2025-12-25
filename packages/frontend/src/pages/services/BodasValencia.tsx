@@ -5,13 +5,16 @@ import { Phone, Mail, Calculator, CheckCircle, MapPin, Star, Heart, Music, Light
 const BodasValencia = () => {
   const currentUrl = 'https://resonaevents.com/bodas-valencia';
   
+  // Canonical URL para SEO
+  const canonicalUrl = 'https://resonaevents.com/servicios/bodas-valencia';
+
   return (
     <>
       <Helmet>
         <title>Bodas en Valencia | Sonido + Iluminación + DJ | ReSona Events</title>
         <meta name="description" content="Organiza tu boda en Valencia con los mejores profesionales. Sonido, iluminación, DJ. +500 bodas realizadas en La Hacienda, Mas de San Antonio, El Bohío. ☎️ 613 88 14 14" />
         <meta name="keywords" content="bodas valencia, boda valencia, sonido bodas valencia, iluminación bodas valencia, dj bodas valencia, fincas bodas valencia, organizar boda valencia" />
-        <link rel="canonical" href={currentUrl} />
+        <link rel="canonical" href={canonicalUrl} />
         
         {/* Open Graph */}
         <meta property="og:title" content="Bodas en Valencia | Sonido + Iluminación + DJ | ReSona Events" />

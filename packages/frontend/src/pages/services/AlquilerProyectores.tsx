@@ -6,6 +6,7 @@ const AlquilerProyectores = () => {
     title: "Proyectores Valencia | 5000 Lúmenes Full HD | ReSona",
     metaDescription: "Proyectores profesionales. 3000-12000 lúmenes. Full HD, 4K. Pantallas incluidas. Técnico especializado. ☎️ 613 88 14 14",
     keywords: "alquiler proyectores valencia, proyector profesional eventos, proyector alta luminosidad",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-proyectores",
     heroTitle: "Alquiler de Proyectores Profesionales en Valencia",
     heroSubtitle: "Proyectores profesionales de alta luminosidad - Disponibles bajo pedido - Servicio en Valencia y provincia",
     introduction: `El <strong>alquiler de proyectores profesionales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

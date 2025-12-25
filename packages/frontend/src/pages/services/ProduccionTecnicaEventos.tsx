@@ -6,6 +6,7 @@ const ProduccionTecnicaEventos = () => {
     title: "Producción Técnica Valencia | Audiovisual | ReSona",
     metaDescription: "Producción técnica completa: sonido, iluminación, vídeo. Gestión integral de eventos. Técnicos especializados. ☎️ 613 88 14 14",
     keywords: "producción eventos valencia, producción técnica audiovisual, gestión técnica eventos",
+    canonicalUrl: "https://resonaevents.com/servicios/produccion-tecnica-eventos",
     heroTitle: "Producción Técnica Completa en Valencia",
     heroSubtitle: "DAS Audio, ICOA, Moving Heads, Pioneer - Producción técnica integral completa",
     introduction: `La <strong>producción técnica completa de eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

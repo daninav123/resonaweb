@@ -6,6 +6,7 @@ const SonidoEventosCorporativos = () => {
     title: "Sonido Eventos Corporativos Valencia | QSC | ReSona",
     metaDescription: "Sonido para eventos corporativos. Conferencias, presentaciones, cenas. Equipos QSC. Streaming incluido. ☎️ 613 88 14 14",
     keywords: "sonido eventos corporativos valencia, audiovisuales empresa, sonido conferencias",
+    canonicalUrl: "https://resonaevents.com/servicios/sonido-eventos-corporativos",
     heroTitle: "Sonido para Eventos Corporativos",
     heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido cristalino para eventos corporativos",
     introduction: `El <strong>sonido para eventos corporativos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

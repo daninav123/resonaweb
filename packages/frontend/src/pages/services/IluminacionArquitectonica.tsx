@@ -6,6 +6,7 @@ const IluminacionArquitectonica = () => {
     title: "Iluminación Arquitectónica Valencia | Uplights | ReSona",
     metaDescription: "Iluminación arquitectónica profesional. Uplights LED RGB, bañadores de fachada. Espacios únicos. ☎️ 613 88 14 14",
     keywords: "iluminación arquitectónica valencia, uplights led, iluminación fachadas eventos",
+    canonicalUrl: "https://resonaevents.com/servicios/iluminacion-arquitectonica",
     heroTitle: "Iluminación Arquitectónica en Valencia",
     heroSubtitle: "Focos LED RGB Decoración - Ilumina fachadas, jardines, espacios exteriores",
     introduction: `La <strong>iluminación arquitectónica para eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

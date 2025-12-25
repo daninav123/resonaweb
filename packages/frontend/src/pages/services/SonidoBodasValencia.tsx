@@ -6,6 +6,7 @@ const SonidoBodasValencia = () => {
     title: "Sonido Bodas Valencia | Ceremonia + Fiesta | ReSona",
     metaDescription: "Sonido para bodas en Valencia. Ceremonia, discursos y fiesta. Equipos DAS Audio + técnico. Desde 250€. ☎️ 613 88 14 14",
     keywords: "sonido bodas valencia, alquiler sonido boda, sonido ceremonia valencia, bodas valencia, audio bodas valencia",
+    canonicalUrl: "https://resonaevents.com/servicios/sonido-bodas-valencia",
     heroTitle: "Sonido Profesional para Bodas en Valencia",
     heroSubtitle: "DAS Audio, ICOA, Behringer, Shure - Sonido perfecto para tu boda",
     introduction: `El <strong>sonido para bodas en Valencia</strong> es fundamental para garantizar el éxito de tu día especial. En ReSona Events contamos con más de 15 años de experiencia en bodas en la Comunidad Valenciana.

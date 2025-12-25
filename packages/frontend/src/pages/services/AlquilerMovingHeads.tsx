@@ -6,6 +6,7 @@ const AlquilerMovingHeads = () => {
     title: "Moving Heads Valencia | Luces Robotizadas | ReSona",
     metaDescription: "Moving heads profesionales. Luces robotizadas 17R, 7R. Beam, Spot, Wash. Control DMX. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler moving heads valencia, luces robotizadas, luces inteligentes eventos",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-moving-heads",
     heroTitle: "Alquiler de Moving Heads en Valencia",
     heroSubtitle: "Moving Head 17R, 7R, Mini Beam LED - Efectos profesionales Dinámicos",
     introduction: `El <strong>alquiler de moving heads en Valencia</strong> transforma cualquier evento en un espectáculo visual impresionante. En ReSona Events disponemos de <strong>Moving Head 3en1 17R</strong> (350W Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash LED RGBW</strong>.

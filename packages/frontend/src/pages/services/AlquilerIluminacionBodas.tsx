@@ -6,6 +6,7 @@ const AlquilerIluminacionBodas = () => {
     title: "Iluminación Bodas Valencia | LED Ambiental | ReSona",
     metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico incluido. Desde 150€. ☎️ 613 88 14 14",
     keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda, bodas valencia, luces bodas valencia",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-iluminacion-bodas",
     heroTitle: "Iluminación Profesional para Bodas en Valencia",
     heroSubtitle: "Focos LED RGB, Moving Heads, Efectos - Iluminación mágica para tu boda",
     introduction: `La <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

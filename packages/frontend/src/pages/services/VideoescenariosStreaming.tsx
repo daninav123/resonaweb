@@ -6,6 +6,7 @@ const VideoescenariosStreaming = () => {
     title: "Streaming Eventos Valencia | Videoescenarios | ReSona",
     metaDescription: "Streaming profesional multicámara - Disponible bajo pedido especial. Múltiples cámaras, producción en vivo, YouTube/Facebook. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "videoescenario eventos valencia, streaming eventos, producción video en vivo",
+    canonicalUrl: "https://resonaevents.com/servicios/videoescenarios-streaming",
     heroTitle: "Videoescenarios y Streaming en Valencia",
     heroSubtitle: "Producción audiovisual completa para tu evento - Servicio en Valencia y provincia",
     introduction: `El <strong>videoescenarios y streaming para eventos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

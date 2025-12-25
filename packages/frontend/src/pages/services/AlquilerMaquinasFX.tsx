@@ -6,6 +6,7 @@ const AlquilerMaquinasFX = () => {
     title: "Máquinas FX Valencia | Humo, CO2, Confeti | ReSona",
     metaDescription: "Máquinas de efectos especiales. Humo, niebla baja, CO2, confeti, burbujas. Efectos espectaculares. ☎️ 613 88 14 14",
     keywords: "alquiler máquinas humo valencia, máquinas fx, efectos especiales eventos",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-maquinas-fx",
     heroTitle: "Alquiler de Máquinas FX en Valencia",
     heroSubtitle: "Flash RGB 1000W, Humo, Efectos - Momentos especiales impactantes, momentos únicos - Servicio en Valencia y provincia",
     introduction: `El <strong>alquiler de máquinas de efectos especiales en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

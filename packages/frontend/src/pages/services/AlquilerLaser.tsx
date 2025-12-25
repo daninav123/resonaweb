@@ -6,6 +6,7 @@ const AlquilerLaser = () => {
     title: "Láser Eventos Valencia | RGB Profesional | ReSona",
     metaDescription: "Láser profesional RGB para eventos. Efectos espectaculares. Control DMX, sincronización música. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler laser eventos valencia, laser profesional, efectos laser",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-laser",
     heroTitle: "Alquiler de Láser Profesional en Valencia",
     heroSubtitle: "Efectos láser profesionales - Disponibles bajo pedido especial",
     introduction: `El <strong>alquiler de láser profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

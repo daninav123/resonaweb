@@ -6,6 +6,7 @@ const IluminacionEscenarios = () => {
     title: "Iluminación Escenarios Valencia | Moving Heads | ReSona",
     metaDescription: "Iluminación para escenarios. Moving heads 17R/7R, PAR LED, flash. Conciertos, shows, teatro. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "iluminación escenarios valencia, luces conciertos, iluminación shows",
+    canonicalUrl: "https://resonaevents.com/servicios/iluminacion-escenarios",
     heroTitle: "Iluminación Profesional para Escenarios en Valencia",
     heroSubtitle: "Moving Head 17R/7R, Flash RGB, Focos LED - Iluminación espectacular para escenarios",
     introduction: `La <strong>iluminación para escenarios en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.

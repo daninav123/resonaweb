@@ -6,6 +6,7 @@ const AlquilerSubwoofers = () => {
     title: "Subwoofers Valencia | DAS Audio 215A/218A | ReSona",
     metaDescription: "Subwoofers profesionales en Valencia. DAS Audio 215A/218A. 2000-3200W. Graves potentes. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler subwoofers valencia, subwoofer profesional, graves eventos",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-subwoofers",
     heroTitle: "Alquiler de Subwoofers Profesionales en Valencia",
     heroSubtitle: "DAS Audio 215A y 218A - Graves profundos y potentes para tu evento",
     introduction: `El <strong>alquiler de subwoofers profesionales en Valencia</strong> es esencial para conseguir graves potentes y profundos en tu evento. En ReSona Events disponemos de <strong>DAS Audio 215A</strong> (subwoofer activo doble 15", 2000W) y <strong>DAS Audio 218A</strong> (subwoofer premium doble 18", 3200W pico).

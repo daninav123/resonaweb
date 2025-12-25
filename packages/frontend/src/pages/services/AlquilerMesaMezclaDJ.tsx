@@ -6,6 +6,7 @@ const AlquilerMesaMezclaDJ = () => {
     title: "Mesa Mezclas DJ Valencia | Pioneer DJM | ReSona",
     metaDescription: "Mesas de mezclas DJ profesionales. Pioneer DJM-900, Allen & Heath. Con CDJs. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler mesa mezclas dj valencia, mesa pioneer valencia, alquiler djm-900 valencia, controladora dj valencia",
+    canonicalUrl: "https://resonaevents.com/servicios/alquiler-mesa-mezcla-dj",
     heroTitle: "Alquiler de Mesa de Mezclas DJ en Valencia",
     heroSubtitle: "Behringer X Air XR18 y Pioneer RX2 - Mezcla profesional digital",
     introduction: `El <strong>alquiler de mesa de mezclas DJ en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
