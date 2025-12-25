@@ -220,13 +220,18 @@ const ProductsPage = () => {
     ? `Alquiler de ${categoryName.toLowerCase()} en Valencia para eventos. Equipos profesionales con disponibilidad en tiempo real. Servicio técnico incluido y entrega en 24h.`
     : 'Catálogo completo de alquiler de equipos para eventos en Valencia: sonido profesional, iluminación LED, fotografía y video. Disponibilidad en tiempo real y reserva online.';
 
+  // Canonical dinámico: incluir parámetro de categoría si existe
+  const canonicalUrl = filters.category 
+    ? `https://resonaevents.com/productos?category=${filters.category}`
+    : 'https://resonaevents.com/productos';
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title={pageTitle}
         description={pageDescription}
         keywords="alquiler equipos eventos valencia, sonido profesional valencia, iluminación eventos valencia, alquiler altavoces valencia, equipos audiovisuales valencia"
-        canonicalUrl="https://resonaevents.com/productos"
+        canonicalUrl={canonicalUrl}
         schema={breadcrumbSchema([
           { name: 'Inicio', url: 'https://resonaevents.com' },
           { name: 'Catálogo', url: 'https://resonaevents.com/productos' }
