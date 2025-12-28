@@ -93,8 +93,17 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <Link to="/" className="hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.png" alt="ReSona Events" className="h-16 w-auto" />
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img src="/logo-resona.png" alt="ReSona Events" className="h-12 w-12" />
+            <div className="flex flex-col">
+              <span
+                className="text-2xl font-bold"
+                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#5ebbff' }}
+              >
+                ReSona
+              </span>
+              <span className="text-xs tracking-widest text-gray-600">EVENTS</span>
+            </div>
           </Link>
 
           {/* Search Bar - Desktop */}
