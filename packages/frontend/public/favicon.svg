@@ -2,27 +2,27 @@
   <!-- Fondo blanco con bordes redondeados -->
   <rect width="512" height="512" fill="white" rx="96"/>
   
-  <!-- Círculo izquierdo con "Resona" dentro -->
-  <circle cx="140" cy="256" r="110" fill="none" stroke="#5ebbff" stroke-width="6"/>
+  <!-- Círculo exterior -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#5ebbff" stroke-width="4"/>
   
-  <!-- Texto "Resona" manuscrita dentro del círculo -->
-  <text x="140" y="270" font-family="'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive" font-size="56" fill="#5ebbff" text-anchor="middle" font-style="italic" font-weight="300">Resona</text>
+  <!-- Texto "Resona" - Tipografía manuscrita -->
+  <text x="256" y="270" font-family="'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive" font-size="80" fill="#5ebbff" text-anchor="middle" font-style="italic" font-weight="300">Resona</text>
   
-  <!-- Texto "EVENTS" debajo del círculo -->
-  <text x="140" y="310" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#4b5563" text-anchor="middle" letter-spacing="8" font-weight="400">EVENTS</text>
+  <!-- Texto "EVENTS" - Sans-serif -->
+  <text x="256" y="305" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#5ebbff" text-anchor="middle" letter-spacing="8" font-weight="400">EVENTS</text>
   
-  <!-- Icono de conector/jack (derecha) -->
-  <g transform="translate(420, 256)">
-    <!-- Cable principal -->
-    <path d="M 0 -30 L 0 30" stroke="#5ebbff" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- Icono de conector/cable (esquina superior derecha) -->
+  <g transform="translate(410, 120)">
+    <!-- Cable vertical -->
+    <path d="M 0 -15 L 0 15" stroke="#5ebbff" stroke-width="3" fill="none" stroke-linecap="round"/>
     <!-- Conector superior -->
-    <circle cx="0" cy="-30" r="6" fill="#5ebbff"/>
+    <circle cx="0" cy="-15" r="4" fill="#5ebbff"/>
     <!-- Conector inferior -->
-    <circle cx="0" cy="30" r="6" fill="#5ebbff"/>
-    <!-- Líneas horizontales del conector -->
-    <line x1="-8" y1="-18" x2="8" y2="-18" stroke="#5ebbff" stroke-width="4"/>
-    <line x1="-8" y1="-6" x2="8" y2="-6" stroke="#5ebbff" stroke-width="4"/>
-    <line x1="-8" y1="6" x2="8" y2="6" stroke="#5ebbff" stroke-width="4"/>
-    <line x1="-8" y1="18" x2="8" y2="18" stroke="#5ebbff" stroke-width="4"/>
+    <circle cx="0" cy="15" r="4" fill="#5ebbff"/>
+    <!-- Líneas del conector -->
+    <line x1="-5" y1="-9" x2="5" y2="-9" stroke="#5ebbff" stroke-width="2"/>
+    <line x1="-5" y1="-3" x2="5" y2="-3" stroke="#5ebbff" stroke-width="2"/>
+    <line x1="-5" y1="3" x2="5" y2="3" stroke="#5ebbff" stroke-width="2"/>
+    <line x1="-5" y1="9" x2="5" y2="9" stroke="#5ebbff" stroke-width="2"/>
   </g>
 </svg>
