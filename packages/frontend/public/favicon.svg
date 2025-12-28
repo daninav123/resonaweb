@@ -1,9 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Fondo blanco -->
-  <rect width="512" height="512" fill="white"/>
-  
-  <!-- Círculo exterior -->
-  <circle cx="256" cy="256" r="230" fill="none" stroke="#5ebbff" stroke-width="12"/>
+  <!-- Fondo blanco con bordes redondeados -->
+  <rect width="512" height="512" fill="white" rx="96"/>
   
   <!-- Texto "R" grande y destacado con tipografía manuscrita -->
   <text x="256" y="340" font-family="'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive" font-size="240" fill="#5ebbff" text-anchor="middle" font-style="italic" font-weight="400">R</text>
