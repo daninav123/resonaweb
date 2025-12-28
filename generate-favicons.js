@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const sourceFile = path.join(__dirname, 'packages/frontend/public/logo-resona.png');
+const sourceFile = path.join(__dirname, 'packages/frontend/public/favicon.svg');
 const outputDir = path.join(__dirname, 'packages/frontend/public');
 
 const sizes = [
@@ -17,16 +17,13 @@ const sizes = [
   { name: 'apple-touch-icon.png', size: 180 }
 ];
 
-console.log('🎨 Generando favicons PNG desde logo original...\n');
+console.log('🎨 Generando favicons PNG desde SVG...\n');
 
 Promise.all(
   sizes.map(async ({ name, size }) => {
     const outputPath = path.join(outputDir, name);
     await sharp(sourceFile)
-      .resize(size, size, {
-        fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      })
+      .resize(size, size)
       .png()
       .toFile(outputPath);
     console.log(`✅ ${name} (${size}x${size}) generado correctamente`);
