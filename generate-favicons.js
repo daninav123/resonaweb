@@ -7,45 +7,37 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const inputSvg = path.join(__dirname, 'packages/frontend/public/favicon.svg');
+const sourceFile = path.join(__dirname, 'packages/frontend/public/logo-resona.png');
 const outputDir = path.join(__dirname, 'packages/frontend/public');
 
 const sizes = [
-  { size: 512, name: 'favicon.png' },
-  { size: 192, name: 'favicon-192.png' },
-  { size: 32, name: 'favicon-32.png' },
-  { size: 180, name: 'apple-touch-icon.png' },
+  { name: 'favicon.png', size: 512 },
+  { name: 'favicon-192.png', size: 192 },
+  { name: 'favicon-32.png', size: 32 },
+  { name: 'apple-touch-icon.png', size: 180 }
 ];
 
-async function generateFavicons() {
-  console.log('🎨 Generando favicons PNG desde SVG...\n');
+console.log('🎨 Generando favicons PNG desde logo original...\n');
 
-  if (!fs.existsSync(inputSvg)) {
-    console.error('❌ Error: No se encontró favicon.svg');
-    process.exit(1);
-  }
-
-  for (const { size, name } of sizes) {
-    try {
-      const outputPath = path.join(outputDir, name);
-      
-      await sharp(inputSvg)
-        .resize(size, size)
-        .png({ quality: 100, compressionLevel: 9 })
-        .toFile(outputPath);
-      
-      console.log(`✅ ${name} (${size}x${size}) generado correctamente`);
-    } catch (error) {
-      console.error(`❌ Error generando ${name}:`, error.message);
-    }
-  }
-
-  console.log('\n🎉 ¡Favicons generados correctamente!');
-  console.log('\n📁 Archivos creados en: packages/frontend/public/');
-  console.log('   - favicon.png (512x512)');
-  console.log('   - favicon-192.png (192x192)');
-  console.log('   - favicon-32.png (32x32)');
-  console.log('   - apple-touch-icon.png (180x180)');
-}
-
-generateFavicons().catch(console.error);
+Promise.all(
+  sizes.map(async ({ name, size }) => {
+    const outputPath = path.join(outputDir, name);
+    await sharp(sourceFile)
+      .resize(size, size, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      })
+      .png()
+      .toFile(outputPath);
+    console.log(`✅ ${name} (${size}x${size}) generado correctamente`);
+  })
+).then(() => {
+  console.log('\n🎉 ¡Favicons generados correctamente!\n');
+  console.log('📁 Archivos creados en: packages/frontend/public/');
+  sizes.forEach(({ name, size }) => {
+    console.log(`   - ${name} (${size}x${size})`);
+  });
+}).catch(err => {
+  console.error('❌ Error generando favicons:', err);
+  process.exit(1);
+});
