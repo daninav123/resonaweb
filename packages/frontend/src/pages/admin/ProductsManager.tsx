@@ -26,7 +26,7 @@ interface Product {
   installationCost?: number;
   installationTimeMinutes?: number;
   requiresInstallation?: boolean;
-  installationComplexity?: number;
+  installationComplexity?: string; // 'NONE' | 'FORCE_SIMPLE' | 'FORCE_COMPLEX'
   isPack?: boolean;
   isConsumable?: boolean;
   pricePerUnit?: number;
@@ -64,7 +64,7 @@ const ProductsManager = () => {
     installationCost: 0,
     installationTimeMinutes: 0,
     requiresInstallation: false,
-    installationComplexity: 1,
+    installationComplexity: 'NONE',
     isPack: false,
     isConsumable: false,
     pricePerUnit: 0,
@@ -238,7 +238,7 @@ const ProductsManager = () => {
         installationCost: formData.installationCost || 0,
         installationTimeMinutes: formData.installationTimeMinutes || 0,
         requiresInstallation: formData.requiresInstallation || false,
-        installationComplexity: formData.installationComplexity || 1,
+        installationComplexity: formData.installationComplexity || 'NONE',
         isPack: formData.isPack || false,
         isConsumable: formData.isConsumable || false,
       };
@@ -445,7 +445,7 @@ const ProductsManager = () => {
       installationCost: product.installationCost || 0,
       installationTimeMinutes: product.installationTimeMinutes || 0,
       requiresInstallation: product.requiresInstallation || false,
-      installationComplexity: product.installationComplexity || 1,
+      installationComplexity: product.installationComplexity || 'NONE',
       isPack: (product as any).isPack || false,
       isConsumable: (product as any).isConsumable || false,
       pricePerUnit: (product as any).pricePerUnit || 0,
@@ -478,7 +478,7 @@ const ProductsManager = () => {
       installationCost: 0,
       installationTimeMinutes: 0,
       requiresInstallation: false,
-      installationComplexity: 1,
+      installationComplexity: 'NONE',
       isPack: false,
       isConsumable: false,
       pricePerUnit: 0,

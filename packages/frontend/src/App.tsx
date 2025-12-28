@@ -48,6 +48,9 @@ const AlquilerIluminacionValenciaPage = lazy(() => import('./pages/AlquilerIlumi
 const SonidoBodasValenciaPage = lazy(() => import('./pages/SonidoBodasValenciaPage'));
 const AlquilerSonidoTorrentPage = lazy(() => import('./pages/AlquilerSonidoTorrentPage'));
 
+// Commercial pages
+const CommercialQuoteRequestsManager = lazy(() => import('./pages/commercial/CommercialQuoteRequestsManager'));
+
 const AdminDashboard = lazy(() => import('./pages/admin/DashboardEnhanced'));
 const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
 const ProductsManager = lazy(() => import('./pages/admin/ProductsManager'));
@@ -281,7 +284,7 @@ function App() {
               <Route path="/comercial" element={<CommercialLayout />}>
                 <Route index element={<Navigate to="/comercial/dashboard" replace />} />
                 <Route path="dashboard" element={<CommercialDashboard />} />
-                <Route path="presupuestos" element={<AdminQuoteRequestsPage apiBasePath="/commercial/quotes" />} />
+                <Route path="presupuestos" element={<CommercialQuoteRequestsManager apiBasePath="/commercial/quotes" />} />
                 <Route path="leads" element={<LeadsManager />} />
                 <Route path="comisiones" element={<CommissionsPage />} />
                 <Route path="calculadora" element={<EventCalculatorPage />} />

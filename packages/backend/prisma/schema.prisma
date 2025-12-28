@@ -192,6 +192,12 @@ enum EmailStatus {
   BOUNCED
 }
 
+enum InstallationComplexity {
+  NONE           // No requiere instalación especial
+  FORCE_SIMPLE   // Fuerza montaje simple (productos muy básicos)
+  FORCE_COMPLEX  // Fuerza montaje complejo (guirnaldas, estructuras grandes, etc.)
+}
+
 enum PriceType {
   FIXED
   PER_HOUR
@@ -428,6 +434,9 @@ model Product {
   // Consumible (productos que se venden, no se alquilan)
   isConsumable Boolean  @default(false)
   pricePerUnit Decimal? @db.Decimal(10, 2) // Precio por unidad para consumibles
+
+  // Complejidad de instalación (para cálculo de montaje en presupuestos)
+  installationComplexity InstallationComplexity @default(NONE)
 
   // Metadatos
   tags String[]
