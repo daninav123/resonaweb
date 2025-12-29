@@ -106,10 +106,10 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         {/* Items */}
         <div className="flex-1 overflow-y-auto p-4">
           {cartItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-              <ShoppingCart className="w-16 h-16 mb-4" />
-              <p className="text-lg font-medium">Tu carrito está vacío</p>
-              <p className="text-sm mt-2">¡Añade productos para empezar!</p>
+            <div className="flex flex-col items-center justify-center h-full">
+              <ShoppingCart className="w-16 h-16 mb-4 text-gray-400" />
+              <p className="text-lg font-semibold text-gray-700">Tu carrito está vacío</p>
+              <p className="text-sm mt-2 text-gray-600">¡Añade productos para empezar!</p>
             </div>
           ) : (
             <div className="space-y-3">

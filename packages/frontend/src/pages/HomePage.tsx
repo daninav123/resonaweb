@@ -46,7 +46,7 @@ const HomePage = () => {
     <div className="min-h-screen">
       <SEOHead
         title="Alquiler Sonido e Iluminación Valencia | ReSona Events"
-        description="⭐ Alquiler Sonido e Iluminación Valencia desde 120€. Bodas, eventos, conciertos. ✓ Técnico incluido ✓ 15 años experiencia ☎ 613 88 14 14"
+        description="Alquiler Sonido e Iluminación Valencia desde 120€. Bodas, eventos, conciertos. Técnico incluido. 15 años experiencia ☎ 613 88 14 14"
         keywords="alquiler sonido valencia, alquiler iluminación valencia, alquiler material eventos valencia, equipos audiovisuales valencia, sonido profesional valencia, iluminación eventos valencia, pantallas LED valencia, equipos DJ valencia, bodas valencia, conciertos valencia, eventos corporativos valencia"
         ogImage="https://resonaevents.com/og-image.png"
         canonicalUrl="https://resonaevents.com/"
@@ -139,6 +139,7 @@ const HomePage = () => {
       {/* Features */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
+          <h2 className="sr-only">Por qué elegirnos</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
               <div className="bg-resona/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">

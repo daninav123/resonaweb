@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Phone, Mail, Calculator, CheckCircle, MapPin, Star, Heart, Music, Lightbulb } from 'lucide-react';
+import SEOHead from '../../components/SEO/SEOHead';
 
 const BodasValencia = () => {
   const currentUrl = 'https://resonaevents.com/bodas-valencia';
@@ -10,19 +11,14 @@ const BodasValencia = () => {
 
   return (
     <>
+      <SEOHead
+        title="Bodas en Valencia | Sonido + Iluminación + DJ | ReSona Events"
+        description="Organiza tu boda en Valencia con los mejores profesionales. Sonido, iluminación, DJ. +500 bodas realizadas en La Hacienda, Mas de San Antonio, El Bohío. ☎️ 613 88 14 14"
+        keywords="bodas valencia, boda valencia, sonido bodas valencia, iluminación bodas valencia, dj bodas valencia, fincas bodas valencia, organizar boda valencia"
+        canonicalUrl={canonicalUrl}
+      />
+      
       <Helmet>
-        <title>Bodas en Valencia | Sonido + Iluminación + DJ | ReSona Events</title>
-        <meta name="description" content="Organiza tu boda en Valencia con los mejores profesionales. Sonido, iluminación, DJ. +500 bodas realizadas en La Hacienda, Mas de San Antonio, El Bohío. ☎️ 613 88 14 14" />
-        <meta name="keywords" content="bodas valencia, boda valencia, sonido bodas valencia, iluminación bodas valencia, dj bodas valencia, fincas bodas valencia, organizar boda valencia" />
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content="Bodas en Valencia | Sonido + Iluminación + DJ | ReSona Events" />
-        <meta property="og:description" content="Organiza tu boda en Valencia con los mejores profesionales. Sonido, iluminación, DJ. +500 bodas realizadas." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={currentUrl} />
-        <meta property="og:locale" content="es_ES" />
-        <meta property="og:site_name" content="ReSona Events Valencia" />
         
         {/* Schema.org - Event */}
         <script type="application/ld+json">

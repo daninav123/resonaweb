@@ -73,7 +73,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">Email</h3>
-                    <p className="text-gray-600">info@resonaevents.com</p>
+                    <p className="text-gray-600">Usa el formulario abajo</p>
                     <p className="text-sm text-gray-500">Respuesta en 24h</p>
                   </div>
                 </div>

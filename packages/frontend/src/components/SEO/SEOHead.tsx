@@ -35,7 +35,7 @@ const SEOHead = ({
   article,
   product,
 }: SEOProps) => {
-  const fullTitle = title.includes('Resona') ? title : `${title} | Resona Events`;
+  const fullTitle = title.includes('Resona') || title.includes('ReSona') ? title : `${title} | Resona Events`;
   const baseUrl = 'https://resonaevents.com';
   const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : baseUrl);
 

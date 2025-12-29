@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Phone, Mail, Calculator, CheckCircle } from 'lucide-react';
+import SEOHead from '../SEO/SEOHead';
 
 interface Package {
   name: string;
@@ -166,25 +167,6 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={metaDescription} />
-        <meta name="keywords" content={keywords} />
-        <link rel="canonical" href={canonicalHref} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={metaDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalHref} />
-        <meta property="og:locale" content="es_ES" />
-        <meta property="og:site_name" content="ReSona Events Valencia" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={metaDescription} />
-        <meta property="twitter:url" content={canonicalHref} />
-        
         {/* Schema FAQPage */}
         {faqSchema && (
           <script type="application/ld+json">
@@ -202,6 +184,13 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
           {breadcrumbSchema}
         </script>
       </Helmet>
+      
+      <SEOHead
+        title={title}
+        description={metaDescription}
+        keywords={keywords}
+        canonicalUrl={canonicalHref}
+      />
 
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
