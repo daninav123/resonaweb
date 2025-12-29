@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, CreditCard } from 'lucide-react';
+import { Mail, Phone, MapPin, CreditCard, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -122,9 +122,9 @@ const Footer = () => {
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
                   <Mail className="w-5 h-5 text-resona" />
                 </div>
-                <a href="mailto:info@resonaevents.com" className="text-gray-300 hover:text-resona transition text-sm">
-                  info@resonaevents.com
-                </a>
+                <Link to="/contacto" className="text-gray-300 hover:text-resona transition text-sm">
+                  Formulario de Contacto
+                </Link>
               </div>
             </div>
             
@@ -136,6 +136,46 @@ const Footer = () => {
               <div className="text-xs text-gray-400">
                 Tarjeta - PayPal - Transferencia
               </div>
+            </div>
+            
+            <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Síguenos</h4>
+            <div className="flex gap-3">
+              <a
+                href="https://www.facebook.com/resonaevents"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5 text-resona group-hover:text-white" />
+              </a>
+              <a
+                href="https://www.twitter.com/resonaevents"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                aria-label="Twitter"
+              >
+                <Twitter className="w-5 h-5 text-resona group-hover:text-white" />
+              </a>
+              <a
+                href="https://www.instagram.com/resonaevents"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5 text-resona group-hover:text-white" />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/resonaevents"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5 text-resona group-hover:text-white" />
+              </a>
             </div>
           </div>
         </div>

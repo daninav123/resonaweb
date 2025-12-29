@@ -63,23 +63,23 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       {/* Top Bar */}
-      <div className="bg-resona text-white py-2">
+      <div className="bg-gray-900 text-white py-2">
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
-            <span>Tel: +34 613 881 414</span>
-            <span className="hidden sm:inline">Email: info@resonaevents.com</span>
+            <span className="font-medium">Tel: +34 613 881 414</span>
+            <span className="hidden sm:inline font-medium">Email: info@resonaevents.com</span>
           </div>
           <div className="flex items-center gap-4">
             {!isAuthenticated ? (
               <>
-                <Link to="/login" className="hover:underline">Iniciar Sesion</Link>
-                <Link to="/register" className="hover:underline">Registrarse</Link>
+                <Link to="/login" className="hover:text-resona transition font-medium">Iniciar Sesion</Link>
+                <Link to="/register" className="hover:text-resona transition font-medium">Registrarse</Link>
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <span>Hola, {user?.firstName}</span>
-                <Link to="/cuenta" className="hover:underline">Mi Cuenta</Link>
-                <button onClick={handleLogout} className="hover:underline flex items-center gap-1">
+                <span className="font-medium">Hola, {user?.firstName}</span>
+                <Link to="/cuenta" className="hover:text-resona transition font-medium">Mi Cuenta</Link>
+                <button onClick={handleLogout} className="hover:text-resona transition flex items-center gap-1 font-medium">
                   <LogOut className="w-4 h-4" />
                   Salir
                 </button>
@@ -94,7 +94,7 @@ const Header = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.png" alt="ReSona Events" className="h-12 w-auto" />
+            <img src="/logo-resona.png" alt="ReSona Events Logo" width="48" height="48" className="h-12 w-12" />
             <div className="flex flex-col">
               <span
                 className="text-2xl font-bold"

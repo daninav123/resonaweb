@@ -45,10 +45,10 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="ReSona Events Valencia - Alquiler Profesional de Equipos Audiovisuales"
-        description="Alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED, equipos DJ. Servicio técnico completo con montaje e instalación. Presupuesto online gratis."
+        title="Alquiler Sonido e Iluminación Valencia | ReSona Events"
+        description="⭐ Alquiler Sonido e Iluminación Valencia desde 120€. Bodas, eventos, conciertos. ✓ Técnico incluido ✓ 15 años experiencia ☎ 613 88 14 14"
         keywords="alquiler sonido valencia, alquiler iluminación valencia, alquiler material eventos valencia, equipos audiovisuales valencia, sonido profesional valencia, iluminación eventos valencia, pantallas LED valencia, equipos DJ valencia, bodas valencia, conciertos valencia, eventos corporativos valencia"
-        ogImage="https://resonaevents.com/og-image.jpg"
+        ogImage="https://resonaevents.com/og-image.png"
         canonicalUrl="https://resonaevents.com/"
         schema={[
           getLocalBusinessSchema(),
@@ -247,6 +247,8 @@ const HomePage = () => {
                       <img
                         src={getImageUrl(product.mainImageUrl)}
                         alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos profesionales'} para eventos | ReSona Events Valencia`}
+                        width="400"
+                        height="300"
                         loading="lazy"
                         className="w-full h-48 object-contain bg-white group-hover:scale-105 transition"
                         onError={(e) => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Phone, Mail, Calculator, CheckCircle } from 'lucide-react';
 
@@ -54,8 +54,114 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   faqs,
   relatedServices,
 }) => {
-  const currentUrl = typeof window !== 'undefined' ? `https://resonaevents.com${window.location.pathname}` : '';
-  const canonicalHref = canonicalUrl || currentUrl;
+  // Memoizar URL para evitar recalcular en cada render
+  const currentUrl = useMemo(
+    () => typeof window !== 'undefined' ? `https://resonaevents.com${window.location.pathname}` : '',
+    []
+  );
+  const canonicalHref = useMemo(
+    () => canonicalUrl || currentUrl,
+    [canonicalUrl, currentUrl]
+  );
+
+  // Memoizar schema FAQPage
+  const faqSchema = useMemo(() => {
+    if (!faqs || faqs.length === 0) return null;
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    });
+  }, [faqs]);
+
+  // Memoizar schema Service + LocalBusiness
+  const serviceSchema = useMemo(() => {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": heroTitle,
+      "serviceType": heroTitle,
+      "description": heroSubtitle || `Servicio profesional de ${heroTitle} en Valencia`,
+      "provider": {
+        "@type": "LocalBusiness",
+        "@id": "https://resonaevents.com/#localbusiness",
+        "name": "ReSona Events",
+        "url": "https://resonaevents.com",
+        "image": "https://resonaevents.com/logo.png",
+        "telephone": "+34613881414",
+        "email": "info@resonaevents.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "C/ de l'Illa Cabrera, 13",
+          "addressLocality": "Valencia",
+          "postalCode": "46026",
+          "addressRegion": "Comunidad Valenciana",
+          "addressCountry": "ES"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "Valencia"
+        },
+        "priceRange": "€€",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "12",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Valencia"
+      },
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "serviceUrl": currentUrl,
+        "servicePhone": {
+          "@type": "ContactPoint",
+          "telephone": "+34613881414",
+          "contactType": "customer service",
+          "availableLanguage": ["Spanish", "English"]
+        }
+      }
+    });
+  }, [heroTitle, heroSubtitle, currentUrl]);
+
+  // Memoizar schema BreadcrumbList
+  const breadcrumbSchema = useMemo(() => {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://resonaevents.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Servicios",
+          "item": "https://resonaevents.com/servicios"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": heroTitle,
+          "item": currentUrl
+        }
+      ]
+    });
+  }, [heroTitle, currentUrl]);
   
   return (
     <>
@@ -80,103 +186,20 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         <meta property="twitter:url" content={canonicalHref} />
         
         {/* Schema FAQPage */}
-        {faqs && faqs.length > 0 && (
+        {faqSchema && (
           <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": faqs.map(faq => ({
-                "@type": "Question",
-                "name": faq.question,
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": faq.answer
-                }
-              }))
-            })}
+            {faqSchema}
           </script>
         )}
         
         {/* Schema Service + LocalBusiness */}
         <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Service",
-            "name": heroTitle,
-            "serviceType": heroTitle,
-            "description": heroSubtitle || `Servicio profesional de ${heroTitle} en Valencia`,
-            "provider": {
-              "@type": "LocalBusiness",
-              "@id": "https://resonaevents.com/#localbusiness",
-              "name": "ReSona Events",
-              "url": "https://resonaevents.com",
-              "image": "https://resonaevents.com/logo.png",
-              "telephone": "+34613881414",
-              "email": "info@resonaevents.com",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "C/ de l'Illa Cabrera, 13",
-                "addressLocality": "Valencia",
-                "postalCode": "46026",
-                "addressRegion": "Comunidad Valenciana",
-                "addressCountry": "ES"
-              },
-              "areaServed": {
-                "@type": "City",
-                "name": "Valencia"
-              },
-              "priceRange": "€€",
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "5.0",
-                "reviewCount": "12",
-                "bestRating": "5",
-                "worstRating": "1"
-              }
-            },
-            "areaServed": {
-              "@type": "City",
-              "name": "Valencia"
-            },
-            "availableChannel": {
-              "@type": "ServiceChannel",
-              "serviceUrl": currentUrl,
-              "servicePhone": {
-                "@type": "ContactPoint",
-                "telephone": "+34613881414",
-                "contactType": "customer service",
-                "availableLanguage": ["Spanish", "English"]
-              }
-            }
-          })}
+          {serviceSchema}
         </script>
         
         {/* Schema BreadcrumbList */}
         <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Inicio",
-                "item": "https://resonaevents.com"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Servicios",
-                "item": "https://resonaevents.com/servicios"
-              },
-              {
-                "@type": "ListItem",
-                "position": 3,
-                "name": heroTitle,
-                "item": currentUrl
-              }
-            ]
-          })}
+          {breadcrumbSchema}
         </script>
       </Helmet>
 
