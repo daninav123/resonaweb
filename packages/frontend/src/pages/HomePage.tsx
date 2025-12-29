@@ -103,7 +103,7 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <Link
                 to="/calculadora-evento"
-                className="group bg-white text-resona px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+                className="group bg-white text-blue-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
               >
                 <Calculator className="w-5 h-5" />
                 Calcula tu Presupuesto
@@ -343,7 +343,7 @@ const HomePage = () => {
               </div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Iluminación Valencia</h3>
               <p className="text-gray-600 text-sm mb-3">Focos LED, cabezas móviles, láseres. Desde 25€/día</p>
-              <span className="text-orange-600 text-sm font-semibold">Ver más →</span>
+              <span className="text-orange-700 text-sm font-semibold">Ver más →</span>
             </Link>
 
             {/* Sonido Bodas */}

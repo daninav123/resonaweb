@@ -98,7 +98,7 @@ const Header = () => {
             <div className="flex flex-col">
               <span
                 className="text-2xl font-bold"
-                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#5ebbff' }}
+                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#2b7bb9' }}
               >
                 ReSona
               </span>
