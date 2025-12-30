@@ -31,7 +31,7 @@ const SonidoBodasValenciaPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Sonido para Bodas en Valencia | Alquiler Equipos Profesionales"
+        title="Sonido Bodas Valencia | Técnico incluido | ReSona"
         description="Alquiler de sonido profesional para bodas en Valencia. Ceremonia, banquete y fiesta con equipos de alta calidad. Microfonía inalámbrica y técnico incluido. Más de 500 bodas realizadas. ☎️ 613881414"
         keywords="sonido bodas valencia, alquiler sonido boda valencia, equipos audio bodas valencia, microfono boda valencia, sonido ceremonia valencia, sonido banquete valencia, musica boda valencia"
         canonicalUrl="https://resonaevents.com/sonido-bodas-valencia"

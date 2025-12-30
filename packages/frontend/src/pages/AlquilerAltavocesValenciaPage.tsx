@@ -43,7 +43,7 @@ const AlquilerAltavocesValenciaPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Alquiler Altavoces Valencia 🔊 Desde 35€/día | JBL, QSC, Yamaha"
+        title="Alquiler Altavoces Valencia desde 35€/día | ReSona"
         description="✅ Altavoces profesionales Valencia: JBL, QSC, Yamaha 400W-2000W. Instalación GRATIS en Valencia y área metropolitana. ⭐ 4.9/5. Eventos, bodas, fiestas. Presupuesto 24h ☎️ 613881414"
         keywords="alquiler altavoces valencia, alquiler altavoces profesionales valencia, alquiler altavoces activos valencia, alquiler altavoces eventos valencia, alquiler PA valencia, alquiler altavoces JBL valencia, alquiler altavoces baratos valencia, alquiler sonido valencia"
         canonicalUrl="https://resonaevents.com/alquiler-altavoces-valencia"
