@@ -290,6 +290,102 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Por qué elegirnos */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">
+            ¿Por Qué Elegir ReSona Events para tu Evento?
+          </h2>
+          
+          <p className="text-gray-700 text-lg text-center mb-12 max-w-3xl mx-auto leading-relaxed">
+            Con más de 15 años de experiencia en el sector audiovisual, en <strong>ReSona Events</strong> hemos participado en más de 2.000 eventos 
+            en Valencia y toda la Comunidad Valenciana. Desde bodas íntimas hasta conciertos con 1.000+ asistentes, festivales municipales 
+            y eventos corporativos de alto nivel.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="text-center">
+              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="font-bold text-xl text-gray-900 mb-3">Equipos Profesionales</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Trabajamos exclusivamente con marcas líderes: <strong>JBL, QSC, Yamaha, Behringer, Martin Audio, Showtec</strong>. 
+                Todo nuestro material pasa revisión técnica mensual y cumple normativas CE.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="font-bold text-xl text-gray-900 mb-3">Técnicos Especializados</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Nuestros técnicos están formados en eventos de 50 a 1.000 personas. Incluimos instalación, configuración, 
+                operación durante el evento y recogida posterior. <strong>Servicio completo llave en mano</strong>.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="font-bold text-xl text-gray-900 mb-3">Cobertura Total Valencia</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Servicio en <strong>Valencia capital, Torrent, Paterna, Mislata, Burjassot, Manises, Aldaia</strong> y toda 
+                el área metropolitana. Transporte e instalación incluidos sin coste adicional en la mayoría de zonas.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Cómo Funciona Nuestro Servicio</h3>
+            
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="bg-resona text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                  1
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Solicita Presupuesto</h4>
+                <p className="text-sm text-gray-600">
+                  Usa nuestra calculadora online o llámanos al 613 88 14 14. Presupuesto gratis en menos de 24h.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-resona text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                  2
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Confirma tu Reserva</h4>
+                <p className="text-sm text-gray-600">
+                  Revisamos disponibilidad, confirmamos fechas y equipos. Pago online seguro o transferencia bancaria.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-resona text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                  3
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Entrega e Instalación</h4>
+                <p className="text-sm text-gray-600">
+                  Llevamos todo al lugar del evento. Instalación, configuración y pruebas de sonido incluidas.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-resona text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                  4
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Recogida Post-Evento</h4>
+                <p className="text-sm text-gray-600">
+                  Al finalizar, recogemos los equipos. Tú solo preocúpate de disfrutar tu evento.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Servicios Locales Valencia */}
       <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="container mx-auto px-4">
