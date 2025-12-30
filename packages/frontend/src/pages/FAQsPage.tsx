@@ -57,11 +57,29 @@ const FAQsPage = () => {
       />
 
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Preguntas Frecuentes</h1>
-        <p className="text-gray-700 mb-8">
-          Si no encuentras tu respuesta, puedes contactar con nosotros o usar la calculadora para preparar un
-          presupuesto.
-        </p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Preguntas Frecuentes sobre Alquiler de Equipos</h1>
+        
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+          <p className="text-gray-700 leading-relaxed mb-4">
+            En <strong>ReSona Events</strong> llevamos más de 15 años proporcionando equipos de sonido, iluminación y audiovisuales 
+            profesionales para eventos en Valencia y toda la Comunidad Valenciana. Durante este tiempo, hemos trabajado en más de 
+            2.000 eventos, desde bodas íntimas hasta conciertos con 1.000+ asistentes, eventos corporativos, festivales municipales 
+            y celebraciones privadas.
+          </p>
+          
+          <p className="text-gray-700 leading-relaxed mb-4">
+            Sabemos que planificar un evento puede generar muchas dudas, especialmente si es la primera vez que alquilas equipos 
+            audiovisuales. Por eso, hemos recopilado las preguntas más frecuentes que nos hacen nuestros clientes sobre <strong>reservas, 
+            transporte, instalación, precios, garantías y logística</strong>. Nuestro objetivo es que tengas toda la información clara 
+            desde el primer momento.
+          </p>
+          
+          <p className="text-gray-700 leading-relaxed">
+            Si no encuentras tu respuesta aquí, puedes <strong>contactarnos directamente por teléfono (613 88 14 14)</strong>, 
+            usar nuestro <strong>formulario de contacto</strong>, o probar la <strong>calculadora de eventos</strong> para obtener 
+            un presupuesto personalizado en menos de 2 minutos. Respondemos todas las consultas en menos de 24 horas.
+          </p>
+        </div>
 
         <div className="flex flex-wrap gap-3 mb-10">
           <Link
@@ -84,7 +102,7 @@ const FAQsPage = () => {
           </Link>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 mb-12">
           {faqs.map((faq) => (
             <details key={faq.question} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               <summary className="cursor-pointer select-none font-semibold text-gray-900">
@@ -93,6 +111,33 @@ const FAQsPage = () => {
               <div className="mt-3 text-gray-700 leading-relaxed">{faq.answer}</div>
             </details>
           ))}
+        </div>
+
+        {/* Información adicional */}
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 border border-blue-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sobre ReSona Events Valencia</h2>
+          
+          <div className="space-y-4 text-gray-700">
+            <p className="leading-relaxed">
+              <strong>ReSona Events</strong> es una empresa especializada en el <strong>alquiler profesional de equipos de sonido, 
+              iluminación, audiovisuales y escenarios</strong> para todo tipo de eventos en la provincia de Valencia. Con sede en 
+              Valencia capital, ofrecemos servicio completo en toda la Comunidad Valenciana, incluyendo <strong>Valencia ciudad, 
+              Torrent, Paterna, Mislata, Burjassot, Manises, Aldaia, Quart de Poblet, Xirivella</strong> y el resto del área metropolitana.
+            </p>
+            
+            <p className="leading-relaxed">
+              Disponemos de un amplio catálogo con más de <strong>500 productos profesionales</strong> de las mejores marcas del mercado: 
+              <strong>JBL, QSC, Yamaha, Behringer, Mackie, Martin Audio, Showtec, Chauvet</strong> y muchas más. Todo nuestro equipamiento 
+              pasa revisión técnica mensual y cumple con las normativas CE vigentes.
+            </p>
+            
+            <p className="leading-relaxed">
+              Nuestros servicios incluyen <strong>asesoramiento técnico personalizado, transporte, instalación, configuración, operación 
+              durante el evento y recogida posterior</strong>. Trabajamos con particulares, empresas, ayuntamientos, productoras y 
+              organizadores de eventos. Ofrecemos <strong>presupuestos sin compromiso</strong> y tarifas especiales para clientes 
+              recurrentes y eventos de larga duración.
+            </p>
+          </div>
         </div>
       </div>
     </div>
