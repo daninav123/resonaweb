@@ -43,6 +43,9 @@ const ProductDetailPage = () => {
   // Redirigir automáticamente si el producto no existe
   useEffect(() => {
     if (error || (!isLoading && !product)) {
+      // Establecer status 404 en el head
+      document.title = '404 - Producto no encontrado | ReSona Events';
+      
       const timer = setTimeout(() => {
         navigate('/productos');
       }, 3000);
@@ -91,21 +94,23 @@ const ProductDetailPage = () => {
     );
   }
 
-  if (error || !product) {
+  if (error || (!isLoading && !product)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Producto no encontrado</h2>
-          <p className="text-gray-600 mb-4">Redirigiendo al catálogo en 3 segundos...</p>
-          <button
-            onClick={() => navigate('/productos')}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            Ir al catálogo ahora
-          </button>
+      <>
+        <SEOHead
+          title="404 - Producto no encontrado"
+          description="El producto que buscas no está disponible. Explora nuestro catálogo completo."
+          noindex={true}
+        />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Producto no encontrado</h1>
+            <p className="text-gray-600 mb-4">El producto que buscas no existe o ha sido eliminado.</p>
+            <p className="text-sm text-gray-500">Serás redirigido al catálogo en 3 segundos...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 

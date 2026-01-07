@@ -18,8 +18,13 @@ Allow: /api/v1/blog
 Allow: /sitemap.xml
 Allow: /rss
 
-# Sitemap
+# Sitemap dinámico (generado desde backend)
 Sitemap: https://resonaevents.com/sitemap.xml
+# El sitemap incluye automáticamente:
+# - Todas las páginas principales y servicios
+# - Productos activos (actualizados en tiempo real)
+# - Packs activos
+# - Posts del blog publicados
 
 # Crawl-delay (cortesía)
 Crawl-delay: 1
