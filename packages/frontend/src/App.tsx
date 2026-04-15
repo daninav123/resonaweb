@@ -69,6 +69,7 @@ const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManagerNew'
 const BackupManager = lazy(() => import('./pages/admin/BackupManager'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
 const StockManager = lazy(() => import('./pages/admin/StockManager'));
+const InventoryManager = lazy(() => import('./pages/admin/InventoryManager'));
 const AdminQuoteRequestsPage = lazy(() => import('./pages/admin/QuoteRequestsManager'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
@@ -317,6 +318,7 @@ function App() {
               <Route path="/admin/extra-categories" element={<AdminLayout><ExtraCategoriesManager /></AdminLayout>} />
               <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
               <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
+              <Route path="/admin/inventory" element={<AdminLayout><InventoryManager /></AdminLayout>} />
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />

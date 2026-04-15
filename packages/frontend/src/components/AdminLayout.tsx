@@ -29,7 +29,8 @@ import {
   ChevronDown,
   BarChart4,
   Zap,
-  PieChart
+  PieChart,
+  Barcode
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -106,6 +107,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
         { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
         { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
+        { path: '/admin/inventory', icon: Barcode, label: 'Inventario Unidades' },
       ]
     },
     {

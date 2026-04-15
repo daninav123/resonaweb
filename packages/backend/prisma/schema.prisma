@@ -464,6 +464,9 @@ model Product {
   // Historial de compras (lotes)
   purchases ProductPurchase[]
 
+  // Unidades físicas con código de barras
+  units ProductUnit[]
+
   @@index([categoryId])
   @@index([extraCategoryId])
   @@index([slug])
@@ -725,6 +728,9 @@ model Order {
 
   // Presupuesto relacionado (si se convirtió de presupuesto)
   budget Budget?
+
+  // Unidades físicas asignadas a este pedido
+  assignedUnits ProductUnit[] @relation("CurrentUnitOrder")
 
   @@index([userId])
   @@index([status])
@@ -1876,6 +1882,129 @@ model BudgetItem {
   @@index([sectionId])
   @@index([productId])
   @@map("budget_items")
+}
+
+// ============= SISTEMA DE INVENTARIO POR UNIDADES (CÓDIGOS DE BARRAS) =============
+
+enum UnitStatus {
+  AVAILABLE      // Disponible para alquilar
+  IN_USE         // Actualmente en un pedido
+  BROKEN         // Roto / averiado
+  UNDER_REPAIR   // En reparación
+  RETIRED        // Retirado / dado de baja
+  LOST           // Perdido
+}
+
+enum UnitCondition {
+  NEW        // Nueva / sin uso
+  GOOD       // Buen estado
+  FAIR       // Estado aceptable
+  POOR       // Estado malo (funciona pero visible deterioro)
+}
+
+enum UnitEventType {
+  CREATED        // Unidad creada en el sistema
+  CHECKED_OUT    // Salida para un pedido
+  CHECKED_IN     // Entrada de vuelta de un pedido
+  BROKEN         // Registrada como rota
+  REPAIR_START   // Enviada a reparar
+  REPAIR_END     // Vuelve de reparación
+  MAINTENANCE    // Mantenimiento preventivo
+  LOST           // Marcada como perdida
+  RETIRED        // Dada de baja
+  NOTE           // Nota manual
+  CONDITION_CHANGE // Cambio de estado de condición
+}
+
+model ProductUnit {
+  id        String @id @default(uuid())
+
+  // Producto al que pertenece
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Identificación
+  barcode      String  @unique // Ej: RES-ALTEA-001 (generado automáticamente)
+  serialNumber String? // Número de serie del fabricante
+  internalRef  String? // Referencia interna adicional
+
+  // Estado y condición
+  status    UnitStatus    @default(AVAILABLE)
+  condition UnitCondition @default(NEW)
+
+  // Información de compra
+  purchaseDate  DateTime?
+  purchasePrice Decimal?  @db.Decimal(10, 2)
+  supplier      String?
+  invoiceRef    String?   // Referencia factura de compra
+  warrantyUntil DateTime? // Fecha de fin de garantía
+
+  // Localización actual (cuando no está en uso)
+  location String? @default("Almacén") // "Almacén", "Taller", etc.
+  notes    String? @db.Text
+
+  // Estadísticas
+  totalUses     Int @default(0) // Número de veces alquilada
+  totalRepairs  Int @default(0) // Número de reparaciones
+
+  // Última revisión
+  lastCheckedAt   DateTime?
+  lastCheckedBy   String?
+
+  // Pedido actual (si status = IN_USE)
+  currentOrderId String?
+  currentOrder   Order?  @relation("CurrentUnitOrder", fields: [currentOrderId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Historial de eventos
+  events UnitEvent[]
+
+  @@index([productId])
+  @@index([barcode])
+  @@index([status])
+  @@index([currentOrderId])
+  @@map("product_units")
+}
+
+model UnitEvent {
+  id     String      @id @default(uuid())
+  unitId String
+  unit   ProductUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  type UnitEventType
+
+  // Pedido relacionado (si aplica)
+  orderId     String?
+  orderNumber String?
+
+  // Descripción del evento
+  description String  @db.Text
+  notes       String? @db.Text
+
+  // Para reparaciones
+  repairShop   String?           // Taller donde se repara
+  repairCost   Decimal?          @db.Decimal(10, 2)
+  estimatedReturn DateTime?       // Fecha estimada de vuelta
+
+  // Para cambios de condición
+  conditionBefore UnitCondition?
+  conditionAfter  UnitCondition?
+
+  // Usuario que registró el evento
+  performedBy   String? // ID del usuario admin
+  performedByName String? // Nombre (para mostrar)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([unitId])
+  @@index([type])
+  @@index([orderId])
+  @@index([createdAt])
+  @@map("unit_events")
 }
 
 // ============= SEO PAGES =============
