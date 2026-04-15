@@ -187,10 +187,14 @@ function App() {
             <Route path="/packs" element={<Navigate to="/productos?category=packs" replace />} />
             <Route path="/packs/:slug" element={<Layout><PackDetailPage /></Layout>} />
             <Route path="/carrito" element={<Layout><CartPage /></Layout>} />
-            <Route path="/test-stock" element={<Layout><TestStockPage /></Layout>} />
-            <Route path="/test-stock-e2e" element={<Layout><TestStockE2EPage /></Layout>} />
-            <Route path="/test-checkout-e2e" element={<Layout><TestCheckoutE2EPage /></Layout>} />
-            <Route path="/test-full-order" element={<Layout><TestFullOrderFlowPage /></Layout>} />
+            {import.meta.env.DEV && (
+              <>
+                <Route path="/test-stock" element={<Layout><TestStockPage /></Layout>} />
+                <Route path="/test-stock-e2e" element={<Layout><TestStockE2EPage /></Layout>} />
+                <Route path="/test-checkout-e2e" element={<Layout><TestCheckoutE2EPage /></Layout>} />
+                <Route path="/test-full-order" element={<Layout><TestFullOrderFlowPage /></Layout>} />
+              </>
+            )}
             <Route path="/calculadora-evento" element={<Layout><EventCalculatorPage /></Layout>} />
             <Route path="/calculadora-eventos" element={<Navigate to="/calculadora-evento" replace />} />
             <Route path="/calculadora" element={<Navigate to="/calculadora-evento" replace />} />

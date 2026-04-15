@@ -26,7 +26,7 @@ export class FacturaeService {
                 billingData: true
               }
             },
-            orderItems: {
+            items: {
               include: {
                 product: true
               }
@@ -40,7 +40,7 @@ export class FacturaeService {
       throw new AppError(404, 'Factura no encontrada', 'INVOICE_NOT_FOUND');
     }
 
-    if (!invoice.order.user.billingData) {
+    if (!(invoice as any).order?.user?.billingData) {
       throw new AppError(400, 'El cliente no tiene datos de facturación', 'NO_BILLING_DATA');
     }
 

@@ -14,7 +14,6 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  token: string | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -44,7 +43,6 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
-      token: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
@@ -79,16 +77,12 @@ export const useAuthStore = create<AuthState>()(
           
           set({
             user,
-            token: accessToken,
             accessToken,
             refreshToken,
             isAuthenticated: true,
             loading: false,
             error: null,
           });
-          
-          console.log('✅ Estado actualizado en Zustand');
-          console.log('💾 Verificando localStorage...', localStorage.getItem('auth-storage'));
           
           return true;
         } catch (error: any) {
@@ -122,7 +116,6 @@ export const useAuthStore = create<AuthState>()(
           
           set({
             user,
-            token: accessToken,
             accessToken,
             refreshToken,
             isAuthenticated: true,
@@ -156,7 +149,6 @@ export const useAuthStore = create<AuthState>()(
         // Clear state
         set({
           user: null,
-          token: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
@@ -180,7 +172,6 @@ export const useAuthStore = create<AuthState>()(
           }
           
           set({
-            token: accessToken,
             accessToken,
             refreshToken: newRefreshToken,
           });
@@ -212,7 +203,6 @@ export const useAuthStore = create<AuthState>()(
               if (token && user) {
                 set({
                   accessToken: token,
-                  token: token,
                   refreshToken: refreshToken,
                   user: user,
                   isAuthenticated: true,
@@ -232,7 +222,6 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             accessToken: null,
             refreshToken: null,
-            token: null
           });
           // Limpiar headers
           if (api.removeAuthToken) {
@@ -257,21 +246,18 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             loading: false,
             accessToken: token,
-            token: token,
           });
         } catch (error: any) {
           const status = error?.response?.status;
           
           // Si es 401, limpiar todo y resetear estado
           if (status === 401) {
-            console.log('❌ Token inválido o expirado (401), limpiando sesión');
             set({ 
               isAuthenticated: false, 
               loading: false,
               user: null,
               accessToken: null,
               refreshToken: null,
-              token: null
             });
             // Limpiar localStorage y headers
             localStorage.removeItem('auth-storage');
@@ -297,7 +283,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       partialize: (state) => ({
-        token: state.token,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         user: state.user,

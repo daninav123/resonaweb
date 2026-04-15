@@ -453,7 +453,7 @@ class QuoteRequestController {
           depositStatus: 'PENDING', // Estado inicial de la fianza
           
           // Estado
-          status: 'CONFIRMED',
+          status: 'PENDING',
           paymentStatus: 'PENDING',
           
           // Items

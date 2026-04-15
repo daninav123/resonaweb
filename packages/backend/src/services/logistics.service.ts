@@ -47,7 +47,7 @@ export class LogisticsService {
             lte: endOfDay,
           },
           status: {
-            in: ['CONFIRMED', 'PREPARING', 'READY'],
+            in: ['IN_PROGRESS'],
           },
         },
         include: {
@@ -78,7 +78,7 @@ export class LogisticsService {
 
       orders.forEach(order => {
         // Extract zone from delivery address (simplified)
-        const zone = this.extractZoneFromAddress(((order.deliveryAddress || {}) || {}));
+        const zone = this.extractZoneFromAddress(JSON.stringify(order.deliveryAddress || {}));
         const zoneOrders = ordersByZone.get(zone) || [];
         zoneOrders.push(order);
         ordersByZone.set(zone, zoneOrders);
@@ -258,7 +258,7 @@ export class LogisticsService {
         actualDate: delivery.actualDate,
         currentLocation: this.getCurrentLocation(delivery),
         estimatedArrival: this.getEstimatedArrival(delivery),
-        deliveryAddress: ((order.deliveryAddress || {}) || {}),
+        deliveryAddress: (((delivery as any).order?.deliveryAddress || {}) || {}),
         signature: delivery.signature,
       };
 
@@ -295,7 +295,7 @@ export class LogisticsService {
       await prisma.order.update({
         where: { id: orderId },
         data: {
-          status: 'DELIVERED',
+          status: 'COMPLETED',
           deliveredAt: new Date(),
         },
       });
@@ -329,7 +329,7 @@ export class LogisticsService {
       const updatedOrder = await prisma.order.update({
         where: { id: orderId },
         data: {
-          status: 'DELIVERED',
+          status: 'COMPLETED',
           deliveredAt: new Date(),
         },
       });
@@ -452,7 +452,7 @@ export class LogisticsService {
       const orders = await prisma.order.findMany({
         where: {
           endDate: date,
-          status: 'DELIVERED',
+          status: 'COMPLETED',
         },
         include: {
           user: {

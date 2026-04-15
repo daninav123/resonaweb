@@ -162,7 +162,7 @@ export class StripeService {
         where: { id: orderId },
         data: {
           paymentStatus: 'COMPLETED',
-          status: 'CONFIRMED',
+          status: 'IN_PROGRESS',
           paidAt: new Date(),
         },
         include: {
@@ -528,18 +528,20 @@ export class StripeService {
       // Convertir a centavos
       const amount = Math.round(depositAmount * 100);
 
-      // Crear un Payment Link
+      // Crear precio dinámico para la fianza
+      const price = await this.stripe.prices.create({
+        currency: 'eur',
+        unit_amount: amount,
+        product_data: {
+          name: `Fianza - Pedido ${order.orderNumber}`,
+        },
+      });
+
+      // Crear un Payment Link con el price creado
       const paymentLink = await this.stripe.paymentLinks.create({
         line_items: [
           {
-            price_data: {
-              currency: 'eur',
-              product_data: {
-                name: `Fianza - Pedido ${order.orderNumber}`,
-                description: `Cobro de fianza para el pedido ${order.orderNumber}`,
-              },
-              unit_amount: amount,
-            },
+            price: price.id,
             quantity: 1,
           },
         ],

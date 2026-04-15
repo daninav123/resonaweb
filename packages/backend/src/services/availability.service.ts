@@ -64,7 +64,7 @@ export class AvailabilityService {
             endDate: { gte: startDate }
           }
         },
-        select: { quantity: true }
+        select: { quantity: true, startDate: true, endDate: true }
       });
 
       // Calculate reserved quantity for each day
@@ -305,7 +305,7 @@ export class AvailabilityService {
             gte: new Date(),
           },
           status: {
-            notIn: ['CANCELLED', 'RETURNED'],
+            notIn: ['CANCELLED'],
           },
         },
         select: {
@@ -345,11 +345,11 @@ export class AvailabilityService {
       const product = await prisma.product.findUnique({
         where: { id: productId },
         include: {
-          items: {
+          orderItems: {
             where: {
               order: {
                 status: {
-                  notIn: ['CANCELLED', 'RETURNED'],
+                  notIn: ['CANCELLED'],
                 },
               },
               startDate: {
@@ -368,9 +368,9 @@ export class AvailabilityService {
         throw new AppError(404, 'Producto no encontrado', 'PRODUCT_NOT_FOUND');
       }
 
-      const totalBookings = ((product as any).items || []).length;
-      const totalQuantityBooked = ((product as any).items || []).reduce((sum, item) => sum + item.quantity, 0);
-      const averageBookingDuration = ((product as any).items || []).reduce((sum, item) => {
+      const totalBookings = ((product as any).orderItems || []).length;
+      const totalQuantityBooked = ((product as any).orderItems || []).reduce((sum: number, item: any) => sum + item.quantity, 0);
+      const averageBookingDuration = ((product as any).orderItems || []).reduce((sum: number, item: any) => {
         const days = Math.ceil(
           (new Date(item.endDate).getTime() - new Date(item.startDate).getTime()) / 
           (1000 * 60 * 60 * 24)

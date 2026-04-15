@@ -503,8 +503,8 @@ export class CartService {
             startDate,
             endDate,
             pricePerDay: product.pricePerDay,
-            shippingCost: product.shippingCost,
-            installationCost: product.installationCost
+            shippingCost: (product as any).shippingCost ?? 0,
+            installationCost: (product as any).installationCost ?? 0
           }
         });
       }

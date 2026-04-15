@@ -316,7 +316,7 @@ export class ProductService {
           slug: true,
           description: true,
           imageUrl: true,
-          pricePerDay: true,
+          basePricePerDay: true,
           isActive: true,
         }
       });
@@ -330,7 +330,7 @@ export class ProductService {
         slug: pack.slug,
         description: pack.description,
         mainImageUrl: pack.imageUrl,
-        pricePerDay: pack.pricePerDay,
+        pricePerDay: pack.basePricePerDay,
         isPack: true, // Identificador especial
       }));
 
@@ -735,8 +735,8 @@ export class ProductService {
     // Update stock status if stock changes
     if (cleanData.stock !== undefined) {
       if (cleanData.stock === 0) {
-        cleanData.stockStatus = 'OUT_OF_STOCK';
-      } else if (cleanData.stock > 0 && existingProduct.stockStatus === 'OUT_OF_STOCK') {
+        cleanData.stockStatus = 'DISCONTINUED';
+      } else if (cleanData.stock > 0 && existingProduct.stockStatus === 'DISCONTINUED') {
         cleanData.stockStatus = 'IN_STOCK';
       }
     }

@@ -45,18 +45,9 @@ class OrderExpirationService {
       // Buscar pedidos pendientes que deban expirar
       const pendingOrders = await prisma.order.findMany({
         where: {
-          // Pedidos pendientes de confirmación o pago
-          OR: [
-            {
-              status: OrderStatus.PENDING,
-              paymentStatus: PaymentStatus.PENDING
-            },
-            {
-              status: OrderStatus.CONFIRMED,
-              paymentStatus: PaymentStatus.PENDING,
-              upfrontPaymentStatus: PaymentStatus.PENDING
-            }
-          ],
+          // Pedidos PENDING sin pago completado
+          status: OrderStatus.PENDING,
+          paymentStatus: PaymentStatus.PENDING,
           // Creados hace más del tiempo de expiración
           createdAt: {
             lt: expirationTime

@@ -62,11 +62,11 @@ import { metricsMiddleware } from './middleware/metrics.middleware';
 
 // Import services
 import { logger } from './utils/logger';
-// import { setupEmailReminders } from './jobs/emailReminders.job';
 import { setupPublishScheduledPosts, setupDailyArticleGeneration } from './jobs/blog.job';
+import { setupEmailReminders } from './jobs/emailReminders.job';
 import { setupGMBPostGenerator } from './jobs/gmb-post-generator.job';
 import { setupInstallmentReminders } from './jobs/installmentReminders.job';
-// import { orderExpirationScheduler } from './schedulers/orderExpiration.scheduler';
+import { orderExpirationScheduler } from './schedulers/orderExpiration.scheduler';
 // import { initErrorTracking, getSentryRequestHandler, getSentryTracingHandler, getSentryErrorHandler } from './services/errorTracking.service';
 
 // Initialize Prisma
@@ -336,13 +336,12 @@ async function startServer() {
     }
 
     // Setup cron jobs for email reminders
-    // DESACTIVADO TEMPORALMENTE - Causaba crash en startup
-    // try {
-    //   setupEmailReminders();
-    //   logger.info('✅ Email reminders scheduled');
-    // } catch (e) {
-    //   logger.warn('⚠️  Email reminders setup failed:', e);
-    // }
+    try {
+      setupEmailReminders();
+      logger.info('✅ Email reminders scheduled (hourly)');
+    } catch (e) {
+      logger.warn('⚠️  Email reminders setup failed:', e);
+    }
 
     // Setup blog jobs
     try {
@@ -381,15 +380,12 @@ async function startServer() {
     }
 
     // Setup order expiration scheduler
-    // DESACTIVADO TEMPORALMENTE - Causaba crash en startup
-    // try {
-    //   orderExpirationScheduler.start();
-    //   logger.info('✅ Order expiration scheduler started');
-    // } catch (e) {
-    //   logger.warn('⚠️  Order expiration scheduler setup failed:', e);
-    // }
-    
-    logger.info('⚠️  Schedulers desactivados temporalmente');
+    try {
+      orderExpirationScheduler.start();
+      logger.info('✅ Order expiration scheduler started (every 5 min)');
+    } catch (e) {
+      logger.warn('⚠️  Order expiration scheduler setup failed:', e);
+    }
 
     // Start listening
     app.listen(PORT, () => {

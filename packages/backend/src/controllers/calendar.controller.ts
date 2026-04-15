@@ -138,7 +138,7 @@ export class CalendarController {
       // Contar pedidos por estado en el mes (con manejo de errores)
       let ordersByStatus = [];
       try {
-        ordersByStatus = await prisma.order.groupBy({
+        ordersByStatus = await (prisma.order.groupBy as any)({
           by: ['status'],
           where: {
             OR: [
@@ -184,7 +184,7 @@ export class CalendarController {
                 },
               },
             ],
-            paymentStatus: 'PAID',
+            paymentStatus: 'COMPLETED',
           },
           _sum: {
             total: true,

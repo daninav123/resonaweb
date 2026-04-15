@@ -553,15 +553,10 @@ export class OrderService {
 
       // Validate status transition
       const validTransitions: Record<OrderStatus, OrderStatus[]> = {
-        [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
-        [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
-        [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.CANCELLED],
-        [OrderStatus.READY]: [OrderStatus.IN_TRANSIT, OrderStatus.DELIVERED, OrderStatus.CANCELLED],
-        [OrderStatus.IN_TRANSIT]: [OrderStatus.DELIVERED, OrderStatus.CANCELLED],
-        [OrderStatus.DELIVERED]: [OrderStatus.COMPLETED, OrderStatus.RETURNED],
-        [OrderStatus.COMPLETED]: [OrderStatus.RETURNED],
+        [OrderStatus.PENDING]: [OrderStatus.IN_PROGRESS, OrderStatus.CANCELLED],
+        [OrderStatus.IN_PROGRESS]: [OrderStatus.COMPLETED, OrderStatus.CANCELLED],
+        [OrderStatus.COMPLETED]: [],
         [OrderStatus.CANCELLED]: [],
-        [OrderStatus.RETURNED]: [],
       };
 
       if (!validTransitions[order.status]?.includes(status)) {
@@ -577,8 +572,9 @@ export class OrderService {
         where: { id: orderId },
         data: { 
           status,
-          ...(status === OrderStatus.DELIVERED && { deliveredAt: new Date() }),
+          ...(status === OrderStatus.COMPLETED && { deliveredAt: new Date() }),
           ...(status === OrderStatus.COMPLETED && { completedAt: new Date() }),
+
           ...(status === OrderStatus.CANCELLED && { cancelledAt: new Date() }),
         },
         include: {
@@ -627,9 +623,9 @@ export class OrderService {
         throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
       }
 
-      // No permitir editar pedidos completados o entregados
-      if ([OrderStatus.COMPLETED, OrderStatus.DELIVERED].includes(existing.status as any)) {
-        throw new AppError(400, 'No se puede editar un pedido ya completado o entregado', 'CANNOT_EDIT');
+      // No permitir editar pedidos completados o cancelados
+      if ([OrderStatus.COMPLETED, OrderStatus.CANCELLED].includes(existing.status as any)) {
+        throw new AppError(400, 'No se puede editar un pedido ya completado o cancelado', 'CANNOT_EDIT');
       }
 
       // Validar que queden al menos 24 horas antes del evento
@@ -698,8 +694,8 @@ export class OrderService {
         throw new AppError(400, 'El pedido ya está cancelado', 'ALREADY_CANCELLED');
       }
 
-      if ([OrderStatus.DELIVERED, OrderStatus.COMPLETED].includes(order.status as any)) {
-        throw new AppError(400, 'No se puede cancelar un pedido entregado o completado', 'CANNOT_CANCEL');
+      if (order.status === OrderStatus.COMPLETED) {
+        throw new AppError(400, 'No se puede cancelar un pedido completado', 'CANNOT_CANCEL');
       }
 
       // Calcular si se puede reembolsar (más de 7 días antes del evento)
@@ -920,7 +916,7 @@ export class OrderService {
             gte: startDate,
           },
           status: {
-            in: [OrderStatus.COMPLETED, OrderStatus.DELIVERED],
+            in: [OrderStatus.COMPLETED],
           },
         },
         _sum: {
@@ -956,7 +952,7 @@ export class OrderService {
             lte: endDate,
           },
           status: {
-            in: [OrderStatus.CONFIRMED, OrderStatus.PREPARING, OrderStatus.READY],
+            in: [OrderStatus.IN_PROGRESS],
           },
         },
         orderBy: {
@@ -1015,7 +1011,7 @@ export class OrderService {
       const updatedOrder = await prisma.order.update({
         where: { id: orderId },
         data: {
-          status: OrderStatus.RETURNED,
+          status: OrderStatus.COMPLETED,
           depositStatus: 'RELEASED', // Liberar fianza
           returnedAt: new Date(),
           returnNotes: returnData.notes,

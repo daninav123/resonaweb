@@ -3,6 +3,7 @@ import { prisma } from '../index';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import PDFDocument from 'pdfkit';
+import puppeteer from 'puppeteer';
 import handlebars from 'handlebars';
 import fs from 'fs/promises';
 import path from 'path';
@@ -297,7 +298,7 @@ export class InvoiceService {
 
       await browser.close();
 
-      return pdfBuffer;
+      return Buffer.from(pdfBuffer);
     } catch (error) {
       logger.error('Error creating PDF:', error);
       throw error;

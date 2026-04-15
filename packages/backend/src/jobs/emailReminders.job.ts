@@ -63,7 +63,7 @@ async function send3DayReminders() {
         gte: startOfDay(in3Days),
         lte: endOfDay(in3Days),
       },
-      status: 'CONFIRMED',
+      status: 'IN_PROGRESS',
     },
     include: { user: true },
   });
@@ -90,7 +90,7 @@ async function send1DayReminders() {
         gte: startOfDay(tomorrow),
         lte: endOfDay(tomorrow),
       },
-      status: { in: ['CONFIRMED', 'READY'] },
+      status: 'IN_PROGRESS',
     },
     include: { user: true },
   });
@@ -117,7 +117,7 @@ async function sendDayOfEventReminders() {
         gte: startOfDay(today),
         lte: endOfDay(today),
       },
-      status: { in: ['READY', 'IN_TRANSIT'] },
+      status: 'IN_PROGRESS',
     },
     include: { user: true },
   });
@@ -144,7 +144,7 @@ async function sendReturnReminders() {
         gte: startOfDay(tomorrow),
         lte: endOfDay(tomorrow),
       },
-      status: 'DELIVERED',
+      status: 'COMPLETED',
     },
     include: { user: true },
   });

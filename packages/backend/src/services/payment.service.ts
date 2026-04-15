@@ -217,7 +217,7 @@ export class PaymentService {
           data: {
             paymentStatus: status,
             ...(status === PaymentStatus.SUCCEEDED && {
-              status: 'CONFIRMED',
+              status: 'IN_PROGRESS',
               confirmedAt: new Date(),
             }),
           },

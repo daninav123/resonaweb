@@ -34,15 +34,11 @@ class ApiClient {
     // Request interceptor - add auth token
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        // NO añadir token a endpoints de autenticación ni a endpoints públicos
+        // NO añadir token a endpoints de autenticación
         const isAuthEndpoint = config.url?.includes('/auth/login') || 
                               config.url?.includes('/auth/register');
-        const isPublicEndpoint = config.url?.includes('/packs') ||
-                                config.url?.includes('/products') ||
-                                config.url?.includes('/categories') ||
-                                config.url?.includes('/calculator-config');
         
-        if (!isAuthEndpoint && !isPublicEndpoint) {
+        if (!isAuthEndpoint) {
           const token = useAuthStore.getState().accessToken;
           if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
