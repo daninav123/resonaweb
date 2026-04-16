@@ -30,7 +30,8 @@ import {
   BarChart4,
   Zap,
   PieChart,
-  Barcode
+  Barcode,
+  Briefcase
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -95,6 +96,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: ShoppingCart,
       items: [
         { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
+        { path: '/admin/crm', icon: Users, label: 'CRM Clientes' },
         { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
         { path: '/admin/coupons', icon: Tag, label: 'Cupones' },
         { path: '/admin/refunds', icon: DollarSign, label: 'Gestión de Reembolsos' },
@@ -104,10 +106,15 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       title: 'Operaciones',
       icon: Zap,
       items: [
+        { path: '/admin/events', icon: Briefcase, label: 'Gestión de Eventos' },
+        { path: '/admin/resource-calendar', icon: Calendar, label: 'Calendario Recursos' },
         { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
+        { path: '/admin/staff-hr', icon: Users, label: 'Personal / RRHH' },
         { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
+        { path: '/admin/vehicles', icon: Truck, label: 'Flota Vehículos' },
         { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
         { path: '/admin/inventory', icon: Barcode, label: 'Inventario Unidades' },
+        { path: '/admin/warehouse-locations', icon: Grid, label: 'Almacén Ubicaciones' },
       ]
     },
     {
@@ -116,7 +123,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       items: [
         { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
         { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
+        { path: '/admin/contracts-mgmt', icon: FileText, label: 'Contratos' },
         { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
+        { path: '/admin/recurring-expenses', icon: DollarSign, label: 'Gastos Recurrentes' },
       ]
     },
     {

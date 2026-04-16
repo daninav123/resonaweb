@@ -47,7 +47,6 @@
     "archiver": "^6.0.2",
     "axios": "^1.13.2",
     "bcrypt": "^5.1.1",
-    "bcryptjs": "^3.0.3",
     "bull": "^4.11.5",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",

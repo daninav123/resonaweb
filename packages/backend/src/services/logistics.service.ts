@@ -11,12 +11,7 @@ interface DeliveryRoute {
   estimatedTime: number;
 }
 
-interface Vehicle {
-  id: string;
-  name: string;
-  capacity: number;
-  available: boolean;
-}
+// Vehicle ahora usa el modelo Prisma directamente
 
 interface DeliveryAssignment {
   orderId: string;
@@ -411,18 +406,12 @@ export class LogisticsService {
   /**
    * Get available vehicles
    */
-  async getAvailableVehicles(date: Date): Promise<Vehicle[]> {
+  async getAvailableVehicles(date: Date): Promise<any[]> {
     try {
-      // In a real system, this would query a vehicles table
-      // For now, return mock data
-      const vehicles: Vehicle[] = [
-        { id: 'v1', name: 'Furgoneta 1', capacity: 100, available: true },
-        { id: 'v2', name: 'Furgoneta 2', capacity: 150, available: true },
-        { id: 'v3', name: 'Camión Pequeño', capacity: 300, available: false },
-        { id: 'v4', name: 'Camión Grande', capacity: 500, available: true },
-      ];
-
-      return vehicles.filter(v => v.available);
+      return prisma.vehicle.findMany({
+        where: { status: 'available' },
+        orderBy: { brand: 'asc' },
+      });
     } catch (error) {
       logger.error('Error getting available vehicles:', error);
       throw error;

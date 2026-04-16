@@ -29,24 +29,21 @@ class BillingService {
    * Get billing data for current user
    */
   async getBillingData(): Promise<BillingData | null> {
-    const response = await api.get('/billing');
-    return response.data;
+    return api.get<BillingData | null>('/billing');
   }
 
   /**
    * Create or update billing data
    */
   async saveBillingData(data: Partial<BillingData>): Promise<BillingData> {
-    const response = await api.post('/billing', data);
-    return response.data;
+    return api.post<BillingData>('/billing', data);
   }
 
   /**
    * Update billing data
    */
   async updateBillingData(data: Partial<BillingData>): Promise<BillingData> {
-    const response = await api.put('/billing', data);
-    return response.data;
+    return api.put<BillingData>('/billing', data);
   }
 
   /**
@@ -60,8 +57,7 @@ class BillingService {
    * Validate Spanish tax ID (NIF/CIF/NIE)
    */
   async validateTaxId(taxId: string, type: string = 'NIF'): Promise<ValidateTaxIdResponse> {
-    const response = await api.post('/billing/validate-tax-id', { taxId, type });
-    return response;
+    return api.post<ValidateTaxIdResponse>('/billing/validate-tax-id', { taxId, type });
   }
 }
 

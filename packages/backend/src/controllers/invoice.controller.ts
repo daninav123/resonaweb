@@ -3,7 +3,6 @@ import { invoiceService } from '../services/invoice.service';
 import { facturaeService } from '../services/facturae.service';
 import { AppError } from '../middleware/error.middleware';
 import archiver from 'archiver';
-import { PDFDocument } from 'pdfkit';
 
 interface AuthRequest extends Request {
   user?: any;

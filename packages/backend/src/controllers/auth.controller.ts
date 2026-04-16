@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service';
 import { AppError } from '../middleware/error.middleware';
 
+interface AuthRequest extends Request {
+  user?: any;
+  token?: string;
+}
+
 export class AuthController {
   /**
    * Register new user

@@ -245,6 +245,26 @@ export class AnalyticsController {
   }
 
   /**
+   * Get smart dashboard data (all widgets in one call)
+   */
+  async getSmartDashboard(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      }
+
+      if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+        throw new AppError(403, 'Solo administradores', 'FORBIDDEN');
+      }
+
+      const data = await analyticsService.getSmartDashboard();
+      res.json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get product amortization data
    */
   async getProductAmortization(req: AuthRequest, res: Response, next: NextFunction) {

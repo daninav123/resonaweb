@@ -50,8 +50,8 @@ const AdminQuoteRequestsPageV2 = () => {
   const { data: allRequests = [], isLoading, refetch } = useQuery({
     queryKey: ['quoteRequests'],
     queryFn: async () => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) throw new Error('No hay token');
       
@@ -69,8 +69,8 @@ const AdminQuoteRequestsPageV2 = () => {
   const { data: stats } = useQuery({
     queryKey: ['quoteStats'],
     queryFn: async () => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) throw new Error('No hay token');
       
@@ -87,8 +87,8 @@ const AdminQuoteRequestsPageV2 = () => {
   // Mutation para aceptar (crear pedido)
   const acceptMutation = useMutation({
     mutationFn: async (quoteId: string) => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) throw new Error('No hay token');
       
@@ -125,8 +125,8 @@ const AdminQuoteRequestsPageV2 = () => {
   // Mutation para rechazar (eliminar)
   const rejectMutation = useMutation({
     mutationFn: async (quoteId: string) => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) throw new Error('No hay token');
       

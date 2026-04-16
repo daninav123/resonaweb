@@ -51,7 +51,7 @@ const PaymentForm = ({ installmentId, amount, onSuccess }: { installmentId: stri
         // Confirmar el pago en el backend
         await api.post(`/installments/${installmentId}/confirm`, {
           paymentIntentId: paymentIntent.id,
-          chargeId: paymentIntent.charges?.data[0]?.id
+          chargeId: (paymentIntent as any).latest_charge || (paymentIntent as any).charges?.data[0]?.id
         });
         
         toast.success('Plazo pagado correctamente');

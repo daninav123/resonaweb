@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { logger } from '../utils/logger';
-import { generateBlogPost } from '../services/openai.service';
+import { generateBlogArticle as generateBlogPost } from '../services/openai.service';
 import fs from 'fs/promises';
 import path from 'path';
 

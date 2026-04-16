@@ -280,9 +280,8 @@ export class ProductController {
   async getRelatedProducts(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const limit = Number(req.query.limit) || 4;
       
-      const products = await productService.getRelatedProducts(id, limit);
+      const products = await productService.getRelatedProducts(id, null);
       
       res.json({ data: products });
     } catch (error) {

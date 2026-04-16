@@ -63,7 +63,7 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
           onSuccess(paymentIntent.id);
         } else if (paymentIntent.status === 'processing') {
           console.log('⏳ Pago en procesamiento...');
-          toast.info('El pago está siendo procesado');
+          toast('El pago está siendo procesado', { icon: 'ℹ️' });
           onSuccess(paymentIntent.id); // También llamar onSuccess para procesar el pago
         } else if (paymentIntent.status === 'requires_payment_method') {
           console.warn('⚠️ Se requiere método de pago');
@@ -71,7 +71,7 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
           onError('Se requiere método de pago');
         } else {
           console.warn('⚠️ Estado desconocido:', paymentIntent.status);
-          toast.warning(`Estado del pago: ${paymentIntent.status}`);
+          toast(`Estado del pago: ${paymentIntent.status}`, { icon: '⚠️' });
         }
       } else {
         console.error('❌ No hay error ni paymentIntent');

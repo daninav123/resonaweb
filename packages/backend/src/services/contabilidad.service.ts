@@ -1,5 +1,6 @@
 import { prisma } from '../index';
 import { logger } from '../utils/logger';
+import { recurringExpenseService } from './recurring.service';
 
 export class ContabilidadService {
   /**
@@ -98,6 +99,19 @@ export class ContabilidadService {
         ? ((currentMetrics.beneficio - previousMetrics.beneficio) / previousMetrics.beneficio) * 100
         : currentMetrics.beneficio > 0 ? 100 : 0;
 
+      // Sumar gastos recurrentes activos al período
+      let recurringTotal = 0;
+      try {
+        const recurringStats = await recurringExpenseService.getStats();
+        if (period === 'month') recurringTotal = recurringStats.monthlyTotal || 0;
+        else if (period === 'quarter') recurringTotal = (recurringStats.monthlyTotal || 0) * 3;
+        else recurringTotal = (recurringStats.monthlyTotal || 0) * 12;
+      } catch { /* tabla puede no existir aún */ }
+
+      currentMetrics.gastos += recurringTotal;
+      currentMetrics.gastosRecurrentes = recurringTotal;
+      currentMetrics.beneficio = currentMetrics.ingresos - currentMetrics.gastos;
+
       return {
         currentMonth: currentMetrics,
         previousMonth: previousMetrics,
@@ -162,6 +176,7 @@ export class ContabilidadService {
       costPersonal,
       costDepreciacion,
       costTransporte,
+      gastosRecurrentes: 0,
     };
   }
 

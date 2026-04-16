@@ -20,6 +20,7 @@ export interface EventPart {
   defaultDuration: number; // en horas
   soundLevel: ServiceLevel;
   lightingLevel: ServiceLevel;
+  price?: number; // Precio fijo (si aplica)
   // Precio variable según rangos de asistentes
   pricingRanges?: PricingRange[]; // Array de rangos de precio
   // Productos/materiales recomendados para esta parte

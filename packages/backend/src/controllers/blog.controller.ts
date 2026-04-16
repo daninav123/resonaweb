@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { blogService } from '../services/blog.service';
 import { BlogPostStatus } from '@prisma/client';
 

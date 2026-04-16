@@ -282,12 +282,33 @@ model User {
   stripeCustomerId String?
   taxId            String?
 
+  // CRM - Tipo y clasificacion
+  customerType    String?   // "particular", "empresa", "agencia", "venue"
+  tags            String[]  // Tags personalizables: ["VIP", "Frecuente", "Tech"]
+  scoring         Int       @default(0) // Score automatico 0-100
+  source          String?   // Origen: "web", "referido", "redes", "telefono"
+
+  // CRM - Seguimiento
+  lastContactDate DateTime?   // Ultimo contacto
+  nextFollowUp    DateTime?   // Proximo seguimiento programado
+  assignedTo      String?     // Admin/comercial asignado
+
+  // CRM - Notas rapidas
+  crmNotes        String?     @db.Text // Notas internas del CRM
+
   // Metadata
   metadata Json?
+
+  // Relaciones CRM
+  customerCommunications CustomerCommunication[]
+  customerTasks          CustomerTask[]
 
   @@index([email])
   @@index([role])
   @@index([stripeCustomerId])
+  @@index([customerType])
+  @@index([scoring])
+  @@index([nextFollowUp])
 }
 
 model BillingData {
@@ -2118,4 +2139,536 @@ model Lead {
   @@index([createdAt])
   @@index([nextFollowUpDate])
   @@map("leads")
+}
+
+// ============= GESTION DE EVENTOS / PROYECTOS =============
+
+enum EventPhase {
+  INQUIRY       // Consulta inicial
+  PLANNING      // Planificacion
+  PREPARATION   // Preparacion (picking, carga)
+  SETUP         // Montaje
+  LIVE          // En curso
+  TEARDOWN      // Desmontaje
+  REVIEW        // Revision post-evento
+  CLOSED        // Cerrado
+}
+
+enum EventPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Event {
+  id          String   @id @default(uuid())
+
+  // Informacion basica
+  name        String   // "Boda Maria y Juan - Finca El Olivo"
+  eventNumber String   @unique // EVT-2025-001
+
+  // Tipo y prioridad
+  eventType   String   // Boda, Concierto, Corporativo, Festival, etc
+  priority    EventPriority @default(MEDIUM)
+
+  // Fechas
+  eventDate     DateTime  // Fecha del evento
+  eventEndDate  DateTime? // Fecha fin (si es multi-dia)
+  setupDate     DateTime? // Fecha de montaje (puede ser dia anterior)
+  teardownDate  DateTime? // Fecha de desmontaje
+
+  // Ubicacion
+  venueName     String?   // Nombre del lugar
+  venueAddress  String?   @db.Text
+  venueContact  String?   // Contacto del venue
+  venuePhone    String?
+  coordinates   Json?     // { lat, lng }
+
+  // Cliente
+  clientName    String
+  clientEmail   String?
+  clientPhone   String?
+  clientCompany String?
+
+  // Detalles del evento
+  attendees     Int?      // Numero de asistentes
+  briefing      String?   @db.Text  // Descripcion/briefing del evento
+  technicalNotes String?  @db.Text  // Notas tecnicas (rider, requisitos)
+
+  // Estado
+  phase         EventPhase @default(INQUIRY)
+
+  // Financiero
+  estimatedRevenue  Decimal? @db.Decimal(10, 2)
+  estimatedCost     Decimal? @db.Decimal(10, 2)
+  actualRevenue     Decimal? @db.Decimal(10, 2)
+  actualCost        Decimal? @db.Decimal(10, 2)
+
+  // Relaciones con pedido/presupuesto
+  orderId       String?   @unique
+  budgetId      String?
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  closedAt      DateTime?
+
+  // Relaciones
+  timeline      EventTimelineItem[]
+  checklist     EventChecklistItem[]
+  staff         EventStaffAssignment[]
+  equipment     EventEquipment[]
+  documents     EventDocument[]
+  notes         EventNote[]
+  incidents     EventIncident[]
+
+  @@index([eventDate])
+  @@index([phase])
+  @@index([eventType])
+  @@index([clientEmail])
+  @@index([createdAt])
+  @@map("events")
+}
+
+model EventTimelineItem {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Hora y descripcion
+  time      String  // "08:00"
+  endTime   String? // "09:30"
+  title     String  // "Montaje de sonido"
+  description String? @db.Text
+  responsible String? // Nombre del responsable
+
+  // Estado
+  completed Boolean @default(false)
+  completedAt DateTime?
+
+  // Orden
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("event_timeline_items")
+}
+
+model EventChecklistItem {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Contenido
+  text      String  // "Confirmar rider tecnico con el venue"
+  category  String? // "Pre-evento", "Montaje", "Post-evento"
+
+  // Estado
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  completedBy String?  // Nombre de quien lo completo
+
+  // Obligatoriedad
+  isRequired  Boolean  @default(false) // Si es obligatorio antes de avanzar de fase
+
+  // Orden
+  sortOrder   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("event_checklist_items")
+}
+
+model EventStaffAssignment {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Trabajador
+  staffName     String  // Nombre del trabajador
+  staffPhone    String? // Telefono
+  staffEmail    String? // Email
+  staffMemberId String? // Vinculo con StaffMember
+  staffMember   StaffMember? @relation(fields: [staffMemberId], references: [id])
+  role          String  // "Tecnico de sonido", "DJ", "Montador", "Coordinador"
+
+  // Horario
+  startTime   String? // "08:00"
+  endTime     String? // "02:00"
+  hours       Decimal? @db.Decimal(5, 2) // Horas trabajadas
+
+  // Coste
+  hourlyRate  Decimal? @db.Decimal(10, 2)
+  totalCost   Decimal? @db.Decimal(10, 2)
+  isPaid      Boolean  @default(false)
+
+  // Estado
+  confirmed   Boolean  @default(false)
+  notes       String?  @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([staffMemberId])
+  @@map("event_staff_assignments")
+}
+
+model EventEquipment {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Equipo
+  productName String  // Nombre del producto (puede no existir en catalogo)
+  productId   String? // Referencia al producto (si existe)
+  quantity    Int     @default(1)
+
+  // Estado de picking
+  pickedUp    Boolean @default(false) // Sacado del almacen
+  returned    Boolean @default(false) // Devuelto al almacen
+  returnCondition String? // "PERFECT", "GOOD", "DAMAGED"
+  returnNotes String? @db.Text
+
+  // Notas
+  notes       String? @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("event_equipment")
+}
+
+model EventDocument {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Documento
+  name      String  // "Presupuesto v2", "Contrato firmado", "Rider tecnico"
+  type      String  // "budget", "contract", "invoice", "rider", "other"
+  url       String  // URL del archivo
+  fileSize  Int?    // Tamaño en bytes
+
+  // Metadata
+  uploadedBy String? // Nombre de quien lo subio
+
+  createdAt DateTime @default(now())
+
+  @@index([eventId])
+  @@map("event_documents")
+}
+
+model EventNote {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Nota
+  content   String  @db.Text
+  authorName String // Nombre del autor
+  isInternal Boolean @default(true) // Solo visible para el equipo
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([createdAt])
+  @@map("event_notes")
+}
+
+model EventIncident {
+  id        String  @id @default(uuid())
+  eventId   String
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Incidencia
+  title       String
+  description String  @db.Text
+  severity    String  @default("medium") // "low", "medium", "high", "critical"
+  category    String? // "equipo_roto", "retraso", "queja_cliente", "logistica", "otro"
+
+  // Resolucion
+  resolved    Boolean   @default(false)
+  resolvedAt  DateTime?
+  resolution  String?   @db.Text
+  resolvedBy  String?
+
+  // Coste asociado
+  cost        Decimal?  @db.Decimal(10, 2)
+
+  // Imagenes
+  images      String[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([eventId])
+  @@index([resolved])
+  @@map("event_incidents")
+}
+
+// ============= CRM: COMUNICACIONES Y TAREAS =============
+
+model CustomerCommunication {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Tipo de comunicacion
+  type      String  // "llamada", "email", "whatsapp", "reunion", "nota"
+  direction String  @default("saliente") // "entrante", "saliente"
+
+  // Contenido
+  subject   String?
+  content   String  @db.Text
+  outcome   String? // "contactado", "buzon", "no_contesta", "reunido", "cerrado"
+
+  // Metadata
+  duration  Int?    // Duracion en minutos (para llamadas/reuniones)
+  authorName String // Nombre del admin que registra
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("customer_communications")
+}
+
+model CustomerTask {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Tarea
+  title     String
+  description String? @db.Text
+  dueDate   DateTime?
+  priority  String   @default("medium") // "low", "medium", "high"
+
+  // Estado
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  completedBy String?
+
+  // Asignacion
+  assignedTo  String? // Nombre del responsable
+  authorName  String  // Quien creo la tarea
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([completed])
+  @@index([dueDate])
+  @@map("customer_tasks")
+}
+
+// ============= FASE 5: PERSONAL / RRHH =============
+
+model StaffMember {
+  id          String  @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  dni         String? // Documento identidad
+  address     String?
+
+  // Clasificacion
+  type        String  @default("freelancer") // "empleado", "freelancer", "eventual"
+  specialty   String? // "tecnico_sonido", "tecnico_iluminacion", "dj", "rigger", "auxiliar"
+  hourlyRate  Decimal @default(0) @db.Decimal(10, 2)
+  dailyRate   Decimal @default(0) @db.Decimal(10, 2)
+
+  // Estado
+  status      String  @default("active") // "active", "inactive", "vacation", "sick_leave"
+
+  // Documentacion
+  hasContract    Boolean @default(false)
+  hasInsurance   Boolean @default(false)
+  hasPRL         Boolean @default(false) // Prevencion de riesgos laborales
+  contractExpiry DateTime?
+  insuranceExpiry DateTime?
+
+  // Notas
+  notes       String? @db.Text
+
+  // Relaciones
+  availability    StaffAvailability[]
+  workLogs        StaffWorkLog[]
+  eventAssignments EventStaffAssignment[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+  @@map("staff_members")
+}
+
+model StaffAvailability {
+  id          String  @id @default(uuid())
+  staffId     String
+  staff       StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  date        DateTime
+  type        String  // "blocked", "vacation", "sick", "available", "assigned"
+  eventRef    String? // Referencia al evento si es asignacion
+  notes       String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([staffId])
+  @@index([date])
+  @@map("staff_availability")
+}
+
+model StaffWorkLog {
+  id          String  @id @default(uuid())
+  staffId     String
+  staff       StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  // Evento/trabajo
+  eventRef    String? // ID o nombre del evento
+  description String?
+  date        DateTime
+  hoursWorked Decimal @db.Decimal(5, 2)
+  hourlyRate  Decimal @db.Decimal(10, 2)
+  totalAmount Decimal @db.Decimal(10, 2)
+
+  // Estado de pago
+  paid        Boolean @default(false)
+  paidAt      DateTime?
+  invoiceRef  String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([staffId])
+  @@index([date])
+  @@index([paid])
+  @@map("staff_work_logs")
+}
+
+// ============= FASE 7: CONTRATOS =============
+
+model Contract {
+  id          String  @id @default(uuid())
+  contractNumber String @unique
+
+  // Relaciones
+  clientName  String
+  clientEmail String
+  budgetRef   String? // Referencia al presupuesto
+
+  // Contenido
+  title       String
+  content     String  @db.Text // HTML del contrato
+  templateId  String?
+
+  // Estado
+  status      String  @default("draft") // "draft", "sent", "viewed", "signed", "active", "completed", "cancelled"
+
+  // Firma
+  signedAt    DateTime?
+  signatureData String? @db.Text // Base64 de la firma
+  signedByName  String?
+  signedByEmail String?
+  signedByIp    String?
+
+  // Totales del contrato
+  totalAmount Decimal? @db.Decimal(10, 2)
+
+  // Token para acceso publico
+  publicToken String @unique @default(uuid())
+
+  sentAt      DateTime?
+  viewedAt    DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientEmail])
+  @@map("contracts")
+}
+
+// ============= FASE 9: CONTABILIDAD AVANZADA =============
+
+model RecurringExpense {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  amount      Decimal @db.Decimal(10, 2)
+  frequency   String  @default("monthly") // "monthly", "quarterly", "yearly"
+  category    String  // "alquiler", "seguros", "leasing", "servicios", "otros"
+
+  // Vencimiento
+  dueDay      Int     @default(1) // Dia del mes
+  nextDueDate DateTime?
+  isActive    Boolean @default(true)
+
+  // Tracking
+  lastPaidAt  DateTime?
+  totalPaid   Decimal @default(0) @db.Decimal(10, 2)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([nextDueDate])
+  @@map("recurring_expenses")
+}
+
+// ============= FASE 10: LOGISTICA Y VEHICULOS =============
+
+model Vehicle {
+  id          String  @id @default(uuid())
+  plate       String  @unique // Matricula
+  brand       String
+  model       String
+  type        String  // "furgoneta", "camion", "coche", "remolque"
+  capacity    String? // Capacidad de carga
+
+  // Estado
+  status      String  @default("available") // "available", "on_route", "maintenance", "inactive"
+
+  // Documentacion
+  itvDate     DateTime?
+  insuranceDate DateTime?
+
+  // Costes
+  kmTotal     Int     @default(0)
+  notes       String? @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@map("vehicles")
+}
+
+// ============= FASE 11: ALMACEN AVANZADO =============
+
+model WarehouseLocation {
+  id          String  @id @default(uuid())
+  zone        String  // "A", "B", "C"...
+  shelf       String  // "1", "2", "3"...
+  position    String? // "A1", "A2"...
+  description String?
+
+  // Capacidad
+  maxItems    Int     @default(100)
+  currentItems Int    @default(0)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([zone, shelf, position])
+  @@map("warehouse_locations")
 }

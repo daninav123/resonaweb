@@ -2,6 +2,18 @@ import { api } from './api';
 
 class AnalyticsService {
   /**
+   * Get smart dashboard data (all widgets)
+   */
+  async getSmartDashboard() {
+    try {
+      return await api.get('/analytics/dashboard/smart');
+    } catch (error) {
+      console.error('Error getting smart dashboard:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get complete dashboard data
    */
   async getCompleteDashboard() {

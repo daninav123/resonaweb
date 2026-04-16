@@ -49,6 +49,8 @@ export interface Product {
   images: string[];
   specifications?: Record<string, any>;
   isActive: boolean;
+  isConsumable?: boolean;
+  pricePerUnit?: number;
   featured: boolean;
   tags: string[];
   // Estadísticas de compra y uso (solo admin)

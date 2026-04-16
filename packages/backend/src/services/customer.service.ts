@@ -62,10 +62,9 @@ export class CustomerService {
   /**
    * Add customer note
    */
-  async addCustomerNote(userId: string, createdBy: string, note: string) {
+  async addCustomerNote(data: { userId: string; createdBy: string; note: string }) {
     try {
-      // Por ahora solo logueamos, ya que el modelo CustomerNote puede no existir aún
-      logger.info(`Note added for customer ${userId} by ${createdBy}: ${note}`);
+      logger.info(`Note added for customer ${data.userId} by ${data.createdBy}: ${data.note}`);
       
       return {
         success: true,
@@ -73,6 +72,72 @@ export class CustomerService {
       };
     } catch (error) {
       logger.error('Error adding customer note:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get customer history (orders, interactions)
+   */
+  async getCustomerHistory(userId: string, page: number = 1, limit: number = 20) {
+    try {
+      const skip = (page - 1) * limit;
+      const orders = await prisma.order.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      });
+      const total = await prisma.order.count({ where: { userId } });
+      return { data: orders, total, page, limit };
+    } catch (error) {
+      logger.error('Error getting customer history:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get customer notes
+   */
+  async getCustomerNotes(userId: string) {
+    try {
+      // Stub: el modelo CustomerNote puede no existir aún
+      logger.info(`Getting notes for customer ${userId}`);
+      return [];
+    } catch (error) {
+      logger.error('Error getting customer notes:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Set customer status
+   */
+  async setCustomerStatus(userId: string, status: string) {
+    try {
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: { isActive: status === 'ACTIVE' },
+      });
+      return { success: true, userId: user.id, status };
+    } catch (error) {
+      logger.error('Error setting customer status:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get customer documents (invoices, contracts)
+   */
+  async getCustomerDocuments(userId: string) {
+    try {
+      const invoices = await prisma.invoice.findMany({
+        where: { order: { userId } },
+        orderBy: { createdAt: 'desc' },
+      });
+      return { invoices };
+    } catch (error) {
+      logger.error('Error getting customer documents:', error);
       throw error;
     }
   }

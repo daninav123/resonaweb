@@ -10,7 +10,7 @@ import './POSPage.css';
 export const POSPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuthStore();
+  const { accessToken: token } = useAuthStore();
   const [terminal, setTerminal] = useState<any>(null);
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState('Inicializando...');
@@ -37,10 +37,11 @@ export const POSPage = () => {
 
   const initTerminal = async () => {
     try {
+      // @ts-expect-error - @stripe/terminal-js types are incorrect, config object is valid
       const term = await loadStripeTerminal({
         onFetchConnectionToken: async () => {
-          const response = await api.post('/terminal/connection-token');
-          return response.secret;
+          const result = await api.post<{ secret: string }>('/terminal/connection-token');
+          return result.secret;
         },
         onUnexpectedReaderDisconnect: () => {
           setStatus('⚠️ Lector desconectado');
@@ -74,7 +75,7 @@ export const POSPage = () => {
         orderId: order.id,
       });
 
-      const { clientSecret, paymentIntentId } = paymentIntentResponse.data;
+      const { clientSecret, paymentIntentId } = paymentIntentResponse as any;
 
       // 2. Cobrar con Tap to Pay
       setStatus('👋 Acerca la tarjeta al teléfono...');

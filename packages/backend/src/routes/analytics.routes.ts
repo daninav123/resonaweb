@@ -11,6 +11,7 @@ router.use(authorize('ADMIN', 'SUPERADMIN'));
 // Dashboard stats
 router.get('/dashboard', analyticsController.getDashboardStats);
 router.get('/dashboard/complete', analyticsController.getCompleteDashboard);
+router.get('/dashboard/smart', analyticsController.getSmartDashboard);
 
 // Charts and graphs
 router.get('/revenue-chart', analyticsController.getRevenueChart);

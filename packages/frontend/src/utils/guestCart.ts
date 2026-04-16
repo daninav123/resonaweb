@@ -11,6 +11,7 @@ export interface GuestCartItem {
     pricePerDay: number;
     stock?: number;
     realStock?: number;
+    isPack?: boolean;
     category?: {
       name: string;
     };

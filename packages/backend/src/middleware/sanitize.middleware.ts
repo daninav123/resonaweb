@@ -4,8 +4,8 @@ import { Request, Response, NextFunction } from 'express';
  * Middleware para sanitizar inputs y prevenir XSS
  */
 
-// Lista de caracteres peligrosos para XSS
-const XSS_PATTERNS = [
+// Funciones que crean regex frescas para evitar el problema de lastIndex con flag 'g'
+const createXSSPatterns = () => [
   /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // <script> tags
   /javascript:/gi, // javascript: protocol
   /on\w+\s*=/gi, // event handlers (onclick, onerror, etc)
@@ -24,8 +24,8 @@ function sanitizeString(value: string): string {
 
   let sanitized = value;
   
-  // Eliminar patrones peligrosos
-  for (const pattern of XSS_PATTERNS) {
+  // Eliminar patrones peligrosos (regex frescas por cada llamada)
+  for (const pattern of createXSSPatterns()) {
     sanitized = sanitized.replace(pattern, '');
   }
   
@@ -129,7 +129,7 @@ export function hasXSSAttempt(value: string): boolean {
     return false;
   }
 
-  for (const pattern of XSS_PATTERNS) {
+  for (const pattern of createXSSPatterns()) {
     if (pattern.test(value)) {
       return true;
     }

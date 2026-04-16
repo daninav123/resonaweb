@@ -72,8 +72,8 @@ const AdminQuoteRequestsPage = () => {
     queryKey: ['quoteRequests', statusFilter],
     queryFn: async () => {
       // Obtener token del store de Zustand
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) {
         throw new Error('No hay token de autenticación');
@@ -99,8 +99,8 @@ const AdminQuoteRequestsPage = () => {
   const { data: stats } = useQuery({
     queryKey: ['quoteStats'],
     queryFn: async () => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) {
         throw new Error('No hay token de autenticación');
@@ -121,8 +121,8 @@ const AdminQuoteRequestsPage = () => {
   // Update status mutation
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status, notes }: { id: string; status: string; notes?: string }) => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) {
         throw new Error('No hay token de autenticación');
@@ -150,8 +150,8 @@ const AdminQuoteRequestsPage = () => {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { token, accessToken } = useAuthStore.getState();
-      const authToken = accessToken || token || localStorage.getItem('token');
+      const { accessToken } = useAuthStore.getState();
+      const authToken = accessToken || localStorage.getItem('token');
       
       if (!authToken) {
         throw new Error('No hay token de autenticación');

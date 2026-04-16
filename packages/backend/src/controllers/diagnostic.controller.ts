@@ -119,8 +119,8 @@ class DiagnosticController {
           hasConfig: !!config,
         },
         config: config ? {
-          eventTypes: config.value?.eventTypes?.length || 0,
-          events: config.value?.eventTypes?.map((e: any) => ({
+          eventTypes: (config.value as any)?.eventTypes?.length || 0,
+          events: (config.value as any)?.eventTypes?.map((e: any) => ({
             name: e.name,
             icon: e.icon,
             parts: e.parts?.length || 0,
@@ -158,8 +158,8 @@ class DiagnosticController {
         return res.json({
           message: 'La configuración ya existe',
           config: {
-            eventTypes: existing.value?.eventTypes?.length || 0,
-            events: existing.value?.eventTypes?.map((e: any) => e.name)
+            eventTypes: (existing.value as any)?.eventTypes?.length || 0,
+            events: (existing.value as any)?.eventTypes?.map((e: any) => e.name)
           }
         });
       }
@@ -175,8 +175,8 @@ class DiagnosticController {
       res.json({
         message: 'Configuración creada exitosamente',
         config: {
-          eventTypes: created.value?.eventTypes?.length || 0,
-          events: created.value?.eventTypes?.map((e: any) => e.name)
+          eventTypes: (created.value as any)?.eventTypes?.length || 0,
+          events: (created.value as any)?.eventTypes?.map((e: any) => e.name)
         },
         nextSteps: [
           'La configuración ya está en la base de datos',

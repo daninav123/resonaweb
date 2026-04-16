@@ -3,7 +3,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
 import { productService } from '../services/product.service';
 import { api } from '../services/api';
-import { ChevronDown, Grid, List, Package } from 'lucide-react';
+import { ChevronDown, Grid, List, Package, ShoppingCart } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { guestCart } from '../utils/guestCart';
+import { cartCountManager } from '../hooks/useCartCount';
 import { SearchBar } from '../components/search/SearchBar';
 import { CategorySidebar } from '../components/CategorySidebar';
 import { CategoryChips } from '../components/CategoryChips';
@@ -356,10 +359,9 @@ const ProductsPage = () => {
                   : 'grid-cols-1'
               }`}>
                 {combinedData.data.map((product: Product) => (
-                  <Link
+                  <div
                     key={(product as any).isPack ? `pack-${product.id}` : `product-${product.id}`}
-                    to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}`}
-                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow relative ${
+                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow relative group ${
                       viewMode === 'list' ? 'flex' : ''
                     }`}
                   >
@@ -373,33 +375,37 @@ const ProductsPage = () => {
                       </div>
                     )}
                     
-                    {/* Imagen - Mismo estilo para todos */}
-                    {product.images && product.images.length > 0 ? (
-                      <img
-                        src={getImageUrl(product.images[0] as any)}
-                        alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
-                        width={viewMode === 'grid' ? 400 : 192}
-                        height={viewMode === 'grid' ? 192 : 128}
-                        loading="lazy"
-                        decoding="async"
-                        className={`object-contain bg-white ${
+                    {/* Imagen - Clickable para ir al detalle */}
+                    <Link to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}`}>
+                      {product.images && product.images.length > 0 ? (
+                        <img
+                          src={getImageUrl(product.images[0] as any)}
+                          alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
+                          width={viewMode === 'grid' ? 400 : 192}
+                          height={viewMode === 'grid' ? 192 : 128}
+                          loading="lazy"
+                          decoding="async"
+                          className={`object-contain bg-white ${
+                            viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
+                          }`}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = placeholderImage;
+                          }}
+                        />
+                      ) : (
+                        <div className={`bg-gray-200 flex items-center justify-center ${
                           viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
-                        }`}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = placeholderImage;
-                        }}
-                      />
-                    ) : (
-                      <div className={`bg-gray-200 flex items-center justify-center ${
-                        viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
-                      }`}>
-                        <Package className="w-12 h-12 text-gray-400" />
-                      </div>
-                    )}
+                        }`}>
+                          <Package className="w-12 h-12 text-gray-400" />
+                        </div>
+                      )}
+                    </Link>
                     
-                    {/* Contenido - Mismo estilo para todos */}
+                    {/* Contenido */}
                     <div className="p-4 flex-1">
-                      <h3 className="font-semibold mb-2 line-clamp-2">{product.name}</h3>
+                      <Link to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}`}>
+                        <h3 className="font-semibold mb-2 line-clamp-2 hover:text-blue-600 transition-colors">{product.name}</h3>
+                      </Link>
                       {viewMode === 'list' && (
                         <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                           {product.description}
@@ -434,18 +440,48 @@ const ProductsPage = () => {
                             </div>
                           )}
                         </div>
-                        {product.realStock > 0 ? (
+                        {product.realStock > 0 && product.realStock <= 3 ? (
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded font-semibold animate-pulse">
+                            Quedan {product.realStock}
+                          </span>
+                        ) : product.realStock > 3 ? (
                           <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
                             Disponible
                           </span>
                         ) : (
                           <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
-                            Sin stock
+                            Consultar
                           </span>
                         )}
                       </div>
+
+                      {/* Quick Add to Cart Button */}
+                      {!(product as any).isPack && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            cartCountManager.increment(1);
+                            guestCart.addItem(product, 1);
+                            toast.success(`${product.name} añadido al carrito`);
+                          }}
+                          className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg font-medium text-sm transition-all active:scale-95"
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          Añadir al carrito
+                        </button>
+                      )}
+                      {(product as any).isPack && (
+                        <Link
+                          to={`/packs/${product.slug}`}
+                          className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-2.5 px-4 rounded-lg font-medium text-sm transition-all"
+                        >
+                          <Package className="w-4 h-4" />
+                          Ver pack completo
+                        </Link>
+                      )}
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}

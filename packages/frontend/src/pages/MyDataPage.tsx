@@ -26,30 +26,27 @@ export default function MyDataPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   // Cargar resumen de datos
-  const { data: dataSummary, isLoading: loadingSummary } = useQuery({
+  const { data: dataSummary, isLoading: loadingSummary } = useQuery<any>({
     queryKey: ['gdpr-data-summary'],
     queryFn: async () => {
-      const response = await api.get('/gdpr/my-data/summary');
-      return response.data;
+      return await api.get('/gdpr/my-data/summary');
     },
   });
 
   // Cargar historial de consentimientos
-  const { data: consentHistory, isLoading: loadingHistory } = useQuery({
+  const { data: consentHistory, isLoading: loadingHistory } = useQuery<any>({
     queryKey: ['gdpr-consent-history'],
     queryFn: async () => {
-      const response = await api.get('/gdpr/consents/history');
-      return response.data;
+      return await api.get('/gdpr/consents/history');
     },
   });
 
   // Descargar datos
   const downloadMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.get('/gdpr/my-data/download', {
+      return await api.get<Blob>('/gdpr/my-data/download', {
         responseType: 'blob',
       });
-      return response;
     },
     onSuccess: (blob) => {
       // Crear URL y descargar archivo
@@ -72,8 +69,7 @@ export default function MyDataPage() {
   // Actualizar consentimientos
   const updateConsentsMutation = useMutation({
     mutationFn: async (marketingConsent: boolean) => {
-      const response = await api.put('/gdpr/consents', { marketingConsent });
-      return response.data;
+      return await api.put('/gdpr/consents', { marketingConsent });
     },
     onSuccess: () => {
       toast.success('Preferencias actualizadas correctamente');
@@ -86,10 +82,9 @@ export default function MyDataPage() {
   // Eliminar cuenta
   const deleteAccountMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.delete('/gdpr/my-account', {
+      return await api.delete('/gdpr/my-account', {
         data: { password: deletePassword, reason: deleteReason },
       });
-      return response.data;
     },
     onSuccess: () => {
       toast.success('Tu cuenta ha sido eliminada. ¡Adiós!', { duration: 5000 });

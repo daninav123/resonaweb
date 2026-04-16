@@ -236,7 +236,7 @@ class ProductUnitService {
         events: {
           create: {
             type: UnitEventType.BROKEN,
-            description,
+            description: description || 'Unidad marcada como rota',
             performedBy: performedBy ?? null,
             performedByName: performedByName ?? null,
           },
@@ -252,7 +252,7 @@ class ProductUnitService {
   async sendToRepair(
     unitId: string,
     data: {
-      description: string;
+      description?: string;
       repairShop?: string;
       repairCost?: number;
       estimatedReturn?: Date;
@@ -272,7 +272,7 @@ class ProductUnitService {
         events: {
           create: {
             type: UnitEventType.REPAIR_START,
-            description: data.description,
+            description: data.description || `Enviado a reparación${data.repairShop ? ` - ${data.repairShop}` : ''}`,
             repairShop: data.repairShop ?? null,
             repairCost: data.repairCost ?? null,
             estimatedReturn: data.estimatedReturn ?? null,
@@ -291,7 +291,7 @@ class ProductUnitService {
   async returnFromRepair(
     unitId: string,
     data: {
-      description: string;
+      description?: string;
       condition?: UnitCondition;
       repairCost?: number;
     },
@@ -310,7 +310,7 @@ class ProductUnitService {
         events: {
           create: {
             type: UnitEventType.REPAIR_END,
-            description: data.description,
+            description: data.description || 'Reparación finalizada',
             repairCost: data.repairCost ?? null,
             conditionBefore: unit.condition,
             conditionAfter: data.condition ?? unit.condition,
@@ -344,7 +344,7 @@ class ProductUnitService {
         events: {
           create: {
             type: UnitEventType.NOTE,
-            description,
+            description: description || 'Unidad marcada como disponible',
             performedBy: performedBy ?? null,
             performedByName: performedByName ?? null,
           },
@@ -358,7 +358,7 @@ class ProductUnitService {
    */
   async retireUnit(
     unitId: string,
-    description: string,
+    description: string = 'Unidad dada de baja',
     performedBy?: string,
     performedByName?: string
   ) {
@@ -373,7 +373,7 @@ class ProductUnitService {
         events: {
           create: {
             type: UnitEventType.RETIRED,
-            description,
+            description: description || 'Unidad dada de baja',
             performedBy: performedBy ?? null,
             performedByName: performedByName ?? null,
           },

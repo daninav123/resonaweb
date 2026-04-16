@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Calculator, Users, Clock, Calendar, Package,
 import SEOHead from '../components/SEO/SEOHead';
 import { calculatorFAQSchema } from '../utils/faqSchema';
 import { serviceSchema } from '../utils/schemas';
-import { DEFAULT_CALCULATOR_CONFIG } from '../types/calculator.types';
+import { DEFAULT_CALCULATOR_CONFIG, type AdvancedCalculatorConfig } from '../types/calculator.types';
 import { productService } from '../services/product.service';
 import { validateEventData, type EventValidation } from '../utils/eventValidation';
 import { guestCart } from '../utils/guestCart';
@@ -180,6 +180,7 @@ const EventCalculatorPage = () => {
           isActive: pack.isActive === true,
           isPack: true, // Marcar como pack
           isMontaje, // Flag para identificar montajes
+          finalPrice: Number(pack.finalPrice || pack.calculatedTotalPrice || 0),
           packData: pack.packData, // Datos adicionales del pack (transportCost, etc.)
         };
       });
@@ -581,7 +582,7 @@ const EventCalculatorPage = () => {
       };
 
       // Obtener token
-      const token = useAuthStore.getState().token || localStorage.getItem('token');
+      const token = useAuthStore.getState().accessToken || localStorage.getItem('token');
       
       // Enviar solicitud
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'}/quote-requests/public`, {
@@ -746,87 +747,6 @@ const EventCalculatorPage = () => {
           <p className="text-gray-600 text-lg">
             Obtén un presupuesto estimado para tu evento en minutos
           </p>
-        </div>
-
-        {/* Introducción Explicativa */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            ¿Cómo Funciona la Calculadora de Eventos?
-          </h2>
-          
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Nuestra <strong>calculadora de presupuesto online</strong> está diseñada para que puedas obtener una estimación 
-            precisa y detallada del coste de tu evento en menos de 3 minutos. Simplemente introduce algunos datos básicos 
-            sobre tu celebración y te mostraremos un presupuesto personalizado con los equipos de sonido, iluminación y 
-            audiovisuales más adecuados para tu evento.
-          </p>
-
-          <p className="text-gray-700 leading-relaxed mb-6">
-            En <strong>ReSona Events</strong> llevamos más de 15 años proporcionando equipos audiovisuales profesionales 
-            para eventos en Valencia. Hemos desarrollado esta calculadora basándonos en nuestra experiencia en más de 
-            2.000 eventos de todo tipo: bodas, eventos corporativos, conciertos, festivales, presentaciones y celebraciones privadas.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Calculator className="w-6 h-6 text-blue-600" />
-                <h3 className="font-bold text-gray-900">Rápido y Fácil</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                Solo necesitas 4 datos: tipo de evento, número de asistentes, duración y ubicación. 
-                En menos de 3 minutos tendrás tu presupuesto.
-              </p>
-            </div>
-
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-6 h-6 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Presupuesto Real</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                Los precios mostrados son reales y actualizados. Incluyen equipos, transporte, montaje 
-                y técnico si es necesario.
-              </p>
-            </div>
-
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-6 h-6 text-green-600" />
-                <h3 className="font-bold text-gray-900">Sin Compromiso</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                Usa la calculadora cuantas veces quieras. No necesitas registrarte ni proporcionar 
-                datos personales para ver el presupuesto.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-6 border border-gray-200">
-            <h3 className="font-bold text-gray-900 mb-3">¿Qué Incluye tu Presupuesto?</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span><strong>Equipos profesionales:</strong> Altavoces, iluminación, microfonía, mesas de mezclas de marcas líderes (JBL, QSC, Yamaha, Behringer)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span><strong>Transporte incluido:</strong> Entrega y recogida en Valencia capital y área metropolitana sin coste adicional</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span><strong>Montaje e instalación:</strong> Técnico especializado para configurar todo el equipo antes del evento</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span><strong>Asistencia técnica:</strong> Soporte durante el evento según el paquete seleccionado</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span><strong>Cables y accesorios:</strong> Todos los cables, soportes y conexiones necesarios incluidos</span>
-              </li>
-            </ul>
-          </div>
         </div>
 
         {/* Progress Bar */}

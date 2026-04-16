@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ShoppingCart, Trash2, Calendar, Star, Crown } from 'lucide-react';
+import { X, ShoppingCart, Trash2, Calendar, Star, Crown, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
@@ -260,10 +260,16 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
             <button
               onClick={handleViewCart}
-              className="w-full bg-resona text-white py-3 rounded-lg font-semibold hover:bg-resona-dark transition"
+              className="w-full bg-resona text-white py-3 rounded-lg font-semibold hover:bg-resona-dark transition flex items-center justify-center gap-2"
             >
-              Ver carrito completo
+              <ShoppingCart className="w-5 h-5" />
+              Ver carrito y reservar
+              <ArrowRight className="w-4 h-4" />
             </button>
+
+            <p className="text-center text-xs text-gray-500 mt-2">
+              Pago seguro con Stripe · Solo pagas el 25% de reserva
+            </p>
           </div>
         )}
       </div>

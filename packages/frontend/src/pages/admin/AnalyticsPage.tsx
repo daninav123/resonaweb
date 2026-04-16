@@ -14,8 +14,8 @@ const AnalyticsPage = () => {
   const loadStats = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/analytics/dashboard');
-      setStats(response.data);
+      const data = await api.get('/analytics/dashboard');
+      setStats(data);
     } catch (error) {
       console.error('Error loading analytics:', error);
       toast.error('Error al cargar estadísticas');

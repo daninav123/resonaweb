@@ -259,9 +259,9 @@ const CommercialQuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { a
     setLoadingSearch(true);
     try {
       const [productsRes, packsRes, montajesRes] = await Promise.all([
-        api.get(`/products?search=${term}&limit=10`),
-        api.get(`/packs?search=${term}&limit=10`),
-        api.get(`/packs?search=${term}&limit=10&category=MONTAJE`),
+        api.get<any>(`/products?search=${term}&limit=10`),
+        api.get<any>(`/packs?search=${term}&limit=10`),
+        api.get<any>(`/packs?search=${term}&limit=10&category=MONTAJE`),
       ]);
 
       const products = (productsRes?.products || []).map((p: any) => ({
@@ -477,6 +477,8 @@ const CommercialQuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { a
         finalPrice: 0,
         includeShipping: true,
         includeInstallation: true,
+        installationComplexity: 'standard',
+        customInstallationCost: 0,
       });
       setQuoteItems([]);
       setPdfData({

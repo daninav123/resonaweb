@@ -1462,7 +1462,7 @@ const CartPage = () => {
                 </button>
 
                 <Link
-                  to="/products"
+                  to="/productos"
                   className="block text-center mt-4 text-blue-600 hover:underline"
                 >
                   Continuar comprando

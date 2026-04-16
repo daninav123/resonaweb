@@ -695,6 +695,363 @@ export class AnalyticsService {
       throw error;
     }
   }
+
+  /**
+   * Smart Dashboard - All data for the intelligent dashboard in a single call
+   */
+  async getSmartDashboard() {
+    try {
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      const startOfWeek = new Date(startOfToday);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Lunes
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(endOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59);
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+      // ============= 1. EVENTOS HOY / ESTA SEMANA =============
+      const [todayEvents, weekEvents] = await Promise.all([
+        prisma.order.findMany({
+          where: {
+            status: { notIn: ['CANCELLED'] },
+            OR: [
+              { startDate: { gte: startOfToday, lte: endOfToday } },
+              { endDate: { gte: startOfToday, lte: endOfToday } },
+              { AND: [{ startDate: { lte: startOfToday } }, { endDate: { gte: endOfToday } }] },
+            ],
+          },
+          include: {
+            user: { select: { firstName: true, lastName: true, email: true, phone: true } },
+            items: { include: { product: { select: { name: true, sku: true } } } },
+          },
+          orderBy: { startDate: 'asc' },
+        }),
+        prisma.order.findMany({
+          where: {
+            status: { notIn: ['CANCELLED'] },
+            OR: [
+              { startDate: { gte: startOfWeek, lte: endOfWeek } },
+              { endDate: { gte: startOfWeek, lte: endOfWeek } },
+              { AND: [{ startDate: { lte: startOfWeek } }, { endDate: { gte: endOfWeek } }] },
+            ],
+          },
+          include: {
+            user: { select: { firstName: true, lastName: true, email: true } },
+            items: { select: { quantity: true, product: { select: { name: true } } } },
+          },
+          orderBy: { startDate: 'asc' },
+        }),
+      ]);
+
+      // Clasificar eventos de hoy
+      const todayEventsClassified = todayEvents.map(order => {
+        const startIsToday = order.startDate >= startOfToday && order.startDate <= endOfToday;
+        const endIsToday = order.endDate >= startOfToday && order.endDate <= endOfToday;
+        let phase = 'en_curso';
+        if (startIsToday) phase = 'montaje';
+        if (endIsToday) phase = 'desmontaje';
+        if (startIsToday && endIsToday) phase = 'dia_completo';
+
+        return {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          customer: `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim(),
+          customerPhone: order.user?.phone || order.contactPhone,
+          startDate: order.startDate,
+          endDate: order.endDate,
+          status: order.status,
+          phase,
+          total: Number(order.total),
+          eventType: order.eventType,
+          location: order.eventLocation,
+          deliveryType: order.deliveryType,
+          itemCount: order.items.length,
+          items: order.items.map(i => ({ name: i.product.name, sku: i.product.sku, qty: i.quantity })),
+        };
+      });
+
+      // Carga de trabajo
+      const workload = todayEventsClassified.length === 0 ? 'libre' :
+                        todayEventsClassified.length <= 2 ? 'bajo' :
+                        todayEventsClassified.length <= 4 ? 'medio' : 'alto';
+
+      // ============= 2. ALERTAS ACTIVAS =============
+      const [
+        unpaidOrders,
+        lowStockProducts,
+        overdueReturns,
+        unansweredQuotes,
+        brokenUnits,
+      ] = await Promise.all([
+        // Pagos pendientes
+        prisma.order.findMany({
+          where: {
+            status: { in: ['PENDING', 'IN_PROGRESS'] },
+            paymentStatus: { in: ['PENDING', 'PROCESSING'] },
+          },
+          select: {
+            id: true, orderNumber: true, total: true, createdAt: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+          take: 10,
+        }),
+        // Stock bajo
+        prisma.product.findMany({
+          where: {
+            isActive: true, isPack: false,
+            stock: { lte: 2 }, // Threshold
+            stockStatus: { not: 'ON_DEMAND' },
+          },
+          select: { id: true, name: true, sku: true, stock: true },
+          orderBy: { stock: 'asc' },
+          take: 10,
+        }),
+        // Devoluciones atrasadas (pedidos cuyo endDate ya pasó y siguen IN_PROGRESS)
+        prisma.order.findMany({
+          where: {
+            status: 'IN_PROGRESS',
+            endDate: { lt: startOfToday },
+          },
+          select: {
+            id: true, orderNumber: true, endDate: true, total: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+          orderBy: { endDate: 'asc' },
+          take: 10,
+        }),
+        // Presupuestos sin responder (>48h)
+        prisma.quoteRequest.findMany({
+          where: {
+            status: 'PENDING',
+            createdAt: { lt: new Date(now.getTime() - 48 * 60 * 60 * 1000) },
+          },
+          select: {
+            id: true, customerName: true, customerEmail: true,
+            estimatedTotal: true, createdAt: true, eventType: true,
+          },
+          orderBy: { createdAt: 'asc' },
+          take: 10,
+        }),
+        // Equipos rotos o en reparación
+        prisma.productUnit.count({
+          where: { status: { in: ['BROKEN', 'UNDER_REPAIR'] } },
+        }),
+      ]);
+
+      const alerts = {
+        unpaidOrders: unpaidOrders.map(o => ({
+          ...o,
+          total: Number(o.total),
+          daysOverdue: Math.floor((now.getTime() - o.createdAt.getTime()) / (1000 * 60 * 60 * 24)),
+          customer: `${o.user?.firstName || ''} ${o.user?.lastName || ''}`.trim(),
+        })),
+        lowStockProducts,
+        overdueReturns: overdueReturns.map(o => ({
+          ...o,
+          total: Number(o.total),
+          daysOverdue: Math.floor((now.getTime() - o.endDate.getTime()) / (1000 * 60 * 60 * 24)),
+          customer: `${o.user?.firstName || ''} ${o.user?.lastName || ''}`.trim(),
+        })),
+        unansweredQuotes: unansweredQuotes.map(q => ({
+          ...q,
+          estimatedTotal: Number(q.estimatedTotal || 0),
+          hoursWaiting: Math.floor((now.getTime() - q.createdAt.getTime()) / (1000 * 60 * 60)),
+        })),
+        brokenUnits,
+        totalAlerts: unpaidOrders.length + lowStockProducts.length + overdueReturns.length + unansweredQuotes.length + (brokenUnits > 0 ? 1 : 0),
+      };
+
+      // ============= 3. PIPELINE DE VENTAS =============
+      const [
+        pipelineLeadsNew,
+        pipelineLeadsContacted,
+        pipelineQuotesPending,
+        pipelineQuotesQuoted,
+        pipelineQuotesConverted,
+        pipelineQuotesRejected,
+        pipelineBudgetsDraft,
+        pipelineBudgetsSent,
+        pipelineBudgetsAccepted,
+      ] = await Promise.all([
+        prisma.lead.count({ where: { status: 'NEW' } }),
+        prisma.lead.count({ where: { status: { in: ['CONTACTED', 'INTERESTED', 'NEGOTIATING'] } } }),
+        prisma.quoteRequest.count({ where: { status: 'PENDING' } }),
+        prisma.quoteRequest.count({ where: { status: 'QUOTED' } }),
+        prisma.quoteRequest.count({ where: { status: 'CONVERTED' } }),
+        prisma.quoteRequest.count({ where: { status: 'REJECTED' } }),
+        prisma.budget.count({ where: { status: 'DRAFT' } }),
+        prisma.budget.count({ where: { status: 'SENT' } }),
+        prisma.budget.count({ where: { status: 'ACCEPTED' } }),
+      ]);
+
+      // Valor en cada fase
+      const [quotePendingValue, quoteQuotedValue, budgetSentValue] = await Promise.all([
+        prisma.quoteRequest.aggregate({
+          where: { status: 'PENDING' },
+          _sum: { estimatedTotal: true },
+        }),
+        prisma.quoteRequest.aggregate({
+          where: { status: 'QUOTED' },
+          _sum: { estimatedTotal: true },
+        }),
+        prisma.budget.aggregate({
+          where: { status: 'SENT' },
+          _sum: { total: true },
+        }),
+      ]);
+
+      const totalQuotes = pipelineQuotesPending + pipelineQuotesQuoted + pipelineQuotesConverted + pipelineQuotesRejected;
+      const conversionRate = totalQuotes > 0 ? (pipelineQuotesConverted / totalQuotes) * 100 : 0;
+
+      const pipeline = {
+        leads: { new: pipelineLeadsNew, inProgress: pipelineLeadsContacted },
+        quotes: {
+          pending: pipelineQuotesPending,
+          quoted: pipelineQuotesQuoted,
+          converted: pipelineQuotesConverted,
+          rejected: pipelineQuotesRejected,
+          pendingValue: Number(quotePendingValue._sum.estimatedTotal || 0),
+          quotedValue: Number(quoteQuotedValue._sum.estimatedTotal || 0),
+        },
+        budgets: {
+          draft: pipelineBudgetsDraft,
+          sent: pipelineBudgetsSent,
+          accepted: pipelineBudgetsAccepted,
+          sentValue: Number(budgetSentValue._sum.total || 0),
+        },
+        conversionRate: Math.round(conversionRate * 10) / 10,
+      };
+
+      // ============= 4. KPIs DEL MES =============
+      const [
+        thisMonthRevenue,
+        lastMonthRevenue,
+        thisMonthOrders,
+        lastMonthOrders,
+        thisMonthCompleted,
+        totalActiveProducts,
+        stockInUse,
+      ] = await Promise.all([
+        prisma.order.aggregate({
+          where: { createdAt: { gte: startOfMonth }, status: { not: 'CANCELLED' } },
+          _sum: { total: true },
+        }),
+        prisma.order.aggregate({
+          where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth }, status: { not: 'CANCELLED' } },
+          _sum: { total: true },
+        }),
+        prisma.order.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.order.count({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth } } }),
+        prisma.order.count({ where: { createdAt: { gte: startOfMonth }, status: 'COMPLETED' } }),
+        prisma.product.count({ where: { isActive: true, isPack: false } }),
+        prisma.productUnit.count({ where: { status: 'IN_USE' } }),
+      ]);
+
+      const thisMonthRev = Number(thisMonthRevenue._sum.total || 0);
+      const lastMonthRev = Number(lastMonthRevenue._sum.total || 0);
+      const revenueChange = lastMonthRev > 0 ? ((thisMonthRev - lastMonthRev) / lastMonthRev) * 100 : 0;
+      const avgTicket = thisMonthOrders > 0 ? thisMonthRev / thisMonthOrders : 0;
+      const totalUnits = await prisma.productUnit.count();
+      const stockOccupancy = totalUnits > 0 ? (stockInUse / totalUnits) * 100 : 0;
+
+      const kpis = {
+        revenue: { current: thisMonthRev, previous: lastMonthRev, change: Math.round(revenueChange * 10) / 10 },
+        orders: { current: thisMonthOrders, previous: lastMonthOrders, completed: thisMonthCompleted },
+        avgTicket: Math.round(avgTicket * 100) / 100,
+        stockOccupancy: Math.round(stockOccupancy * 10) / 10,
+        totalProducts: totalActiveProducts,
+        eventsThisMonth: thisMonthCompleted + (await prisma.order.count({
+          where: { startDate: { gte: startOfMonth }, status: { in: ['PENDING', 'IN_PROGRESS'] } },
+        })),
+      };
+
+      // ============= 5. FACTURACION PENDIENTE =============
+      const [pendingInvoices, overdueInvoices, next7DaysInvoices] = await Promise.all([
+        prisma.invoice.aggregate({
+          where: { status: { in: ['PENDING', 'SENT'] } },
+          _sum: { total: true },
+          _count: true,
+        }),
+        prisma.invoice.aggregate({
+          where: { status: 'OVERDUE' },
+          _sum: { total: true },
+          _count: true,
+        }),
+        prisma.invoice.findMany({
+          where: {
+            status: { in: ['PENDING', 'SENT'] },
+            dueDate: { gte: startOfToday, lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) },
+          },
+          select: { id: true, invoiceNumber: true, total: true, dueDate: true },
+          orderBy: { dueDate: 'asc' },
+          take: 5,
+        }),
+      ]);
+
+      // También contar plazos (installments) pendientes
+      const pendingInstallments = await prisma.paymentInstallment.aggregate({
+        where: { status: 'PENDING' },
+        _sum: { amount: true },
+        _count: true,
+      });
+
+      const billing = {
+        totalPending: Number(pendingInvoices._sum.total || 0) + Number(pendingInstallments._sum.amount || 0),
+        invoicesPending: { count: (pendingInvoices._count as unknown as number) || 0, total: Number(pendingInvoices._sum.total || 0) },
+        invoicesOverdue: { count: (overdueInvoices._count as unknown as number) || 0, total: Number(overdueInvoices._sum.total || 0) },
+        installmentsPending: { count: (pendingInstallments._count as unknown as number) || 0, total: Number(pendingInstallments._sum.amount || 0) },
+        next7Days: next7DaysInvoices.map(inv => ({
+          ...inv, total: Number(inv.total),
+        })),
+      };
+
+      // ============= 6. PEDIDOS RECIENTES =============
+      const recentOrders = await prisma.order.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { firstName: true, lastName: true, email: true } },
+        },
+      });
+
+      return {
+        todayEvents: todayEventsClassified,
+        weekEvents: weekEvents.map(o => ({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          customer: `${o.user?.firstName || ''} ${o.user?.lastName || ''}`.trim(),
+          startDate: o.startDate,
+          endDate: o.endDate,
+          status: o.status,
+          total: Number(o.total),
+          eventType: o.eventType,
+          itemCount: o.items.length,
+        })),
+        workload,
+        alerts,
+        pipeline,
+        kpis,
+        billing,
+        recentOrders: recentOrders.map(o => ({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          customer: `${o.user?.firstName || ''} ${o.user?.lastName || ''}`.trim(),
+          email: o.user?.email,
+          total: Number(o.total),
+          status: o.status,
+          createdAt: o.createdAt,
+        })),
+      };
+    } catch (error) {
+      logger.error('Error getting smart dashboard:', error);
+      throw error;
+    }
+  }
 }
 
 export const analyticsService = new AnalyticsService();

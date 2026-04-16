@@ -30,8 +30,7 @@ export interface PackItem {
 class PackService {
   async getPacks(): Promise<Pack[]> {
     try {
-      const response = await api.get('/packs');
-      return response.data;
+      return await api.get<Pack[]>('/packs');
     } catch (error) {
       console.error('Error al obtener packs:', error);
       return [];
@@ -40,8 +39,7 @@ class PackService {
 
   async getPackById(id: string): Promise<Pack | null> {
     try {
-      const response = await api.get(`/packs/${id}`);
-      return response.data;
+      return await api.get<Pack>(`/packs/${id}`);
     } catch (error) {
       console.error(`Error al obtener pack ${id}:`, error);
       return null;
@@ -50,11 +48,11 @@ class PackService {
 
   async checkAvailability(packId: string, startDate: string, endDate: string): Promise<boolean> {
     try {
-      const response = await api.post(`/packs/${packId}/check-availability`, {
+      const result = await api.post<{ available: boolean }>(`/packs/${packId}/check-availability`, {
         startDate,
         endDate
       });
-      return response.data.available;
+      return result.available;
     } catch (error) {
       console.error('Error al verificar disponibilidad:', error);
       return false;

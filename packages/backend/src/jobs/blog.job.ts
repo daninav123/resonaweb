@@ -217,7 +217,7 @@ async function generateDailyArticle(authorId: string) {
         slug: generateSlug(aiArticle.category),
         description: `Artículos sobre ${aiArticle.category.toLowerCase()}`,
         color: '#5ebbff',
-      });
+      }) as any;
     }
 
     // Crear post programado para mañana a las 9 AM
@@ -332,7 +332,7 @@ export async function generateArticleNow(authorId: string) {
         slug: generateSlug(aiArticle.category),
         description: `Artículos sobre ${aiArticle.category.toLowerCase()}`,
         color: '#5ebbff',
-      });
+      }) as any;
     }
 
     // Crear post PUBLICADO inmediatamente

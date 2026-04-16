@@ -76,7 +76,7 @@ router.post(
           if (installmentId) {
             try {
               const installmentService = new InstallmentService(prisma);
-              const chargeId = paymentIntent.charges?.data[0]?.id;
+              const chargeId = (paymentIntent as any).latest_charge as string || (paymentIntent as any).charges?.data[0]?.id;
               
               await installmentService.markInstallmentAsPaid(
                 installmentId,
@@ -129,7 +129,7 @@ router.post(
                 
                 if (firstInstallment && firstInstallment.status === 'PENDING') {
                   const installmentService = new InstallmentService(prisma);
-                  const chargeId = paymentIntent.charges?.data[0]?.id;
+                  const chargeId = (paymentIntent as any).latest_charge as string || (paymentIntent as any).charges?.data[0]?.id;
                   
                   await installmentService.markInstallmentAsPaid(
                     firstInstallment.id,

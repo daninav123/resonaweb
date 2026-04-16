@@ -29,19 +29,18 @@ const BudgetManager: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Cargar presupuestos
-  const { data: budgetsData, isLoading } = useQuery({
+  const { data: budgetsData, isLoading } = useQuery<Budget[]>({
     queryKey: ['budgets', statusFilter, searchTerm],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (statusFilter) params.append('status', statusFilter);
       if (searchTerm) params.append('search', searchTerm);
       
-      const response = await api.get(`/budgets?${params.toString()}`);
-      return response.data;
+      return await api.get<Budget[]>(`/budgets?${params.toString()}`);
     },
   });
 
-  const budgets = budgetsData || [];
+  const budgets: Budget[] = budgetsData || [];
 
   // Eliminar presupuesto
   const deleteMutation = useMutation({
@@ -60,8 +59,7 @@ const BudgetManager: React.FC = () => {
   // Duplicar presupuesto
   const duplicateMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await api.post(`/budgets/${id}/duplicate`);
-      return response.data;
+      return await api.post(`/budgets/${id}/duplicate`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgets'] });

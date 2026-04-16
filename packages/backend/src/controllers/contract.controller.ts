@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { contractService } from '../services/contract.service';
+import { contractMgmtService } from '../services/contractMgmt.service';
 import { AppError } from '../middleware/error.middleware';
 
 interface AuthRequest extends Request {
@@ -19,7 +19,7 @@ export class ContractController {
       }
 
       // Generar PDF
-      const pdfBuffer = await contractService.generateContract(orderId);
+      const pdfBuffer = await contractMgmtService.generateOrderContractPDF(orderId);
 
       // Enviar PDF
       res.setHeader('Content-Type', 'application/pdf');

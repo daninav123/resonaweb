@@ -29,7 +29,7 @@ const PaymentSuccessPage = () => {
     }
 
     try {
-      const orderData = await api.get(`/orders/${orderId}`);
+      const orderData = await api.get<any>(`/orders/${orderId}`);
       
       console.log('📦 Order data recibido:', orderData);
       console.log('💳 eligibleForInstallments:', orderData.eligibleForInstallments);

@@ -152,8 +152,7 @@ const BudgetEditor: React.FC = () => {
   // Agregar sección
   const addSectionMutation = useMutation({
     mutationFn: async (sectionData: any) => {
-      const response = await api.post(`/budgets/${id}/sections`, sectionData);
-      return response.data;
+      return await api.post(`/budgets/${id}/sections`, sectionData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budget', id] });
@@ -164,8 +163,7 @@ const BudgetEditor: React.FC = () => {
   // Agregar item
   const addItemMutation = useMutation({
     mutationFn: async ({ sectionId, itemData }: any) => {
-      const response = await api.post(`/budgets/sections/${sectionId}/items`, itemData);
-      return response.data;
+      return await api.post(`/budgets/sections/${sectionId}/items`, itemData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budget', id] });

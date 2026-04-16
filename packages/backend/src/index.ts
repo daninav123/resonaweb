@@ -6,7 +6,6 @@ import fs from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { PrismaClient } from '@prisma/client';
 
 // Import routers
 import { authRouter } from './routes/auth.routes';
@@ -51,6 +50,11 @@ import budgetRouter from './routes/budget.routes';
 import gdprRouter from './routes/gdpr.routes'; // RGPD: Derechos de protección de datos
 import seoPageRouter from './routes/seoPage.routes'; // SEO Pages management
 import commercialRouter from './routes/commercial.routes'; // Panel de Comerciales
+import stripeWebhookRouter from './routes/stripe-webhook.routes';
+import { eventRouter } from './routes/event.routes'; // Gestión de Eventos/Proyectos
+import { crmRouter } from './routes/crm.routes'; // CRM de Clientes
+import { staffRouter } from './routes/staff.routes'; // Personal / RRHH
+import { contractsRouter, contractPublicRouter, expensesRouter, vehiclesRouter, warehouseRouter } from './routes/adminModules.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -70,10 +74,10 @@ import { setupInstallmentReminders } from './jobs/installmentReminders.job';
 import { orderExpirationScheduler } from './schedulers/orderExpiration.scheduler';
 // import { initErrorTracking, getSentryRequestHandler, getSentryTracingHandler, getSentryErrorHandler } from './services/errorTracking.service';
 
-// Initialize Prisma
-export const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-});
+// Importar Prisma desde módulo centralizado (evita dependencia circular)
+import { prisma } from './lib/prisma';
+// Re-export para compatibilidad con imports existentes
+export { prisma };
 
 // Create Express app
 const app = express();
@@ -194,7 +198,13 @@ app.use('/uploads', (req, res, next) => {
 // Servir imágenes de productos subidas con soporte WebP automático
 app.use('/uploads/products', (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-  res.header('Access-Control-Allow-Origin', '*'); // Permitir acceso desde frontend
+  // Usar misma lógica de orígenes permitidos que el resto de la app
+  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
+  const origin = req.headers.origin;
+  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app'))) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
   
   // Intentar servir versión WebP si existe
   const originalPath = path.join(__dirname, '../uploads/products', req.path);
@@ -210,15 +220,14 @@ app.use('/uploads/products', (req, res, next) => {
 }, express.static(path.join(__dirname, '../uploads/products')));
 
 // Stripe webhook - DEBE ir ANTES de express.json() para obtener el body raw
-import stripeWebhookRouter from './routes/stripe-webhook.routes';
 app.use('/api/v1/webhooks', express.raw({ type: 'application/json' }), stripeWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Sanitización de inputs (prevenir XSS)
-app.use(sanitizeInputs);
+// Detección XSS primero (sobre input original), luego sanitización
 app.use(detectXSS);
+app.use(sanitizeInputs);
 
 // Metrics middleware (debe ir antes de las rutas para capturar todas)
 app.use(metricsMiddleware);
@@ -311,6 +320,14 @@ app.use('/api/v1/budgets', budgetRouter);
 app.use('/api/v1/gdpr', gdprRouter); // RGPD: Derechos de protección de datos
 app.use('/api/v1/seo-pages', seoPageRouter); // SEO Pages management
 app.use('/api/v1/commercial', commercialRouter); // Panel de Comerciales
+app.use('/api/v1/events', eventRouter); // Gestión de Eventos/Proyectos
+app.use('/api/v1/crm', crmRouter); // CRM de Clientes
+app.use('/api/v1/staff', staffRouter); // Personal / RRHH
+app.use('/api/v1/contracts-mgmt', contractsRouter); // Contratos
+app.use('/api/v1/contracts-public', contractPublicRouter); // Contratos - acceso público
+app.use('/api/v1/recurring-expenses', expensesRouter); // Gastos recurrentes
+app.use('/api/v1/vehicles', vehiclesRouter); // Vehículos
+app.use('/api/v1/warehouse', warehouseRouter); // Almacén
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling
