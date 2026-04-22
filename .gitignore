@@ -89,3 +89,14 @@ playwright-report/
 # Debug files
 debug-*.png
 debug-*.js
+
+# Service accounts y credenciales Google (NUNCA subir)
+**/secrets/
+**/secrets/*.json
+*service-account*.json
+/packages/backend/secrets/
+
+# Datos brutos de Search Console / GA (contienen info sensible de negocio)
+/docs/gsc/
+/docs/ga4/
+/docs/gbp/

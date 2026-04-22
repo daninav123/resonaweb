@@ -37,7 +37,13 @@ const SEOHead = ({
 }: SEOProps) => {
   const fullTitle = title.includes('Resona') || title.includes('ReSona') ? title : `${title} | Resona Events`;
   const baseUrl = 'https://resonaevents.com';
-  const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : baseUrl);
+  // Canonical: si no se pasa explícita, usar la URL actual SIN query params ni hash
+  // para evitar canibalización por filtros (?category=, ?search=, ?utm_...).
+  const fallbackCanonical =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${window.location.pathname}`
+      : baseUrl;
+  const currentUrl = canonicalUrl || fallbackCanonical;
 
   // Asegurar que la imagen tiene URL completa
   const fullOgImage = ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`;

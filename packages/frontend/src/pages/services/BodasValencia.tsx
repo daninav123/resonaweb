@@ -66,14 +66,7 @@ const BodasValencia = () => {
               "longitude": -0.3763
             },
             "url": "https://resonaevents.com",
-            "priceRange": "€€",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "5.0",
-              "reviewCount": "12",
-              "bestRating": "5",
-              "worstRating": "1"
-            }
+            "priceRange": "€€"
           })}
         </script>
 
@@ -104,7 +97,7 @@ const BodasValencia = () => {
                 "name": "¿Qué incluye vuestro servicio completo para bodas en Valencia?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Servicio completo incluye: sonido profesional DAS Audio/ICOA para ceremonia, cóctel, banquete y fiesta; microfonía inalámbrica para novios, testigos y sacerdote; iluminación LED RGB ambiental (uplighting); técnico especializado durante toda la boda; montaje y desmontaje; transporte gratis Valencia capital; equipos de backup; coordinación con DJ/wedding planner; y soporte 24/7."
+                  "text": "Servicio completo incluye: sonido profesional DAS Audio/ICOA para ceremonia, cóctel, banquete y fiesta; microfonía inalámbrica para novios, testigos y sacerdote; iluminación LED RGB ambiental (uplighting); técnico especializado durante toda la boda; montaje y desmontaje; transporte Valencia capital; equipos de backup; coordinación con DJ/wedding planner; y soporte 24/7."
                 }
               },
               {
@@ -136,7 +129,7 @@ const BodasValencia = () => {
                 "name": "¿Trabajáis bodas en toda la provincia de Valencia?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Sí, trabajamos en toda la provincia de Valencia y alrededores: Valencia capital, Alboraya, Torrent, Paterna, Mislata, Godella, Bétera, L'Eliana, Moncada, Burjassot, Manises, Quart de Poblet, Xirivella, Catarroja, Massanassa, Alfafar, Sedaví, y toda la comarca de L'Horta. Transporte gratis en Valencia capital (30km), resto según distancia."
+                  "text": "Sí, trabajamos en toda la provincia de Valencia y alrededores: Valencia capital, Alboraya, Torrent, Paterna, Mislata, Godella, Bétera, L'Eliana, Moncada, Burjassot, Manises, Quart de Poblet, Xirivella, Catarroja, Massanassa, Alfafar, Sedaví, y toda la comarca de L'Horta. Transporte incluido en Valencia capital (30km), resto según distancia."
                 }
               },
               {
@@ -667,7 +660,7 @@ const BodasValencia = () => {
                     ¿Qué incluye vuestro servicio completo para bodas en Valencia?
                   </summary>
                   <p className="mt-4 text-gray-700">
-                    Servicio completo incluye: sonido profesional DAS Audio/ICOA para ceremonia, cóctel, banquete y fiesta; microfonía inalámbrica para novios, testigos y sacerdote; iluminación LED RGB ambiental (uplighting); técnico especializado durante toda la boda; montaje y desmontaje; transporte gratis Valencia capital; equipos de backup; coordinación con DJ/wedding planner; y soporte 24/7.
+                    Servicio completo incluye: sonido profesional DAS Audio/ICOA para ceremonia, cóctel, banquete y fiesta; microfonía inalámbrica para novios, testigos y sacerdote; iluminación LED RGB ambiental (uplighting); técnico especializado durante toda la boda; montaje y desmontaje; transporte Valencia capital; equipos de backup; coordinación con DJ/wedding planner; y soporte 24/7.
                   </p>
                 </details>
 

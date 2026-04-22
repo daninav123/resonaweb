@@ -98,34 +98,7 @@ export const advancedProductSchema = (product: any) => {
         "name": "ReSona Events"
       }
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.7",
-      "reviewCount": "23",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": [
-      {
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "María García"
-        },
-        "datePublished": "2024-11-15",
-        "reviewBody": "Excelente equipo, sonido perfecto para nuestra boda. Muy profesionales.",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "5",
-          "bestRating": "5",
-          "worstRating": "1"
-        },
-        "itemReviewed": {
-          "@type": "Product",
-          "name": product.name
-        }
-      }
-    ]
+    // aggregateRating y review eliminados: se añadirán cuando existan reseñas reales vinculadas al producto
   };
 };
 
@@ -200,12 +173,8 @@ export const serviceSchema = {
         ]
       }
     ]
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "127"
   }
+  // aggregateRating eliminado: se añadirá cuando existan reseñas reales agregadas de clientes
 };
 
 // Breadcrumb helper

@@ -36,7 +36,7 @@ export class SitemapController {
         },
       });
 
-      // Obtener todos los productos activos (solo necesitamos slug)
+      // Obtener todos los productos activos (slug + imagen principal)
       const products = await prisma.product.findMany({
         where: {
           isActive: true,
@@ -45,10 +45,13 @@ export class SitemapController {
         select: {
           slug: true,
           updatedAt: true,
+          name: true,
+          mainImageUrl: true,
+          images: true,
         },
       });
 
-      // Obtener todos los packs activos
+      // Obtener todos los packs activos (el modelo Pack usa imageUrl, no mainImageUrl)
       const packs = await prisma.pack.findMany({
         where: {
           isActive: true,
@@ -56,6 +59,8 @@ export class SitemapController {
         select: {
           slug: true,
           updatedAt: true,
+          name: true,
+          imageUrl: true,
         },
       });
 
@@ -112,28 +117,49 @@ export class SitemapController {
 `;
       });
 
-      // Añadir productos individuales
+      // Utilidad: convertir rutas de imagen a URL absoluta, escapar XML
+      const toAbsoluteImage = (img?: string | null) => {
+        if (!img) return null;
+        const abs = img.startsWith('http') ? img : `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`;
+        return abs.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      };
+      const escapeXml = (str: string) =>
+        str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+      // Añadir productos individuales (con imágenes para Google Images)
       products.forEach(product => {
         const lastmod = product.updatedAt.toISOString().split('T')[0];
+        const imgs = [product.mainImageUrl, ...((product.images as string[] | null) || [])]
+          .filter(Boolean)
+          .slice(0, 5)
+          .map(toAbsoluteImage)
+          .filter(Boolean) as string[];
         xml += `  
   <url>
     <loc>${baseUrl}/productos/${product.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+${imgs.map(src => `    <image:image>\n      <image:loc>${src}</image:loc>\n      <image:title>${escapeXml(product.name)}</image:title>\n    </image:image>`).join('\n')}
   </url>
 `;
       });
 
-      // Añadir packs
+      // Añadir packs (con imágenes)
       packs.forEach(pack => {
         const lastmod = pack.updatedAt.toISOString().split('T')[0];
+        const imgs = [pack.imageUrl]
+          .filter(Boolean)
+          .slice(0, 5)
+          .map(toAbsoluteImage)
+          .filter(Boolean) as string[];
         xml += `  
   <url>
     <loc>${baseUrl}/packs/${pack.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+${imgs.map(src => `    <image:image>\n      <image:loc>${src}</image:loc>\n      <image:title>${escapeXml(pack.name)}</image:title>\n    </image:image>`).join('\n')}
   </url>
 `;
       });

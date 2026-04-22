@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { blogService } from '../../services/blog.service';
 import SEOHead from '../../components/SEO/SEOHead';
 import { Calendar, User, ArrowLeft, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
@@ -111,7 +110,7 @@ const BlogPostPage = () => {
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
-    "image": imageUrl || "https://resonaevents.com/og-image.jpg",
+    "image": imageUrl || "https://resonaevents.com/og-image.png",
     "datePublished": post.publishedAt,
     "dateModified": post.publishedAt,
     "author": {
@@ -134,19 +133,26 @@ const BlogPostPage = () => {
     "keywords": post.metaKeywords || post.tags?.map(t => t.name).join(', ') || '',
   };
 
+  const canonicalUrl = `https://resonaevents.com/blog/${post.slug}`;
+
   return (
     <>
       <SEOHead
         title={post.metaTitle || post.title}
         description={post.metaDescription || post.excerpt}
+        keywords={post.metaKeywords || post.tags?.map(t => t.name).join(', ')}
+        canonicalUrl={canonicalUrl}
+        ogImage={imageUrl || 'https://resonaevents.com/og-image.png'}
+        ogType="article"
+        article={{
+          publishedTime: post.publishedAt,
+          modifiedTime: post.publishedAt,
+          author: `${post.author.firstName} ${post.author.lastName}`,
+          section: post.category.name,
+          tags: post.tags?.map(t => t.name),
+        }}
+        schema={articleSchema}
       />
-      
-      {/* Schema.org JSON-LD para Google */}
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(articleSchema)}
-        </script>
-      </Helmet>
 
       <article className="min-h-screen bg-gray-50">
         {/* Header */}

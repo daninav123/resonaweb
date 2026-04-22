@@ -50,10 +50,6 @@
       "destination": "https://resona-backend.onrender.com/sitemap.xml"
     },
     {
-      "source": "/robots.txt",
-      "destination": "https://resona-backend.onrender.com/robots.txt"
-    },
-    {
       "source": "/calculadora-evento",
       "destination": "/calculadora-evento.html"
     },
@@ -117,6 +113,14 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(self), camera=(), microphone=(), payment=(self)"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
         }
       ]
     },

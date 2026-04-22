@@ -1,32 +1,46 @@
-# robots.txt para Resona Events
+# robots.txt — ReSona Events
+# Servido directamente por Vercel (estático). Fuente única de verdad.
 
 User-agent: *
 Allow: /
 
-# Páginas importantes para crawlear
-Allow: /productos
-Allow: /blog
-Allow: /packs
-Allow: /calculadora-evento
-Allow: /servicios
-Allow: /sobre-nosotros
-Allow: /contacto
-
-# No indexar páginas privadas
+# Rutas privadas / no indexables
 Disallow: /admin
+Disallow: /admin/*
 Disallow: /cuenta
+Disallow: /perfil
 Disallow: /mis-pedidos
 Disallow: /checkout
 Disallow: /carrito
-
-# No indexar APIs
+Disallow: /private/
 Disallow: /api/
 
-# Sitemap Dinámico (generado automáticamente con productos y blog)
+# Evitar indexar páginas con parámetros de búsqueda / filtros (duplicados)
+Disallow: /*?search=
+Disallow: /*?utm_
+Disallow: /*&utm_
+
+# Googlebot (refuerzo explícito)
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /cuenta
+Disallow: /perfil
+Disallow: /mis-pedidos
+Disallow: /checkout
+Disallow: /carrito
+Disallow: /api/
+
+# Bots agresivos bloqueados (protección de recursos)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap dinámico (generado desde backend, incluye productos, packs, blog, categorías y SEO pages)
 Sitemap: https://resonaevents.com/sitemap.xml
 
-# RSS Feed del Blog
-# https://api.resonaevents.com/rss
-
-# Crawl-delay para proteger el servidor
-Crawl-delay: 1
