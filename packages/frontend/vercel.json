@@ -50,6 +50,14 @@
       "destination": "https://resona-backend.onrender.com/sitemap.xml"
     },
     {
+      "source": "/uploads/:path*",
+      "destination": "https://resona-backend.onrender.com/uploads/:path*"
+    },
+    {
+      "source": "/rss",
+      "destination": "https://resona-backend.onrender.com/rss"
+    },
+    {
       "source": "/calculadora-evento",
       "destination": "/calculadora-evento.html"
     },

@@ -129,11 +129,12 @@ export class SitemapController {
       // Añadir productos individuales (con imágenes para Google Images)
       products.forEach(product => {
         const lastmod = product.updatedAt.toISOString().split('T')[0];
-        const imgs = [product.mainImageUrl, ...((product.images as string[] | null) || [])]
-          .filter(Boolean)
-          .slice(0, 5)
-          .map(toAbsoluteImage)
-          .filter(Boolean) as string[];
+        const imgs = Array.from(new Set(
+          [product.mainImageUrl, ...((product.images as string[] | null) || [])]
+            .filter(Boolean)
+            .map(toAbsoluteImage)
+            .filter(Boolean) as string[]
+        )).slice(0, 5);
         xml += `  
   <url>
     <loc>${baseUrl}/productos/${product.slug}</loc>
