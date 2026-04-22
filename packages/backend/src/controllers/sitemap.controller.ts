@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { prisma } from '../index';
 
 export class SitemapController {
@@ -117,10 +119,28 @@ export class SitemapController {
 `;
       });
 
-      // Utilidad: convertir rutas de imagen a URL absoluta, escapar XML
-      const toAbsoluteImage = (img?: string | null) => {
+      // Utilidad: convertir rutas de imagen a URL absoluta SOLO si el archivo existe
+      // en disco. Evita incluir en el sitemap imágenes rotas (Google penaliza si
+      // reportamos URLs en <image:loc> que devuelven 404).
+      const uploadsRoot = path.join(__dirname, '../../uploads');
+      const toAbsoluteImage = (img?: string | null): string | null => {
         if (!img) return null;
-        const abs = img.startsWith('http') ? img : `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`;
+        // Si es absoluta externa, la dejamos tal cual (no la verificamos)
+        if (/^https?:\/\//i.test(img)) {
+          return img.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        // Verificar existencia física del archivo bajo /uploads
+        const relative = img.startsWith('/') ? img.substring(1) : img; // "uploads/products/foo.png"
+        const normalized = relative.startsWith('uploads/')
+          ? relative.substring('uploads/'.length)
+          : relative;
+        const absPath = path.join(uploadsRoot, normalized);
+        try {
+          if (!fs.existsSync(absPath)) return null;
+        } catch {
+          return null;
+        }
+        const abs = `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`;
         return abs.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       };
       const escapeXml = (str: string) =>
