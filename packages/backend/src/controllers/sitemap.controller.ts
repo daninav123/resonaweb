@@ -120,26 +120,33 @@ export class SitemapController {
       });
 
       // Utilidad: convertir rutas de imagen a URL absoluta SOLO si el archivo existe
-      // en disco. Evita incluir en el sitemap imágenes rotas (Google penaliza si
-      // reportamos URLs en <image:loc> que devuelven 404).
-      const uploadsRoot = path.join(__dirname, '../../uploads');
+      // en disco. Evita incluir en el sitemap imágenes rotas (Google penaliza).
+      // El backend sirve /uploads desde DOS raíces distintas según index.ts:
+      //   - express.static(../public/uploads) para /uploads/*
+      //   - express.static(../uploads/products) para /uploads/products/*
+      // Compruebo ambas para determinar si el archivo realmente se servirá.
+      const uploadsRoots = [
+        path.join(__dirname, '../../public/uploads'),
+        path.join(__dirname, '../../uploads'),
+      ];
+      const fileExistsInAnyRoot = (relativePathFromUploads: string): boolean => {
+        for (const root of uploadsRoots) {
+          try {
+            if (fs.existsSync(path.join(root, relativePathFromUploads))) return true;
+          } catch { /* noop */ }
+        }
+        return false;
+      };
       const toAbsoluteImage = (img?: string | null): string | null => {
         if (!img) return null;
-        // Si es absoluta externa, la dejamos tal cual (no la verificamos)
         if (/^https?:\/\//i.test(img)) {
           return img.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
-        // Verificar existencia física del archivo bajo /uploads
-        const relative = img.startsWith('/') ? img.substring(1) : img; // "uploads/products/foo.png"
+        const relative = img.startsWith('/') ? img.substring(1) : img;
         const normalized = relative.startsWith('uploads/')
           ? relative.substring('uploads/'.length)
           : relative;
-        const absPath = path.join(uploadsRoot, normalized);
-        try {
-          if (!fs.existsSync(absPath)) return null;
-        } catch {
-          return null;
-        }
+        if (!fileExistsInAnyRoot(normalized)) return null;
         const abs = `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`;
         return abs.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       };
