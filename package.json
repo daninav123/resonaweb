@@ -4,14 +4,19 @@
   "private": true,
   "description": "Sistema de gestión de alquiler de material para eventos",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "start": "npm run start --workspace=backend",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:all": "concurrently -n backend,admin,rent,events -c yellow,blue,green,magenta \"npm run dev:backend\" \"npm run dev --workspace=admin\" \"npm run dev --workspace=rent\" \"npm run dev --workspace=events\"",
+    "dev:admin": "npm run dev --workspace=admin",
+    "dev:rent": "npm run dev --workspace=rent",
+    "dev:events": "npm run dev --workspace=events",
     "dev:frontend": "npm run dev --workspace=frontend",
-    "dev:backend": "npm run dev:quick --workspace=backend",
-    "dev:backend:nodemon": "npm run dev --workspace=backend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:backend:quick": "npm run dev:quick --workspace=backend",
     "build": "npm run build --workspaces",
     "build:frontend": "npm run build --workspace=frontend",
     "build:backend": "npm run build --workspace=backend",

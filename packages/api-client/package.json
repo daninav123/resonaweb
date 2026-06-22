@@ -1,0 +1,23 @@
+{
+  "name": "@resona/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cliente Axios compartido: interceptor JWT, refresh de tokens, authStore (Zustand)",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@resona/shared-types": "*"
+  },
+  "peerDependencies": {
+    "axios": "^1.0.0",
+    "react-hot-toast": "^2.0.0",
+    "zustand": "^4.0.0"
+  }
+}

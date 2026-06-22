@@ -182,13 +182,17 @@ async function generateDailyArticle(authorId: string) {
     logger.info('🤖 Iniciando generación de artículo con IA...');
     logger.info(`OpenAI API Key configurada: ${process.env.OPENAI_API_KEY ? 'Sí (longitud: ' + process.env.OPENAI_API_KEY.length + ')' : 'No'}`);
 
+    // Títulos recientes para evitar repetir tema (anti-contenido-duplicado)
+    const recent = await blogService.getPosts({ page: 1, limit: 30 } as any);
+    const recentTitles = (recent?.posts || recent?.data || []).map((p: any) => p.title).filter(Boolean);
+
     // Generar contenido con OpenAI
-    const aiArticle = await generateBlogArticle();
-    
-    // Generar imagen con DALL-E 3
+    const aiArticle = await generateBlogArticle(recentTitles);
+
+    // Generar imagen
     let featuredImage: string | null = null;
     try {
-      logger.info('🎨 Generando imagen con DALL-E 3...');
+      logger.info('🎨 Generando imagen del artículo...');
       featuredImage = await generateBlogImage(aiArticle.title, aiArticle.excerpt);
       
       if (featuredImage) {

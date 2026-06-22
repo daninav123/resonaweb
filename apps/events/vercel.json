@@ -1,0 +1,69 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && npm install && npm run build --workspace=events",
+  "outputDirectory": "dist",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://resona-backend.onrender.com/uploads/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.resonaevents.com" }],
+      "destination": "https://resonaevents.com/:path*",
+      "permanent": true
+    },
+    { "source": "/sobre-nosotros", "destination": "/estudio", "permanent": true },
+    { "source": "/calculadora-evento", "destination": "/brief", "permanent": true },
+    { "source": "/sonido-bodas-valencia", "destination": "/bodas", "permanent": true },
+    { "source": "/servicios/bodas-valencia", "destination": "/bodas", "permanent": true },
+    { "source": "/servicios/sonido-bodas-valencia", "destination": "/bodas", "permanent": true },
+    { "source": "/servicios/sonido-iluminacion-bodas-valencia", "destination": "/bodas", "permanent": true },
+    { "source": "/servicios/sonido-eventos-corporativos", "destination": "/eventos", "permanent": true },
+    { "source": "/servicios/iluminacion-arquitectonica", "destination": "/servicios", "permanent": true },
+    { "source": "/servicios/iluminacion-escenarios", "destination": "/servicios", "permanent": true },
+    { "source": "/servicios/produccion-eventos-valencia", "destination": "/servicios", "permanent": true },
+    { "source": "/servicios/produccion-tecnica-eventos", "destination": "/servicios", "permanent": true },
+    { "source": "/servicios/videoescenarios-streaming", "destination": "/servicios", "permanent": true },
+    { "source": "/productos", "destination": "https://resonarent.com/productos", "permanent": false },
+    { "source": "/productos/:slug", "destination": "https://resonarent.com/productos/:slug", "permanent": false },
+    { "source": "/carrito", "destination": "https://resonarent.com/carrito", "permanent": false },
+    { "source": "/checkout", "destination": "https://resonarent.com/checkout", "permanent": false },
+    { "source": "/mis-pedidos", "destination": "https://resonarent.com/mis-pedidos", "permanent": false },
+    { "source": "/cuenta", "destination": "https://resonarent.com/cuenta", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600" },
+        { "key": "Content-Type", "value": "application/xml" }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}

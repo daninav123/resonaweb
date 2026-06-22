@@ -1,0 +1,32 @@
+# robots.txt — ReSona Events (resonaevents.com)
+
+User-agent: *
+Allow: /
+
+# Áreas privadas / flujo interno
+Disallow: /login
+Disallow: /registro
+Disallow: /api/
+
+# Parámetros UTM / tracking (evitar duplicados en índice)
+Disallow: /*?utm_
+Disallow: /*&utm_
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /login
+Disallow: /registro
+Disallow: /api/
+
+# Bots agresivos
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+Sitemap: https://resonaevents.com/sitemap.xml

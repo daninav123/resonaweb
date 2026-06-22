@@ -66,7 +66,7 @@ const articleTopics = [
   },
 ];
 
-export async function generateBlogArticle(): Promise<{
+export async function generateBlogArticle(recentTitles: string[] = []): Promise<{
   title: string;
   category: string;
   excerpt: string;
@@ -76,9 +76,14 @@ export async function generateBlogArticle(): Promise<{
   metaKeywords: string;
 }> {
   try {
-    // Seleccionar tema aleatorio
-    const categoryTemplate = articleTopics[Math.floor(Math.random() * articleTopics.length)];
-    const topic = categoryTemplate.topics[Math.floor(Math.random() * categoryTemplate.topics.length)];
+    // Seleccionar tema evitando los ya usados recientemente (anti-contenido-duplicado)
+    const used = recentTitles.map((t) => t.toLowerCase());
+    const allTopics = articleTopics.flatMap((c) => c.topics.map((t) => ({ category: c.category, topic: t })));
+    const available = allTopics.filter((t) => !used.some((u) => u.includes(t.topic.toLowerCase())));
+    const pool = available.length > 0 ? available : allTopics;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    const categoryTemplate = { category: picked.category };
+    const topic = picked.topic;
 
     logger.info(`🤖 Generando artículo con IA: ${topic}`);
 
@@ -92,6 +97,7 @@ El artículo debe:
 - Ser informativo y útil para organizadores de eventos
 - Incluir consejos prácticos y profesionales
 - Mencionar ejemplos específicos de equipos (micrófonos Shure, altavoces JBL, luces LED, etc.)
+- Enfoque local SEO: menciona de forma natural Valencia y la Comunidad Valenciana (Resona Events opera en Valencia), sin forzar
 - Incluir una sección de preguntas frecuentes (FAQ)
 - Terminar con un call-to-action suave hacia Resona Events
 - Usar formato Markdown con títulos H2 y H3
@@ -216,10 +222,10 @@ export async function generateMultipleArticles(count: number = 10) {
   return articles;
 }
 
-// Función para generar imagen con DALL-E 3
+// Función para generar imagen con gpt-image-1
 export async function generateBlogImage(articleTitle: string, articleExcerpt: string): Promise<string | null> {
   try {
-    logger.info(`🎨 Generando imagen con DALL-E 3 para: "${articleTitle}"`);
+    logger.info(`🎨 Generando imagen con gpt-image-1 para: "${articleTitle}"`);
 
     // Crear prompt descriptivo basado en el título
     const imagePrompt = `Professional high-quality photograph for a blog article about: "${articleTitle}". 
@@ -229,25 +235,25 @@ Style: Professional photography, bright natural lighting, ultra realistic, 8k qu
 commercial photography aesthetic. No text or logos in the image.`;
 
     const response = await openai.images.generate({
-      model: 'dall-e-3',
+      model: 'gpt-image-1',
       prompt: imagePrompt,
       n: 1,
       size: '1024x1024',
-      quality: 'standard',
-      style: 'natural',
+      quality: 'medium',
     });
 
-    const imageUrl = response.data[0]?.url;
-    
-    if (!imageUrl) {
-      logger.error('No se generó URL de imagen');
+    const img = response.data?.[0] as { url?: string; b64_json?: string } | undefined;
+    const imageSource = img?.url ?? (img?.b64_json ? `data:image/png;base64,${img.b64_json}` : null);
+
+    if (!imageSource) {
+      logger.error('No se generó imagen');
       return null;
     }
 
-    logger.info(`✅ Imagen generada: ${imageUrl}`);
+    logger.info('✅ Imagen generada con gpt-image-1');
 
     // Subir a Cloudinary para uso en producción (funciona tanto en local como en producción)
-    const cloudinaryUrl = await uploadImageToCloudinary(imageUrl, articleTitle);
+    const cloudinaryUrl = await uploadImageToCloudinary(imageSource, articleTitle);
     
     return cloudinaryUrl;
   } catch (error: any) {

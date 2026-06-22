@@ -1,0 +1,1454 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { api } from '@resona/api-client';
+import { Trash2, Plus, Minus, ShoppingBag, Calendar, ShoppingCart, Package, AlertTriangle, Info, Star, Crown, Tag } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { guestCart, GuestCartItem } from '../utils/guestCart';
+import { useAuthStore } from '../stores/authStore';
+import { productService } from '../services/product.service';
+import { companyService } from '../services/company.service';
+import { calculatePaymentBreakdown } from '../utils/depositCalculator';
+import AddressAutocomplete from '../components/AddressAutocomplete';
+import { CouponInput } from '../components/coupons/CouponInput';
+import { calculateCartTotals } from '../utils/cartCalculations';
+
+const CartPage = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, loading } = useAuthStore();
+  const [guestCartItems, setGuestCartItems] = useState<GuestCartItem[]>([]);
+  const [globalDates, setGlobalDates] = useState({ start: '', end: '' });
+  const [includeInstallation, setIncludeInstallation] = useState(false);
+  const [unavailableItems, setUnavailableItems] = useState<Map<string, string>>(new Map()); // itemId -> error message
+  const [calculatedShipping, setCalculatedShipping] = useState<any>(null);
+  const [shippingConfig, setShippingConfig] = useState<any>(null);
+  const [companySettings, setCompanySettings] = useState<any>(null);
+  const deliveryOption = 'pickup'; // Siempre recogida en tienda
+  const [orderNotes, setOrderNotes] = useState<string>(''); // Notas del pedido
+  const [shippingIncludedInPrice, setShippingIncludedInPrice] = useState(false); // Flag: transporte ya incluido en precio
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null); // Cupón aplicado
+  
+  // Debug de estado de autenticación (solo en desarrollo)
+  // console.log('CartPage - Auth State:', { 
+  //   user: user?.email, 
+  //   isAuthenticated, 
+  //   loading,
+  //   hasUser: !!user 
+  // });
+
+  // Cargar configuración de envío y datos guardados al montar
+  useEffect(() => {
+    const loadShippingConfig = async () => {
+      try {
+        const config: any = await api.get('/shipping-config');
+        setShippingConfig(config);
+      } catch (error) {
+        console.error('Error cargando configuración de envío:', error);
+      }
+    };
+    
+    const loadCompanySettings = async () => {
+      try {
+        const settings: any = await companyService.getSettings();
+        setCompanySettings(settings);
+      } catch (error) {
+        console.error('Error cargando configuración de empresa:', error);
+      }
+    };
+
+    loadShippingConfig();
+    loadCompanySettings();
+
+    // Restaurar datos guardados del sidebar
+    const savedDates = localStorage.getItem('cartGlobalDates');
+    const savedDeliveryOption = localStorage.getItem('cartDeliveryOption');
+    const savedDistance = localStorage.getItem('cartDistance');
+    const savedAddress = localStorage.getItem('cartDeliveryAddress');
+    const savedInstallation = localStorage.getItem('cartIncludeInstallation');
+    const savedNotes = localStorage.getItem('cartOrderNotes');
+
+    if (savedDates) {
+      try {
+        const dates = JSON.parse(savedDates);
+        setGlobalDates(dates);
+      } catch (e) {
+        console.error('Error parsing saved dates');
+      }
+    }
+
+    // deliveryOption siempre es 'pickup', no hace falta restaurar
+    
+    if (savedInstallation) {
+      setIncludeInstallation(savedInstallation === 'true');
+    }
+
+    if (savedNotes) {
+      setOrderNotes(savedNotes);
+    }
+
+    // Detectar si viene de la calculadora (transporte/montaje ya incluido)
+    const fromCalculator = localStorage.getItem('cartFromCalculator') === 'true';
+    const includesShipping = localStorage.getItem('cartIncludesShippingInstallation') === 'true';
+    
+    if (fromCalculator && includesShipping) {
+      setShippingIncludedInPrice(true);
+      setIncludeInstallation(true); // Marcar automáticamente
+    }
+
+    // Cargar fechas del evento desde la calculadora
+    const eventDates = localStorage.getItem('cartEventDates');
+    if (eventDates && fromCalculator) {
+      try {
+        const dates = JSON.parse(eventDates);
+        setGlobalDates(dates);
+      } catch (e) {
+        console.error('Error parsing event dates:', e);
+      }
+    }
+
+    // Generar notas del pedido con información del evento
+    const eventInfo = localStorage.getItem('cartEventInfo');
+    if (eventInfo && fromCalculator) {
+      try {
+        const info = JSON.parse(eventInfo);
+        
+        // Generar texto descriptivo de las notas
+        let notesText = `📅 INFORMACIÓN DEL EVENTO\n\n`;
+        notesText += `Tipo de evento: ${info.eventType}\n`;
+        notesText += `Número de asistentes: ${info.attendees} personas\n`;
+        
+        // Mostrar hora de inicio
+        if (info.startTime) {
+          notesText += `Hora de inicio: ${info.startTime}\n`;
+        }
+        notesText += `Duración: ${info.duration} ${info.durationType === 'hours' ? 'horas' : 'días'}\n`;
+        
+        if (info.eventDate) {
+          const date = new Date(info.eventDate);
+          notesText += `Fecha del evento: ${date.toLocaleDateString('es-ES', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}\n`;
+        }
+        
+        if (info.eventLocation) {
+          notesText += `Ubicación: ${info.eventLocation}\n`;
+        }
+        
+        if (info.selectedParts && info.selectedParts.length > 0) {
+          notesText += `\nPartes del evento seleccionadas:\n`;
+          
+          // Intentar obtener nombres reales de las partes
+          try {
+            const calculatorConfig = localStorage.getItem('advancedCalculatorConfig');
+            if (calculatorConfig) {
+              const config = JSON.parse(calculatorConfig);
+              const eventType = config.eventTypes?.find((et: any) => et.name === info.eventType);
+              
+              if (eventType && eventType.parts) {
+                info.selectedParts.forEach((partId: string) => {
+                  const part = eventType.parts.find((p: any) => p.id === partId);
+                  if (part) {
+                    notesText += `  ${part.icon || '•'} ${part.name}`;
+                    if (part.defaultDuration) {
+                      notesText += ` (${part.defaultDuration}h)`;
+                    }
+                    notesText += `\n`;
+                  } else {
+                    notesText += `  • ${partId}\n`;
+                  }
+                });
+              } else {
+                // Si no hay config, mostrar IDs
+                info.selectedParts.forEach((partId: string) => {
+                  notesText += `  • ${partId}\n`;
+                });
+              }
+            } else {
+              // Si no hay config, mostrar IDs
+              info.selectedParts.forEach((partId: string) => {
+                notesText += `  • ${partId}\n`;
+              });
+            }
+          } catch (e) {
+            // Fallback: mostrar IDs
+            info.selectedParts.forEach((partId: string) => {
+              notesText += `  • ${partId}\n`;
+            });
+          }
+        }
+        
+        notesText += `\n---\nNotas adicionales:\n`;
+        
+        setOrderNotes(notesText);
+      } catch (e) {
+        console.error('Error parsing event info:', e);
+      }
+    }
+  }, []);
+
+  // Autocompletar fechas y notas para items de eventos
+  useEffect(() => {
+    // Buscar items de eventos
+    const eventItems = guestCartItems.filter((item: any) => item.eventMetadata);
+
+    // Si no hay items de evento, limpiar las notas de eventos viejos
+    if (eventItems.length === 0) {
+      // Solo limpiar si las notas actuales parecen ser de un evento
+      if (orderNotes.includes('📅 INFORMACIÓN DEL EVENTO') || orderNotes.includes('📋 DETALLES DEL EVENTO')) {
+        console.log('🧹 Limpiando notas de eventos antiguos (no hay items de evento en el carrito)');
+        setOrderNotes('');
+        localStorage.removeItem('cartOrderNotes');
+        localStorage.removeItem('cartEventInfo');
+      }
+      return;
+    }
+
+    // Autocompletar fechas si no hay fechas establecidas
+    if (!globalDates.start && !globalDates.end && eventItems[0].eventMetadata?.eventDate) {
+      const firstEventDate = eventItems[0].eventMetadata.eventDate;
+      setGlobalDates({
+        start: firstEventDate,
+        end: firstEventDate
+      });
+    }
+
+    // Construir notas automáticas con detalles de packs y extras
+    let autoNotes = '📋 DETALLES DEL EVENTO:\n\n';
+    
+    eventItems.forEach((item: any, index: number) => {
+      autoNotes += `${index + 1}. ${item.product.name}\n`;
+      
+      // Información del evento
+      if (item.eventMetadata.eventType) {
+        autoNotes += `   🎉 Tipo: ${item.eventMetadata.eventType}\n`;
+      }
+      if (item.eventMetadata.attendees) {
+        autoNotes += `   👥 Asistentes: ${item.eventMetadata.attendees}\n`;
+      }
+      if (item.eventMetadata.eventDate) {
+        autoNotes += `   📅 Fecha: ${new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}\n`;
+      }
+      if (item.eventMetadata.eventLocation) {
+        autoNotes += `   📍 Ubicación: ${item.eventMetadata.eventLocation}\n`;
+      }
+      
+      autoNotes += '\n';
+      
+      // Partes del Evento
+      if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+        autoNotes += '   📦 Partes del Evento:\n';
+        item.eventMetadata.selectedParts.forEach((part: any) => {
+          const price = part.price || 0;
+          autoNotes += `      • ${part.name}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+        });
+        autoNotes += '\n';
+      }
+      
+      // Extras
+      if (item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0) {
+        autoNotes += '   ✨ Extras:\n';
+        item.eventMetadata.selectedExtras.forEach((extra: any) => {
+          const price = extra.total || extra.price || 0;
+          const qty = extra.quantity || 1;
+          autoNotes += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+        });
+        autoNotes += '\n';
+      }
+      
+      // Subtotales
+      if (item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) {
+        autoNotes += '   💰 Subtotales:\n';
+        if (item.eventMetadata.partsTotal) {
+          autoNotes += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
+        }
+        if (item.eventMetadata.extrasTotal) {
+          autoNotes += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+        }
+      }
+      
+      autoNotes += '\n';
+    });
+    
+    autoNotes += '---\n\n💬 Notas adicionales:\n';
+    
+    // Siempre actualizar las notas para items de eventos
+    setOrderNotes(autoNotes);
+  }, [guestCartItems, globalDates.start, globalDates.end]);
+
+  // Para items de eventos, el transporte ya está incluido (sin necesidad de marcar nada)
+
+  // Guardar fechas en localStorage cuando cambian
+  useEffect(() => {
+    localStorage.setItem('cartGlobalDates', JSON.stringify(globalDates));
+  }, [globalDates]);
+
+  // Guardar opción de instalación en localStorage
+  useEffect(() => {
+    localStorage.setItem('cartIncludeInstallation', includeInstallation.toString());
+  }, [includeInstallation]);
+
+  // Guardar notas del pedido en localStorage
+  useEffect(() => {
+    localStorage.setItem('cartOrderNotes', orderNotes);
+  }, [orderNotes]);
+
+  // Estado para controlar si ya se validó
+  const [lastValidatedDates, setLastValidatedDates] = useState({ start: '', end: '' });
+  const [isValidating, setIsValidating] = useState(false);
+
+  // Aplicar fechas globales automáticamente cuando ambas están seleccionadas
+  useEffect(() => {
+    // Solo validar si las fechas cambiaron y no estamos ya validando
+    if (
+      globalDates.start && 
+      globalDates.end && 
+      !isValidating &&
+      (globalDates.start !== lastValidatedDates.start || globalDates.end !== lastValidatedDates.end)
+    ) {
+      // Delay para evitar múltiples llamadas mientras escribe
+      const timer = setTimeout(() => {
+        setIsValidating(true);
+        setLastValidatedDates({ start: globalDates.start, end: globalDates.end });
+        applyGlobalDates().finally(() => {
+          setIsValidating(false);
+        });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [globalDates.start, globalDates.end, isValidating, lastValidatedDates]);
+
+  // Ya no necesitamos calcular envío porque siempre es recogida en tienda (gratis)
+  // Para montajes, el transporte ya está incluido en el precio
+
+  // Cargar guest cart (SIEMPRE, backend no persiste aún)
+  useEffect(() => {
+    const initializeCart = async () => {
+      const cart = guestCart.getCart();
+      
+      // MIGRACIÓN AUTOMÁTICA: Actualizar productos sin stock con datos actuales
+      let stockInfoUpdated = false; // Solo actualización de info de stock
+      const itemsToRemove: string[] = [];
+      
+      const updatedCart = await Promise.all(
+        cart.map(async (item) => {
+          // Si el producto no tiene stock definido, actualizar desde la API
+          if (item.product && (item.product.stock === undefined || item.product.realStock === undefined)) {
+            console.log(`🔄 Actualizando info de stock para: ${item.product.name}`);
+            
+            let itemFound = false;
+            
+            // ESTRATEGIA: Intentar SIEMPRE ambos endpoints
+            // 1. Intentar primero como PACK
+            try {
+              console.log(`📦 Intentando cargar como PACK: ${item.productId}`);
+              const response: any = await api.get(`/packs/${item.productId}`);
+              const productData = response.data || response;
+              
+              item.product = {
+                ...item.product,
+                stock: productData.stock || 999,
+                realStock: productData.realStock || productData.stock || 999,
+              };
+              stockInfoUpdated = true;
+              itemFound = true;
+              console.log(`✅ PACK cargado exitosamente`);
+            } catch (error: any) {
+              if (error?.response?.status === 404) {
+                console.log(`⚠️ No encontrado como PACK (404), intentando como PRODUCTO...`);
+              } else {
+                console.error(`❌ Error cargando como pack (no es 404):`, error.message);
+              }
+            }
+            
+            // 2. Si no se encontró como pack, intentar como PRODUCTO
+            if (!itemFound) {
+              try {
+                console.log(`📦 Intentando cargar como PRODUCTO: ${item.productId}`);
+                const response: any = await api.get(`/products/${item.productId}`);
+                const productData = response.data || response;
+                
+                item.product = {
+                  ...item.product,
+                  stock: productData.stock || 999,
+                  realStock: productData.realStock || productData.stock || 999,
+                };
+                stockInfoUpdated = true;
+                itemFound = true;
+                console.log(`✅ PRODUCTO cargado exitosamente`);
+              } catch (error: any) {
+                if (error?.response?.status === 404) {
+                  console.warn(`❌ ${item.product.name} NO ENCONTRADO en ningún endpoint - Marcado para eliminar`);
+                  itemsToRemove.push(item.id);
+                } else {
+                  console.error(`❌ Error inesperado cargando como producto:`, error.message);
+                  // NO eliminar si es otro tipo de error (red, timeout, etc)
+                }
+              }
+            }
+          }
+          return item;
+        })
+      );
+      
+      // Eliminar productos que no existen (solo si realmente hay items para eliminar)
+      if (itemsToRemove.length > 0) {
+        itemsToRemove.forEach(itemId => {
+          guestCart.removeItem(itemId);
+        });
+        // Mostrar notificación de productos eliminados
+        toast.error(`${itemsToRemove.length} producto(s) ya no disponible(s) fueron eliminados del carrito`, {
+          duration: 4000,
+          id: 'removed-items'
+        });
+        // Actualizar desde el carrito limpio DESPUÉS de eliminar
+        setGuestCartItems(guestCart.getCart());
+      } else {
+        // Si hubo actualizaciones de stock, guardar silenciosamente (sin notificación)
+        if (stockInfoUpdated) {
+          localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
+          console.log('✅ Carrito actualizado con información de stock (silencioso)');
+          window.dispatchEvent(new Event('cartUpdated'));
+        }
+        // Usar el carrito actualizado
+        setGuestCartItems(updatedCart);
+      }
+    };
+    
+    initializeCart();
+
+    // Listener para actualizar cuando cambie
+    const handleUpdate = () => {
+      setGuestCartItems(guestCart.getCart());
+    };
+
+    window.addEventListener('cartUpdated', handleUpdate);
+    return () => window.removeEventListener('cartUpdated', handleUpdate);
+  }, []);
+
+  // Pre-rellenar fechas globales si el usuario llegó con items que ya traían fechas desde la ficha.
+  useEffect(() => {
+    if (globalDates.start && globalDates.end) return;
+    const firstWithDates = guestCartItems.find((i: any) => i.startDate && i.endDate);
+    if (firstWithDates?.startDate && firstWithDates?.endDate) {
+      setGlobalDates({ start: firstWithDates.startDate, end: firstWithDates.endDate });
+    }
+  }, [guestCartItems, globalDates.start, globalDates.end]);
+
+  // Nota: No usamos useQuery porque trabajamos con localStorage (guest cart)
+  // El backend no persiste el carrito aún
+
+  // Limpiar datos de eventos cuando el carrito se vacía
+  useEffect(() => {
+    if (guestCartItems.length === 0) {
+      console.log('🧹 Carrito vacío - Limpiando datos de eventos');
+      localStorage.removeItem('cartFromCalculator');
+      localStorage.removeItem('cartIncludesShippingInstallation');
+      localStorage.removeItem('cartEventDates');
+      localStorage.removeItem('cartEventInfo');
+      localStorage.removeItem('cartOrderNotes');
+      setOrderNotes('');
+    }
+  }, [guestCartItems.length]);
+
+  const calculateDays = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) return 0;
+    
+    // Si las fechas son iguales (mismo día), devolver 0 para eventos
+    if (startDate === endDate) return 0;
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays || 1;
+  };
+
+  const calculateItemPrice = (item: any) => {
+    // Si el item tiene eventMetadata (viene de la calculadora) - ES UN EVENTO
+    if (item.eventMetadata) {
+      // Calcular precio de las partes si existen
+      let partsPrice = 0;
+      if (item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0) {
+        item.eventMetadata.selectedParts.forEach((part: any) => {
+          const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+          const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+          partsPrice += displayPrice;
+        });
+      }
+      
+      // Añadir precio de extras
+      const extrasPrice = item.eventMetadata?.extrasTotal || 0;
+      
+      // IMPORTANTE: Los eventos son PRECIO FIJO - NO MULTIPLICAR POR NADA
+      const finalPrice = partsPrice + extrasPrice;
+      console.log('💰 Precio evento (FIJO - NO MULTIPLICA):', { 
+        partsPrice, 
+        extrasPrice, 
+        finalPrice,
+        quantity: item.quantity,
+        MULTIPLICADO: false
+      });
+      return finalPrice;
+    }
+    
+    // Para items normales (no eventos), calcular con días
+    const dates = getEffectiveDates(item);
+    const days = (!dates.start || !dates.end) ? 1 : calculateDays(dates.start, dates.end);
+    console.log('💰 Precio producto normal:', { pricePerDay: item.product.pricePerDay, days, quantity: item.quantity });
+    return Number(item.product.pricePerDay) * days * item.quantity;
+  };
+
+  const calculateShippingCost = () => {
+    // Si es recogida en tienda, sin coste de envío
+    if (deliveryOption === 'pickup') {
+      return 0;
+    }
+    
+    // Verificar si hay items de eventos (transporte incluido)
+    const hasEventItems = guestCartItems.some((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+    
+    // Si TODOS los items son de eventos, transporte ya incluido
+    const allItemsAreEvents = guestCartItems.every((item: any) => 
+      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+    );
+    
+    if (allItemsAreEvents) {
+      return 0; // Transporte incluido en eventos
+    }
+    
+    // Usar el cálculo del backend si está disponible
+    if (calculatedShipping) {
+      return includeInstallation 
+        ? Number(calculatedShipping.totalInstallationCost || 0)
+        : Number(calculatedShipping.totalShippingCost || 0);
+    }
+    
+    // Fallback: mínimo default (solo para items no-eventos)
+    return hasEventItems ? 0 : 20;
+  };
+
+  const calculateInstallationCost = () => {
+    // Ya está incluido en calculateShippingCost cuando includeInstallation es true
+    return 0;
+  };
+
+  const calculateSubtotal = () => {
+    return guestCartItems.reduce((total: number, item: any) => {
+      return total + calculateItemPrice(item);
+    }, 0);
+  };
+
+  // ⚠️ FUNCIONES ANTIGUAS ELIMINADAS
+  // Ahora se usa calculateCartTotals() de cartCalculations.ts
+  // que excluye correctamente los montajes del descuento VIP
+
+  const allItemsHaveDates = () => {
+    if (guestCartItems.length === 0) return false;
+    
+    // Items de eventos tienen su propia fecha en eventMetadata
+    const allEventItems = guestCartItems.every((item: any) => 
+      item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0
+    );
+    
+    // Si TODOS los items son de eventos, no necesitan fechas globales
+    if (allEventItems) {
+      return true;
+    }
+    
+    // Si hay mix o solo items normales, verificar fechas globales
+    // En rent todos los items comparten las mismas fechas (globalDates).
+    // Si no hay fechas globales elegidas → invalido (a menos que todos los items sean de evento pre-configurado).
+    if (!globalDates.start || !globalDates.end) {
+      return guestCartItems.every((item: any) => {
+        const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+        return Boolean(isEventItem);
+      });
+    }
+    return true;
+  };
+
+  const hasInvalidDates = () => {
+    // Los items de eventos nunca tienen fechas inválidas
+    const hasNonEventInvalidItems = Array.from(unavailableItems.keys()).some(itemId => {
+      const item = guestCartItems.find(i => i.id === itemId);
+      const isEventItem = item?.eventMetadata?.eventDate && item?.eventMetadata?.selectedParts?.length > 0;
+      return !isEventItem; // Solo contar items no-eventos como inválidos
+    });
+    
+    return hasNonEventInvalidItems;
+  };
+
+  const getInvalidItemsCount = () => {
+    return guestCartItems.filter((item: any) => {
+      const productStock = (item.product as any)?.stock ?? 0;
+      if (productStock === 0 && item.startDate) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const start = new Date(item.startDate);
+        start.setHours(0, 0, 0, 0);
+        const daysUntilStart = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        return daysUntilStart < 30;
+      }
+      return false;
+    }).length;
+  };
+
+  // Funciones para guest cart
+  const handleGuestUpdateQuantity = async (itemId: string, newQuantity: number) => {
+    guestCart.updateQuantity(itemId, newQuantity);
+    setGuestCartItems(guestCart.getCart());
+    
+    // Verificar disponibilidad si tiene fechas
+    const item = guestCart.getCart().find(i => i.id === itemId);
+    if (item && item.startDate && item.endDate) {
+      console.log('🔍 Verificando disponibilidad después de cambiar cantidad...');
+      
+      try {
+        // Detectar si es un pack
+        const isPack = item.product.isPack || 
+                      item.product.category?.name?.toLowerCase() === 'packs' ||
+                      item.product.category?.name?.toLowerCase() === 'montaje';
+        
+        const response: any = isPack
+          ? await api.post(`/packs/${item.product.id}/check-availability`, {
+              startDate: item.startDate,
+              endDate: item.endDate,
+              quantity: newQuantity
+            })
+          : await api.post('/products/check-availability', {
+              productId: item.product.id,
+              startDate: item.startDate,
+              endDate: item.endDate,
+              quantity: newQuantity
+            });
+        
+        if (response.available) {
+          // Limpiar error si existía
+          setUnavailableItems(prev => {
+            const newMap = new Map(prev);
+            newMap.delete(itemId);
+            return newMap;
+          });
+          toast.success('Cantidad actualizada', { id: 'quantity-update', duration: 1500 });
+        } else {
+          // Mostrar error de disponibilidad
+          const startDateStr = new Date(item.startDate).toLocaleDateString('es-ES');
+          const endDateStr = new Date(item.endDate).toLocaleDateString('es-ES');
+          const errorMsg = response.message || `No disponible ${newQuantity > 1 ? `(${newQuantity} unidades)` : ''} para ${startDateStr} - ${endDateStr}`;
+          
+          setUnavailableItems(prev => {
+            const newMap = new Map(prev);
+            newMap.set(itemId, errorMsg);
+            return newMap;
+          });
+          
+          toast.error(`No hay suficiente stock disponible`, { duration: 4000, id: 'stock-error' });
+        }
+      } catch (error) {
+        console.error('Error verificando disponibilidad:', error);
+        toast('Cantidad actualizada. Verificaremos disponibilidad en el checkout.', { icon: '⚠️' });
+      }
+    } else {
+      toast.success('Cantidad actualizada', { id: 'quantity-update', duration: 1500 });
+    }
+  };
+
+  const handleGuestUpdateDates = async (itemId: string, startDate: string, endDate: string) => {
+    console.log('🔍 ============ handleGuestUpdateDates LLAMADO ============');
+    console.log('📋 Parámetros:', { itemId, startDate, endDate });
+    
+    // Siempre guardar la fecha (permite cambiar una a la vez)
+    guestCart.updateDates(itemId, startDate, endDate);
+    setGuestCartItems(guestCart.getCart());
+    
+    // Solo validar disponibilidad si ambas fechas están presentes
+    if (!startDate || !endDate) {
+      console.log('⏭️ Fecha incompleta, esperando la otra fecha...');
+      console.log('   startDate:', startDate || 'VACÍO');
+      console.log('   endDate:', endDate || 'VACÍO');
+      return;
+    }
+    
+    console.log('✅ Ambas fechas presentes, procediendo a validar...');
+    
+    const item = guestCartItems.find(i => i.id === itemId);
+    if (!item || !item.product) {
+      console.log('❌ Item no encontrado en carrito');
+      return;
+    }
+
+    console.log('📦 Item encontrado:', {
+      name: item.product.name,
+      quantity: item.quantity
+    });
+
+    try {
+      // Detectar si es un pack
+      const isPack = item.product.isPack || 
+                    item.product.category?.name?.toLowerCase() === 'packs' ||
+                    item.product.category?.name?.toLowerCase() === 'montaje';
+      
+      console.log('🌐 Llamando a API check-availability...', { isPack, productName: item.product.name });
+      
+      const response: any = isPack
+        ? await api.post(`/packs/${item.product.id}/check-availability`, {
+            startDate,
+            endDate,
+            quantity: item.quantity
+          })
+        : await api.post('/products/check-availability', {
+            productId: item.product.id,
+            startDate,
+            endDate,
+            quantity: item.quantity
+          });
+
+      console.log('📥 Respuesta recibida del servidor:', response);
+      console.log('📊 response.available:', response.available);
+      console.log('📊 response.message:', response.message);
+
+      if (response.available) {
+        console.log('✅ Producto DISPONIBLE');
+        // Limpiar error si existía
+        setUnavailableItems(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(itemId);
+          return newMap;
+        });
+        toast.success('Producto disponible', { duration: 2000, id: `available-${itemId}` });
+      } else {
+        console.log('❌ Producto NO DISPONIBLE');
+        console.log('🗑️ Limpiando fechas del carrito...');
+        
+        // Eliminar las fechas si no hay disponibilidad
+        guestCart.updateDates(itemId, '', '');
+        setGuestCartItems(guestCart.getCart());
+        
+        // Construir mensaje con fechas y cantidad
+        const item = guestCartItems.find(i => i.id === itemId);
+        const startDateStr = new Date(startDate).toLocaleDateString('es-ES');
+        const endDateStr = new Date(endDate).toLocaleDateString('es-ES');
+        const errorMsg = response.message || `No disponible ${item?.quantity && item.quantity > 1 ? `(${item.quantity} unidades)` : ''} para ${startDateStr} - ${endDateStr}`;
+        console.log('💬 Mensaje de error:', errorMsg);
+        
+        // Guardar el error en el estado
+        setUnavailableItems(prev => {
+          const newMap = new Map(prev);
+          newMap.set(itemId, errorMsg);
+          return newMap;
+        });
+        
+        console.log('✅ Error guardado en item');
+      }
+    } catch (error: any) {
+      console.error('❌ ============ ERROR EN LA PETICIÓN ============');
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      console.error('❌ Error completo:', error);
+      
+      // Si hay error específico del backend, mostrarlo
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message, { duration: 6000 });
+      } else {
+        // Si falla la verificación, mostrar advertencia
+        toast('No se pudo verificar disponibilidad. Se verificará en el checkout.', { 
+          duration: 5000,
+          icon: '⚠️'
+        });
+      }
+    }
+    
+    console.log('🔍 ============ handleGuestUpdateDates TERMINADO ============\n');
+  };
+
+  const handleGuestRemoveItem = (itemId: string) => {
+    guestCart.removeItem(itemId);
+    setGuestCartItems(guestCart.getCart());
+    // Limpiar error si existía
+    setUnavailableItems(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(itemId);
+      return newMap;
+    });
+    toast.success('Producto eliminado', { id: 'item-removed', duration: 2000 });
+  };
+
+  // Aplicar fechas globales a todos los items
+  const applyGlobalDates = async () => {
+    if (!globalDates.start || !globalDates.end) {
+      toast.error('Selecciona las fechas globales');
+      return;
+    }
+    
+    // Limpiar errores previos al comenzar nueva validación
+    setUnavailableItems(new Map());
+    
+    const newUnavailableItems = new Map<string, string>();
+    let availableCount = 0;
+    let unavailableCount = 0;
+    
+    // Validar disponibilidad para cada item (todos usan globalDates).
+    for (const item of guestCartItems) {
+      // Saltar items de eventos (ya tienen su propia fecha y disponibilidad garantizada)
+      const isEventItem = item.eventMetadata?.eventDate && item.eventMetadata?.selectedParts?.length > 0;
+      if (isEventItem) {
+        availableCount++;
+        continue;
+      }
+      
+      try {
+        // Detectar si es un pack
+        const isPack = item.product.isPack || 
+                      item.product.category?.name?.toLowerCase() === 'packs' ||
+                      item.product.category?.name?.toLowerCase() === 'montaje';
+        
+        let response: any;
+        
+        if (isPack) {
+          // Validar como pack
+          response = await api.post(`/packs/${item.product.id}/check-availability`, {
+            startDate: globalDates.start,
+            endDate: globalDates.end,
+            quantity: item.quantity
+          });
+        } else {
+          // Validar como producto individual
+          response = await api.post('/products/check-availability', {
+            productId: item.product.id,
+            startDate: globalDates.start,
+            endDate: globalDates.end,
+            quantity: item.quantity
+          });
+        }
+        
+        if (!response.available) {
+          unavailableCount++;
+          // Construir mensaje con fechas y cantidad
+          const startDateStr = new Date(globalDates.start).toLocaleDateString('es-ES');
+          const endDateStr = new Date(globalDates.end).toLocaleDateString('es-ES');
+          const errorMsg = response.message || `No disponible ${item.quantity > 1 ? `(${item.quantity} unidades)` : ''} para ${startDateStr} - ${endDateStr}`;
+          newUnavailableItems.set(item.id, errorMsg);
+        } else {
+          availableCount++;
+          // Aplicar fechas si está disponible
+          guestCart.updateDates(item.id, globalDates.start, globalDates.end);
+        }
+      } catch (error: any) {
+        // Si es un 404, el producto ya no existe - eliminarlo del carrito
+        if (error?.response?.status === 404) {
+          console.warn(`🗑️ Producto eliminado del carrito (ya no existe): ${item.product.name}`);
+          guestCart.removeItem(item.id);
+          // No contar como unavailable, se eliminará
+        } else {
+          console.error(`   ❌ Error al validar ${item.product.name}:`, error);
+          unavailableCount++;
+          newUnavailableItems.set(item.id, 'Error al verificar disponibilidad');
+        }
+      }
+    }
+    
+    // Actualizar estado de items no disponibles
+    setUnavailableItems(newUnavailableItems);
+    setGuestCartItems(guestCart.getCart());
+    
+    // Mostrar resumen (con ID único para evitar duplicados)
+    if (unavailableCount > 0) {
+      toast.error(`${unavailableCount} producto(s) no disponibles para estas fechas`, { 
+        duration: 4000,
+        id: 'validation-error' // Evita duplicados
+      });
+    } else if (availableCount > 0) {
+      toast.success('Todos los productos están disponibles', {
+        duration: 2000,
+        id: 'validation-success' // Evita duplicados
+      });
+    }
+  };
+
+  // En rent todos los items del carrito comparten las mismas fechas.
+  const getEffectiveDates = (_item: any) => globalDates;
+
+  // ⭐ USAR FUNCIÓN CENTRALIZADA PARA TODOS LOS CÁLCULOS
+  const cartTotals = calculateCartTotals({
+    items: guestCartItems,
+    deliveryOption: 'pickup', // Siempre recogida en tienda
+    distance: 0, // Sin distancia - recogida en tienda
+    includeInstallation,
+    shippingIncludedInPrice,
+    userLevel: user?.userLevel,
+    appliedCoupon: appliedCoupon ? {
+      discountAmount: appliedCoupon.discountAmount,
+      freeShipping: appliedCoupon.freeShipping
+    } : null
+  });
+  
+  // Extraer valores de la función centralizada
+  const { 
+    subtotal,
+    shippingCost, 
+    installationCost, 
+    vipDiscount, 
+    couponDiscount, 
+    totalBeforeTax, 
+    tax, 
+    total 
+  } = cartTotals;
+  
+  // 💳 Detectar si viene de calculadora
+  const fromCalculator = localStorage.getItem('cartFromCalculator') === 'true';
+  
+  // Calcular desglose de pago (señal, fianza, etc.)
+  const paymentBreakdown = calculatePaymentBreakdown(
+    subtotal,
+    shippingCost,
+    deliveryOption,
+    user?.userLevel, // ⭐ Pasar nivel VIP
+    vipDiscount, // ⭐ Pasar descuento VIP
+    shippingIncludedInPrice, // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
+    fromCalculator // 💳 Pasar si viene de calculadora para aplicar 25%
+  );
+
+  // Usar guestCartItems como cartItems para mantener compatibilidad con el resto del código
+  const cartItems = guestCartItems;
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mi Carrito</h1>
+
+        {cartItems.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Tu carrito está vacío</h2>
+            <p className="text-gray-600 mb-6">¡Añade algunos productos para empezar!</p>
+            <Link
+              to="/productos"
+              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Explorar Productos
+            </Link>
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Columna izquierda: Productos + Notas */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Lista de Productos */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold mb-4">Productos en el carrito</h2>
+                
+                <div className="space-y-6">
+                  {cartItems.map((item: any) => (
+                    <div key={item.id} data-testid="cart-item" className="border-b pb-6">
+                      <div className="flex gap-4 mb-4">
+                        <img
+                          src={item.product.mainImageUrl || '/placeholder.png'}
+                          alt={item.product.name}
+                          className="w-24 h-24 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">{item.product.name}</h3>
+                          <p className="text-gray-600 text-sm">{item.product.category?.name}</p>
+                          
+                          {/* Badge de error de disponibilidad */}
+                          {unavailableItems.has(item.id) && (
+                            <div className="mt-2 p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                              <div className="flex items-start gap-2">
+                                <span className="text-red-600 text-lg">⚠️</span>
+                                <div>
+                                  <p className="text-sm text-red-700 font-semibold">
+                                    No disponible
+                                  </p>
+                                  <p className="text-xs text-red-600 mt-1">
+                                    {unavailableItems.get(item.id)}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <p className="text-blue-600 font-semibold mt-2">
+                            €{item.product.pricePerDay} / día
+                          </p>
+                          
+                          {/* Partes del evento si existen */}
+                          {item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0 && (() => {
+                            // Calcular el total real considerando el precio del pack en la parte de fiesta
+                            let totalPartsDisplay = 0;
+                            
+                            return (
+                              <>
+                                <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                  <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
+                                  <div className="space-y-1">
+                                    {item.eventMetadata.selectedParts.map((part: any) => {
+                                      // Si es la parte de Disco/Fiesta, mostrar el precio del pack
+                                      const isPartyPart = part.name && (part.name.toLowerCase().includes('disco') || part.name.toLowerCase().includes('fiesta'));
+                                      const displayPrice = isPartyPart ? Number(item.product.pricePerDay) : part.price;
+                                      totalPartsDisplay += displayPrice;
+                                      
+                                      return (
+                                        <div key={part.id}>
+                                          <div className="flex justify-between items-center text-xs">
+                                            <span className="text-purple-600">{part.icon} {part.name}</span>
+                                            <span className="font-semibold text-purple-700">€{displayPrice.toFixed(2)}</span>
+                                          </div>
+                                          {/* Si es parte de fiesta, mostrar el nombre del pack debajo */}
+                                          {isPartyPart && (
+                                            <div className="ml-4 mt-1">
+                                              <span className="text-xs text-gray-600">📦 {item.product.name}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                    <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
+                                      <span className="font-semibold text-purple-700">Total Partes:</span>
+                                      <span className="font-bold text-purple-800">€{totalPartsDisplay.toFixed(2)}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Extras si existen */}
+                                {item.eventMetadata?.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
+                                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                    <p className="text-xs font-semibold text-blue-700 mb-2">✨ Extras</p>
+                                    <div className="space-y-1">
+                                      {item.eventMetadata.selectedExtras.map((extra: any) => (
+                                        <div key={extra.id} className="flex justify-between items-center text-xs">
+                                          <span className="text-blue-600">{extra.quantity}x {extra.name}</span>
+                                          <span className="font-semibold text-blue-700">€{extra.total.toFixed(2)}</span>
+                                        </div>
+                                      ))}
+                                      <div className="border-t border-blue-300 mt-2 pt-2 flex justify-between items-center">
+                                        <span className="font-semibold text-blue-700">Total Extras:</span>
+                                        <span className="font-bold text-blue-800">€{item.eventMetadata.extrasTotal?.toFixed(2) || '0.00'}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Badge informativo para eventos */}
+                                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                                  <p className="text-xs text-green-700 flex items-center gap-1">
+                                    ✅ <span className="font-semibold">Transporte y montaje incluidos</span>
+                                  </p>
+                                  <p className="text-xs text-green-600 mt-1">
+                                    📅 Duración: 1 día (fecha del evento: {item.eventMetadata.eventDate || 'Por confirmar'})
+                                  </p>
+                                </div>
+                              </>
+                            );
+                          })()}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            data-testid="decrease-quantity"
+                            onClick={() => handleGuestUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            className="w-8 h-8 rounded border hover:bg-gray-100"
+                          >
+                            <Minus className="w-4 h-4 mx-auto" />
+                          </button>
+                          <span data-testid="quantity-input" className="w-12 text-center">{item.quantity}</span>
+                          <button
+                            data-testid="increase-quantity"
+                            onClick={() => handleGuestUpdateQuantity(item.id, item.quantity + 1)}
+                            className="w-8 h-8 rounded border hover:bg-gray-100"
+                          >
+                            <Plus className="w-4 h-4 mx-auto" />
+                          </button>
+                        </div>
+                        <button
+                          data-testid="remove-item"
+                          onClick={() => handleGuestRemoveItem(item.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                      
+                      {/* Notas específicas del producto */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          📝 Notas para este producto
+                        </label>
+                        <textarea
+                          value={item.notes || ''}
+                          onChange={(e) => {
+                            guestCart.updateNotes(item.id, e.target.value);
+                            setGuestCartItems(guestCart.getCart());
+                          }}
+                          placeholder="Ej: Instrucciones especiales, preferencias, horarios específicos..."
+                          rows={2}
+                          maxLength={500}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-xs text-gray-500">
+                            Notas específicas para {item.product.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(item.notes || '').length}/500
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notas del Pedido */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Notas del Pedido
+                </h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  Horarios de recogida/devolución preferidos, cómo contactarte el día del alquiler, accesos especiales, etc.
+                </p>
+                <textarea
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                  placeholder="Ej: Puedo recoger el jueves a partir de las 17:00. Devolveré el domingo por la mañana. Contacto: 6XX XXX XXX."
+                  rows={8}
+                  maxLength={1000}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <p className="text-sm text-gray-500">
+                    💡 Tip: Incluye detalles como horarios, accesos especiales, contactos adicionales, etc.
+                  </p>
+                  <p className="text-sm font-medium text-gray-700">
+                    {orderNotes.length}/1000 caracteres
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Columna derecha: Resumen (sticky) */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                <h2 className="text-xl font-semibold mb-4">Resumen del pedido</h2>
+                
+                {/* Fechas del Pedido */}
+                <div className="bg-white p-4 rounded-lg shadow mb-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    Fechas del Pedido
+                  </h3>
+                  
+                  {(() => {
+                    // Verificar si hay items de eventos
+                    const hasEventItems = guestCartItems.some((item: any) => 
+                      item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+                    );
+                    
+                    if (hasEventItems) {
+                      // Mostrar fecha del evento (solo lectura)
+                      const eventDate = globalDates.start || new Date().toISOString().split('T')[0];
+                      const formattedDate = new Date(eventDate).toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      
+                      return (
+                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="w-5 h-5 text-blue-600" />
+                            <span className="text-sm font-semibold text-blue-900">Fecha del Evento</span>
+                          </div>
+                          <p className="text-blue-700 text-sm capitalize">{formattedDate}</p>
+                          <p className="text-xs text-blue-600 mt-2">📅 Duración: 1 día (incluye transporte y montaje)</p>
+                        </div>
+                      );
+                    }
+                    
+                    // Para items normales, mostrar campos de fecha editables
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Inicio
+                            </label>
+                            <input
+                              type="date"
+                              data-testid="global-start-date"
+                              value={globalDates.start}
+                              onChange={(e) => setGlobalDates({ ...globalDates, start: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                              min={new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Fin
+                            </label>
+                            <input
+                              type="date"
+                              data-testid="global-end-date"
+                              value={globalDates.end}
+                              onChange={(e) => setGlobalDates({ ...globalDates, end: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                              min={globalDates.start || new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Validación automática - sin botón necesario */}
+                        {globalDates.start && globalDates.end && (
+                          <div className="mt-3 text-center text-xs">
+                            {isValidating ? (
+                              <span className="text-blue-600">
+                                <span className="inline-block animate-spin mr-1">⏳</span>
+                                Validando disponibilidad...
+                              </span>
+                            ) : unavailableItems.size > 0 ? (
+                              <span className="text-red-600">
+                                ❌ {unavailableItems.size} producto(s) no disponibles
+                              </span>
+                            ) : guestCartItems.length > 0 ? (
+                              <span className="text-green-600">
+                                ✓ Todos los productos están disponibles
+                              </span>
+                            ) : null}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {!allItemsHaveDates() && (
+                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      ⚠️ Selecciona las fechas de inicio y fin
+                    </p>
+                  </div>
+                )}
+
+                {/* Info: Método de Entrega */}
+                {(() => {
+                  const hasEventItems = guestCartItems.some((item: any) => 
+                    item.eventMetadata?.selectedParts && item.eventMetadata.selectedParts.length > 0
+                  );
+
+                  if (hasEventItems) {
+                    // Para eventos, mostrar que transporte está incluido
+                    return (
+                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm font-semibold text-green-900">✅ Transporte y montaje incluidos</p>
+                        <p className="text-xs text-green-700 mt-1">El evento incluye el transporte y montaje completo</p>
+                      </div>
+                    );
+                  }
+
+                  // Para productos/packs normales, mostrar recogida en tienda
+                  return (
+                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm font-semibold text-blue-900">🏪 Recogida en tienda</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        C/ de l'Illa Cabrera, 13, 46026 València
+                        {' • Gratis'}
+                      </p>
+                    </div>
+                  );
+                })()}
+
+                {/* Alerta VIP - Solo mostrar si hay descuento aplicado */}
+                {user && user.userLevel && user.userLevel !== 'STANDARD' && vipDiscount > 0 && (
+                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-lg mb-4">
+                    <h3 className="font-bold text-yellow-900 flex items-center gap-2 text-sm mb-1">
+                      {user.userLevel === 'VIP' ? (
+                        <><Star className="w-4 h-4" /> ⭐ Cliente VIP</>
+                      ) : (
+                        <><Crown className="w-4 h-4" /> 👑 Cliente VIP PLUS</>
+                      )}
+                    </h3>
+                    <ul className="text-xs text-yellow-800 space-y-1">
+                      <li>✓ {user.userLevel === 'VIP' ? '25%' : '50%'} de descuento aplicado</li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Cupones */}
+                <div className="mb-4">
+                  <CouponInput
+                    orderAmount={subtotal}
+                    onCouponApplied={(discount) => setAppliedCoupon(discount)}
+                    onCouponRemoved={() => setAppliedCoupon(null)}
+                    appliedCoupon={appliedCoupon?.code}
+                  />
+                </div>
+
+                <div className="space-y-2 mb-4 pb-4 border-b">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Subtotal productos</span>
+                    <span className="font-semibold">
+                      {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
+                    </span>
+                  </div>
+                  
+                  
+                  {/* Descuento VIP */}
+                  {vipDiscount > 0 && (
+                    <div className="flex justify-between text-sm font-semibold bg-yellow-50 p-2 rounded">
+                      <span className="text-yellow-700 flex items-center gap-1">
+                        {user?.userLevel === 'VIP' ? (
+                          <><Star className="w-4 h-4" /> Descuento VIP (25%)</>
+                        ) : (
+                          <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
+                        )}
+                      </span>
+                      <span className="text-green-600 font-bold">-€{vipDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  {/* Descuento por Cupón */}
+                  {appliedCoupon && (
+                    <div className="flex justify-between text-sm text-green-600 mb-2">
+                      <span className="font-medium flex items-center gap-1">
+                        <Tag className="w-4 h-4" />
+                        Descuento ({appliedCoupon.code})
+                      </span>
+                      <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between pt-2 border-t">
+                    <span className="text-gray-600">IVA (21%)</span>
+                    <span className="font-semibold">
+                      €{tax.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between text-xl font-bold mb-4">
+                  <span>Total</span>
+                  <span data-testid="cart-total" className="text-blue-600">
+                    €{total.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Información de Pago */}
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-300 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-xs">
+                      <p className="font-semibold text-blue-900 mb-1">💳 Pago de Reserva</p>
+                      <p className="text-blue-800 mb-2">
+                        {paymentBreakdown.payLater > 0 ? (
+                          <>
+                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (25% de reserva) ahora.
+                            <br />
+                            <span className="text-blue-700">Resto: €{paymentBreakdown.payLater.toFixed(2)} en "Mis Pedidos"</span>
+                          </>
+                        ) : (
+                          <>
+                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (100%) ahora al reservar.
+                          </>
+                        )}
+                      </p>
+                      {paymentBreakdown.requiresDeposit && (
+                        <p className="text-blue-800 text-xs bg-blue-100 p-2 rounded">
+                          ℹ️ Fianza de <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span> se cobrará en tienda al recoger el material (reembolsable)
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Alerta de productos no disponibles */}
+                {unavailableItems.size > 0 && (
+                  <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">🚫</span>
+                      <div className="flex-1">
+                        <p className="text-base text-red-700 font-bold">
+                          No puedes continuar con el pedido
+                        </p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {unavailableItems.size} producto{unavailableItems.size > 1 ? 's' : ''} no {unavailableItems.size > 1 ? 'están' : 'está'} disponible{unavailableItems.size > 1 ? 's' : ''} para las fechas seleccionadas
+                        </p>
+                        <p className="text-xs text-red-500 mt-2 font-medium">
+                          → Cambia las fechas o elimina los productos marcados con rojo
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  data-testid="proceed-checkout"
+                  onClick={() => {
+                    console.log('🔘 Click en Proceder al checkout:', {
+                      isAuthenticated,
+                      loading,
+                      user: user?.email,
+                      hasInvalidDates: hasInvalidDates(),
+                      allItemsHaveDates: allItemsHaveDates()
+                    });
+
+                    if (!allItemsHaveDates()) {
+                      toast.error('Por favor selecciona las fechas del pedido arriba');
+                      return;
+                    }
+                    
+                    if (hasInvalidDates()) {
+                      const count = unavailableItems.size;
+                      toast.error(
+                        `No puedes continuar. ${count} producto${count > 1 ? 's' : ''} no ${count > 1 ? 'están' : 'está'} disponible${count > 1 ? 's' : ''} para las fechas seleccionadas.`,
+                        { duration: 6000 }
+                      );
+                      return;
+                    }
+                    
+                    // Guest checkout permitido: no bloqueamos por falta de sesión.
+                    // El usuario rellenará sus datos en el paso 1 del checkout.
+                    console.log('✅ Procediendo al checkout', isAuthenticated ? '(autenticado)' : '(invitado)');
+                    
+                    // Guardar datos para el checkout
+                    localStorage.setItem('checkoutDeliveryOption', 'pickup'); // Siempre recogida en tienda
+                    localStorage.setItem('checkoutInstallation', includeInstallation.toString());
+                    localStorage.setItem('checkoutOrderNotes', orderNotes);
+                    
+                    // ⚠️ NO limpiar flags aquí - CheckoutPage los necesita para calcular 25%
+                    // CheckoutPage los limpiará después de usarlos
+                    
+                    navigate('/checkout');
+                  }}
+                  disabled={!allItemsHaveDates() || hasInvalidDates() || loading}
+                  className={`w-full py-3 rounded-lg font-semibold transition ${
+                    hasInvalidDates() 
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                  }`}
+                >
+                  {hasInvalidDates() 
+                    ? '🚫 Productos no disponibles' 
+                    : (loading ? 'Verificando sesión...' : (isAuthenticated ? 'Proceder al checkout' : 'Inicia sesión para continuar'))
+                  }
+                </button>
+
+                <Link
+                  to="/productos"
+                  className="block text-center mt-4 text-blue-600 hover:underline"
+                >
+                  Continuar comprando
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CartPage;

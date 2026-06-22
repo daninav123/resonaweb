@@ -1,0 +1,207 @@
+/**
+ * Schema.org JSON-LD estructuras para SEO
+ */
+
+// Schema de la Organización
+export const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Resona Events',
+  url: 'https://resonaevents.com',
+  logo: 'https://resonaevents.com/logo.png',
+  description: 'Alquiler profesional de equipos de sonido, iluminación y audiovisuales para eventos',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+34-613-881-414',
+    contactType: 'customer service',
+    email: 'info@resonaevents.com',
+    availableLanguage: ['Spanish'],
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'C/ de l\'Illa Cabrera, 13',
+    addressLocality: 'València',
+    addressRegion: 'Quatre Carreres',
+    postalCode: '46026',
+    addressCountry: 'ES',
+  },
+};
+
+// Schema del sitio web
+export const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Resona Events',
+  url: 'https://resonaevents.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://resonaevents.com/productos?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+// Schema de Local Business
+export const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://resonaevents.com/#localbusiness',
+  name: 'Resona Events',
+  image: 'https://resonaevents.com/logo.png',
+  description: 'Alquiler de material profesional para eventos: sonido, iluminación, fotografía y video',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'C/ de l\'Illa Cabrera, 13',
+    addressLocality: 'València',
+    addressRegion: 'Quatre Carreres',
+    postalCode: '46026',
+    addressCountry: 'ES',
+  },
+  telephone: '+34-613-881-414',
+  email: 'info@resonaevents.com',
+  url: 'https://resonaevents.com',
+  priceRange: '€€',
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+  ],
+  areaServed: {
+    '@type': 'GeoCircle',
+    geoMidpoint: {
+      '@type': 'GeoCoordinates',
+      latitude: '39.4699',
+      longitude: '-0.3763',
+    },
+    geoRadius: '100',
+  },
+};
+
+// Schema para producto individual
+export const productSchema = (product: any) => {
+  // Fecha dinámica: siempre un año en el futuro
+  const nextYear = new Date();
+  nextYear.setFullYear(nextYear.getFullYear() + 1);
+  const priceValidUntil = nextYear.toISOString().split('T')[0];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: product.imageUrl,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand || 'Resona Events',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://resonaevents.com/productos/${product.slug}`,
+      priceCurrency: 'EUR',
+      price: product.pricePerDay,
+      availability: product.isActive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      priceValidUntil: priceValidUntil,
+      seller: {
+        '@type': 'Organization',
+        name: 'Resona Events',
+      },
+    },
+    ...(product.category && {
+      category: product.category.name,
+    }),
+  };
+};
+
+// Schema para lista de productos
+export const productListSchema = (products: any[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: products.map((product, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Product',
+      name: product.name,
+      url: `https://resonaevents.com/productos/${product.slug}`,
+      image: product.imageUrl,
+      offers: {
+        '@type': 'Offer',
+        price: product.pricePerDay,
+        priceCurrency: 'EUR',
+      },
+    },
+  })),
+});
+
+// Schema para breadcrumb
+export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: item.url,
+  })),
+});
+
+// Schema para FAQPage
+export const faqSchema = (faqs: { question: string; answer: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+});
+
+// Schema para Service
+export const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Alquiler de Material para Eventos',
+  description: 'Servicio profesional de alquiler de equipos de sonido, iluminación, fotografía y video para todo tipo de eventos',
+  provider: {
+    '@type': 'Organization',
+    name: 'Resona Events',
+    url: 'https://resonaevents.com',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Spain',
+  },
+  serviceType: ['Alquiler de Sonido', 'Alquiler de Iluminación', 'Alquiler de Equipos Audiovisuales'],
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'EUR',
+    lowPrice: '50',
+    highPrice: '500',
+  },
+};
+
+// Schema para evento (calculadora)
+export const eventSchema = (eventType: string, attendees: number) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: `${eventType} - Calculadora de Presupuesto`,
+  description: `Calcula el presupuesto estimado para tu ${eventType} con ${attendees} asistentes`,
+  organizer: {
+    '@type': 'Organization',
+    name: 'Resona Events',
+    url: 'https://resonaevents.com',
+  },
+  offers: {
+    '@type': 'Offer',
+    url: 'https://resonaevents.com/calculadora-eventos',
+    priceCurrency: 'EUR',
+  },
+});

@@ -1,0 +1,46 @@
+# robots.txt — ReSona Rent
+# Servido directamente por Vercel (estático). Fuente única de verdad.
+
+User-agent: *
+Allow: /
+
+# Rutas privadas / no indexables
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /cuenta
+Disallow: /perfil
+Disallow: /mis-pedidos
+Disallow: /checkout
+Disallow: /carrito
+Disallow: /private/
+Disallow: /api/
+
+# Evitar indexar páginas con parámetros de búsqueda / filtros (duplicados)
+Disallow: /*?search=
+Disallow: /*?utm_
+Disallow: /*&utm_
+
+# Googlebot (refuerzo explícito)
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /cuenta
+Disallow: /perfil
+Disallow: /mis-pedidos
+Disallow: /checkout
+Disallow: /carrito
+Disallow: /api/
+
+# Bots agresivos bloqueados (protección de recursos)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap dinámico (generado desde backend, incluye productos, categorías y SEO pages de alquiler)
+Sitemap: https://resonarent.com/sitemap.xml
+
