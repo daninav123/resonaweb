@@ -3,84 +3,127 @@ import fs from 'fs';
 import path from 'path';
 import { prisma } from '../index';
 
+interface SitemapOptions {
+  baseUrl: string;
+  includeSeoPages?: boolean;
+  // Filtro aplicado al slug de cada SEO page. La home (slug vacío) siempre se incluye.
+  seoSlugFilter?: (slug: string) => boolean;
+  includeCategories?: boolean;
+  includeProducts?: boolean;
+  includePacks?: boolean;
+  includeBlog?: boolean;
+}
+
+// Páginas estáticas que ambas webs sirven (mismo slug en rent y events).
+const SHARED_SEO_SLUGS = new Set(['contacto', 'faqs', 'sobre-nosotros']);
+// Una SEO page es de Rent si su slug habla de alquiler o del catálogo de productos.
+// Las landings de alquiler viven bajo `servicios/alquiler-*`, de ahí el `includes`.
+const isRentSeoSlug = (slug: string) =>
+  slug.includes('alquiler') || slug === 'productos' || slug.startsWith('productos/');
+
 export class SitemapController {
   /**
-   * Genera sitemap.xml dinámico con productos y posts del blog
+   * Sitemap genérico (resonaweb.com legacy): todo el contenido, baseUrl FRONTEND_URL.
    */
   async generateSitemap(req: Request, res: Response) {
+    return this.respondSitemap(res, {
+      baseUrl: process.env.FRONTEND_URL || 'https://resonaevents.com',
+      includeSeoPages: true,
+      includeCategories: true,
+      includeProducts: true,
+      includePacks: true,
+      includeBlog: true,
+    });
+  }
+
+  /**
+   * Sitemap de Rent (resonarent.com): catálogo de alquiler + categorías + SEO pages de alquiler.
+   * No incluye packs ni blog (viven en Events).
+   */
+  async generateRentSitemap(req: Request, res: Response) {
+    return this.respondSitemap(res, {
+      baseUrl: process.env.RENT_URL || 'https://resonarent.com',
+      includeSeoPages: true,
+      seoSlugFilter: (slug) => isRentSeoSlug(slug) || SHARED_SEO_SLUGS.has(slug),
+      includeCategories: true,
+      includeProducts: true,
+      includePacks: false,
+      includeBlog: false,
+    });
+  }
+
+  /**
+   * Sitemap de Events (resonaevents.com): packs + blog + SEO pages no-alquiler.
+   * No incluye el catálogo de productos ni categorías (viven en Rent).
+   */
+  async generateEventsSitemap(req: Request, res: Response) {
+    return this.respondSitemap(res, {
+      baseUrl: process.env.EVENTS_URL || 'https://resonaevents.com',
+      includeSeoPages: true,
+      seoSlugFilter: (slug) => !isRentSeoSlug(slug),
+      includeCategories: false,
+      includeProducts: false,
+      includePacks: true,
+      includeBlog: true,
+    });
+  }
+
+  private async respondSitemap(res: Response, opts: SitemapOptions) {
     try {
-      const baseUrl = process.env.FRONTEND_URL || 'https://resonaevents.com';
-      const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      
-      // Obtener todos los posts publicados
-      const posts = await prisma.blogPost.findMany({
-        where: {
-          status: 'PUBLISHED',
-        },
-        select: {
-          slug: true,
-          updatedAt: true,
-        },
-        orderBy: {
-          publishedAt: 'desc',
-        },
-      });
+      const xml = await this.buildSitemap(opts);
+      res.header('Content-Type', 'application/xml');
+      res.header('Cache-Control', 'public, max-age=3600'); // Cache 1 hora
+      res.send(xml);
+    } catch (error) {
+      console.error('Error generating sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  }
 
-      // Obtener todas las categorías activas
-      const categories = await prisma.category.findMany({
-        where: {
-          isActive: true,
-          isHidden: false, // No incluir categorías ocultas
-        },
-        select: {
-          slug: true,
-          updatedAt: true,
-        },
-      });
+  private async buildSitemap(opts: SitemapOptions): Promise<string> {
+    const { baseUrl } = opts;
 
-      // Obtener todos los productos activos (slug + imagen principal)
-      const products = await prisma.product.findMany({
-        where: {
-          isActive: true,
-          isPack: false,
-        },
-        select: {
-          slug: true,
-          updatedAt: true,
-          name: true,
-          mainImageUrl: true,
-          images: true,
-        },
-      });
+    const posts = opts.includeBlog
+      ? await prisma.blogPost.findMany({
+          where: { status: 'PUBLISHED' },
+          select: { slug: true, updatedAt: true },
+          orderBy: { publishedAt: 'desc' },
+        })
+      : [];
 
-      // Obtener todos los packs activos (el modelo Pack usa imageUrl, no mainImageUrl)
-      const packs = await prisma.pack.findMany({
-        where: {
-          isActive: true,
-        },
-        select: {
-          slug: true,
-          updatedAt: true,
-          name: true,
-          imageUrl: true,
-        },
-      });
+    const categories = opts.includeCategories
+      ? await prisma.category.findMany({
+          where: { isActive: true, isHidden: false },
+          select: { slug: true, updatedAt: true },
+        })
+      : [];
 
-      // Obtener páginas SEO activas (DINÁMICO desde BD)
-      const seoPages = await prisma.seoPage.findMany({
-        where: {
-          isActive: true,
-        },
-        select: {
-          slug: true,
-          priority: true,
-          changefreq: true,
-          updatedAt: true,
-        },
-        orderBy: {
-          priority: 'desc',
-        },
-      });
+    const products = opts.includeProducts
+      ? await prisma.product.findMany({
+          where: { isActive: true, isPack: false },
+          select: { slug: true, updatedAt: true, name: true, mainImageUrl: true, images: true },
+        })
+      : [];
+
+    // El modelo Pack usa imageUrl, no mainImageUrl
+    const packs = opts.includePacks
+      ? await prisma.pack.findMany({
+          where: { isActive: true },
+          select: { slug: true, updatedAt: true, name: true, imageUrl: true },
+        })
+      : [];
+
+    const allSeoPages = opts.includeSeoPages
+      ? await prisma.seoPage.findMany({
+          where: { isActive: true },
+          select: { slug: true, priority: true, changefreq: true, updatedAt: true },
+          orderBy: { priority: 'desc' },
+        })
+      : [];
+    // La home (slug vacío) se incluye siempre; el resto pasa por el filtro del sitio.
+    const seoPages = opts.seoSlugFilter
+      ? allSeoPages.filter((p) => !p.slug || opts.seoSlugFilter!(p.slug))
+      : allSeoPages;
 
       // Construir XML (header)
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -208,15 +251,7 @@ ${imgs.map(src => `    <image:image>\n      <image:loc>${src}</image:loc>\n     
       xml += `
 </urlset>`;
 
-      // Enviar como XML
-      res.header('Content-Type', 'application/xml');
-      res.header('Cache-Control', 'public, max-age=3600'); // Cache 1 hora
-      res.send(xml);
-      
-    } catch (error) {
-      console.error('Error generating sitemap:', error);
-      res.status(500).send('Error generating sitemap');
-    }
+      return xml;
   }
 
   /**

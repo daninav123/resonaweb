@@ -8,6 +8,10 @@
       "source": "/uploads/:path*",
       "destination": "https://resona-backend.onrender.com/uploads/:path*"
     },
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://resona-backend.onrender.com/sitemap-events.xml"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "redirects": [
