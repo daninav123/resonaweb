@@ -15,7 +15,7 @@ Guía operativa para Dani. Estado al cierre de la sesión de migración (2026-04
         ┌────────────────┘         │           └────────────────┐
         │                          │                            │
 ┌───────────────┐         ┌────────────────┐         ┌─────────────────┐
-│ resonarent.com│         │resonaevents.com│         │gestion.resona.com│
+│ resonarent.com│         │resonaevents.com│         │gestion.resonaevents.com│
 │  apps/rent    │         │  apps/events   │         │  apps/admin      │
 │  Vercel/Netlify│         │  Vercel/Netlify│         │  Vercel/Netlify  │
 └───────────────┘         └────────────────┘         └─────────────────┘
@@ -27,7 +27,7 @@ Guía operativa para Dani. Estado al cierre de la sesión de migración (2026-04
 
 | App | Dominio objetivo | Puerto dev | Comando build |
 |---|---|---|---|
-| admin | `gestion.resona.com` | 3002 | `npm run build --workspace=admin` |
+| admin | `gestion.resonaevents.com` | 3002 | `npm run build --workspace=admin` |
 | rent | `resonarent.com` | 3003 | `npm run build --workspace=rent` |
 | events | `resonaevents.com` | 3004 | `npm run build --workspace=events` |
 
@@ -46,10 +46,10 @@ VITE_API_URL=https://resona-backend.onrender.com/api/v1
 ### Backend
 
 ```env
-CORS_ORIGIN=https://resonarent.com,https://resonaevents.com,https://gestion.resona.com,https://www.resonarent.com,https://www.resonaevents.com
+CORS_ORIGIN=https://resonarent.com,https://resonaevents.com,https://gestion.resonaevents.com,https://www.resonarent.com,https://www.resonaevents.com
 ```
 
-Los dominios públicos son **`resonarent.com` y `resonaevents.com`** (no existe resonaweb.com). El admin va en `gestion.resona.com`.
+Los dominios públicos son **`resonarent.com` y `resonaevents.com`** (no existe resonaweb.com). El admin va en `gestion.resonaevents.com`.
 
 Si tu backend local dev corre en :3001, las 3 apps apuntarán a él automáticamente (ya está en el fallback por defecto de [index.ts:153](../packages/backend/src/index.ts#L153)).
 
@@ -67,7 +67,7 @@ Cada app tiene su `vercel.json` en la raíz de la app ([apps/admin/vercel.json](
 6. **Install Command**: `npm install` (Vercel detecta el monorepo automáticamente).
 7. **Variables de entorno**:
    - `VITE_API_URL=https://resona-backend.onrender.com/api/v1`
-8. **Dominio**: asignar `resonarent.com` / `resonaevents.com` / `gestion.resona.com`.
+8. **Dominio**: asignar `resonarent.com` / `resonaevents.com` / `gestion.resonaevents.com`.
 
 ### Puntos de atención
 
@@ -97,7 +97,7 @@ Mismo principio. Añadir `netlify.toml` en cada app con:
 ## Orden de deploy recomendado
 
 1. **Backend primero**: confirmar que `CORS_ORIGIN` incluye los 3 dominios nuevos. Redeploy backend.
-2. **apps/admin** a `gestion.resona.com`. Es interno, sin riesgo SEO. Validar login con una cuenta con rol interno.
+2. **apps/admin** a `gestion.resonaevents.com`. Es interno, sin riesgo SEO. Validar login con una cuenta con rol interno.
 3. **apps/rent** a `resonarent.com`. Monitorear conversión.
 4. **apps/events** a `resonaevents.com`. Idem.
 5. Después de 2 semanas sin incidencias, apagar admin del monolito.
@@ -136,7 +136,7 @@ Editar el `packages/frontend/vercel.json` del monolito para hacer 301s por patr�
     { "source": "/sobre-nosotros", "destination": "https://resonaevents.com/sobre-nosotros", "permanent": true },
     { "source": "/faqs", "destination": "https://resonaevents.com/faqs", "permanent": true },
 
-    { "source": "/admin/:path*", "destination": "https://gestion.resona.com/admin/:path*", "permanent": true },
+    { "source": "/admin/:path*", "destination": "https://gestion.resonaevents.com/admin/:path*", "permanent": true },
 
     { "source": "/", "destination": "https://resonaevents.com/", "permanent": true }
   ]

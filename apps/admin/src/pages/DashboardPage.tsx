@@ -21,7 +21,7 @@ export default function DashboardPage() {
             Migración en curso
           </h2>
           <p className="mb-4 text-sm text-gray-600">
-            Este panel <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">gestion.resona.com</code>{' '}
+            Este panel <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">gestion.resonaevents.com</code>{' '}
             está en fase de extracción desde el frontend monolítico. Las páginas admin se irán moviendo aquí en grupos temáticos.
           </p>
           <p className="text-sm text-gray-600">

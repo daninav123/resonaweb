@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Panel de administración de Resona (gestion.resona.com)",
+  "description": "Panel de administración de Resona (gestion.resonaevents.com)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
