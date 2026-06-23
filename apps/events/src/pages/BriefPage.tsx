@@ -11,6 +11,7 @@ import {
 } from '../data/pricing';
 import { quoteRequestService } from '../services/quoteRequest.service';
 import { getPackBySlug, formatEuros, Pack } from '../data/packs';
+import { trackLead } from '@resona/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -184,6 +185,7 @@ const BriefPage = () => {
         estimatedTotal: estimated,
         notes: combinedNotes || undefined,
       });
+      trackLead({ value: estimated, leadType: pack ? 'pack' : 'custom' });
       setSubmitted(true);
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message;

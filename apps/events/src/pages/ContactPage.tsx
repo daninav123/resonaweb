@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { trackLead } from '@resona/utils';
 import SEOHead from '../components/SEO/SEOHead';
 
 const ContactPage = () => {
@@ -20,7 +21,8 @@ const ContactPage = () => {
     try {
       const api = (await import('../services/api')).default;
       await api.post('/contact', formData);
-      
+
+      trackLead({ leadType: 'contacto' });
       toast.success('Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');
       setFormData({
         name: '',

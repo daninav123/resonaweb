@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Cookie, Settings } from 'lucide-react';
+import { initMetaPixel } from '@resona/utils';
 
 export const CookieConsent = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -31,21 +32,16 @@ export const CookieConsent = () => {
   }, []);
 
   const applyConsent = (prefs: typeof preferences) => {
-    // Aquí aplicarías las cookies según el consentimiento
-    if (prefs.analytics) {
-      // Activar Google Analytics
-      console.log('✅ Google Analytics activado');
-      // window.gtag('consent', 'update', { analytics_storage: 'granted' });
-    } else {
-      console.log('❌ Google Analytics desactivado');
-    }
-
-    if (prefs.marketing) {
-      // Activar Facebook Pixel, Google Ads, etc.
-      console.log('✅ Marketing activado');
-    } else {
-      console.log('❌ Marketing desactivado');
-    }
+    // Consent Mode v2: ad_user_data y ad_personalization son obligatorios para Google Ads.
+    window.gtag?.('consent', 'update', {
+      analytics_storage: prefs.analytics ? 'granted' : 'denied',
+      ad_storage: prefs.marketing ? 'granted' : 'denied',
+      ad_user_data: prefs.marketing ? 'granted' : 'denied',
+      ad_personalization: prefs.marketing ? 'granted' : 'denied',
+    });
+    // Meta Pixel: se carga al conceder marketing (lee el consentimiento de localStorage,
+    // que saveConsent guarda antes de llamar a applyConsent).
+    if (prefs.marketing) initMetaPixel();
   };
 
   const saveConsent = (prefs: typeof preferences) => {

@@ -1,11 +1,23 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
+import { trackPurchase } from '@resona/utils';
 import SEOHead from '../components/SEO/SEOHead';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const ReservaConfirmadaPage = () => (
+const ReservaConfirmadaPage = () => {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Señal pagada = conversión de compra. El importe no está en la URL (solo el id de
+    // sesión de Stripe); se registra sin valor hasta que se enriquezca vía backend.
+    const quoteSession = searchParams.get('quote');
+    trackPurchase({ transactionId: quoteSession || 'reserva' });
+  }, [searchParams]);
+
+  return (
   <>
     <SEOHead
       title="Reserva confirmada — ReSona Events"
@@ -106,6 +118,7 @@ const ReservaConfirmadaPage = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default ReservaConfirmadaPage;
