@@ -135,7 +135,14 @@ const HomePage = () => {
       </section>
 
       {/* Banner Mundial 2030 - Pantalla LED */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-resona">
+      <section className="relative overflow-hidden">
+        <img
+          src="/images/pantalla-led-3x4.jpg"
+          alt="Alquiler de pantalla LED gigante para ver el Mundial 2030 en Valencia"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
         <div className="relative container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-2xl text-white">
             <span className="inline-block bg-resona text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
