@@ -134,35 +134,44 @@
     <div id="root"><div class="loading">Cargando...</div></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Google Analytics - Carga diferida para mejor performance -->
+    <!-- Google Analytics + Google Ads (Consent Mode v2) - script diferido para performance -->
     <script>
-      // Cargar GA solo después de interacción del usuario o 3 segundos (lo que ocurra primero)
       (function() {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
-        
-        let gaLoaded = false;
-        
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        // Consent Mode v2: denegado por defecto (RGPD); el banner de cookies hace 'update'.
+        // Releemos el consentimiento guardado para que un visitante recurrente no pierda tracking.
+        var stored = null;
+        try { stored = JSON.parse(localStorage.getItem('cookie_consent')); } catch (e) {}
+        var analytics = stored && stored.analytics ? 'granted' : 'denied';
+        var marketing = stored && stored.marketing ? 'granted' : 'denied';
+        gtag('consent', 'default', {
+          analytics_storage: analytics,
+          ad_storage: marketing,
+          ad_user_data: marketing,
+          ad_personalization: marketing
+        });
+
+        gtag('js', new Date());
+        gtag('config', 'G-4F522M345Z');
+
+        // El script de gtag se carga diferido; la cola de dataLayer se procesa al cargar.
+        var gaLoaded = false;
         function loadGA() {
           if (gaLoaded) return;
           gaLoaded = true;
-          
-          const script = document.createElement('script');
+          var script = document.createElement('script');
           script.async = true;
           script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4F522M345Z';
           document.head.appendChild(script);
-          
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-4F522M345Z');
         }
-        
-        // Cargar en primera interacción
         ['mousedown', 'touchstart', 'scroll', 'keydown'].forEach(function(event) {
           window.addEventListener(event, loadGA, { once: true, passive: true });
         });
-        
-        // O después de 3 segundos si no hay interacción
         setTimeout(loadGA, 3000);
       })();
     </script>

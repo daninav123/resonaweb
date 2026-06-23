@@ -11,6 +11,9 @@
 4. **[ROADMAP.md](ROADMAP.md)** - Plan de desarrollo por fases
 5. **[USER_FLOWS.md](USER_FLOWS.md)** - Flujos de usuario detallados
 6. **[GAPS_AND_IMPROVEMENTS.md](GAPS_AND_IMPROVEMENTS.md)** - ⭐ Análisis de gaps y propuestas de mejora
+7. **[MIGRATION_SPLIT_RENT_EVENTS.md](MIGRATION_SPLIT_RENT_EVENTS.md)** - 🚧 Plan de split en 3 apps (Rent / Events / Admin)
+8. **[AI_RULES_SHARED.md](AI_RULES_SHARED.md)** - 🤖 Reglas compartidas para Claude/Windsurf/Cascade (fuente canónica)
+9. **[DEPLOYMENT_3APPS.md](DEPLOYMENT_3APPS.md)** - 🚀 Guía operativa para deployar las 3 apps (Rent / Events / Admin)
 
 ## 🏗️ Arquitectura
 
@@ -30,6 +33,7 @@
 
 18. **[DEPLOYMENT.md](DEPLOYMENT.md)** - Guía de despliegue
 19. **[MONITORING.md](MONITORING.md)** - Monitorización y alertas
+20. **[ADS_TRACKING_SETUP.md](ADS_TRACKING_SETUP.md)** - 📈 Publicidad y conversiones (Google Ads + Meta): cómo obtener y configurar los IDs
 
 ## 📚 Orden de Lectura Recomendado
 
