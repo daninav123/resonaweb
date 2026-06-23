@@ -6,10 +6,10 @@
 export const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://resonaevents.com/#localbusiness",
-  "name": "ReSona Events",
-  "url": "https://resonaevents.com",
-  "image": "https://resonaevents.com/logo.png",
+  "@id": "https://resonarent.com/#localbusiness",
+  "name": "ReSona Rent",
+  "url": "https://resonarent.com",
+  "image": "https://resonarent.com/logo.png",
   "telephone": "+34613881414",
   "address": {
     "@type": "PostalAddress",
@@ -25,43 +25,43 @@ export const localBusinessSchema = {
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "ReSona Events",
+  "name": "ReSona Rent",
   "alternateName": "ReSona",
-  "url": "https://resonaevents.com",
-  "logo": "https://resonaevents.com/logo.png",
+  "url": "https://resonarent.com",
+  "logo": "https://resonarent.com/logo.png",
   "description": "Líder en alquiler de equipos audiovisuales para eventos en Valencia. Sonido, iluminación, fotografía y video profesional.",
   "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "+34613881414",
     "contactType": "customer service",
-    "email": "info@resonaevents.com",
+    "email": "info@resonarent.com",
     "areaServed": "ES",
     "availableLanguage": ["Spanish", "English"]
   },
   "sameAs": [
-    "https://www.facebook.com/resonaevents",
-    "https://www.instagram.com/resonaevents",
-    "https://www.linkedin.com/company/resonaevents"
+    "https://www.facebook.com/resonarent",
+    "https://www.instagram.com/resonarent",
+    "https://www.linkedin.com/company/resonarent"
   ]
 };
 
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "ReSona Events",
-  "url": "https://resonaevents.com",
+  "name": "ReSona Rent",
+  "url": "https://resonarent.com",
   "description": "Alquiler de equipos audiovisuales para eventos. Calculadora de presupuesto online. Valencia, Alicante, Castellón.",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://resonaevents.com/productos?search={search_term_string}",
+    "target": "https://resonarent.com/productos?search={search_term_string}",
     "query-input": "required name=search_term_string"
   },
   "publisher": {
     "@type": "Organization",
-    "name": "ReSona Events",
+    "name": "ReSona Rent",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://resonaevents.com/logo.png"
+      "url": "https://resonarent.com/logo.png"
     }
   }
 };
@@ -78,16 +78,16 @@ export const advancedProductSchema = (product: any) => {
     "@type": "Product",
     "name": product.name,
     "description": product.description || `Alquiler de ${product.name} para eventos profesionales`,
-    "image": product.mainImageUrl || "https://resonaevents.com/placeholder.jpg",
+    "image": product.mainImageUrl || "https://resonarent.com/placeholder.jpg",
     "sku": product.sku,
     "mpn": product.sku,
     "brand": {
       "@type": "Brand",
-      "name": "ReSona Events"
+      "name": "ReSona Rent"
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://resonaevents.com/productos/${product.slug}`,
+      "url": `https://resonarent.com/productos/${product.slug}`,
       "priceCurrency": "EUR",
       "price": product.pricePerDay,
       "priceValidUntil": priceValidUntil,
@@ -95,7 +95,7 @@ export const advancedProductSchema = (product: any) => {
       "itemCondition": "https://schema.org/UsedCondition",
       "seller": {
         "@type": "Organization",
-        "name": "ReSona Events"
+        "name": "ReSona Rent"
       }
     },
     // aggregateRating y review eliminados: se añadirán cuando existan reseñas reales vinculadas al producto
@@ -111,9 +111,9 @@ export const serviceSchema = {
   "description": "Servicio profesional de alquiler de equipos de sonido, iluminación y audiovisuales para todo tipo de eventos en Valencia",
   "provider": {
     "@type": "LocalBusiness",
-    "@id": "https://resonaevents.com/#localbusiness",
-    "name": "ReSona Events",
-    "image": "https://resonaevents.com/logo.png",
+    "@id": "https://resonarent.com/#localbusiness",
+    "name": "ReSona Rent",
+    "image": "https://resonarent.com/logo.png",
     "telephone": "+34613881414",
     "address": {
       "@type": "PostalAddress",

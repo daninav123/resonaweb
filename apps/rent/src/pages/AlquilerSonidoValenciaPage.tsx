@@ -46,7 +46,7 @@ const AlquilerSonidoValenciaPage = () => {
         title="Alquiler Sonido Valencia 🔊 Desde 35€/día | Eventos, Bodas, Fiestas"
         description="✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación incluida. 15 años de experiencia. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414"
         keywords="alquiler sonido valencia, alquiler altavoces valencia, alquiler equipos sonido valencia, sonido profesional valencia, alquiler PA valencia, sistema sonido eventos valencia, alquiler subwoofer valencia"
-        canonicalUrl="https://resonaevents.com/alquiler-sonido-valencia"
+        canonicalUrl="https://resonarent.com/alquiler-sonido-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />
 
@@ -113,7 +113,7 @@ const AlquilerSonidoValenciaPage = () => {
             
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-4">
-                <strong>ReSona Events</strong> es tu empresa de confianza para el <strong>alquiler de equipos de sonido profesional en Valencia</strong>. 
+                <strong>ReSona Rent</strong> es tu empresa de confianza para el <strong>alquiler de equipos de sonido profesional en Valencia</strong>. 
                 Con más de 10 años de experiencia en el sector audiovisual, ofrecemos soluciones completas de audio para todo tipo de eventos: 
                 bodas, conciertos, eventos corporativos, fiestas privadas, conferencias y presentaciones.
               </p>
@@ -180,7 +180,7 @@ const AlquilerSonidoValenciaPage = () => {
               </div>
 
               <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
-                ¿Por Qué Elegir ReSona Events para tu Alquiler de Sonido?
+                ¿Por Qué Elegir ReSona Rent para tu Alquiler de Sonido?
               </h3>
 
               <ul className="space-y-3 mb-6">

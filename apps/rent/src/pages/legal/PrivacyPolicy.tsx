@@ -17,18 +17,18 @@ export default function PrivacyPolicy() {
               
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
-                  <strong>Identidad:</strong> ReSona Events<br />
+                  <strong>Identidad:</strong> ReSona Rent<br />
                   <strong>Titular:</strong> Daniel Navarro Campos<br />
                   <strong>DNI:</strong> 03152623J<br />
                   <strong>Dirección:</strong> Valencia, España<br />
-                  <strong>Email:</strong> info@resonaevents.com<br />
+                  <strong>Email:</strong> info@resonarent.com<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
-                  <strong>Sitio web:</strong> resonaevents.com
+                  <strong>Sitio web:</strong> resonarent.com
                 </p>
               </div>
 
               <p className="text-gray-700 mb-4">
-                ReSona Events (en adelante, "el Responsable") es el responsable del tratamiento de 
+                ReSona Rent (en adelante, "el Responsable") es el responsable del tratamiento de 
                 los datos personales que nos facilites a través de este sitio web.
               </p>
             </section>
@@ -274,7 +274,7 @@ export default function PrivacyPolicy() {
                   Puedes ejercer tus derechos enviando un email a:
                 </p>
                 <p className="text-sm font-semibold text-gray-900">
-                  info@resonaevents.com
+                  info@resonarent.com
                 </p>
                 <p className="text-sm text-gray-700 mt-2">
                   Indicando tu nombre, email y derecho que deseas ejercer. Responderemos en un 
@@ -358,8 +358,8 @@ export default function PrivacyPolicy() {
               
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-gray-700">
-                  <strong>ReSona Events</strong><br />
-                  <strong>Email:</strong> info@resonaevents.com<br />
+                  <strong>ReSona Rent</strong><br />
+                  <strong>Email:</strong> info@resonarent.com<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
                   <strong>Dirección:</strong> Valencia, España
                 </p>

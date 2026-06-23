@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { initMetaPixel } from '@resona/utils';
 
 export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -29,29 +30,16 @@ export default function CookieBanner() {
   }, []);
 
   const applyPreferences = (prefs: typeof preferences) => {
-    // Aplicar preferencias de cookies
-    if (prefs.analytics) {
-      // Activar Google Analytics
-      window.gtag?.('consent', 'update', {
-        analytics_storage: 'granted'
-      });
-    } else {
-      // Desactivar Google Analytics
-      window.gtag?.('consent', 'update', {
-        analytics_storage: 'denied'
-      });
-    }
-
-    // Marketing/advertising (si se usa en el futuro)
-    if (prefs.marketing) {
-      window.gtag?.('consent', 'update', {
-        ad_storage: 'granted'
-      });
-    } else {
-      window.gtag?.('consent', 'update', {
-        ad_storage: 'denied'
-      });
-    }
+    // Consent Mode v2: ad_user_data y ad_personalization son obligatorios para Google Ads.
+    window.gtag?.('consent', 'update', {
+      analytics_storage: prefs.analytics ? 'granted' : 'denied',
+      ad_storage: prefs.marketing ? 'granted' : 'denied',
+      ad_user_data: prefs.marketing ? 'granted' : 'denied',
+      ad_personalization: prefs.marketing ? 'granted' : 'denied',
+    });
+    // Meta Pixel: se carga al conceder marketing (lee el consentimiento de localStorage,
+    // que applyPreferences guarda antes de llamarse).
+    if (prefs.marketing) initMetaPixel();
   };
 
   const handleAcceptAll = () => {

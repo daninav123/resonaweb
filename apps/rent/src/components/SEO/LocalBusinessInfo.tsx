@@ -12,7 +12,7 @@ const LocalBusinessInfo = ({
   className = '' 
 }: LocalBusinessInfoProps) => {
   const businessInfo = {
-    name: 'ReSona Events',
+    name: 'ReSona Rent',
     address: {
       street: "C/ de l'Illa Cabrera, 13",
       neighborhood: 'Quatre Carreres',
@@ -23,7 +23,7 @@ const LocalBusinessInfo = ({
     },
     phone: '+34 613 881 414',
     phoneDisplay: '+34 613 881 414',
-    email: 'info@resonaevents.com',
+    email: 'info@resonarent.com',
     hours: {
       weekday: 'Lun - Vie: 9:00 - 20:00',
       saturday: 'Sáb: 10:00 - 14:00',
@@ -184,7 +184,7 @@ const LocalBusinessInfo = ({
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Ubicación de ReSona Events en Valencia"
+              title="Ubicación de ReSona Rent en Valencia"
             />
           </div>
         )}

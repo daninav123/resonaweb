@@ -57,25 +57,25 @@ interface LocalBusinessSchema {
 }
 
 /**
- * Schema principal de LocalBusiness para ReSona Events
+ * Schema principal de LocalBusiness para ReSona Rent
  */
 export const getLocalBusinessSchema = (): any => ({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://resonaevents.com/#localbusiness',
-  name: 'ReSona Events',
-  alternateName: 'ReSona Events Valencia',
-  url: 'https://resonaevents.com',
-  logo: 'https://resonaevents.com/logo.png',
+  '@id': 'https://resonarent.com/#localbusiness',
+  name: 'ReSona Rent',
+  alternateName: 'ReSona Rent Valencia',
+  url: 'https://resonarent.com',
+  logo: 'https://resonarent.com/logo.png',
   image: [
-    'https://resonaevents.com/og-image.jpg',
-    'https://resonaevents.com/images/equipos-audiovisuales.jpg',
+    'https://resonarent.com/og-image.jpg',
+    'https://resonarent.com/images/equipos-audiovisuales.jpg',
   ],
   description:
     'Empresa especializada en alquiler de equipos audiovisuales profesionales para eventos en Valencia. Sonido, iluminación, pantallas LED y equipos DJ. Servicio en Valencia y provincia.',
   priceRange: '€€',
   telephone: '+34613881414',
-  email: 'info@resonaevents.com',
+  email: 'info@resonarent.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "C/ de l'Illa Cabrera, 13",
@@ -115,7 +115,7 @@ export const getLocalBusinessSchema = (): any => ({
   ],
   sameAs: [
     // Añadir enlaces a redes sociales cuando estén disponibles
-    'https://resonaevents.com',
+    'https://resonarent.com',
   ],
   // aggregateRating y review eliminados: se añadirán dinámicamente cuando
   // existan reseñas reales vinculadas a pedidos finalizados.
@@ -132,8 +132,8 @@ export const getLocalBusinessSchema = (): any => ({
             'Altavoces profesionales, mesas de mezclas, micrófonos y sistemas de sonido completos para eventos.',
           provider: {
             '@type': 'Organization',
-            '@id': 'https://resonaevents.com/#organization',
-            name: 'ReSona Events',
+            '@id': 'https://resonarent.com/#organization',
+            name: 'ReSona Rent',
           },
         },
         priceSpecification: {
@@ -152,8 +152,8 @@ export const getLocalBusinessSchema = (): any => ({
             'Focos LED, barras de iluminación, efectos especiales y sistemas de iluminación profesional.',
           provider: {
             '@type': 'Organization',
-            '@id': 'https://resonaevents.com/#organization',
-            name: 'ReSona Events',
+            '@id': 'https://resonarent.com/#organization',
+            name: 'ReSona Rent',
           },
         },
         priceSpecification: {
@@ -172,8 +172,8 @@ export const getLocalBusinessSchema = (): any => ({
             'Pantallas LED de alta resolución, proyectores y sistemas de vídeo para presentaciones y eventos.',
           provider: {
             '@type': 'Organization',
-            '@id': 'https://resonaevents.com/#organization',
-            name: 'ReSona Events',
+            '@id': 'https://resonarent.com/#organization',
+            name: 'ReSona Rent',
           },
         },
         priceSpecification: {
@@ -192,8 +192,8 @@ export const getLocalBusinessSchema = (): any => ({
             'Controladoras, CDJs, mesas de mezclas DJ y equipos completos para DJs profesionales.',
           provider: {
             '@type': 'Organization',
-            '@id': 'https://resonaevents.com/#organization',
-            name: 'ReSona Events',
+            '@id': 'https://resonarent.com/#organization',
+            name: 'ReSona Rent',
           },
         },
         priceSpecification: {
@@ -212,8 +212,8 @@ export const getLocalBusinessSchema = (): any => ({
             'Servicio técnico completo con montaje, instalación y soporte durante el evento.',
           provider: {
             '@type': 'Organization',
-            '@id': 'https://resonaevents.com/#organization',
-            name: 'ReSona Events',
+            '@id': 'https://resonarent.com/#organization',
+            name: 'ReSona Rent',
           },
         },
         priceSpecification: {
@@ -233,12 +233,12 @@ export const getLocalBusinessSchema = (): any => ({
 export const getOrganizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  '@id': 'https://resonaevents.com/#organization',
-  name: 'ReSona Events',
-  url: 'https://resonaevents.com',
+  '@id': 'https://resonarent.com/#organization',
+  name: 'ReSona Rent',
+  url: 'https://resonarent.com',
   logo: {
     '@type': 'ImageObject',
-    url: 'https://resonaevents.com/logo.png',
+    url: 'https://resonarent.com/logo.png',
     width: 600,
     height: 200,
   },
@@ -258,18 +258,18 @@ export const getOrganizationSchema = () => ({
 export const getWebSiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': 'https://resonaevents.com/#website',
-  name: 'ReSona Events',
-  url: 'https://resonaevents.com',
+  '@id': 'https://resonarent.com/#website',
+  name: 'ReSona Rent',
+  url: 'https://resonarent.com',
   description: 'Alquiler profesional de equipos audiovisuales para eventos en Valencia',
   publisher: {
-    '@id': 'https://resonaevents.com/#organization',
+    '@id': 'https://resonarent.com/#organization',
   },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://resonaevents.com/productos?q={search_term_string}',
+      urlTemplate: 'https://resonarent.com/productos?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -332,10 +332,10 @@ export const getBlogPostSchema = (post: {
   },
   publisher: {
     '@type': 'Organization',
-    name: 'ReSona Events',
+    name: 'ReSona Rent',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://resonaevents.com/logo.png',
+      url: 'https://resonarent.com/logo.png',
     },
   },
   datePublished: post.datePublished,

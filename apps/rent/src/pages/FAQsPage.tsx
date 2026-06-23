@@ -5,7 +5,7 @@ import { getFAQSchema } from '../components/SEO/schemas';
 const FAQsPage = () => {
   const faqs = [
     {
-      question: '¿Cómo funciona el alquiler de equipos con ReSona Events?',
+      question: '¿Cómo funciona el alquiler de equipos con ReSona Rent?',
       answer:
         'Puedes navegar por el catálogo, seleccionar productos y fechas, y completar la reserva. Si prefieres una recomendación personalizada, utiliza la calculadora de eventos y te prepararemos un presupuesto según tipo de evento, asistentes, duración y ubicación.',
     },
@@ -49,10 +49,10 @@ const FAQsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <SEOHead
-        title="Preguntas Frecuentes (FAQs) | ReSona Events"
+        title="Preguntas Frecuentes (FAQs) | ReSona Rent"
         description="Resolvemos dudas frecuentes sobre alquiler de equipos para eventos: reservas, transporte, montaje, depósito y presupuesto."
         keywords="faqs alquiler equipos eventos, preguntas frecuentes alquiler sonido valencia, alquiler audiovisuales valencia"
-        canonicalUrl="https://resonaevents.com/faqs"
+        canonicalUrl="https://resonarent.com/faqs"
         schema={[getFAQSchema(faqs)]}
       />
 
@@ -61,10 +61,9 @@ const FAQsPage = () => {
         
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
           <p className="text-gray-700 leading-relaxed mb-4">
-            En <strong>ReSona Events</strong> llevamos más de 15 años proporcionando equipos de sonido, iluminación y audiovisuales 
-            profesionales para eventos en Valencia y toda la Comunidad Valenciana. Durante este tiempo, hemos trabajado en más de 
-            2.000 eventos, desde bodas íntimas hasta conciertos con 1.000+ asistentes, eventos corporativos, festivales municipales 
-            y celebraciones privadas.
+            En <strong>ReSona Rent</strong> proporcionamos equipos de sonido, iluminación y audiovisuales
+            profesionales para eventos en Valencia y toda la Comunidad Valenciana: desde bodas íntimas hasta conciertos,
+            eventos corporativos, festivales municipales y celebraciones privadas.
           </p>
           
           <p className="text-gray-700 leading-relaxed mb-4">
@@ -117,11 +116,11 @@ const FAQsPage = () => {
 
         {/* Información adicional */}
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 border border-blue-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sobre ReSona Events Valencia</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sobre ReSona Rent Valencia</h2>
           
           <div className="space-y-4 text-gray-700">
             <p className="leading-relaxed">
-              <strong>ReSona Events</strong> es una empresa especializada en el <strong>alquiler profesional de equipos de sonido, 
+              <strong>ReSona Rent</strong> es una empresa especializada en el <strong>alquiler profesional de equipos de sonido, 
               iluminación, audiovisuales y escenarios</strong> para todo tipo de eventos en la provincia de Valencia. Con sede en 
               Valencia capital, ofrecemos servicio completo en toda la Comunidad Valenciana, incluyendo <strong>Valencia ciudad, 
               Torrent, Paterna, Mislata, Burjassot, Manises, Aldaia, Quart de Poblet, Xirivella</strong> y el resto del área metropolitana.

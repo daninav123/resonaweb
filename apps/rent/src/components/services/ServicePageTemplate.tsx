@@ -57,7 +57,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
 }) => {
   // Memoizar URL para evitar recalcular en cada render
   const currentUrl = useMemo(
-    () => typeof window !== 'undefined' ? `https://resonaevents.com${window.location.pathname}` : '',
+    () => typeof window !== 'undefined' ? `https://resonarent.com${window.location.pathname}` : '',
     []
   );
   const canonicalHref = useMemo(
@@ -92,12 +92,12 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
       "description": heroSubtitle || `Servicio profesional de ${heroTitle} en Valencia`,
       "provider": {
         "@type": "LocalBusiness",
-        "@id": "https://resonaevents.com/#localbusiness",
-        "name": "ReSona Events",
-        "url": "https://resonaevents.com",
-        "image": "https://resonaevents.com/logo.png",
+        "@id": "https://resonarent.com/#localbusiness",
+        "name": "ReSona Rent",
+        "url": "https://resonarent.com",
+        "image": "https://resonarent.com/logo.png",
         "telephone": "+34613881414",
-        "email": "info@resonaevents.com",
+        "email": "info@resonarent.com",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "C/ de l'Illa Cabrera, 13",
@@ -139,13 +139,13 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
           "@type": "ListItem",
           "position": 1,
           "name": "Inicio",
-          "item": "https://resonaevents.com"
+          "item": "https://resonarent.com"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Servicios",
-          "item": "https://resonaevents.com/servicios"
+          "item": "https://resonarent.com/servicios"
         },
         {
           "@type": "ListItem",
@@ -384,7 +384,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 WhatsApp Directo
               </a>
               <a
-                href="mailto:info@resonaevents.com"
+                href="mailto:info@resonarent.com"
                 className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
               >
                 <Mail className="w-5 h-5 mr-2" />
@@ -393,7 +393,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             </div>
             
             <p className="mt-8 text-white/80">
-              📞 613 88 14 14 | 📧 info@resonaevents.com
+              📞 613 88 14 14 | 📧 info@resonarent.com
             </p>
           </div>
         </section>

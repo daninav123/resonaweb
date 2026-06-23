@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { trackLead } from '@resona/utils';
 import SEOHead from '../components/SEO/SEOHead';
 
 const ContactPage = () => {
@@ -20,7 +21,8 @@ const ContactPage = () => {
     try {
       const api = (await import('../services/api')).default;
       await api.post('/contact', formData);
-      
+
+      trackLead({ leadType: 'contacto' });
       toast.success('Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');
       setFormData({
         name: '',
@@ -41,10 +43,10 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <SEOHead
-        title="Contacto Valencia - Presupuesto para Eventos y Alquiler de Material | ReSona Events"
+        title="Contacto Valencia - Presupuesto para Eventos y Alquiler de Material | ReSona Rent"
         description="Contáctanos en Valencia para presupuesto personalizado de alquiler de sonido, iluminación y equipos audiovisuales. Respuesta en 24h. Teléfono: +34 613881414"
         keywords="contacto resona valencia, presupuesto alquiler equipos valencia, presupuesto sonido eventos valencia, alquiler material eventos valencia"
-        canonicalUrl="https://resonaevents.com/contacto"
+        canonicalUrl="https://resonarent.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>

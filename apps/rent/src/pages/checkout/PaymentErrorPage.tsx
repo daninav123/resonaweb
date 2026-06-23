@@ -90,10 +90,10 @@ const PaymentErrorPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
               <a
-                href="mailto:info@resonaevents.com"
+                href="mailto:info@resonarent.com"
                 className="text-resona hover:underline"
               >
-                📧 info@resonaevents.com
+                📧 info@resonarent.com
               </a>
               <a
                 href="tel:+34613881414"

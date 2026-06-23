@@ -6,10 +6,10 @@ const AlquilerPantallasLED = () => {
     title: "Pantallas LED Valencia | Videowall Modular | ReSona",
     metaDescription: "Pantallas LED modulares para eventos. 2x2m a 10x6m. P3, P5. Interior/exterior. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler pantallas led valencia, pantallas led eventos, videowall",
-    canonicalUrl: "https://resonaevents.com/servicios/alquiler-pantallas-led",
+    canonicalUrl: "https://resonarent.com/servicios/alquiler-pantallas-led",
     heroTitle: "Alquiler de Pantallas LED Modulares en Valencia",
     heroSubtitle: "Pantallas LED profesionales - Disponibles bajo pedido especial",
-    introduction: `El <strong>alquiler de pantallas LED en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    introduction: `El <strong>alquiler de pantallas LED en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>alquiler de pantallas LED en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Pantallas LED profesionales modulares disponibles bajo pedido para eventos especiales. Consultanos para conferencias, presentaciones, conciertos que requieran videowall, pantallas de alta resolución P2-P4, procesadores video profesionales.
 

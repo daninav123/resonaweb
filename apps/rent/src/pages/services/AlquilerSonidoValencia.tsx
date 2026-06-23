@@ -6,10 +6,10 @@ const AlquilerSonidoValencia = () => {
     title: "Alquiler Sonido Valencia desde 120€ · Técnico Incluido",
     metaDescription: "Alquiler de equipos de sonido profesional en Valencia desde 120€/día. DAS Audio, ICOA, Pioneer. Técnico especializado incluido. +2000 eventos ☎ 613 88 14 14",
     keywords: "alquiler sonido valencia, alquiler equipos sonido valencia, alquiler de sonido para eventos, alquiler equipo sonido",
-    canonicalUrl: "https://resonaevents.com/servicios/alquiler-sonido-valencia",
+    canonicalUrl: "https://resonarent.com/servicios/alquiler-sonido-valencia",
     heroTitle: "Alquiler de Sonido Profesional en Valencia",
     heroSubtitle: "Equipos DAS Audio, ICOA, Behringer, Pioneer - Técnico especializado incluido",
-    introduction: `El <strong>alquiler de sonido profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    introduction: `El <strong>alquiler de sonido profesional en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>alquiler de sonido profesional en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 300 asistentes. Trabajamos exclusivamente con equipamiento profesional de marcas reconocidas: <strong>DAS Audio</strong> (altavoces 515A y subwoofers 215A/218A), <strong>ICOA</strong> (series 12A y 15A), <strong>Behringer X Air</strong>, <strong>Pioneer</strong> para DJ, y micrófonos <strong>Shure</strong>, garantizando rendimiento y fiabilidad máximos.
 

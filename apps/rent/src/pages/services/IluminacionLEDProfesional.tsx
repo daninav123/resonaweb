@@ -6,10 +6,10 @@ const IluminacionLEDProfesional = () => {
     title: "Iluminación LED Valencia | Moving Heads RGB | ReSona",
     metaDescription: "Iluminación LED para eventos en Valencia. Moving Heads, focos RGB/RGBW. Control DMX. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "iluminación led eventos valencia, luces led profesionales valencia, focos par led valencia, iluminación profesional valencia",
-    canonicalUrl: "https://resonaevents.com/servicios/iluminacion-led-profesional",
+    canonicalUrl: "https://resonarent.com/servicios/iluminacion-led-profesional",
     heroTitle: "Iluminación LED Profesional para Eventos en Valencia",
     heroSubtitle: "Moving Heads, Flash RGB, Focos LED - Efectos profesionales para tu evento",
-    introduction: `La <strong>iluminación LED profesional en Valencia</strong> transforma completamente cualquier evento. En ReSona Events contamos con más de 15 años de experiencia en iluminación para bodas, eventos corporativos, conciertos y fiestas en Valencia, Castellón y Alicante.
+    introduction: `La <strong>iluminación LED profesional en Valencia</strong> transforma completamente cualquier evento. En ReSona Rent contamos con más de 15 años de experiencia en iluminación para bodas, eventos corporativos, conciertos y fiestas en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>iluminación LED profesional</strong> está diseñado para eventos de 20 a 300 personas. Trabajamos con equipamiento profesional: <strong>Moving Head 3en1 17R</strong> (350W, Beam/Spot/Wash), <strong>Moving Head Beam 7R</strong> (230W, 14 colores), <strong>Mini Beam LED</strong> y <strong>Mini Wash RGBW</strong>, <strong>Flash Estroboscópico RGB 1000W</strong>, <strong>Focos LED RGB</strong> decorativos, <strong>Ventilador LED RGB</strong> para efectos rotativos, y <strong>Focos Spot</strong> profesionales.
 

@@ -5,10 +5,10 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Sobre Nosotros - Alquiler de Equipos para Eventos en Valencia | ReSona Events"
-        description="ReSona Events, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
-        keywords="resona events valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
-        canonicalUrl="https://resonaevents.com/sobre-nosotros"
+        title="Sobre Nosotros - Alquiler de Equipos para Eventos en Valencia | ReSona Rent"
+        description="ReSona Rent, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
+        keywords="resona rent valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
+        canonicalUrl="https://resonarent.com/sobre-nosotros"
       />
 
       {/* Hero Section */}
@@ -18,7 +18,7 @@ const AboutPage = () => {
         
         <div className="relative container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Sobre Resona Events</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Sobre Resona Rent</h1>
             <p className="text-xl text-white/90">
               Transformando eventos en experiencias inolvidables desde hace más de 10 años
             </p>
@@ -37,7 +37,7 @@ const AboutPage = () => {
             
             <div className="bg-white rounded-lg shadow-md p-8 mb-8">
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                Resona Events nació en 2014 con una visión clara: <strong>democratizar el acceso a equipos audiovisuales profesionales</strong> 
+                Resona Rent nació en 2014 con una visión clara: <strong>democratizar el acceso a equipos audiovisuales profesionales</strong> 
                 para todo tipo de eventos. Lo que comenzó como una pequeña empresa familiar en Valencia, ha crecido hasta convertirse 
                 en uno de los proveedores de referencia en el sector.
               </p>
@@ -231,7 +231,7 @@ const AboutPage = () => {
             <Users className="w-16 h-16 text-resona mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">¿Listo para tu próximo evento?</h2>
             <p className="text-lg text-gray-600 mb-6">
-              Únete a miles de clientes satisfechos que confían en Resona Events para sus celebraciones más importantes
+              Únete a miles de clientes satisfechos que confían en Resona Rent para sus celebraciones más importantes
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

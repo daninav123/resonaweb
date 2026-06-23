@@ -6,15 +6,15 @@
 export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Resona Events',
-  url: 'https://resonaevents.com',
-  logo: 'https://resonaevents.com/logo.png',
+  name: 'Resona Rent',
+  url: 'https://resonarent.com',
+  logo: 'https://resonarent.com/logo.png',
   description: 'Alquiler profesional de equipos de sonido, iluminación y audiovisuales para eventos',
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+34-613-881-414',
     contactType: 'customer service',
-    email: 'info@resonaevents.com',
+    email: 'info@resonarent.com',
     availableLanguage: ['Spanish'],
   },
   address: {
@@ -31,13 +31,13 @@ export const organizationSchema = {
 export const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Resona Events',
-  url: 'https://resonaevents.com',
+  name: 'Resona Rent',
+  url: 'https://resonarent.com',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://resonaevents.com/productos?q={search_term_string}',
+      urlTemplate: 'https://resonarent.com/productos?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -47,9 +47,9 @@ export const websiteSchema = {
 export const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://resonaevents.com/#localbusiness',
-  name: 'Resona Events',
-  image: 'https://resonaevents.com/logo.png',
+  '@id': 'https://resonarent.com/#localbusiness',
+  name: 'Resona Rent',
+  image: 'https://resonarent.com/logo.png',
   description: 'Alquiler de material profesional para eventos: sonido, iluminación, fotografía y video',
   address: {
     '@type': 'PostalAddress',
@@ -60,8 +60,8 @@ export const localBusinessSchema = {
     addressCountry: 'ES',
   },
   telephone: '+34-613-881-414',
-  email: 'info@resonaevents.com',
-  url: 'https://resonaevents.com',
+  email: 'info@resonarent.com',
+  url: 'https://resonarent.com',
   priceRange: '€€',
   openingHoursSpecification: [
     {
@@ -97,18 +97,18 @@ export const productSchema = (product: any) => {
     image: product.imageUrl,
     brand: {
       '@type': 'Brand',
-      name: product.brand || 'Resona Events',
+      name: product.brand || 'Resona Rent',
     },
     offers: {
       '@type': 'Offer',
-      url: `https://resonaevents.com/productos/${product.slug}`,
+      url: `https://resonarent.com/productos/${product.slug}`,
       priceCurrency: 'EUR',
       price: product.pricePerDay,
       availability: product.isActive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       priceValidUntil: priceValidUntil,
       seller: {
         '@type': 'Organization',
-        name: 'Resona Events',
+        name: 'Resona Rent',
       },
     },
     ...(product.category && {
@@ -127,7 +127,7 @@ export const productListSchema = (products: any[]) => ({
     item: {
       '@type': 'Product',
       name: product.name,
-      url: `https://resonaevents.com/productos/${product.slug}`,
+      url: `https://resonarent.com/productos/${product.slug}`,
       image: product.imageUrl,
       offers: {
         '@type': 'Offer',
@@ -172,8 +172,8 @@ export const serviceSchema = {
   description: 'Servicio profesional de alquiler de equipos de sonido, iluminación, fotografía y video para todo tipo de eventos',
   provider: {
     '@type': 'Organization',
-    name: 'Resona Events',
-    url: 'https://resonaevents.com',
+    name: 'Resona Rent',
+    url: 'https://resonarent.com',
   },
   areaServed: {
     '@type': 'Country',
@@ -196,12 +196,12 @@ export const eventSchema = (eventType: string, attendees: number) => ({
   description: `Calcula el presupuesto estimado para tu ${eventType} con ${attendees} asistentes`,
   organizer: {
     '@type': 'Organization',
-    name: 'Resona Events',
-    url: 'https://resonaevents.com',
+    name: 'Resona Rent',
+    url: 'https://resonarent.com',
   },
   offers: {
     '@type': 'Offer',
-    url: 'https://resonaevents.com/calculadora-eventos',
+    url: 'https://resonarent.com/calculadora-eventos',
     priceCurrency: 'EUR',
   },
 });

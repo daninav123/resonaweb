@@ -179,7 +179,7 @@ const ProductDetailPage = () => {
   }
 
   // SEO: Metadatos dinámicos
-  const baseUrl = 'https://resonaevents.com';
+  const baseUrl = 'https://resonarent.com';
   const canonicalUrl = `${baseUrl}/productos/${product.slug}`;
   const imageUrl = product.mainImageUrl || product.images?.[0];
   const fullImageUrl = imageUrl?.startsWith('http') 
@@ -201,7 +201,7 @@ const ProductDetailPage = () => {
     pricePerDay: product.pricePerDay,
     image: fullImageUrl,
     category: product.category?.name,
-    brand: 'Resona Events',
+    brand: 'Resona Rent',
     sku: product.sku,
     availability: product.stock > 0 ? 'InStock' : 'OutOfStock',
     // Reviews y rating solo cuando existan datos reales vinculados al producto
@@ -245,7 +245,7 @@ const ProductDetailPage = () => {
               {product.mainImageUrl ? (
                 <OptimizedImage
                   src={getImageUrl(product.mainImageUrl)}
-                  alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Events`}
+                  alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Rent`}
                   className="w-full h-96 object-contain bg-white"
                   height={384}
                   priority={true}
@@ -427,33 +427,6 @@ const ProductDetailPage = () => {
               <div className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 rounded-lg p-3">
                 <Wrench className="w-5 h-5 text-purple-600 flex-shrink-0" />
                 <span>Técnico opcional</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-700 bg-yellow-50 rounded-lg p-3">
-                <Star className="w-5 h-5 text-yellow-600 flex-shrink-0" />
-                <span>+2.000 alquileres</span>
-              </div>
-            </div>
-
-            {/* Social Proof */}
-            <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex -space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm font-semibold text-gray-900">4.8/5</span>
-                <span className="text-xs text-gray-500">(+120 valoraciones)</span>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm text-gray-600 italic border-l-2 border-yellow-400 pl-3">
-                  "Excelente equipo y servicio impecable. Todo funcionó perfecto en nuestra boda."
-                  <span className="block text-xs text-gray-400 mt-1 not-italic">— Ana G., Valencia</span>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                <CheckCircle className="w-3.5 h-3.5 text-green-500" />
-                <span>15 personas alquilaron este producto esta semana</span>
               </div>
             </div>
 

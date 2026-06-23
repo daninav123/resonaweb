@@ -6,10 +6,10 @@ const AlquilerMicrofonosInalambricos = () => {
     title: "Micrófonos Inalámbricos Valencia | Shure | ReSona",
     metaDescription: "Micrófonos inalámbricos profesionales. Shure SM58, Sennheiser. Mano, solapa, diadema. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler micrófonos inalámbricos valencia, micrófonos shure valencia, alquiler micros valencia, sennheiser valencia",
-    canonicalUrl: "https://resonaevents.com/servicios/alquiler-microfonos-inalambricos",
+    canonicalUrl: "https://resonarent.com/servicios/alquiler-microfonos-inalambricos",
     heroTitle: "Alquiler de Micrófonos Inalámbricos en Valencia",
     heroSubtitle: "Shure SM58 Inalámbrico - Calidad profesional sin cables",
-    introduction: `El <strong>alquiler de micrófonos inalámbricos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    introduction: `El <strong>alquiler de micrófonos inalámbricos en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>alquiler de micrófonos inalámbricos en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con equipamiento profesional: Shure SM58 Inalámbrico (dinámico cardioide, estándar mundial), ideal para ceremonias, discursos, presentaciones, bodas. Disponibles bajo pedido (consultar disponibilidad).
 

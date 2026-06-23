@@ -46,7 +46,7 @@ const AlquilerIluminacionValenciaPage = () => {
         title="Alquiler Iluminación Valencia desde 25€ · Focos LED"
         description="Alquiler de iluminación profesional en Valencia desde 25€/día. Focos LED RGB, cabezas móviles, láseres, control DMX. Técnico incluido. Presupuesto 24h ☎ 613 88 14 14"
         keywords="alquiler iluminacion valencia, alquiler luces led valencia, alquiler focos valencia, alquiler iluminacion de obra exterior, iluminacion profesional valencia"
-        canonicalUrl="https://resonaevents.com/alquiler-iluminacion-valencia"
+        canonicalUrl="https://resonarent.com/alquiler-iluminacion-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />
 
@@ -113,7 +113,7 @@ const AlquilerIluminacionValenciaPage = () => {
             
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-4">
-                En <strong>ReSona Events</strong> somos especialistas en <strong>alquiler de iluminación profesional en Valencia</strong>. 
+                En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de iluminación profesional en Valencia</strong>. 
                 Transformamos cualquier espacio con nuestros equipos de iluminación LED de última generación. Ya sea para una boda elegante 
                 en una finca valenciana, un concierto en vivo, o un evento corporativo en el centro de Valencia, tenemos la solución perfecta 
                 de iluminación para crear el ambiente que buscas.

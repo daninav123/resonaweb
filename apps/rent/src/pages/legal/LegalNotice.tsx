@@ -23,19 +23,19 @@ export default function LegalNotice() {
 
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
                 <p className="text-sm text-gray-700 space-y-1">
-                  <strong>Denominación Social:</strong> ReSona Events<br />
+                  <strong>Denominación Social:</strong> ReSona Rent<br />
                   <strong>Titular:</strong> Daniel Navarro Campos<br />
                   <strong>DNI:</strong> 03152623J<br />
                   <strong>Domicilio Social:</strong> Valencia, España<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
-                  <strong>Email:</strong> info@resonaevents.com<br />
-                  <strong>Sitio web:</strong> resonaevents.com<br />
+                  <strong>Email:</strong> info@resonarent.com<br />
+                  <strong>Sitio web:</strong> resonarent.com<br />
                   <strong>Actividad:</strong> Alquiler de equipos audiovisuales para eventos
                 </p>
               </div>
 
               <p className="text-gray-700 mb-4">
-                ReSona Events (en adelante, "el Titular") es el propietario y responsable del 
+                ReSona Rent (en adelante, "el Titular") es el propietario y responsable del 
                 presente sitio web.
               </p>
             </section>
@@ -44,8 +44,8 @@ export default function LegalNotice() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Objeto y Aceptación</h2>
               
               <p className="text-gray-700 mb-4">
-                El presente Aviso Legal regula el uso y utilización del sitio web <strong>resonaevents.com</strong>, 
-                del que es titular ReSona Events.
+                El presente Aviso Legal regula el uso y utilización del sitio web <strong>resonarent.com</strong>, 
+                del que es titular ReSona Rent.
               </p>
 
               <p className="text-gray-700 mb-4">
@@ -124,7 +124,7 @@ export default function LegalNotice() {
               <h3 className="text-xl font-semibold text-gray-800 mb-3">5.1 Derechos de Autor</h3>
               <p className="text-gray-700 mb-4">
                 Todos los contenidos del sitio web (textos, imágenes, logotipos, iconos, fotografías, 
-                software, estructura, diseño gráfico, código fuente, etc.) son propiedad de ReSona Events 
+                software, estructura, diseño gráfico, código fuente, etc.) son propiedad de ReSona Rent 
                 o de terceros que han autorizado su uso.
               </p>
 
@@ -166,7 +166,7 @@ export default function LegalNotice() {
               
               <h3 className="text-xl font-semibold text-gray-800 mb-3">6.1 Enlaces Salientes</h3>
               <p className="text-gray-700 mb-4">
-                El sitio web puede contener enlaces a sitios web de terceros. ReSona Events no 
+                El sitio web puede contener enlaces a sitios web de terceros. ReSona Rent no 
                 controla ni es responsable del contenido, políticas de privacidad o prácticas 
                 de estos sitios externos.
               </p>
@@ -184,7 +184,7 @@ export default function LegalNotice() {
               <h3 className="text-xl font-semibold text-gray-800 mb-3">6.2 Enlaces Entrantes</h3>
               <p className="text-gray-700 mb-4">
                 Si desea establecer un enlace hacia nuestro sitio web, debe solicitar autorización 
-                previa contactando a: info@resonaevents.com
+                previa contactando a: info@resonarent.com
               </p>
 
               <p className="text-gray-700 mb-4">
@@ -194,7 +194,7 @@ export default function LegalNotice() {
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
                 <li>Enlazar directamente a archivos internos (deep linking) sin autorización</li>
                 <li>Presentar nuestro contenido en frames o ventanas de otro sitio</li>
-                <li>Realizar afirmaciones falsas sobre relación con ReSona Events</li>
+                <li>Realizar afirmaciones falsas sobre relación con ReSona Rent</li>
               </ul>
             </section>
 
@@ -286,7 +286,7 @@ export default function LegalNotice() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Modificaciones</h2>
               
               <p className="text-gray-700 mb-4">
-                ReSona Events se reserva el derecho a modificar el presente Aviso Legal en cualquier 
+                ReSona Rent se reserva el derecho a modificar el presente Aviso Legal en cualquier 
                 momento, con el objetivo de adaptarlo a cambios legislativos o jurisprudenciales, 
                 así como a prácticas del sector.
               </p>
@@ -322,11 +322,11 @@ export default function LegalNotice() {
               
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-gray-700">
-                  <strong>ReSona Events</strong><br />
+                  <strong>ReSona Rent</strong><br />
                   <strong>Dirección:</strong> Valencia, España<br />
                   <strong>Teléfono:</strong> 613 88 14 14<br />
-                  <strong>Email:</strong> info@resonaevents.com<br />
-                  <strong>Web:</strong> resonaevents.com
+                  <strong>Email:</strong> info@resonarent.com<br />
+                  <strong>Web:</strong> resonarent.com
                 </p>
               </div>
             </section>

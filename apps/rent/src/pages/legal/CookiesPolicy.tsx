@@ -37,7 +37,7 @@ export default function CookiesPolicy() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. ¿Para qué usamos cookies?</h2>
               
               <p className="text-gray-700 mb-4">
-                En ReSona Events utilizamos cookies para:
+                En ReSona Rent utilizamos cookies para:
               </p>
               
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
@@ -360,8 +360,8 @@ export default function CookiesPolicy() {
               
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-gray-700">
-                  <strong>ReSona Events</strong><br />
-                  <strong>Email:</strong> info@resonaevents.com<br />
+                  <strong>ReSona Rent</strong><br />
+                  <strong>Email:</strong> info@resonarent.com<br />
                   <strong>Teléfono:</strong> 613 88 14 14
                 </p>
               </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Package, Download, Mail } from 'lucide-react';
 import { api } from '@resona/api-client';
+import { trackPurchase } from '@resona/utils';
 import confetti from 'canvas-confetti';
 
 const PaymentSuccessPage = () => {
@@ -57,6 +58,13 @@ const PaymentSuccessPage = () => {
         ...orderData,
         amountPaid,
         hasInstallments
+      });
+
+      // Conversión: valor de la reserva completa (orderData.total), no solo el plazo cobrado.
+      trackPurchase({
+        transactionId: String(orderId),
+        value: Number(orderData.total) || undefined,
+        currency: 'EUR',
       });
     } catch (error) {
       console.error('Error loading order:', error);
@@ -187,8 +195,8 @@ const PaymentSuccessPage = () => {
           <div className="mt-8 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               ¿Tienes alguna pregunta? Contáctanos en{' '}
-              <a href="mailto:info@resonaevents.com" className="text-resona hover:underline">
-                info@resonaevents.com
+              <a href="mailto:info@resonarent.com" className="text-resona hover:underline">
+                info@resonarent.com
               </a>
             </p>
           </div>

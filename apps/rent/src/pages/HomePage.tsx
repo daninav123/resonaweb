@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Phone,
   Star,
+  CalendarCheck,
 } from 'lucide-react';
 import { productService } from '../services/product.service';
 import { getPriceDisplay } from '../utils/priceWithVAT';
@@ -127,7 +128,7 @@ const HomePage = () => {
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" /> Depósito reembolsable</span>
               <span className="flex items-center gap-1.5"><Truck className="w-4 h-4" /> Entrega en Valencia</span>
               <span className="flex items-center gap-1.5"><Wrench className="w-4 h-4" /> Técnico opcional</span>
-              <span className="flex items-center gap-1.5"><Star className="w-4 h-4" /> +2.000 alquileres</span>
+              <span className="flex items-center gap-1.5"><CalendarCheck className="w-4 h-4" /> Reserva 100% online</span>
             </div>
           </div>
         </div>
@@ -260,12 +261,12 @@ const HomePage = () => {
               Si buscas bodas, conciertos o corporativos con montaje, diseño técnico y coordinación, visita nuestra división de eventos.
             </p>
             <a
-              href="https://resonaevents.com"
+              href="https://resonarent.com"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white text-gray-900 hover:bg-gray-100 font-medium px-5 py-2.5 rounded-md transition"
             >
-              Ir a ReSona Events <ArrowRight className="w-4 h-4" />
+              Ir a ReSona Rent <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>

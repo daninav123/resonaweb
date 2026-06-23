@@ -67,7 +67,7 @@ const Header = () => {
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
             <span className="font-medium">Tel: +34 613 881 414</span>
-            <span className="hidden sm:inline font-medium">Email: info@resonaevents.com</span>
+            <span className="hidden sm:inline font-medium">Email: info@resonarent.com</span>
           </div>
           <div className="flex items-center gap-4">
             {!isAuthenticated ? (
@@ -94,7 +94,7 @@ const Header = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.png" alt="ReSona Events Logo" width="48" height="48" className="h-12 w-12" />
+            <img src="/logo-resona.png" alt="ReSona Rent Logo" width="48" height="48" className="h-12 w-12" />
             <div className="flex flex-col">
               <span
                 className="text-2xl font-bold"
@@ -102,7 +102,7 @@ const Header = () => {
               >
                 ReSona
               </span>
-              <span className="text-xs tracking-widest text-gray-600">EVENTS</span>
+              <span className="text-xs tracking-widest text-gray-600">RENT</span>
             </div>
           </Link>
 
@@ -286,13 +286,13 @@ const Header = () => {
             </li>
             <li className="md:ml-auto">
               <a
-                href="https://resonaevents.com"
+                href="https://resonarent.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block py-2 md:py-3 text-xs text-gray-500 hover:text-resona transition-colors italic"
                 title="Si buscas que organicemos tu evento completo con montaje"
               >
-                ¿Evento completo? → ReSona Events
+                ¿Evento completo? → ReSona Rent
               </a>
             </li>
             {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') && (

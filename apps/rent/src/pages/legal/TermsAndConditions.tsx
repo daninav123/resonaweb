@@ -16,8 +16,8 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Información General</h2>
               <p className="text-gray-700 mb-4">
                 El presente documento regula las condiciones de uso y contratación de los servicios 
-                ofrecidos por <strong>ReSona Events</strong> (en adelante, "la Empresa") a través de 
-                su sitio web <strong>resonaevents.com</strong>.
+                ofrecidos por <strong>ReSona Rent</strong> (en adelante, "la Empresa") a través de 
+                su sitio web <strong>resonarent.com</strong>.
               </p>
               <p className="text-gray-700 mb-4">
                 Al utilizar nuestros servicios y realizar reservas, usted acepta estar sujeto a estos 
@@ -27,11 +27,11 @@ export default function TermsAndConditions() {
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Datos de la Empresa:</strong><br />
-                  ReSona Events<br />
+                  ReSona Rent<br />
                   <strong>Titular:</strong> Daniel Navarro Campos<br />
                   DNI: 03152623J<br />
                   Dirección: Valencia, España<br />
-                  Email: info@resonaevents.com<br />
+                  Email: info@resonarent.com<br />
                   Teléfono: 613 88 14 14
                 </p>
               </div>
@@ -40,7 +40,7 @@ export default function TermsAndConditions() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Objeto del Servicio</h2>
               <p className="text-gray-700 mb-4">
-                ReSona Events se dedica al <strong>alquiler de equipos audiovisuales profesionales</strong> 
+                ReSona Rent se dedica al <strong>alquiler de equipos audiovisuales profesionales</strong> 
                 para eventos, incluyendo pero no limitándose a:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
@@ -63,7 +63,7 @@ export default function TermsAndConditions() {
                 <li>La calculadora de presupuesto en línea</li>
                 <li>Formulario de contacto en la web</li>
                 <li>Teléfono: 613 88 14 14</li>
-                <li>Email: info@resonaevents.com</li>
+                <li>Email: info@resonarent.com</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-800 mb-3">3.2 Confirmación de Reserva</h3>
@@ -73,12 +73,12 @@ export default function TermsAndConditions() {
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
                 <li>El cliente acepta el presupuesto</li>
                 <li>Se realiza el pago del anticipo (si aplica)</li>
-                <li>ReSona Events envía confirmación por escrito (email)</li>
+                <li>ReSona Rent envía confirmación por escrito (email)</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-800 mb-3">3.3 Disponibilidad</h3>
               <p className="text-gray-700 mb-4">
-                Todos los equipos están sujetos a disponibilidad. ReSona Events se reserva el derecho 
+                Todos los equipos están sujetos a disponibilidad. ReSona Rent se reserva el derecho 
                 de rechazar una reserva si los equipos solicitados no están disponibles en las fechas indicadas.
               </p>
             </section>
@@ -114,7 +114,7 @@ export default function TermsAndConditions() {
               
               <h3 className="text-xl font-semibold text-gray-800 mb-3">5.1 Opciones de Pago</h3>
               <p className="text-gray-700 mb-4">
-                ReSona Events ofrece las siguientes modalidades:
+                ReSona Rent ofrece las siguientes modalidades:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
                 <li><strong>Pago completo anticipado:</strong> 100% antes del evento (descuento 5%)</li>
@@ -204,9 +204,9 @@ export default function TermsAndConditions() {
                 con más de 7 días de antelación.
               </p>
 
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">8.3 Cancelación por ReSona Events</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">8.3 Cancelación por ReSona Rent</h3>
               <p className="text-gray-700 mb-4">
-                En caso de fuerza mayor o indisponibilidad imprevista del equipo, ReSona Events 
+                En caso de fuerza mayor o indisponibilidad imprevista del equipo, ReSona Rent 
                 ofrecerá equipos alternativos de características similares o reembolso completo.
               </p>
             </section>
@@ -224,9 +224,9 @@ export default function TermsAndConditions() {
                 <li>Multas o sanciones derivadas del uso inadecuado</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">9.2 Responsabilidad de ReSona Events</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">9.2 Responsabilidad de ReSona Rent</h3>
               <p className="text-gray-700 mb-4">
-                ReSona Events garantiza:
+                ReSona Rent garantiza:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
                 <li>Equipos en perfecto estado de funcionamiento</li>
@@ -236,7 +236,7 @@ export default function TermsAndConditions() {
 
               <h3 className="text-xl font-semibold text-gray-800 mb-3">9.3 Limitación de Responsabilidad</h3>
               <p className="text-gray-700 mb-4">
-                ReSona Events no se hace responsable de:
+                ReSona Rent no se hace responsable de:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
                 <li>Pérdidas económicas derivadas de fallos técnicos imprevistos</li>
@@ -250,7 +250,7 @@ export default function TermsAndConditions() {
               
               <p className="text-gray-700 mb-4">
                 Todo el equipo se entrega revisado y en perfecto estado. En caso de mal funcionamiento 
-                durante el alquiler, el cliente debe notificarlo inmediatamente a ReSona Events.
+                durante el alquiler, el cliente debe notificarlo inmediatamente a ReSona Rent.
               </p>
               <p className="text-gray-700 mb-4">
                 Se proporcionará equipo de reemplazo o asistencia técnica en un plazo máximo de 4 horas 
@@ -266,7 +266,7 @@ export default function TermsAndConditions() {
                 el Reglamento General de Protección de Datos (RGPD).
               </p>
               <p className="text-gray-700 mb-4">
-                ReSona Events garantiza la confidencialidad de la información del cliente y no la 
+                ReSona Rent garantiza la confidencialidad de la información del cliente y no la 
                 cederá a terceros sin consentimiento expreso.
               </p>
             </section>
@@ -276,7 +276,7 @@ export default function TermsAndConditions() {
               
               <p className="text-gray-700 mb-4">
                 Todos los contenidos del sitio web (textos, imágenes, logos, diseño) son propiedad 
-                de ReSona Events o de terceros que han autorizado su uso. Queda prohibida su 
+                de ReSona Rent o de terceros que han autorizado su uso. Queda prohibida su 
                 reproducción sin autorización.
               </p>
             </section>
@@ -294,7 +294,7 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">14. Modificaciones</h2>
               
               <p className="text-gray-700 mb-4">
-                ReSona Events se reserva el derecho de modificar estos términos y condiciones en 
+                ReSona Rent se reserva el derecho de modificar estos términos y condiciones en 
                 cualquier momento. Los cambios serán notificados a través del sitio web y entrarán 
                 en vigor inmediatamente tras su publicación.
               </p>
@@ -308,8 +308,8 @@ export default function TermsAndConditions() {
               </p>
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-gray-700">
-                  <strong>ReSona Events</strong><br />
-                  Email: info@resonaevents.com<br />
+                  <strong>ReSona Rent</strong><br />
+                  Email: info@resonarent.com<br />
                   Teléfono: 613 88 14 14<br />
                   Dirección: Valencia, España
                 </p>

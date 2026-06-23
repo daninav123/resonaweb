@@ -16,13 +16,13 @@ export interface QuoteRequestForPDF {
 export async function generateQuotePDF(request: QuoteRequestForPDF): Promise<void> {
   try {
     let companyData: any = {
-      companyName: 'Resona Events',
+      companyName: 'Resona Rent',
       taxId: 'B-XXXXXXXX',
       address: 'C/ Ejemplo, 123',
       city: 'Madrid',
       postalCode: '28000',
       phone: '+34 XXX XXX XXX',
-      email: 'info@resonaevents.com',
+      email: 'info@resonarent.com',
     };
 
     try {
@@ -88,7 +88,7 @@ export async function generateQuotePDF(request: QuoteRequestForPDF): Promise<voi
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
-    doc.text(companyData.companyName || 'RESONA EVENTS', 20, 25);
+    doc.text(companyData.companyName || 'RESONA RENT', 20, 25);
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -248,10 +248,10 @@ export async function generateQuotePDF(request: QuoteRequestForPDF): Promise<voi
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text(`${companyData.companyName || 'RESONA EVENTS'} | CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 105, 280, { align: 'center' });
+    doc.text(`${companyData.companyName || 'RESONA RENT'} | CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 105, 280, { align: 'center' });
     const address = `${companyData.address || 'C/ Ejemplo, 123'} - ${companyData.postalCode || '28000'} ${companyData.city || 'Madrid'}`;
     doc.text(`Dirección: ${address}`, 105, 285, { align: 'center' });
-    doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'} | Email: ${companyData.email || 'info@resonaevents.com'}`, 105, 290, { align: 'center' });
+    doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'} | Email: ${companyData.email || 'info@resonarent.com'}`, 105, 290, { align: 'center' });
 
     const fileName = `Presupuesto_${presupuestoNum}_${request.customerName?.replace(/[^a-z0-9]/gi, '_')}.pdf`;
     doc.save(fileName);

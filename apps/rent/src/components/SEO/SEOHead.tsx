@@ -24,10 +24,10 @@ interface SEOProps {
 }
 
 const SEOHead = ({
-  title = 'Resona Events - Alquiler de Material para Eventos',
+  title = 'Resona Rent - Alquiler de Material para Eventos',
   description = 'Alquiler profesional de equipos de sonido, iluminación, fotografía y video para eventos. Bodas, conciertos, conferencias y eventos corporativos. Presupuesto online.',
   keywords = 'alquiler sonido, alquiler iluminación, alquiler material eventos, alquiler equipos audiovisuales, sonido profesional, iluminación eventos, fotografía eventos, video eventos, bodas, conciertos',
-  ogImage = 'https://resonaevents.com/og-image.png',
+  ogImage = 'https://resonarent.com/og-image.png',
   ogType = 'website',
   canonicalUrl,
   noindex = false,
@@ -35,8 +35,8 @@ const SEOHead = ({
   article,
   product,
 }: SEOProps) => {
-  const fullTitle = title.includes('Resona') || title.includes('ReSona') ? title : `${title} | Resona Events`;
-  const baseUrl = 'https://resonaevents.com';
+  const fullTitle = title.includes('Resona') || title.includes('ReSona') ? title : `${title} | Resona Rent`;
+  const baseUrl = 'https://resonarent.com';
   // Canonical: si no se pasa explícita, usar la URL actual SIN query params ni hash
   // para evitar canibalización por filtros (?category=, ?search=, ?utm_...).
   const fallbackCanonical =
@@ -74,7 +74,7 @@ const SEOHead = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:type" content="image/png" />
-      <meta property="og:site_name" content="Resona Events" />
+      <meta property="og:site_name" content="Resona Rent" />
       <meta property="og:locale" content="es_ES" />
       
       {/* Article specific */}
@@ -101,7 +101,7 @@ const SEOHead = ({
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@resonaevents" />
+      <meta name="twitter:site" content="@resonarent" />
       <meta name="twitter:url" content={currentUrl} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
@@ -112,7 +112,7 @@ const SEOHead = ({
       <meta name="geo.region" content="ES" />
       <meta name="geo.placename" content="España" />
       <meta name="revisit-after" content="7 days" />
-      <meta name="author" content="Resona Events" />
+      <meta name="author" content="Resona Rent" />
       
       {/* Mobile */}
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />

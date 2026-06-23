@@ -6,10 +6,10 @@ const AlquilerEstructurasTruss = () => {
     title: "Estructuras Truss Valencia | Montajes Rigging | ReSona",
     metaDescription: "Estructuras truss para eventos. Montajes profesionales certificados. Rigging seguro. Técnico incluido. ☎️ 613 88 14 14",
     keywords: "alquiler truss valencia, estructuras eventos, montajes truss",
-    canonicalUrl: "https://resonaevents.com/servicios/alquiler-estructuras-truss",
+    canonicalUrl: "https://resonarent.com/servicios/alquiler-estructuras-truss",
     heroTitle: "Alquiler de Estructuras Truss en Valencia",
     heroSubtitle: "Estructuras truss profesionales para Moving Heads, iluminación, sonido. Montajes seguros y profesionales - Servicio en Valencia y provincia",
-    introduction: `El <strong>alquiler de estructuras truss en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Events contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    introduction: `El <strong>alquiler de estructuras truss en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>alquiler de estructuras truss en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos con estructuras truss profesionales certificadas (triangular/cuadrado 290mm) para colgar Moving Heads 17R/7R, iluminación LED, altavoces. Torres elevadoras, ground support, rigging certificado TÜV. Instalación segura por técnicos especializados.
 

@@ -17,7 +17,7 @@ const Footer = () => {
           <div>
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 mb-4 group hover:opacity-90 transition-opacity">
-              <img src="/logo-resona.svg" alt="ReSona Events" width="48" height="48" className="h-12 w-12" />
+              <img src="/logo-resona.png" alt="ReSona Rent" width="48" height="48" className="h-12 w-12" />
               <div className="flex flex-col">
                 <span
                   className="text-2xl font-bold leading-tight"
@@ -25,7 +25,7 @@ const Footer = () => {
                 >
                   ReSona
                 </span>
-                <span className="text-xs tracking-widest text-gray-300">EVENTS</span>
+                <span className="text-xs tracking-widest text-gray-300">RENT</span>
               </div>
             </Link>
             <p className="text-gray-300 mb-4 text-sm">
@@ -56,13 +56,13 @@ const Footer = () => {
               </Link></li>
               <li className="pt-2 border-t border-gray-700 mt-2">
                 <a
-                  href="https://resonaevents.com"
+                  href="https://resonarent.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-resona transition flex items-center group text-sm italic"
                 >
                   <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                  ¿Evento completo? ReSona Events ↗
+                  ¿Evento completo? ReSona Rent ↗
                 </a>
               </li>
             </ul>
@@ -144,7 +144,7 @@ const Footer = () => {
             <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Síguenos</h4>
             <div className="flex gap-3">
               <a
-                href="https://www.facebook.com/resonaevents"
+                href="https://www.facebook.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
@@ -153,7 +153,7 @@ const Footer = () => {
                 <Facebook className="w-5 h-5 text-resona group-hover:text-white" />
               </a>
               <a
-                href="https://www.twitter.com/resonaevents"
+                href="https://www.twitter.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
@@ -162,7 +162,7 @@ const Footer = () => {
                 <Twitter className="w-5 h-5 text-resona group-hover:text-white" />
               </a>
               <a
-                href="https://www.instagram.com/resonaevents"
+                href="https://www.instagram.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
@@ -171,7 +171,7 @@ const Footer = () => {
                 <Instagram className="w-5 h-5 text-resona group-hover:text-white" />
               </a>
               <a
-                href="https://www.linkedin.com/company/resonaevents"
+                href="https://www.linkedin.com/company/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
@@ -189,7 +189,7 @@ const Footer = () => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-resona rounded-full animate-pulse"></div>
               <p className="text-gray-400 text-sm">
-                © 2024 <span className="text-resona font-semibold">ReSona Events</span>. Todos los derechos reservados.
+                © 2024 <span className="text-resona font-semibold">ReSona Rent</span>. Todos los derechos reservados.
               </p>
             </div>
             <div className="flex flex-wrap gap-6 justify-center">

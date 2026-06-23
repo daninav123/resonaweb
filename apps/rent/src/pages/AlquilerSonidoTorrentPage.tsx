@@ -23,10 +23,10 @@ const AlquilerSonidoTorrentPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Alquiler de Sonido en Torrent | Equipos Profesionales ReSona Events"
+        title="Alquiler de Sonido en Torrent | Equipos Profesionales ReSona Rent"
         description="Alquiler de sonido profesional en Torrent, Valencia. Altavoces, microfonía y equipos de audio para eventos, bodas y fiestas. Servicio en Torrent y pedanías. Presupuesto sin compromiso. ☎️ 613881414"
         keywords="alquiler sonido torrent, alquiler altavoces torrent, equipos audio torrent, sonido eventos torrent, sonido profesional torrent valencia"
-        canonicalUrl="https://resonaevents.com/alquiler-sonido-torrent"
+        canonicalUrl="https://resonarent.com/alquiler-sonido-torrent"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />
 
@@ -92,14 +92,14 @@ const AlquilerSonidoTorrentPage = () => {
             
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-4">
-                <strong>ReSona Events</strong> ofrece servicio de <strong>alquiler de equipos de sonido profesional en Torrent</strong>, 
+                <strong>ReSona Rent</strong> ofrece servicio de <strong>alquiler de equipos de sonido profesional en Torrent</strong>, 
                 uno de los municipios más importantes del área metropolitana de Valencia. Con más de 10 años de experiencia en el sector 
                 audiovisual, ponemos a tu disposición altavoces, subwoofers, mesas de mezclas, microfonía inalámbrica y equipos completos 
                 para todo tipo de eventos en Torrent y sus barrios: El Vedat, Sector Albuixarres, L'Alter, Monte Vedat y Parc Central.
               </p>
 
               <p className="text-gray-700 mb-4">
-                Torrent cuenta con numerosos espacios para eventos, tanto públicos como privados, y en <strong>ReSona Events</strong> 
+                Torrent cuenta con numerosos espacios para eventos, tanto públicos como privados, y en <strong>ReSona Rent</strong> 
                 conocemos perfectamente las características técnicas de cada uno. Hemos realizado montajes de sonido en el 
                 <strong>Centro Cultural La Estación</strong>, la <strong>Casa de la Cultura de Torrent</strong>, 
                 el <strong>Polideportivo Municipal</strong>, y en decenas de salones de celebraciones y locales de eventos privados 
@@ -191,7 +191,7 @@ const AlquilerSonidoTorrentPage = () => {
               </div>
 
               <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
-                Por Qué Elegir ReSona Events en Torrent
+                Por Qué Elegir ReSona Rent en Torrent
               </h3>
 
               <ul className="space-y-3 mb-6">

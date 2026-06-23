@@ -130,7 +130,7 @@ export const generateProductSchema = (product: Product, baseUrl: string) => {
       url: productUrl, // URL de la oferta
       seller: {
         '@type': 'Organization',
-        name: 'Resona Events',
+        name: 'Resona Rent',
       },
     },
     ...(product.rating && product.reviewCount && {
@@ -226,10 +226,10 @@ export const generateBlogPostSchema = (post: {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Resona Events',
+      name: 'Resona Rent',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://resonaevents.com/logo.png',
+        url: 'https://resonarent.com/logo.png',
       },
     },
     datePublished: post.publishedDate,
@@ -308,7 +308,7 @@ export const generateWebSiteSchema = (baseUrl: string) => {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Resona Events',
+    name: 'Resona Rent',
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',

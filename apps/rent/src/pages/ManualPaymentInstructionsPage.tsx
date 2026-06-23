@@ -130,7 +130,7 @@ const ManualPaymentInstructionsPage = () => {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Titular:</p>
-                  <p className="font-semibold text-gray-900">ReSona Events S.L.</p>
+                  <p className="font-semibold text-gray-900">ReSona Rent S.L.</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">IBAN:</p>
@@ -228,8 +228,8 @@ const ManualPaymentInstructionsPage = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             ¿Tienes dudas? Contáctanos en{' '}
-            <a href="mailto:info@resonaevents.com" className="text-blue-600 hover:underline">
-              info@resonaevents.com
+            <a href="mailto:info@resonarent.com" className="text-blue-600 hover:underline">
+              info@resonarent.com
             </a>
             {' '}o llámanos al{' '}
             <a href="tel:+34613881414" className="text-blue-600 hover:underline">

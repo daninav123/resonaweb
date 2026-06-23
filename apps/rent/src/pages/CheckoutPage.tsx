@@ -90,7 +90,7 @@ const CheckoutPage = () => {
   
   // Detectar si es un pedido de evento
   // En Rent nunca hay eventos con montaje — todos los pedidos son alquileres simples.
-  // (Los items con eventMetadata vienen de la calculadora de eventos, que solo existe en resonaevents.com.)
+  // (Los items con eventMetadata vienen de la calculadora de eventos, que solo existe en resonarent.com.)
   const isEventOrder = false;
   
   // Obtener dirección del evento si existe

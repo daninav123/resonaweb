@@ -124,7 +124,7 @@ const ProductsPage = () => {
   };
 
   // En Rent solo mostramos productos individuales.
-  // Los packs (experiencias de evento completo) viven en resonaevents.com.
+  // Los packs (experiencias de evento completo) viven en resonarent.com.
   const combinedData = (() => {
     if (!productsData?.data) return { data: [], pagination: productsData?.pagination || { total: 0 } };
 

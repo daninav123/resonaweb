@@ -46,7 +46,7 @@ const AlquilerAltavocesValenciaPage = () => {
         title="Alquiler Altavoces Valencia desde 35€ · Entrega 24h"
         description="Alquiler de altavoces profesionales en Valencia desde 35€/día. JBL, QSC, Yamaha, DAS Audio 400-2000W. Trípodes y cables incluidos. Entrega en Valencia ☎ 613 88 14 14"
         keywords="alquiler altavoces valencia, alquilar altavoces valencia, alquiler altavoces, alquiler de altavoces, alquiler altavoces para fiestas"
-        canonicalUrl="https://resonaevents.com/alquiler-altavoces-valencia"
+        canonicalUrl="https://resonarent.com/alquiler-altavoces-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />
 
@@ -119,7 +119,7 @@ const AlquilerAltavocesValenciaPage = () => {
             
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 leading-relaxed mb-4">
-                En <strong>ReSona Events</strong> somos especialistas en <strong>alquiler de altavoces profesionales en Valencia</strong> desde hace más de 10 años. Contamos con el equipamiento más avanzado del mercado: <strong>altavoces activos JBL</strong> (serie EON, PRX, SRX), <strong>QSC K-Series y CP-Series</strong>, <strong>Yamaha DXR y DBR</strong>, y <strong>Mackie Thump</strong>, todos con potencias desde 400W hasta 2000W por unidad.
+                En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de altavoces profesionales en Valencia</strong> desde hace más de 10 años. Contamos con el equipamiento más avanzado del mercado: <strong>altavoces activos JBL</strong> (serie EON, PRX, SRX), <strong>QSC K-Series y CP-Series</strong>, <strong>Yamaha DXR y DBR</strong>, y <strong>Mackie Thump</strong>, todos con potencias desde 400W hasta 2000W por unidad.
               </p>
 
               <p className="text-gray-700 leading-relaxed mb-6">
@@ -127,7 +127,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </p>
 
               <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
-                ¿Por Qué Alquilar Altavoces con ReSona Events?
+                ¿Por Qué Alquilar Altavoces con ReSona Rent?
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">

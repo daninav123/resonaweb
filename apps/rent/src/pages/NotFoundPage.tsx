@@ -6,7 +6,7 @@ const NotFoundPage = () => {
   return (
     <>
       <Helmet>
-        <title>404 - Página no encontrada - ReSona Events</title>
+        <title>404 - Página no encontrada - ReSona Rent</title>
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
