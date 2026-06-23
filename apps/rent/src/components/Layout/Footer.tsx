@@ -15,18 +15,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Company Info con Logo */}
           <div>
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 mb-4 group hover:opacity-90 transition-opacity">
-              <img src="/logo-resona.png" alt="ReSona Rent" width="48" height="48" className="h-12 w-12" />
-              <div className="flex flex-col">
-                <span
-                  className="text-2xl font-bold leading-tight"
-                  style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#5ebbff' }}
-                >
-                  ReSona
-                </span>
-                <span className="text-xs tracking-widest text-gray-300">RENT</span>
-              </div>
+            {/* Logo — el PNG ya incluye el wordmark "Resona RENT" */}
+            <Link to="/" className="flex items-center mb-4 group hover:opacity-90 transition-opacity">
+              <img
+                src="/logo-resona.png"
+                alt="Resona Rent"
+                className="h-16 w-auto object-contain"
+              />
             </Link>
             <p className="text-gray-300 mb-4 text-sm">
               Tu partner de confianza para el alquiler de material de eventos.
