@@ -1,7 +1,73 @@
 import { Request, Response } from 'express';
+import crypto from 'crypto';
 import { prisma } from '../index';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+import { eventService } from '../services/event.service';
+import { contractMgmtService } from '../services/contractMgmt.service';
+import { commissionService } from '../services/commission.service';
+import { stripeService } from '../services/stripe.service';
+import { EmailService } from '../services/email.service';
+
+const emailService = new EmailService();
+const CONTACT_EMAIL = process.env.EMAIL_CONTACT || 'info@resonaevents.com';
+
+// Avisa al equipo (y opcionalmente confirma al cliente) cuando entra un brief.
+// Nunca lanza: un fallo de email no debe tirar la creación del lead.
+async function sendQuoteNotifications(quote: any, notifyCustomer: boolean) {
+  const fmtDate = (d: any) =>
+    d ? new Date(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin definir';
+  const extras =
+    quote.selectedExtras && typeof quote.selectedExtras === 'object'
+      ? Object.keys(quote.selectedExtras).join(', ')
+      : '';
+  const rows = `
+    <p><strong>Nombre:</strong> ${quote.customerName || '—'}</p>
+    <p><strong>Email:</strong> <a href="mailto:${quote.customerEmail}">${quote.customerEmail}</a></p>
+    <p><strong>Teléfono:</strong> <a href="tel:${quote.customerPhone || ''}">${quote.customerPhone || '—'}</a></p>
+    <p><strong>Tipo de evento:</strong> ${quote.eventType}</p>
+    <p><strong>Asistentes:</strong> ${quote.attendees}</p>
+    <p><strong>Duración:</strong> ${quote.duration} ${quote.durationType || ''}</p>
+    <p><strong>Fecha del evento:</strong> ${fmtDate(quote.eventDate)}</p>
+    <p><strong>Ubicación:</strong> ${quote.eventLocation || '—'}</p>
+    <p><strong>Pack:</strong> ${quote.selectedPack || '—'}</p>
+    ${extras ? `<p><strong>Extras:</strong> ${extras}</p>` : ''}
+    <p><strong>Total estimado:</strong> ${quote.estimatedTotal != null ? quote.estimatedTotal + ' €' : '—'}</p>
+    ${quote.notes ? `<p><strong>Notas:</strong> ${quote.notes}</p>` : ''}
+  `;
+
+  try {
+    await emailService.send({
+      to: CONTACT_EMAIL,
+      subject: `🎯 Nuevo brief: ${quote.eventType}${quote.customerName ? ' — ' + quote.customerName : ''}`,
+      html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#0b0b0c">
+        <h2 style="color:#b8845a">Nueva solicitud de presupuesto</h2>
+        ${rows}
+        <p style="margin-top:24px;color:#888;font-size:12px">Lead recibido desde resonaevents.com · ID ${String(quote.id).slice(0, 8)}</p>
+      </div>`,
+    });
+  } catch (e: any) {
+    logger.error(`No se pudo enviar el aviso de brief al equipo: ${e.message}`);
+  }
+
+  if (notifyCustomer && quote.customerEmail) {
+    try {
+      await emailService.send({
+        to: quote.customerEmail,
+        subject: 'Hemos recibido tu solicitud — ReSona Events',
+        html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#0b0b0c">
+          <h2 style="color:#b8845a">¡Gracias${quote.customerName ? ', ' + quote.customerName : ''}!</h2>
+          <p>Hemos recibido tu solicitud para tu evento. Te enviaremos una propuesta personalizada en <strong>menos de 24 horas</strong> (días laborables).</p>
+          <p>Si tu evento es urgente, llámanos al <strong>+34 613 881 414</strong>.</p>
+          <p style="margin-top:24px">— El equipo de ReSona Events</p>
+          <p style="color:#888;font-size:12px">info@resonaevents.com · +34 613 881 414 · Valencia</p>
+        </div>`,
+      });
+    } catch (e: any) {
+      logger.error(`No se pudo enviar la confirmación al cliente: ${e.message}`);
+    }
+  }
+}
 
 class QuoteRequestController {
   /**
@@ -25,9 +91,12 @@ class QuoteRequestController {
         notes,
       } = req.body;
 
-      // Validaciones básicas - Al menos email O teléfono
-      if (!customerEmail && !customerPhone) {
-        throw new AppError(400, 'Se requiere al menos email o teléfono del cliente', 'VALIDATION_ERROR');
+      // Teléfono obligatorio (un lead sin teléfono tiene mucho menos valor)
+      if (!customerPhone) {
+        throw new AppError(400, 'El teléfono es obligatorio para poder contactarte', 'PHONE_REQUIRED');
+      }
+      if (!customerEmail) {
+        throw new AppError(400, 'El email es obligatorio', 'EMAIL_REQUIRED');
       }
 
       if (!eventType || !attendees || !duration) {
@@ -55,6 +124,8 @@ class QuoteRequestController {
 
       logger.info(`Nueva solicitud de presupuesto creada: ${quoteRequest.id} - ${customerEmail}`);
 
+      await sendQuoteNotifications(quoteRequest, true);
+
       res.status(201).json({
         success: true,
         message: 'Solicitud de presupuesto recibida correctamente',
@@ -62,6 +133,110 @@ class QuoteRequestController {
       });
     } catch (error) {
       logger.error('Error creating quote request:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Crear solicitud + generar Stripe Checkout Session para la señal del 30%.
+   * El pago no es vinculante: si no podemos atender la fecha, reembolsamos 100%.
+   * El webhook checkout.session.completed marca firstPaymentPaid y status CONVERTED.
+   */
+  async createQuoteRequestWithPayment(req: Request, res: Response) {
+    try {
+      const {
+        customerName,
+        customerEmail,
+        customerPhone,
+        eventType,
+        attendees,
+        duration,
+        durationType,
+        eventDate,
+        eventLocation,
+        selectedPack,
+        selectedExtras,
+        estimatedTotal,
+        notes,
+        successUrl,
+        cancelUrl,
+      } = req.body;
+
+      if (!customerPhone) {
+        throw new AppError(400, 'El teléfono es obligatorio para poder contactarte', 'PHONE_REQUIRED');
+      }
+      if (!customerEmail) {
+        throw new AppError(400, 'El email es obligatorio', 'EMAIL_REQUIRED');
+      }
+      if (!eventType || !attendees) {
+        throw new AppError(400, 'Información del evento incompleta', 'VALIDATION_ERROR');
+      }
+      if (!estimatedTotal || Number(estimatedTotal) <= 0) {
+        throw new AppError(400, 'Se requiere un total estimado para generar la reserva', 'VALIDATION_ERROR');
+      }
+      if (!successUrl || !cancelUrl) {
+        throw new AppError(400, 'URLs de success/cancel requeridas', 'VALIDATION_ERROR');
+      }
+
+      const total = Number(estimatedTotal);
+      const firstPayment = Math.round(total * 0.3 * 100) / 100;
+      const remaining = Math.round((total - firstPayment) * 100) / 100;
+      const paymentToken = crypto.randomBytes(16).toString('hex');
+
+      const quoteRequest = await prisma.quoteRequest.create({
+        data: {
+          customerName: customerName || null,
+          customerEmail,
+          customerPhone,
+          eventType,
+          attendees: parseInt(attendees),
+          duration: duration ? parseInt(duration) : 1,
+          durationType: durationType || 'DAY',
+          eventDate: eventDate || null,
+          eventLocation: eventLocation || null,
+          selectedPack: selectedPack || null,
+          selectedExtras: selectedExtras || {},
+          estimatedTotal: total,
+          notes: notes || null,
+          paymentToken,
+          firstPayment,
+          secondPayment: remaining,
+        },
+      });
+
+      await sendQuoteNotifications(quoteRequest, false);
+
+      const description = selectedPack
+        ? `Señal de reserva — Pack ${selectedPack}`
+        : 'Señal de reserva — Evento ReSona';
+
+      const { checkoutUrl } = await stripeService.createCheckoutSessionForQuoteReservation({
+        quoteRequestId: quoteRequest.id,
+        amountEuros: firstPayment,
+        customerEmail,
+        description,
+        successUrl,
+        cancelUrl,
+      });
+
+      if (!checkoutUrl) {
+        throw new AppError(500, 'No se pudo generar la sesión de pago', 'STRIPE_SESSION_ERROR');
+      }
+
+      logger.info(`Reserva con pago creada: ${quoteRequest.id} - señal ${firstPayment}€`);
+
+      res.status(201).json({
+        success: true,
+        message: 'Reserva creada. Redirigiendo a pasarela de pago.',
+        data: {
+          quoteRequestId: quoteRequest.id,
+          checkoutUrl,
+          firstPayment,
+          total,
+        },
+      });
+    } catch (error) {
+      logger.error('Error creating quote request with payment:', error);
       throw error;
     }
   }
@@ -185,6 +360,16 @@ class QuoteRequestController {
       });
 
       console.log('✅ Quote request actualizado exitosamente');
+
+      // Si se rechaza, marcar comisión como LOST
+      if (status === 'REJECTED') {
+        try {
+          await commissionService.markAsLost(id);
+          logger.info(`[updateQuoteRequest] Comisión marcada como LOST para quote ${id}`);
+        } catch (commErr: any) {
+          logger.warn(`[updateQuoteRequest] No se pudo marcar comisión como LOST: ${commErr.message}`);
+        }
+      }
 
       logger.info(`Quote request ${id} actualizada: ${status || 'notes'}`);
 
@@ -481,12 +666,42 @@ class QuoteRequestController {
 
       logger.info(`Solicitud ${id} convertida a pedido ${order.id}`);
 
+      // === AUTO-CREACIONES POST-CONVERSIÓN ===
+      let createdEvent = null;
+      let createdContract = null;
+
+      // 1. Crear Evento automáticamente desde el pedido
+      try {
+        createdEvent = await eventService.createFromOrder(order.id);
+        logger.info(`[convertToOrder] Evento auto-creado: ${createdEvent?.eventNumber || createdEvent?.id}`);
+      } catch (eventError: any) {
+        logger.warn(`[convertToOrder] No se pudo auto-crear evento: ${eventError.message}`);
+      }
+
+      // 2. Crear Contrato automáticamente desde el pedido
+      try {
+        createdContract = await contractMgmtService.createFromOrder(order.id);
+        logger.info(`[convertToOrder] Contrato auto-creado: ${(createdContract as any)?.contractNumber || (createdContract as any)?.id}`);
+      } catch (contractError: any) {
+        logger.warn(`[convertToOrder] No se pudo auto-crear contrato: ${contractError.message}`);
+      }
+
+      // 3. Marcar comisión como GENERATED (si existe comisión pendiente para este presupuesto)
+      try {
+        await commissionService.markAsGenerated(id);
+        logger.info(`[convertToOrder] Comisión marcada como GENERATED para quote ${id}`);
+      } catch (commError: any) {
+        logger.warn(`[convertToOrder] No se pudo actualizar comisión: ${commError.message}`);
+      }
+
       res.status(200).json({
         success: true,
         message: 'Solicitud convertida a pedido exitosamente',
         data: {
           order,
           quoteRequestId: id,
+          event: createdEvent ? { id: createdEvent.id, eventNumber: (createdEvent as any).eventNumber } : null,
+          contract: createdContract ? { id: (createdContract as any).id } : null,
         },
       });
     } catch (error: any) {
@@ -516,6 +731,42 @@ class QuoteRequestController {
         'INTERNAL_ERROR',
         errorDetails
       );
+    }
+  }
+
+  /**
+   * Obtener datos de pago por token público
+   */
+  async getByPaymentToken(req: Request, res: Response) {
+    try {
+      const { token } = req.params;
+      const quote = await prisma.quoteRequest.findUnique({
+        where: { paymentToken: token },
+      });
+
+      if (!quote) {
+        throw new AppError(404, 'Enlace de pago no válido o expirado', 'NOT_FOUND');
+      }
+
+      // Datos seguros para el cliente (no exponer todo)
+      res.json({
+        success: true,
+        data: {
+          id: quote.id,
+          customerName: quote.customerName,
+          eventType: quote.eventType,
+          eventDate: quote.eventDate,
+          eventLocation: quote.eventLocation,
+          estimatedTotal: quote.estimatedTotal,
+          firstPayment: quote.firstPayment,
+          secondPayment: quote.secondPayment,
+          thirdPayment: quote.thirdPayment,
+          status: quote.status,
+        },
+      });
+    } catch (error) {
+      logger.error('Error fetching quote by payment token:', error);
+      throw error;
     }
   }
 
