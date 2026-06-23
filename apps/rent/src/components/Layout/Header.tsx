@@ -92,13 +92,18 @@ const Header = () => {
       {/* Main Header */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
-          {/* Logo — el PNG ya incluye el wordmark "Resona RENT", no añadir texto al lado */}
-          <Link to="/" className="flex items-center hover:opacity-90 transition-opacity">
-            <img
-              src="/logo-resona.png"
-              alt="Resona Rent"
-              className="h-14 w-auto object-contain"
-            />
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img src="/logo-resona.png" alt="Resona Rent" className="h-12 w-auto object-contain" />
+            <div className="flex flex-col leading-none">
+              <span
+                className="text-2xl font-bold"
+                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#2b7bb9' }}
+              >
+                ReSona
+              </span>
+              <span className="text-xs tracking-widest text-gray-600">RENT</span>
+            </div>
           </Link>
 
           {/* Search Bar - Desktop */}
