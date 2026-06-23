@@ -3,175 +3,155 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerPantallasLED = () => {
   const pageData = {
-    title: "Pantallas LED Valencia | Videowall Modular | ReSona",
-    metaDescription: "Pantallas LED modulares para eventos. 2x2m a 10x6m. P3, P5. Interior/exterior. Técnico incluido. ☎️ 613 88 14 14",
-    keywords: "alquiler pantallas led valencia, pantallas led eventos, videowall",
+    title: "Alquiler de Pantalla LED Gigante en Valencia | Mundial 2030 | Resona Rent",
+    metaDescription:
+      "Alquila una pantalla LED gigante en Valencia para ver el Mundial 2030 en grande. Tamaños 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
+    keywords:
+      "alquiler pantalla led valencia, pantalla led gigante mundial, pantalla gigante futbol valencia, alquiler pantalla mundial 2030, videowall eventos valencia",
     canonicalUrl: "https://resonarent.com/servicios/alquiler-pantallas-led",
-    heroTitle: "Alquiler de Pantallas LED Modulares en Valencia",
-    heroSubtitle: "Pantallas LED profesionales - Disponibles bajo pedido especial",
-    introduction: `El <strong>alquiler de pantallas LED en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    heroTitle: "Alquiler de Pantalla LED Gigante en Valencia",
+    heroSubtitle:
+      "Vive el Mundial 2030 en pantalla gigante — y cualquier evento — con calidad LED profesional",
 
-Nuestro servicio de <strong>alquiler de pantallas LED en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Pantallas LED profesionales modulares disponibles bajo pedido para eventos especiales. Consultanos para conferencias, presentaciones, conciertos que requieran videowall, pantallas de alta resolución P2-P4, procesadores video profesionales.
+    introduction: `<strong>España es sede del Mundial de fútbol 2030</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
 
-Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+A diferencia de un proyector, una <strong>pantalla LED</strong> ofrece mucho más brillo y se ve perfectamente incluso con luz ambiente, de día y de noche. Disponemos de dos formatos: <strong>3×2 metros (6 m²)</strong> y <strong>3×4 metros (12 m²)</strong>, para adaptarnos a tu espacio y a tu aforo. Tenemos <strong>dos pantallas de 3×2 m</strong>, así que también puedes cubrir varias zonas a la vez.
 
-El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+Nos encargamos de la <strong>entrega, el montaje y el desmontaje en Valencia</strong> y alrededores: tú solo eliges la fecha y nosotros lo dejamos listo para el saque inicial. Además del fútbol, la pantalla es perfecta para conciertos, ferias, presentaciones de empresa, bodas y todo tipo de eventos.
 
-Hemos trabajado en más de 2.000 eventos en Valencia: eventos corporativos, conciertos, ferias, y todo tipo de celebraciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sonido profesional</a> y <a href="/servicios/produccion-tecnica-eventos" class="text-primary-600 hover:underline font-semibold">producción audiovisual</a>.`,
-   
+<strong>Las fechas de partido vuelan</strong>: reserva con antelación llamando al 613 88 14 14 o por WhatsApp y te confirmamos disponibilidad al momento.`,
+
     whyChooseUs: [
       {
-        icon: "🎵",
-        title: "Equipos Profesionales",
-        description: "Solo marcas líderes de máxima calidad"
+        icon: "⚽",
+        title: "Perfecta para el Mundial 2030",
+        description: "Reúne a tu público para ver los partidos en pantalla gigante",
       },
       {
-        icon: "👨‍🔧",
-        title: "Técnicos Especializados",
-        description: "Expertos con años de experiencia"
+        icon: "📺",
+        title: "Pantalla LED de verdad",
+        description: "Imagen brillante y nítida, muy superior a un proyector",
+      },
+      {
+        icon: "📐",
+        title: "Dos tamaños",
+        description: "3×2 m (6 m²) y 3×4 m (12 m²) según tu espacio y aforo",
       },
       {
         icon: "🚚",
-        title: "Servicio Completo",
-        description: "Transporte, montaje y desmontaje incluidos"
+        title: "Entrega y montaje",
+        description: "La llevamos, montamos y desmontamos en Valencia",
       },
       {
-        icon: "🔒",
-        title: "Equipos de Backup",
-        description: "Respaldo siempre disponible"
+        icon: "🗓️",
+        title: "Reserva por fecha",
+        description: "Disponibilidad real: eliges tu día y la bloqueamos",
       },
       {
-        icon: "💰",
-        title: "Precios Claros",
-        description: "Sin costes ocultos"
+        icon: "💶",
+        title: "Precio claro",
+        description: "Tarifa cerrada y sin sorpresas, IVA aparte",
       },
-      {
-        icon: "⚡",
-        title: "Respuesta Rápida",
-        description: "Presupuesto en 24h"
-      }
     ],
 
     technicalSpecs: [
       {
-            title: "Pantallas LED y Videowall",
-            items: [
-                  "Pantallas LED P2.9/P3.9: Pixel pitch 2.9-3.9mm, brillo 1000-1500 nits, 140° viewing",
-                  "Módulos 500×500mm/500×1000mm: Aluminio magnesio, magnéticos, rápido montaje",
-                  "Procesadores Novastar/Colorlight: 4K@60fps, múltiples inputs HDMI/SDI/DVI",
-                  "Estructuras ground support: Certificadas TÜV, bases lastradas, 3-6m altura",
-                  "Cables fibra óptica: HDMI/SDI extenders hasta 100m sin pérdida señal"
-            ]
+        title: "Tamaños disponibles",
+        items: [
+          "Pantalla LED 3×2 m — 6 m² de superficie",
+          "Pantalla LED 3×4 m — 12 m² de superficie",
+          "Dos unidades de 3×2 m disponibles a la vez",
+          "Formato LED modular: montaje adaptado a tu espacio",
+        ],
       },
       {
-            title: "Proyectores Profesionales",
-            items: [
-                  "Epson EB-PU Series: 5000-8000 lúmenes ANSI, láser 3LCD, 4K enhancement",
-                  "BenQ LU Series: 5500-7000 lúmenes, DLP, lente intercambiable",
-                  "Panasonic PT-RZ Series: 6500-10000 lúmenes, resolución WUXGA/4K nativa",
-                  "Pantallas trípode/enrollables: 200-400cm diagonal, 16:9/4:3, superficie mate",
-                  "Soportes truss/techo: Ajustables 3-8m altura, rotación 360°"
-            ]
+        title: "Ideal para",
+        items: [
+          "Ver los partidos del Mundial 2030 en pantalla gigante",
+          "Bares, peñas, cervecerías y locales de ocio",
+          "Fan zones, plazas y eventos al aire libre",
+          "Comunidades, empresas y eventos privados",
+          "Conciertos, ferias, bodas y presentaciones",
+        ],
       },
-      {
-            title: "Cámaras y Streaming",
-            items: [
-                  "Cámaras PTZ 4K: Zoom óptico 20x, HDMI/SDI/IP, control remoto joystick",
-                  "Blackmagic ATEM Mini/Extreme: Mezclador 4-8 inputs, streaming integrado",
-                  "Encoders H.264/H.265: Bitrate 1-20 Mbps, RTMP/HLS/SRT protocols",
-                  "Kits iluminación LED: Paneles bi-color 3200-5600K, softboxes, trípodes",
-                  "Grabadores Atomos/Blackmagic: ProRes/DNxHD, SSD 500GB-2TB"
-            ]
-      }
-],
+    ],
 
     packages: [
       {
-        name: "Pack Básico",
-        subtitle: "Para eventos pequeños",
-        price: "desde 300€",
+        name: "Pantalla LED 3×2 m",
+        subtitle: "6 m² · ideal para bares, peñas y locales",
+        price: "800 € + IVA",
         features: [
-          "Equipos básicos profesionales",
-          "Transporte incluido",
-          "Montaje y desmontaje",
-          "Asistencia telefónica"
-        ]
-      },
-      {
-        name: "Pack Profesional",
-        subtitle: "Más popular",
-        price: "desde 600€",
-        features: [
-          "Equipos profesionales completos",
-          "Técnico especializado incluido",
-          "Transporte y montaje",
-          "Equipos de backup",
-          "Soporte completo"
+          "Superficie de 6 m² (3×2 m)",
+          "Imagen LED brillante y nítida",
+          "Entrega, montaje y desmontaje en Valencia",
+          "Perfecta para ver el Mundial en grande",
+          "968 € IVA incluido · 2 unidades disponibles",
         ],
-        highlighted: true
       },
       {
-        name: "Pack Premium",
-        subtitle: "Máxima calidad",
-        price: "desde 1.200€",
+        name: "Pantalla LED 3×4 m",
+        subtitle: "12 m² · máximo impacto",
+        price: "1.500 € + IVA",
         features: [
-          "Equipos top de gama",
-          "2 técnicos especializados",
-          "Equipos redundantes",
-          "Prueba previa",
-          "Soporte 24/7"
-        ]
-      }
+          "Superficie de 12 m² (3×4 m)",
+          "Visible para grandes aforos",
+          "Entrega, montaje y desmontaje en Valencia",
+          "Ideal para fan zones y eventos grandes",
+          "1.815 € IVA incluido",
+        ],
+        highlighted: true,
+      },
+      {
+        name: "Dos pantallas 3×2 m",
+        subtitle: "Cubre dos zonas o más aforo",
+        price: "1.600 € + IVA",
+        features: [
+          "Dos pantallas de 6 m² a la vez",
+          "Cubre dos salas, terrazas o ambientes",
+          "Más puntos de visión para tu público",
+          "Entrega, montaje y desmontaje en Valencia",
+        ],
+      },
     ],
 
     faqs: [
       {
-            question: "¿Qué incluye exactamente el servicio de alquiler de pantallas LED en Valencia?",
-            answer: "Nuestro servicio completo de alquiler de pantallas LED en Valencia incluye: equipamiento profesional de última generación perfectamente calibrado, técnico especializado con más de 10 años de experiencia (en packs Profesional y Premium), transporte sin coste adicional en Valencia capital y hasta 30km, montaje completo siguiendo plano del espacio y especificaciones del evento, configuración y calibración técnica personalizada, pruebas de sonido previas al evento, asistencia técnica durante todo el desarrollo del evento, equipos de respaldo incluidos en packs premium, desmontaje completo al finalizar, soporte telefónico 24/7 para emergencias, y seguro de responsabilidad civil de todos los equipos. Todo está incluido en el precio final sin sorpresas ni costes ocultos adicionales."
+        question: "¿Puedo alquilar una pantalla LED gigante para ver el Mundial 2030?",
+        answer:
+          "Sí. España es una de las sedes del Mundial de fútbol 2030, y una pantalla LED gigante es la mejor forma de reunir a tu público para vivir los partidos en grande, ya sea en un bar, una peña, una empresa, una comunidad de vecinos o un evento al aire libre. Como solo disponemos de un número limitado de pantallas, te recomendamos reservar tu fecha con antelación, sobre todo para los días de partido.",
       },
       {
-            question: "¿Con cuánta antelación debo reservar el alquiler de pantallas LED en Valencia?",
-            answer: "El plazo de reserva depende de la temporada y disponibilidad. Para fechas entre semana, generalmente con 1-2 semanas de antelación es suficiente, aunque recomendamos consultar disponibilidad lo antes posible. Para fines de semana, especialmente en temporada alta (mayo a octubre), recomendamos reservar con 1-2 meses de antelación mínimo. Para eventos grandes como eventos corporativos o conciertos que requieren producción compleja, lo ideal es contactar con 2-3 meses de antelación. Para fechas muy demandadas (Navidad, San Juan, Fallas, puentes festivos) recomendamos 3-4 meses. Puedes consultar disponibilidad en tiempo real llamando al 613 88 14 14 o vía WhatsApp, te respondemos en menos de 2 horas."
+        question: "¿Qué tamaños de pantalla LED tenéis y cuánto cuestan?",
+        answer:
+          "Tenemos dos formatos: la pantalla de 3×2 metros (6 m²) por 800 € + IVA (968 € IVA incluido), y la pantalla de 3×4 metros (12 m²) por 1.500 € + IVA (1.815 € IVA incluido). Disponemos de dos pantallas de 3×2 m, por lo que también puedes alquilar las dos a la vez (1.600 € + IVA) para cubrir varias zonas. Todas incluyen entrega y montaje en Valencia.",
       },
       {
-            question: "¿El técnico especializado está incluido en el precio?",
-            answer: "Sí, en los packs Profesional y Premium el técnico especializado está totalmente incluido durante todo el evento. El técnico llega 2-3 horas antes para montaje y configuración, permanece durante todo el desarrollo del evento gestionando niveles, ecualizaciones y solucionando cualquier incidencia técnica, y se encarga del desmontaje completo al finalizar. En el pack Básico, los equipos son autoamplificados fáciles de operar con controles intuitivos, pero puedes añadir técnico especializado por 150€ adicionales si lo prefieres. Nuestros técnicos tienen formación específica en video profesional y más de 10 años de experiencia en eventos en Valencia, garantizando resultados profesionales impecables."
+        question: "¿Entregáis y montáis la pantalla?",
+        answer:
+          "Sí. Nos encargamos de la entrega, el montaje y el desmontaje de la pantalla en Valencia y alrededores. Tú solo eliges la fecha y el espacio, y nosotros la dejamos lista y funcionando. Para ubicaciones fuera de Valencia capital, consúltanos y te confirmamos las condiciones.",
       },
       {
-            question: "¿El transporte y montaje tiene coste adicional?",
-            answer: "No, el transporte está completamente incluido en Valencia capital y hasta 30 kilómetros de radio sin ningún coste adicional. Para distancias superiores aplicamos suplemento: 30-50km +30€, 50-80km +60€, 80-120km +100€, más de 120km consultar presupuesto personalizado. El precio incluye: transporte de ida con furgoneta equipada, descarga y traslado de equipos al espacio del evento, montaje completo siguiendo especificaciones técnicas y plano del espacio, calibración y pruebas, desmontaje al finalizar el evento, recogida y transporte de vuelta. Todo en un precio cerrado final sin sorpresas. También ofrecemos opción de recogida en nuestro almacén en Valencia con 20% descuento si prefieres transportar tú mismo."
+        question: "¿La pantalla LED se ve bien de día y con luz ambiente?",
+        answer:
+          "Sí. A diferencia de un proyector, una pantalla LED tiene mucho más brillo, por lo que ofrece una imagen nítida incluso con luz, tanto de día como de noche y en interior o en exterior cubierto. Es la mejor opción para que todo el público vea el partido con claridad.",
       },
       {
-            question: "¿Qué pasa si hay algún fallo técnico durante el evento?",
-            answer: "La fiabilidad es nuestra máxima prioridad. Todos nuestros equipos pasan revisión técnica completa antes de cada evento y utilizamos exclusivamente marcas profesionales de máxima confianza. En los packs Profesional y Premium incluimos siempre equipos de respaldo (backup completo de elementos críticos) sin coste adicional. En el improbable caso de fallo técnico, el técnico presente soluciona el 95% de incidencias en menos de 5 minutos. Para el 5% restante, disponemos de técnicos de guardia 24/7 con furgoneta equipada para reemplazo urgente, llegando en menos de 60 minutos en Valencia capital. En 15 años de trayectoria y más de 2.000 eventos realizados, nunca hemos tenido que cancelar o suspender un evento por fallo técnico gracias a nuestros sistemas redundantes y protocolos de contingencia."
+        question: "¿Con cuánta antelación debo reservar?",
+        answer:
+          "Cuanto antes, mejor, especialmente para los días de partido del Mundial y los fines de semana: la disponibilidad es limitada porque solo contamos con estas unidades. Puedes consultar disponibilidad y reservar tu fecha llamando al 613 88 14 14 o por WhatsApp; te respondemos rápido.",
       },
       {
-            question: "¿Trabajáis con todos los tipos de eventos en Valencia?",
-            answer: "Sí, tenemos amplia experiencia en todo tipo de eventos: eventos corporativos, conciertos, ferias, presentaciones, bodas, y cualquier celebración que requiera alquiler de pantallas LED en Valencia. Hemos trabajado en espacios emblemáticos de Valencia como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, Viveros Municipales, así como en centenares de fincas, hoteles, locales, carpas, y espacios únicos en toda la provincia de Valencia, Castellón y Alicante. Cada tipo de evento tiene requisitos técnicos específicos que conocemos perfectamente: acústica, potencia necesaria, distribución de equipos, timing, y protocolos. Nuestro equipo realiza visita técnica previa gratuita para eventos grandes, evaluando acústica del espacio, puntos eléctricos, accesos, y diseñando la mejor configuración técnica."
+        question: "¿Sirve para otros eventos además del fútbol?",
+        answer:
+          "Por supuesto. Además de retransmisiones deportivas, la pantalla LED es ideal para conciertos, ferias, presentaciones de empresa, bodas, comuniones, eventos corporativos y cualquier ocasión en la que quieras una imagen grande y de calidad.",
       },
-      {
-            question: "¿Ofrecéis descuentos para eventos de varios días o múltiples servicios?",
-            answer: "Sí, aplicamos descuentos progresivos atractivos. Para alquileres de varios días: 2-3 días consecutivos 15% descuento total, 4-7 días 25% descuento, más de 7 días precio especial personalizado. Para contratación de múltiples servicios combinados (por ejemplo sonido + iluminación, o sonido + vídeo + iluminación) aplicamos packs con hasta 20% descuento sobre contratación separada. También ofrecemos condiciones ventajosas para: clientes recurrentes con contrato marco, empresas organizadoras de eventos, ayuntamientos y entidades públicas, asociaciones y ONGs, y productoras audiovisuales. Consulta tu caso específico llamando al 613 88 14 14 para presupuesto personalizado ajustado con las máximas ventajas."
-      },
-      {
-            question: "¿Puedo ver los equipos antes de contratar el servicio?",
-            answer: "Por supuesto. Puedes visitar nuestro showroom-almacén en Valencia con cita previa, donde podrás ver y probar los equipos en funcionamiento. También organizamos demostraciones técnicas para eventos grandes o producciones complejas que lo requieran. Además, tenemos portfolio fotográfico completo de equipos, fichas técnicas detalladas con especificaciones, vídeos de eventos reales realizados, y referencias de clientes satisfechos. Para eventos corporativos o conciertos grandes, ofrecemos visita técnica gratuita al espacio del evento, donde mostramos referencias fotográficas de montajes similares y explicamos detalladamente la configuración técnica propuesta. Trabajamos con total transparencia: lo que ves en la demostración es exactamente lo que recibirás en tu evento."
-      },
-      {
-            question: "¿Qué formas de pago aceptáis?",
-            answer: "Aceptamos múltiples formas de pago para tu comodidad: transferencia bancaria (IBAN español), Bizum (hasta 1.000€), tarjeta de crédito/débito (Visa, Mastercard), PayPal, y efectivo. El proceso de reserva es: 1) Confirmas fecha y servicio, 2) Pagas señal del 30% para bloquear fecha (no reembolsable), 3) Pagas 70% restante hasta 7 días antes del evento, 4) Realizamos el evento, 5) Firmas albarán de conformidad. Emitimos factura completa con IVA desglosado. Para empresas ofrecemos pago a 30 días con contrato marco. Para eventos grandes (+ 2.000€) aceptamos pago fraccionado: 30% reserva, 40% un mes antes, 30% 7 días antes. Todas las transacciones son seguras y ofrecemos recibo/factura oficial."
-      },
-      {
-            question: "¿Tenéis seguro de responsabilidad civil?",
-            answer: "Sí, disponemos de seguro de responsabilidad civil profesional con cobertura de 600.000€ que cubre cualquier daño a terceros, equipos, instalaciones del venue, y accidentes durante montaje/desmontaje. Además, todos nuestros equipos están asegurados contra robo, daño, y mal funcionamiento. Nuestras estructuras truss están certificadas TÜV (inspección anual), cumplimos normativa UNE-EN 61439, y seguimos todos los protocolos de seguridad eléctrica y prevención de riesgos laborales. Nuestros técnicos tienen formación en prevención de riesgos, primeros auxilios, y trabajos en altura. Podemos proporcionar copia del seguro y certificados si el venue lo requiere. Tu evento está en manos profesionales y totalmente aseguradas, garantizando tranquilidad absoluta."
-      }
-],
+    ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
-      { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
-    ]
+      { title: "Alquiler de sonido", url: "/servicios/alquiler-sonido-valencia" },
+      { title: "Ver todo el catálogo", url: "/productos" },
+    ],
   };
 
   return <ServicePageTemplate {...pageData} />;
