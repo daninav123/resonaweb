@@ -13,7 +13,9 @@ const AlquilerPantallasLED = () => {
     heroSubtitle:
       "Vive el Mundial 2030 en pantalla gigante — y cualquier evento — con calidad LED profesional",
 
-    introduction: `<strong>España es sede del Mundial de fútbol 2030</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante para ver el Mundial 2030 en Valencia" style="width:100%;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+
+<strong>España es sede del Mundial de fútbol 2030</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
 
 A diferencia de un proyector, una <strong>pantalla LED P3.9</strong> ofrece mucho más brillo y se ve perfectamente incluso con luz ambiente, de día y de noche. Son aptas <strong>para interior y exterior</strong>, así que valen igual para una terraza, una plaza o un salón. Disponemos de dos formatos: <strong>3×2 metros (6 m²)</strong> y <strong>3×4 metros (12 m²)</strong>, para adaptarnos a tu espacio y a tu aforo. Tenemos <strong>dos pantallas de 3×2 m</strong>, así que también puedes cubrir varias zonas a la vez.
 
