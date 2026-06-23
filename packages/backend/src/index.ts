@@ -33,6 +33,7 @@ import orderModificationRouter from './routes/orderModification.routes';
 import packRouter from './routes/pack.routes';
 import orderExpirationRouter from './routes/orderExpiration.routes';
 import quoteRequestRouter from './routes/quoteRequest.routes';
+import { quoteRequestController as quoteReqCtrl } from './controllers/quoteRequest.controller';
 import { metricsRouter } from './routes/metrics.routes';
 import backupRouter from './routes/backup.routes';
 import contractRouter from './routes/contract.routes';
@@ -54,7 +55,9 @@ import stripeWebhookRouter from './routes/stripe-webhook.routes';
 import { eventRouter } from './routes/event.routes'; // Gestión de Eventos/Proyectos
 import { crmRouter } from './routes/crm.routes'; // CRM de Clientes
 import { staffRouter } from './routes/staff.routes'; // Personal / RRHH
-import { contractsRouter, contractPublicRouter, expensesRouter, vehiclesRouter, warehouseRouter } from './routes/adminModules.routes';
+import { contractsRouter, contractPublicRouter, expensesRouter, vehiclesRouter, warehouseRouter, templatesRouter, suppliersRouter, maintenanceRouter, commissionsRouter, subcontractsRouter, clientPortalRouter, clientPortalAdminRouter, emailCampaignsRouter, portfolioRouter } from './routes/adminModules.routes';
+import { availabilityRouter } from './routes/availability.routes';
+import { roleDefinitionRouter } from './routes/roleDefinition.routes';
 // import { redsysRouter } from './routes/redsys.routes'; // Desactivado - solo Stripe
 
 // Import middleware
@@ -83,7 +86,9 @@ export { prisma };
 const app = express();
 
 // Trust proxy - IMPORTANTE para Render/proxies (express-rate-limit, IPs reales)
-app.set('trust proxy', true);
+// Número de proxies hop a confiar (1 = un reverse proxy delante, típico en Render/Railway/Vercel).
+// Ver: https://express-rate-limit.github.io/ERR_ERL_PERMISSIVE_TRUST_PROXY/
+app.set('trust proxy', 1);
 
 // Get port from environment
 const PORT = process.env.BACKEND_PORT || 3001;
@@ -146,23 +151,51 @@ app.use(helmet({
     }
   },
 }));
+// Dominios de producción de las 3 apps. Se permite el apex y cualquier subdominio
+// (www.resonarent.com, gestion.resonaevents.com, etc.) sin depender de CORS_ORIGIN.
+const ALLOWED_ROOT_DOMAINS = ['resonarent.com', 'resonaevents.com'];
+const isAllowedProdOrigin = (origin: string): boolean =>
+  ALLOWED_ROOT_DOMAINS.some(d => origin === `https://${d}` || origin.endsWith(`.${d}`));
+
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
-    
+    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:3000', // frontend monolito
+      'http://localhost:3002', // apps/admin dev
+      'http://localhost:3003', // apps/rent dev
+      'http://localhost:3004', // apps/events dev
+    ];
+
     // Permitir requests sin origin (mobile apps, Postman, etc)
     if (!origin) return callback(null, true);
-    
+
     // Verificar si el origin está en la lista exacta
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    
+
+    // Permitir dominios de producción (resonarent.com / resonaevents.com y subdominios)
+    if (isAllowedProdOrigin(origin)) {
+      return callback(null, true);
+    }
+
     // Permitir cualquier subdominio de vercel.app
     if (origin.includes('.vercel.app')) {
       return callback(null, true);
     }
-    
+
+    // Permitir túneles temporales (preview / demo)
+    if (
+      origin.includes('.ngrok.app') ||
+      origin.includes('.ngrok-free.app') ||
+      origin.includes('.ngrok.io') ||
+      origin.includes('.trycloudflare.com') ||
+      origin.includes('.loca.lt') ||
+      origin.includes('.lhr.life')
+    ) {
+      return callback(null, true);
+    }
+
     // Rechazar otros origins
     callback(new Error('Not allowed by CORS'));
   },
@@ -182,13 +215,18 @@ app.use(express.static(path.join(__dirname, '../public'), {
 // Serve static files (uploaded images)
 app.use('/uploads', (req, res, next) => {
   // Use specific origins instead of '*'
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
+  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://localhost:3003',
+    'http://localhost:3004',
+  ];
   const origin = req.headers.origin;
-  
-  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app'))) {
+
+  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app') || isAllowedProdOrigin(origin))) {
     res.header('Access-Control-Allow-Origin', origin);
   }
-  
+
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Cross-Origin-Resource-Policy', 'cross-origin');
   res.header('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
@@ -199,9 +237,14 @@ app.use('/uploads', (req, res, next) => {
 app.use('/uploads/products', (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
   // Usar misma lógica de orígenes permitidos que el resto de la app
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
+  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://localhost:3003',
+    'http://localhost:3004',
+  ];
   const origin = req.headers.origin;
-  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app'))) {
+  if (origin && (allowedOrigins.includes(origin) || origin.includes('.vercel.app') || isAllowedProdOrigin(origin))) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -253,6 +296,24 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Public payment token endpoint (no auth, before any routers)
+app.get('/api/v1/quote-requests/payment/:token', (req, res) => {
+  prisma.quoteRequest.findUnique({ where: { paymentToken: req.params.token } })
+    .then(quote => {
+      if (!quote) return res.status(404).json({ success: false, error: { message: 'Enlace de pago no válido' } });
+      return res.json({
+        success: true,
+        data: {
+          id: quote.id, customerName: quote.customerName, eventType: quote.eventType,
+          eventDate: quote.eventDate, eventLocation: quote.eventLocation,
+          estimatedTotal: quote.estimatedTotal, firstPayment: quote.firstPayment,
+          secondPayment: quote.secondPayment, thirdPayment: quote.thirdPayment, status: quote.status,
+        },
+      });
+    })
+    .catch(e => res.status(500).json({ success: false, error: { message: (e as any).message } }));
+});
+
 // Version check - IMPORTANTE: verificar que el backend se actualizó
 app.get('/api/v1/version', (_req, res) => {
   res.json({
@@ -293,6 +354,7 @@ app.use('/api/v1/blog', blogRouter);
 app.use('/api/v1/shipping-config', shippingConfigRouter);
 app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/calendar', calendarRouter);
+app.use('/api/v1/role-definitions', roleDefinitionRouter); // Definiciones de roles (público)
 app.use('/api/v1', orderNoteRouter);
 app.use('/api/v1/coupons', couponRouter);
 app.use('/api/v1/notifications', notificationRouter);
@@ -328,6 +390,16 @@ app.use('/api/v1/contracts-public', contractPublicRouter); // Contratos - acceso
 app.use('/api/v1/recurring-expenses', expensesRouter); // Gastos recurrentes
 app.use('/api/v1/vehicles', vehiclesRouter); // Vehículos
 app.use('/api/v1/warehouse', warehouseRouter); // Almacén
+app.use('/api/v1/availability', availabilityRouter); // Disponibilidad equipos
+app.use('/api/v1/event-templates', templatesRouter); // Plantillas de evento
+app.use('/api/v1/suppliers', suppliersRouter); // Proveedores
+app.use('/api/v1/maintenance', maintenanceRouter); // Mantenimiento de equipos
+app.use('/api/v1/commissions', commissionsRouter); // Comisiones (admin)
+app.use('/api/v1/subcontracts', subcontractsRouter); // Subcontrataciones
+app.use('/api/v1/client-portal', clientPortalRouter); // Portal del cliente
+app.use('/api/v1/client-portal/admin', clientPortalAdminRouter); // Portal admin
+app.use('/api/v1/email-campaigns', emailCampaignsRouter); // Email Marketing
+app.use('/api/v1/portfolio', portfolioRouter); // Portfolio post-evento
 // app.use('/api/v1/redsys', redsysRouter); // Desactivado - solo Stripe
 
 // Error handling
@@ -341,6 +413,15 @@ async function startServer() {
     // Test database connection
     await prisma.$connect();
     logger.info('✅ Database connected successfully');
+
+    // Seed system role definitions
+    try {
+      const { roleDefinitionService } = await import('./services/roleDefinition.service');
+      const count = await roleDefinitionService.seedSystemRoles();
+      if (count > 0) logger.info(`🌱 ${count} role definitions seeded`);
+    } catch (e: any) {
+      logger.warn('⚠️  Role definitions seed failed:', e.message);
+    }
 
     // Auto-seed SEO pages (solo en producción)
     if (process.env.NODE_ENV === 'production') {
