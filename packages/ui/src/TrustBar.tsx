@@ -1,5 +1,5 @@
 import { ComponentType, SVGProps } from 'react';
-import { Shield, Truck, Clock, Star } from 'lucide-react';
+import { Shield, Truck, Clock } from 'lucide-react';
 
 export interface TrustBarItem {
   /** Icono de lucide-react (o cualquier componente SVG compatible). */
@@ -13,24 +13,15 @@ export interface TrustBarItem {
 }
 
 interface TrustBarProps {
-  /** Items custom. Si no se pasan, usa los defaults (orientados a evento completo). */
+  /** Items custom. Si no se pasan, usa los defaults. */
   items?: TrustBarItem[];
-  /** Nº de eventos/alquileres a mostrar en el item de rating (si usas el default). */
-  eventsCount?: string;
-  /** Nota/valoración (si usas el default). */
-  ratingLabel?: string;
 }
 
-const DEFAULT_ITEMS = (eventsCount: string, ratingLabel: string): TrustBarItem[] => [
+// Sin reviews/valoraciones inventadas: solo claims verificables del servicio.
+const DEFAULT_ITEMS: TrustBarItem[] = [
   { icon: Truck, label: 'Montaje y desmontaje incluido', iconColor: 'text-green-600' },
   { icon: Shield, label: 'Pago 100% seguro', iconColor: 'text-blue-600', hideBelow: 'sm' },
   { icon: Clock, label: 'Solo 25% de reserva', iconColor: 'text-purple-600' },
-  {
-    icon: Star,
-    label: `${eventsCount} eventos · ${ratingLabel} valoraciones`,
-    iconColor: 'text-yellow-500',
-    hideBelow: 'md',
-  },
 ];
 
 const hideClassMap: Record<NonNullable<TrustBarItem['hideBelow']>, string> = {
@@ -39,12 +30,8 @@ const hideClassMap: Record<NonNullable<TrustBarItem['hideBelow']>, string> = {
   lg: 'hidden lg:flex',
 };
 
-export function TrustBar({
-  items,
-  eventsCount = '+2.000',
-  ratingLabel = '4.8/5',
-}: TrustBarProps = {}) {
-  const finalItems = items ?? DEFAULT_ITEMS(eventsCount, ratingLabel);
+export function TrustBar({ items }: TrustBarProps = {}) {
+  const finalItems = items ?? DEFAULT_ITEMS;
 
   return (
     <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
