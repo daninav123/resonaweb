@@ -134,6 +134,35 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Banner Mundial 2030 - Pantalla LED */}
+      <section className="relative overflow-hidden">
+        <img
+          src="/images/pantalla-led-3x4.jpg"
+          alt="Alquiler de pantalla LED gigante para ver el Mundial 2030 en Valencia"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
+        <div className="relative container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-2xl text-white">
+            <span className="inline-block bg-resona text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
+              Mundial 2030 · España
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Vive el Mundial en pantalla gigante</h2>
+            <p className="text-lg text-white/90 mb-6">
+              Alquila una pantalla LED P3.9 (3×2 m o 3×4 m) para ver los partidos en grande.
+              Entrega y montaje en toda la provincia de Valencia. Desde 800 € + IVA.
+            </p>
+            <Link
+              to="/servicios/alquiler-pantallas-led"
+              className="inline-flex items-center gap-2 bg-resona hover:opacity-90 text-white font-semibold px-6 py-3 rounded-lg transition"
+            >
+              Ver pantallas LED <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Cómo alquilar en 3 pasos */}
       <section className="py-14 bg-white">
         <div className="container mx-auto px-4">
