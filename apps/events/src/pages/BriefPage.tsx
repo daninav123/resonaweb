@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Phone, MessageCircle, Mail, X } from 'lucide-react';
+import { ArrowRight, Phone, MessageCircle, Mail, X, Check } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { EVENT_TYPES, EventType } from '../data/pricing';
 import { quoteRequestService } from '../services/quoteRequest.service';
@@ -142,35 +142,28 @@ const EventContact = () => {
                 </div>
 
                 <div className="flex flex-col border-y border-ink/10 divide-y divide-ink/10">
-                  <a
-                    href={`tel:+${WHATSAPP}`}
-                    className="flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
-                  >
-                    <Phone className="w-5 h-5 text-accent-500" />
-                    <span className="tracking-wide">{PHONE_DISPLAY}</span>
-                  </a>
-                  <a
-                    href={`https://wa.me/${WHATSAPP}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
-                  >
-                    <MessageCircle className="w-5 h-5 text-accent-500" />
-                    <span className="tracking-wide">WhatsApp directo</span>
-                  </a>
-                  <a
-                    href={`mailto:${CONTACT_EMAIL}`}
-                    className="flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
-                  >
-                    <Mail className="w-5 h-5 text-accent-500" />
-                    <span className="tracking-wide">{CONTACT_EMAIL}</span>
-                  </a>
+                  {[
+                    { href: `tel:+${WHATSAPP}`, icon: Phone, label: PHONE_DISPLAY, ext: false },
+                    { href: `https://wa.me/${WHATSAPP}`, icon: MessageCircle, label: 'WhatsApp directo', ext: true },
+                    { href: `mailto:${CONTACT_EMAIL}`, icon: Mail, label: CONTACT_EMAIL, ext: false },
+                  ].map(({ href, icon: Icon, label, ext }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="group flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
+                    >
+                      <Icon className="w-5 h-5 text-accent-500" />
+                      <span className="tracking-wide">{label}</span>
+                      <ArrowRight className="w-4 h-4 ml-auto text-ink/0 group-hover:text-ink/40 group-hover:translate-x-0.5 transition-all" />
+                    </a>
+                  ))}
                 </div>
               </div>
             </aside>
 
             <div className="md:col-span-7">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-10" noValidate>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-8" noValidate>
                 <Field eyebrow="01" label="¿Qué tipo de evento es?" hint="Opcional">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {EVENT_TYPES.map((et) => {
@@ -180,17 +173,30 @@ const EventContact = () => {
                           key={et.key}
                           type="button"
                           onClick={() => set('eventType', active ? null : et.key)}
-                          className={`text-left p-5 border transition-all ${
+                          className={`group text-left p-5 rounded-xl border transition-all duration-300 ${
                             active
-                              ? 'border-ink bg-ink text-cream'
-                              : 'border-ink/20 hover:border-ink/50'
+                              ? 'border-ink bg-ink text-cream shadow-sm'
+                              : 'border-ink/15 bg-cream-50 hover:border-ink/40 hover:bg-white hover:-translate-y-0.5'
                           }`}
                         >
-                          <div className="font-display text-2xl tracking-tighter">{et.label}</div>
-                          <div
-                            className={`mt-1 text-sm ${active ? 'text-cream/70' : 'text-ink/60'}`}
-                          >
-                            {et.description}
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="font-display text-2xl tracking-tight">{et.label}</div>
+                              <div
+                                className={`mt-1 text-sm ${active ? 'text-cream/70' : 'text-ink/55'}`}
+                              >
+                                {et.description}
+                              </div>
+                            </div>
+                            <span
+                              className={`mt-1 w-5 h-5 rounded-full flex-shrink-0 border flex items-center justify-center transition-colors ${
+                                active
+                                  ? 'bg-accent-400 border-accent-400 text-ink'
+                                  : 'border-ink/25 group-hover:border-ink/50'
+                              }`}
+                            >
+                              {active && <Check className="w-3 h-3" strokeWidth={3} />}
+                            </span>
                           </div>
                         </button>
                       );
@@ -538,7 +544,7 @@ const PackBrief = ({ pack }: { pack: Pack }) => {
    ────────────────────────────────────────────────────────────────────────── */
 
 const inputClass =
-  'w-full px-4 py-3 bg-transparent border border-ink/20 focus:border-ink focus:ring-0 rounded-none';
+  'w-full px-4 py-3.5 bg-cream-50 border border-ink/15 rounded-xl text-ink placeholder:text-ink/35 focus:border-accent-500 focus:bg-white focus:ring-0 transition-colors';
 
 const StepWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
@@ -631,13 +637,15 @@ const Field = ({
   hint?: string;
   children: React.ReactNode;
 }) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex items-baseline justify-between gap-3">
-      <div className="flex items-baseline gap-4">
-        <span className="font-display text-sm text-accent-500">{eyebrow}</span>
-        <label className="font-display text-xl md:text-2xl tracking-tight">{label}</label>
-      </div>
-      {hint && <span className="text-xs text-ink/50 tracking-wide">{hint}</span>}
+  <div className="flex flex-col gap-3.5">
+    <div className="flex items-baseline gap-3 flex-wrap">
+      <span className="font-display text-sm text-accent-500">{eyebrow}</span>
+      <label className="font-display text-xl md:text-2xl tracking-tight">{label}</label>
+      {hint && (
+        <span className="text-[0.65rem] uppercase tracking-widest text-ink/40 font-medium">
+          {hint}
+        </span>
+      )}
     </div>
     <div>{children}</div>
   </div>
