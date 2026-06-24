@@ -3,19 +3,19 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerPantallasLED = () => {
   const pageData = {
-    title: "Alquiler de Pantalla LED Gigante en Valencia | Mundial 2030 | Resona Rent",
+    title: "Alquiler de Pantalla LED Gigante en Valencia | Mundial 2026 | Resona Rent",
     metaDescription:
-      "Alquila una pantalla LED gigante en Valencia para ver el Mundial 2030 en grande. P3.9 interior y exterior. 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
+      "Alquila una pantalla LED gigante en Valencia para ver el Mundial 2026 en grande. P3.9 interior y exterior. 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
     keywords:
-      "alquiler pantalla led valencia, pantalla led gigante mundial, pantalla gigante futbol valencia, alquiler pantalla mundial 2030, videowall eventos valencia, pantalla led exterior valencia",
+      "alquiler pantalla led valencia, pantalla led gigante mundial, pantalla gigante futbol valencia, alquiler pantalla mundial 2026, videowall eventos valencia, pantalla led exterior valencia",
     canonicalUrl: "https://resonarent.com/servicios/alquiler-pantallas-led",
     heroTitle: "Alquiler de Pantalla LED Gigante en Valencia",
     heroSubtitle:
-      "Vive el Mundial 2030 en pantalla gigante — y cualquier evento — con calidad LED profesional",
+      "Vive el Mundial 2026 en pantalla gigante — y cualquier evento — con calidad LED profesional",
 
-    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2030 en Valencia" style="width:100%;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2026 en Valencia" style="width:100%;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
-<strong>España es sede del Mundial de fútbol 2030</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
+<strong>El Mundial de fútbol 2026 ya está en marcha</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
 
 A diferencia de un proyector, una <strong>pantalla LED P3.9</strong> ofrece mucho más brillo y se ve perfectamente incluso con luz ambiente, de día y de noche. Son aptas <strong>para interior y exterior</strong>, así que valen igual para una terraza, una plaza o un salón. Disponemos de dos formatos: <strong>3×2 metros (6 m²)</strong> y <strong>3×4 metros (12 m²)</strong>, para adaptarnos a tu espacio y a tu aforo. Tenemos <strong>dos pantallas de 3×2 m</strong>, así que también puedes cubrir varias zonas a la vez.
 
@@ -26,7 +26,7 @@ Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la prov
     whyChooseUs: [
       {
         icon: "⚽",
-        title: "Perfecta para el Mundial 2030",
+        title: "Perfecta para el Mundial 2026",
         description: "Reúne a tu público para ver los partidos en pantalla gigante",
       },
       {
@@ -78,7 +78,7 @@ Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la prov
       {
         title: "Ideal para",
         items: [
-          "Ver los partidos del Mundial 2030 en pantalla gigante",
+          "Ver los partidos del Mundial 2026 en pantalla gigante",
           "Bares, peñas, cervecerías y locales de ocio",
           "Fan zones, plazas y eventos al aire libre",
           "Comunidades, empresas y eventos privados",
@@ -128,9 +128,9 @@ Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la prov
 
     faqs: [
       {
-        question: "¿Puedo alquilar una pantalla LED gigante para ver el Mundial 2030?",
+        question: "¿Puedo alquilar una pantalla LED gigante para ver el Mundial 2026?",
         answer:
-          "Sí. España es una de las sedes del Mundial de fútbol 2030, y una pantalla LED gigante es la mejor forma de reunir a tu público para vivir los partidos en grande, ya sea en un bar, una peña, una empresa, una comunidad de vecinos o un evento al aire libre. Como solo disponemos de un número limitado de pantallas, te recomendamos reservar tu fecha con antelación, sobre todo para los días de partido.",
+          "Sí. Una pantalla LED gigante es la mejor forma de reunir a tu público para vivir los partidos del Mundial 2026 en grande, ya sea en un bar, una peña, una empresa, una comunidad de vecinos o un evento al aire libre. Como solo disponemos de un número limitado de pantallas, te recomendamos reservar tu fecha con antelación, sobre todo para los días de partido.",
       },
       {
         question: "¿Qué tamaños de pantalla LED tenéis y cuánto cuestan?",

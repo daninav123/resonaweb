@@ -134,11 +134,11 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Banner Mundial 2030 - Pantalla LED */}
+      {/* Banner Mundial 2026 - Pantalla LED */}
       <section className="relative overflow-hidden">
         <img
           src="/images/pantalla-led-3x4.jpg"
-          alt="Alquiler de pantalla LED gigante para ver el Mundial 2030 en Valencia"
+          alt="Alquiler de pantalla LED gigante para ver el Mundial 2026 en Valencia"
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
         />
@@ -146,7 +146,7 @@ const HomePage = () => {
         <div className="relative container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-2xl text-white">
             <span className="inline-block bg-resona text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
-              Mundial 2030 · España
+              Mundial 2026 · En directo
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Vive el Mundial en pantalla gigante</h2>
             <p className="text-lg text-white/90 mb-6">
