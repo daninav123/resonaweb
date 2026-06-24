@@ -14,6 +14,22 @@ const WHATSAPP = '34613881414';
 const PHONE_DISPLAY = '+34 613 881 414';
 const CONTACT_EMAIL = 'info@resonaevents.com';
 
+// El backend puede devolver el error como objeto ({ error: { code, message } }) o como
+// string; forzamos siempre un string para no pintar un objeto como hijo de React (#31).
+// Solo mostramos el detalle del backend en validaciones (400), accionables por el usuario;
+// el resto (401, red, 5xx) → mensaje genérico.
+const friendlyError = (err: any, fallback: string): string => {
+  const status = err?.response?.status;
+  const data = err?.response?.data;
+  const backendMsg =
+    (typeof data?.error === 'string' && data.error) ||
+    (typeof data?.error?.message === 'string' && data.error.message) ||
+    (typeof data?.message === 'string' && data.message) ||
+    '';
+  if (status === 400 && backendMsg) return backendMsg;
+  return fallback;
+};
+
 const BriefPage = () => {
   const [searchParams] = useSearchParams();
   const packSlug = searchParams.get('pack');
@@ -93,10 +109,11 @@ const EventContact = () => {
       trackLead({ leadType: 'contacto' });
       setSubmitted(true);
     } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message;
       setError(
-        msg ||
-          `No hemos podido enviar tu mensaje. Inténtalo otra vez o escríbenos a ${CONTACT_EMAIL}.`
+        friendlyError(
+          err,
+          `No hemos podido enviar tu mensaje. Inténtalo otra vez, llámanos al ${PHONE_DISPLAY} o escríbenos a ${CONTACT_EMAIL}.`
+        )
       );
     } finally {
       setSubmitting(false);
@@ -431,10 +448,11 @@ const PackBrief = ({ pack }: { pack: Pack }) => {
       trackLead({ value: packTotal, leadType: 'pack' });
       setSubmitted(true);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message;
       setError(
-        msg ||
-          `No hemos podido enviar el brief. Inténtalo otra vez o escríbenos a ${CONTACT_EMAIL}.`
+        friendlyError(
+          err,
+          `No hemos podido enviar el brief. Inténtalo otra vez, llámanos al ${PHONE_DISPLAY} o escríbenos a ${CONTACT_EMAIL}.`
+        )
       );
     } finally {
       setSubmitting(false);
