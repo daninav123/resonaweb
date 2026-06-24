@@ -20,7 +20,7 @@ describe('🔍 VALIDACIÓN COMPLETA DEL PROYECTO SEGÚN DOCUMENTACIÓN', () => {
       const services = [
         'cart.service.ts',
         'order.service.ts',
-        'payment.service.ts',
+        'stripe.service.ts',
         'invoice.service.ts',
         'notification.service.ts',
         'availability.service.ts',
@@ -140,7 +140,7 @@ describe('🔍 VALIDACIÓN COMPLETA DEL PROYECTO SEGÚN DOCUMENTACIÓN', () => {
     });
 
     test('✅ Sistema de Pagos (Stripe) - Archivo existe', () => {
-      const paymentServicePath = path.join(__dirname, '..', 'services', 'payment.service.ts');
+      const paymentServicePath = path.join(__dirname, '..', 'services', 'stripe.service.ts');
       const content = fs.readFileSync(paymentServicePath, 'utf8');
       
       expect(content).toContain('Stripe');
