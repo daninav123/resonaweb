@@ -4,7 +4,7 @@ import { stockAlertService } from '../services/stockAlert.service';
 
 const router = Router();
 
-router.get('/stock-alerts', authenticate, authorize('ADMIN', 'SUPERADMIN'), async (req, res) => {
+router.get('/stock-alerts', authenticate, authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'), async (req, res) => {
   try {
     const result = await stockAlertService.getStockAlerts();
     res.json(result);
@@ -14,7 +14,7 @@ router.get('/stock-alerts', authenticate, authorize('ADMIN', 'SUPERADMIN'), asyn
   }
 });
 
-router.get('/stock-alerts/product/:productId', authenticate, authorize('ADMIN', 'SUPERADMIN'), async (req, res) => {
+router.get('/stock-alerts/product/:productId', authenticate, authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'), async (req, res) => {
   try {
     const { productId } = req.params;
     const alerts = await stockAlertService.getAlertsByProduct(productId);
@@ -25,7 +25,7 @@ router.get('/stock-alerts/product/:productId', authenticate, authorize('ADMIN', 
   }
 });
 
-router.post('/stock-alerts/mark-for-purchase', authenticate, authorize('ADMIN', 'SUPERADMIN'), async (req, res) => {
+router.post('/stock-alerts/mark-for-purchase', authenticate, authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'), async (req, res) => {
   try {
     const count = await stockAlertService.markProductsForPurchase();
     res.json({ message: `${count} productos marcados para compra`, count });

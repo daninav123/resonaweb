@@ -4,23 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
 import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
-
-// Helper para construir URLs completas de imágenes
-const getFullImageUrl = (imagePath: string | null | undefined): string => {
-  if (!imagePath) return '';
-  if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  const apiPath = baseUrl.replace('/api/v1', '');
-  return `${apiPath}${imagePath}`;
-};
-
-// Helper para convertir URL completa a ruta relativa
-const getRelativeImagePath = (fullUrl: string | null | undefined): string | undefined => {
-  if (!fullUrl) return undefined;
-  if (fullUrl.startsWith('/uploads/')) return fullUrl;
-  const match = fullUrl.match(/\/uploads\/products\/.+$/);
-  return match ? match[0] : undefined;
-};
+import { fetchCategories, fetchProducts, fetchPacks, filterAvailableProducts, getFullImageUrl, getRelativeImagePath } from '../../utils/packUtils';
 
 const MontajesManager = () => {
   const navigate = useNavigate();
@@ -69,23 +53,11 @@ const MontajesManager = () => {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      // Incluir packs inactivos Y montajes en el admin
-      const response: any = await api.get('/packs?includeInactive=true&includeMontajes=true');
-      console.log('Respuesta de packs desde /packs (con montajes):', response);
-
-      // El backend retorna { packs: [...] }
-      const packsData = response?.packs || response || [];
-      console.log('Packs procesados:', packsData);
-
-      // Filtrar solo packs de categoría MONTAJE
-      const montajePacks = Array.isArray(packsData)
-        ? packsData.filter((pack: any) => {
-            const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
-            return categoryName === 'montaje';
-          })
-        : [];
-
-      console.log('Montajes filtrados:', montajePacks);
+      const packsData = await fetchPacks({ includeInactive: true, includeMontajes: true });
+      const montajePacks = packsData.filter((pack: any) => {
+        const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
+        return categoryName === 'montaje';
+      });
       setPacks(montajePacks);
     } catch (error) {
       console.error('Error cargando packs:', error);
@@ -97,31 +69,13 @@ const MontajesManager = () => {
 
   const loadCategories = async () => {
     try {
-      const response: any = await api.get('/products/categories');
-      console.log('Respuesta de categorías:', response);
-
-      // La respuesta puede ser un array directamente o un objeto con categorías
-      let cats = [];
-      if (Array.isArray(response)) {
-        cats = response;
-      } else if (response?.categories && Array.isArray(response.categories)) {
-        cats = response.categories;
-      } else if (response?.data && Array.isArray(response.data)) {
-        cats = response.data;
-      }
-
-      console.log('Categorías procesadas:', cats);
+      const cats = await fetchCategories();
       setCategories(cats);
-
-      // Buscar categoría "Montaje"
       const montajeCategory = cats.find((cat: any) =>
         cat.name && cat.name.toLowerCase() === 'montaje'
       );
       if (montajeCategory) {
         setMontajeCategoryId(montajeCategory.id);
-        console.log('Categoría Montaje encontrada:', montajeCategory.id, montajeCategory.name);
-      } else {
-        console.log('Categoría Montaje no encontrada. Categorías disponibles:', cats.map((c: any) => c.name));
       }
     } catch (error) {
       console.error('Error cargando categorías:', error);
@@ -130,76 +84,21 @@ const MontajesManager = () => {
 
   const loadProducts = async () => {
     try {
-      // Cargar TODOS los productos sin límite - includeHidden=true para ver Personal, etc.
-      const response: any = await api.get('/products?limit=1000&includeHidden=true');
-      console.log('Respuesta de productos:', response);
-
-      let prods = [];
-      if (Array.isArray(response)) {
-        prods = response;
-      } else if (response?.products && Array.isArray(response.products)) {
-        prods = response.products;
-      } else if (response?.data && Array.isArray(response.data)) {
-        prods = response.data;
-      }
-
-      console.log('Productos procesados:', prods.length, 'productos');
+      const prods = await fetchProducts(true);
       setProducts(prods);
     } catch (error) {
       console.error('Error cargando productos:', error);
     }
   };
 
-  // Filtrar productos disponibles para agregar al pack
   const getAvailableProducts = () => {
-    console.log('Total productos:', products.length);
-    console.log('Productos con isPack:', products.filter(p => p.isPack).length);
-    console.log('Productos SIN isPack:', products.filter(p => !p.isPack).length);
-
-    let filtered = products.filter(p => !p.isPack);
-    console.log('Después de filtrar packs:', filtered.length);
-
-    if (filtered.length > 0) {
-      console.log('Categorías de productos disponibles:', [...new Set(filtered.map(p => p.categoryId))]);
-      console.log('Primeros 3 productos antes de filtrar:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
-    }
-
-    // Filtrar por categoría si hay una seleccionada
-    if (productFilter.categoryId) {
-      console.log('Filtrando por categoría:', productFilter.categoryId);
-      const beforeCatFilter = filtered.length;
-      filtered = filtered.filter(p => {
-        const match = p.categoryId === productFilter.categoryId;
-        if (!match && beforeCatFilter < 5) {
-          console.log(`   Producto "${p.name}" tiene categoryId: ${p.categoryId}`);
-        }
-        return match;
-      });
-      console.log(`Después de filtro categoría: ${beforeCatFilter} -> ${filtered.length}`);
-    }
-
-    // Filtrar por búsqueda
-    if (productFilter.search.trim()) {
-      console.log('Filtrando por búsqueda:', productFilter.search);
-      const beforeSearch = filtered.length;
-      const search = productFilter.search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name?.toLowerCase().includes(search) ||
-        p.sku?.toLowerCase().includes(search)
-      );
-      console.log(`Después de búsqueda: ${beforeSearch} -> ${filtered.length}`);
-    }
-
-    console.log('Productos finales disponibles:', filtered.length);
-    if (filtered.length > 0) {
-      console.log('Primeros 3 productos finales:', filtered.slice(0, 3).map(p => ({ name: p.name, categoryId: p.categoryId })));
-    }
-    return filtered;
+    return filterAvailableProducts(products, {
+      categoryId: productFilter.categoryId || undefined,
+      search: productFilter.search || undefined,
+    });
   };
 
   const handleCreate = () => {
-    console.log('Abriendo modal de crear pack');
-    console.log('Estado actual de filtros ANTES de resetear:', productFilter);
     setEditingPack(null);
     setFormData({
       name: '',
@@ -217,7 +116,6 @@ const MontajesManager = () => {
       search: '',
     };
     setProductFilter(newFilters);
-    console.log('Filtros reseteados a:', newFilters);
     setShowModal(true);
   };
 
@@ -232,35 +130,18 @@ const MontajesManager = () => {
       hoursPerPerson: item.hoursPerPerson
     }));
     
-    console.log('✏️ Editando pack - CATEGORIA ORIGINAL:', pack.category);
-    console.log('📷 URL de imagen recibida:', pack.imageUrl);
-    
-    // Convertir URL de imagen a URL completa usando helper
     const imageUrl = getFullImageUrl(pack.imageUrl);
-    console.log('📷 URL de imagen completa:', imageUrl);
     
     setFormData({
       name: pack.name || '',
       description: pack.description || '',
-      category: pack.category || 'OTROS', // Usar la categoría del pack, por defecto OTROS
+      category: pack.category || 'OTROS',
       customFinalPrice: pack.customPriceEnabled ? String(pack.finalPrice || '') : '',
-      transportCost: String(pack.transportCost || ''), // Añadir transportCost
+      transportCost: String(pack.transportCost || ''),
       includeShipping: pack.includeShipping !== false,
       includeInstallation: pack.includeInstallation !== false,
       imageUrl: imageUrl,
       items: mappedItems
-    });
-    console.log('📝 FormData.category establecido a:', pack.category || 'OTROS');
-    console.log('📦 Items del pack (detalle completo):');
-    pack.items?.forEach((item: any, index: number) => {
-      const product = products.find(p => p.id === (item.productId || item.product?.id));
-      console.log(`  Item ${index}: ${product?.name}`, {
-        productId: item.productId || item.product?.id,
-        quantity: item.quantity,
-        numberOfPeople: item.numberOfPeople,
-        hoursPerPerson: item.hoursPerPerson,
-        rawItem: item
-      });
     });
     setShowModal(true);
   };
@@ -286,36 +167,23 @@ const MontajesManager = () => {
       const uploadFormData = new FormData();
       uploadFormData.append('image', file);
 
-      console.log('📤 Subiendo imagen...');
       const response: any = await api.post('/upload/image', uploadFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log('📥 Respuesta completa del servidor:', response);
-      console.log('📥 response.data:', response.data);
-      console.log('📥 response.imageUrl:', response.imageUrl);
-      
-      // El backend puede responder directamente o con data
       const imageUrl = response.imageUrl || response.data?.imageUrl || response.data;
       
       if (!imageUrl) {
-        console.error('❌ No se recibió imageUrl. Respuesta:', response);
         throw new Error('El servidor no devolvió la URL de la imagen');
       }
       
-      console.log('✅ URL de imagen obtenida:', imageUrl);
-      
-      // Construir URL completa usando helper
       const fullImageUrl = getFullImageUrl(imageUrl);
-      
-      console.log('✅ URL completa de imagen:', fullImageUrl);
       setFormData(prev => ({ ...prev, imageUrl: fullImageUrl }));
       toast.success('Imagen subida correctamente');
     } catch (error: any) {
-      console.error('❌ Error subiendo imagen:', error);
-      console.error('❌ Error response:', error.response);
+      console.error('Error subiendo imagen:', error);
       toast.error(error.response?.data?.error || error.message || 'Error al subir la imagen');
     } finally {
       setUploadingImage(false);
@@ -374,22 +242,8 @@ const MontajesManager = () => {
         return;
       }
 
-      console.log('💾 ANTES de mapear - formData.items:');
-      formData.items.forEach((item, index) => {
-        const product = products.find(p => p.id === item.productId);
-        console.log(`  Item ${index}: ${product?.name}`, {
-          productId: item.productId,
-          quantity: item.quantity,
-          numberOfPeople: item.numberOfPeople,
-          hoursPerPerson: item.hoursPerPerson
-        });
-      });
-
-      // Filtrar productos virtuales que no existen en la BD
       const validItems = formData.items.filter(item => {
-        // Excluir productos virtuales como 'product-custom-event-virtual'
         if (item.productId && item.productId.includes('virtual')) {
-          console.log(`⚠️ Filtrando producto virtual: ${item.productId}`);
           return false;
         }
         return true;
@@ -400,12 +254,7 @@ const MontajesManager = () => {
         return;
       }
 
-      console.log('📝 CATEGORIA ANTES DE GUARDAR:', formData.category);
-      console.log('📝 montajeCategoryId:', montajeCategoryId);
-      
-      // Convertir URL completa de vuelta a ruta relativa para guardar en BD
       const imageUrlToSave = getRelativeImagePath(formData.imageUrl);
-      console.log('📷 Guardando imagen como:', imageUrlToSave);
       
       const packData: any = {
         name: formData.name,
@@ -427,56 +276,22 @@ const MontajesManager = () => {
         autoCalculate: true
       };
       
-      console.log('📦 Items a guardar (detalle completo):');
-      packData.items.forEach((item: any, index: number) => {
-        const product = products.find(p => p.id === item.productId);
-        console.log(`  Item ${index}: ${product?.name}`, {
-          productId: item.productId,
-          quantity: item.quantity,
-          numberOfPeople: item.numberOfPeople,
-          hoursPerPerson: item.hoursPerPerson
-        });
-      });
-
-      console.log('📦 Guardando pack:', {
-        isNew: !editingPack,
-        packId: editingPack?.id,
-        name: packData.name,
-        itemsCount: packData.items.length
-      });
-
       if (editingPack) {
-        console.log(`🔄 Actualizando pack ${editingPack.id}...`);
-        const response = await api.put(`/packs/${editingPack.id}`, packData);
-        console.log('✅ Pack actualizado:', response);
+        await api.put(`/packs/${editingPack.id}`, packData);
         toast.success('Pack actualizado correctamente');
       } else {
-        console.log('🆕 Creando nuevo pack...');
-        const response = await api.post('/packs', packData);
-        console.log('✅ Pack creado:', response);
+        await api.post('/packs', packData);
         toast.success('Pack creado correctamente');
       }
 
       setShowModal(false);
       await loadPacks();
     } catch (error: any) {
-      console.error('❌ ============ ERROR GUARDANDO PACK ============');
-      console.error('📋 Error completo:', error);
-      console.error('📋 Mensaje:', error.message);
-      console.error('📋 Response completa:', error.response);
-      console.error('📋 Response.data:', error.response?.data);
-      console.error('📋 Response.data.error:', error.response?.data?.error);
-      console.error('📋 Response.data.message:', error.response?.data?.message);
-      console.error('📋 Status:', error.response?.status);
-      console.error('📋 Headers:', error.response?.headers);
-      console.error('❌ ===============================================');
-      
-      // Mostrar mensaje de error más detallado
+      console.error('Error guardando pack:', error);
       const errorMsg = error.response?.data?.error?.message 
         || error.response?.data?.message 
         || error.message 
         || 'Error al guardar el pack';
-      
       toast.error(errorMsg);
     }
   };
@@ -660,19 +475,6 @@ const MontajesManager = () => {
           itemAmortization = Number(product.purchasePrice || 0) * effectiveQuantity * 0.05;
         }
 
-        console.log(`📦 Item ${index}: ${product.name}`, {
-          isPersonal,
-          isConsumable,
-          numberOfPeople: item.numberOfPeople,
-          hoursPerPerson: item.hoursPerPerson,
-          quantity: item.quantity,
-          effectiveQuantity,
-          purchasePrice: product.purchasePrice,
-          pricePerDay: product.pricePerDay,
-          itemPrice,
-          amortizationCost: itemAmortization.toFixed(2)
-        });
-
         totalPricePerDay += itemPrice;
         
         // Sumar precios y costes de envío e instalación
@@ -710,17 +512,6 @@ const MontajesManager = () => {
     
     // Margen % = (Beneficio / Precio Final) × 100
     const profitMargin = finalPrice > 0 ? (profit / finalPrice) * 100 : 0;
-
-    console.log('💰 Análisis de Rentabilidad:', {
-      'Precio Venta': finalPrice.toFixed(2),
-      'Coste Material': costMaterial.toFixed(2),
-      'Coste Personal': costPersonal.toFixed(2),
-      'Coste Envío+Montaje': costShippingInstallation.toFixed(2),
-      'Coste Amortización': costDepreciation.toFixed(2),
-      'Coste Total': totalCost.toFixed(2),
-      'Beneficio': profit.toFixed(2),
-      'Margen': profitMargin.toFixed(1) + '%'
-    });
 
     return {
       totalPricePerDay,

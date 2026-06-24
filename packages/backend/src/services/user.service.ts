@@ -29,6 +29,7 @@ export class UserService {
           lastName: true,
           phone: true,
           role: true,
+          additionalRoles: true,
           userLevel: true, // ⭐ AÑADIDO
           isActive: true,
           emailVerified: true,
@@ -66,6 +67,7 @@ export class UserService {
         lastName: true,
         phone: true,
         role: true,
+        additionalRoles: true,
         address: true,
         isActive: true,
         emailVerified: true,
@@ -98,7 +100,8 @@ export class UserService {
     firstName: string;
     lastName: string;
     phone?: string;
-    role?: 'CLIENT' | 'ADMIN' | 'SUPERADMIN' | 'COMMERCIAL';
+    role?: string;
+    additionalRoles?: string[];
   }) {
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -119,6 +122,7 @@ export class UserService {
         email: data.email.toLowerCase(),
         password: hashedPassword,
         role: data.role || 'CLIENT',
+        additionalRoles: data.additionalRoles || [],
       },
       select: {
         id: true,
@@ -127,6 +131,7 @@ export class UserService {
         lastName: true,
         phone: true,
         role: true,
+        additionalRoles: true,
         isActive: true,
         emailVerified: true,
         createdAt: true,
@@ -149,7 +154,8 @@ export class UserService {
       lastName: string;
       phone: string;
       address: any;
-      role: 'CLIENT' | 'ADMIN' | 'SUPERADMIN' | 'COMMERCIAL';
+      role: string;
+      additionalRoles: string[];
       isActive: boolean;
     }>,
     isAdmin: boolean = false
@@ -188,6 +194,7 @@ export class UserService {
 
     if (isAdmin) {
       if (data.role !== undefined) updateData.role = data.role;
+      if (data.additionalRoles !== undefined) updateData.additionalRoles = data.additionalRoles;
       if (data.isActive !== undefined) updateData.isActive = data.isActive;
     }
 
@@ -202,6 +209,7 @@ export class UserService {
         lastName: true,
         phone: true,
         role: true,
+        additionalRoles: true,
         address: true,
         isActive: true,
         emailVerified: true,

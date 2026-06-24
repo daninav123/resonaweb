@@ -20,11 +20,11 @@ const AlquilerAltavocesValenciaPage = () => {
     },
     {
       question: '¿Entregan los altavoces a domicilio en Valencia?',
-      answer: 'Sí, realizamos entregas en toda Valencia capital (gratis), y en toda el área metropolitana: Mislata, Paterna, Torrent, Burjassot, Manises, Xirivella, Alboraya, Alfafar, Sedaví, Quart de Poblet, etc. Para zonas más alejadas consultanos disponibilidad. Horarios flexibles de entrega: días laborables 9:00-20:00h, sábados 10:00-14:00h y 17:00-20:00h.',
+      answer: 'Sí, realizamos entregas en toda Valencia capital, y en toda el área metropolitana: Mislata, Paterna, Torrent, Burjassot, Manises, Xirivella, Alboraya, Alfafar, Sedaví, Quart de Poblet, etc. Para zonas más alejadas consultanos disponibilidad. Horarios flexibles de entrega: días laborables 9:00-20:00h, sábados 10:00-14:00h y 17:00-20:00h.',
     },
     {
       question: '¿Necesito conocimientos técnicos para usar los altavoces?',
-      answer: 'No necesariamente. Nuestros altavoces activos son plug-and-play: solo necesitas conectar la fuente de audio (móvil, portátil, mesa de mezclas) y encenderlos. Incluimos instrucciones simples. Si tu evento requiere montaje complejo (varios altavoces, micrófonos, mesa de mezclas), ofrecemos servicio técnico profesional desde 80€. También hacemos instalación gratuita si lo necesitas.',
+      answer: 'No necesariamente. Nuestros altavoces activos son plug-and-play: solo necesitas conectar la fuente de audio (móvil, portátil, mesa de mezclas) y encenderlos. Incluimos instrucciones simples. Si tu evento requiere montaje complejo (varios altavoces, micrófonos, mesa de mezclas), ofrecemos servicio técnico profesional desde 80€. También ofrecemos servicio de instalación.',
     },
     {
       question: '¿Qué potencia de altavoces necesito para mi evento?',
@@ -43,9 +43,9 @@ const AlquilerAltavocesValenciaPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Alquiler Altavoces Valencia desde 35€/día | ReSona"
-        description="✅ Altavoces profesionales Valencia: JBL, QSC, Yamaha 400W-2000W. Instalación GRATIS en Valencia y área metropolitana. ⭐ 4.9/5. Eventos, bodas, fiestas. Presupuesto 24h ☎️ 613881414"
-        keywords="alquiler altavoces valencia, alquiler altavoces profesionales valencia, alquiler altavoces activos valencia, alquiler altavoces eventos valencia, alquiler PA valencia, alquiler altavoces JBL valencia, alquiler altavoces baratos valencia, alquiler sonido valencia"
+        title="Alquiler Altavoces Valencia desde 35€ · Entrega 24h"
+        description="Alquiler de altavoces profesionales en Valencia desde 35€/día. JBL, QSC, Yamaha, DAS Audio 400-2000W. Trípodes y cables incluidos. Entrega en Valencia ☎ 613 88 14 14"
+        keywords="alquiler altavoces valencia, alquilar altavoces valencia, alquiler altavoces, alquiler de altavoces, alquiler altavoces para fiestas"
         canonicalUrl="https://resonaevents.com/alquiler-altavoces-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />
@@ -77,7 +77,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </div>
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Truck className="w-5 h-5" />
-                <span>Entrega gratis Valencia</span>
+                <span>Montaje incluido</span>
               </div>
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Shield className="w-5 h-5" />
@@ -123,7 +123,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </p>
 
               <p className="text-gray-700 leading-relaxed mb-6">
-                Ya sea para una <strong>boda en Valencia</strong>, un <strong>concierto</strong>, <strong>evento corporativo</strong>, <strong>fiesta privada</strong> o <strong>presentación</strong>, tenemos el <strong>sistema de altavoces perfecto</strong> para tu evento. Nuestro servicio incluye <strong>entrega e instalación gratuita</strong> en Valencia capital y área metropolitana.
+                Ya sea para una <strong>boda en Valencia</strong>, un <strong>concierto</strong>, <strong>evento corporativo</strong>, <strong>fiesta privada</strong> o <strong>presentación</strong>, tenemos el <strong>sistema de altavoces perfecto</strong> para tu evento. Nuestro servicio incluye <strong>entrega e instalación</strong> en Valencia capital y área metropolitana.
               </p>
 
               <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
@@ -147,9 +147,9 @@ const AlquilerAltavocesValenciaPage = () => {
                   <div className="flex items-start gap-3">
                     <Truck className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Entrega Gratis en Valencia</h4>
+                      <h4 className="font-semibold text-gray-900 mb-2">Servicio en Valencia y alrededores</h4>
                       <p className="text-gray-700 text-sm">
-                        Llevamos y recogemos los altavoces en tu ubicación sin coste adicional en Valencia ciudad y área metropolitana (Mislata, Paterna, Torrent, Burjassot...).
+                        Llevamos, montamos y recogemos los altavoces en tu ubicación en Valencia ciudad y área metropolitana (Mislata, Paterna, Torrent, Burjassot...).
                       </p>
                     </div>
                   </div>

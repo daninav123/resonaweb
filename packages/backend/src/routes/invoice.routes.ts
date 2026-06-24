@@ -31,45 +31,45 @@ router.post(
   invoiceController.sendInvoice
 );
 
-// Mark invoice as paid (admin only)
+// Mark invoice as paid (admin/accountant)
 router.patch(
   '/:id/mark-paid',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.markAsPaid
 );
 
-// Get all invoices (admin only)
+// Get all invoices (admin/accountant)
 router.get(
   '/',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.getAllInvoices
 );
 
-// Generate Facturae XML (admin only)
+// Generate Facturae XML (admin/accountant)
 router.post(
   '/:id/facturae',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.generateFacturae
 );
 
-// Download Facturae XML (admin only)
+// Download Facturae XML (admin/accountant)
 router.get(
   '/:id/facturae/download',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.downloadFacturae
 );
 
-// Create manual invoice (admin only - for non-web events)
+// Create manual invoice (admin/accountant)
 router.post(
   '/manual',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.createManualInvoice
 );
 
-// Download all invoices as ZIP (admin only)
+// Download all invoices as ZIP (admin/accountant)
 router.get(
   '/download-all',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   invoiceController.downloadAllInvoices
 );
 

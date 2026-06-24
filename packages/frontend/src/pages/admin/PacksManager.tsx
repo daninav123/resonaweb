@@ -6,6 +6,7 @@ import { api } from '../../services/api';
 import { useTableSort } from '../../hooks/useTableSort';
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader';
 import { ResponsiveTableWrapper } from '../../components/admin/ResponsiveTableWrapper';
+import { fetchCategories, fetchProducts, fetchPacks, filterAvailableProducts } from '../../utils/packUtils';
 
 const PacksManager = () => {
   const navigate = useNavigate();
@@ -48,21 +49,16 @@ const PacksManager = () => {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      const response: any = await api.get('/packs?includeInactive=true');
-      const packsData = response?.packs || response || [];
-      
-      // Filtrar para excluir montajes (solo mostrar packs reales)
-      const filteredPacks = Array.isArray(packsData) 
-        ? packsData.filter((pack: any) => {
-            const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
-            return categoryName !== 'montaje';
-          }).map((pack: any) => ({
-            ...pack,
-            // Normalizar finalPrice a número para que el ordenamiento funcione
-            finalPrice: Number(pack.finalPrice || pack.calculatedTotalPrice || 0)
-          }))
-        : [];
-      
+      const packsData = await fetchPacks({ includeInactive: true });
+      const filteredPacks = packsData
+        .filter((pack: any) => {
+          const categoryName = pack.categoryRef?.name?.toLowerCase() || pack.category?.toLowerCase() || '';
+          return categoryName !== 'montaje';
+        })
+        .map((pack: any) => ({
+          ...pack,
+          finalPrice: Number(pack.finalPrice || pack.calculatedTotalPrice || 0)
+        }));
       setPacks(filteredPacks);
     } catch (error) {
       console.error('Error cargando packs:', error);
@@ -74,15 +70,7 @@ const PacksManager = () => {
 
   const loadCategories = async () => {
     try {
-      const response: any = await api.get('/products/categories');
-      let cats = [];
-      if (Array.isArray(response)) {
-        cats = response;
-      } else if (response?.categories && Array.isArray(response.categories)) {
-        cats = response.categories;
-      } else if (response?.data && Array.isArray(response.data)) {
-        cats = response.data;
-      }
+      const cats = await fetchCategories();
       setCategories(cats);
       const packsCategory = cats.find((cat: any) => 
         cat.name && cat.name.toLowerCase().includes('pack')
@@ -97,15 +85,7 @@ const PacksManager = () => {
 
   const loadProducts = async () => {
     try {
-      const response: any = await api.get('/products?limit=1000');
-      let prods = [];
-      if (Array.isArray(response)) {
-        prods = response;
-      } else if (response?.products && Array.isArray(response.products)) {
-        prods = response.products;
-      } else if (response?.data && Array.isArray(response.data)) {
-        prods = response.data;
-      }
+      const prods = await fetchProducts();
       setProducts(prods);
     } catch (error) {
       console.error('Error cargando productos:', error);

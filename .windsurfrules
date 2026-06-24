@@ -1,0 +1,97 @@
+# Reglas Windsurf / Cascade — resonaweb
+
+> Fuente canónica con más detalle: `docs/AI_RULES_SHARED.md`. Plan de migración activo: `docs/MIGRATION_SPLIT_RENT_EVENTS.md`. Si modificas este archivo, actualiza también `CLAUDE.md`.
+
+## Proyecto
+
+Resona (Valencia) — alquiler de equipos audiovisuales + eventos completos. Monorepo npm workspaces (`packages/*`).
+
+**Stack**: React 18 + Vite + Tailwind + Zustand + React Query (frontend) · Express + Prisma (PostgreSQL) + JWT (backend) · Stripe + Redsys · Vitest/Jest/Playwright.
+
+**Migración activa** desde monolito (`packages/frontend`, `packages/backend`) hacia:
+- `apps/rent/` → resonarent.com (alquiler)
+- `apps/events/` → resonaevents.com (eventos, lead-gen)
+- `apps/admin/` → gestion.resona.com (admin)
+- Compartidas: `packages/{shared-types, api-client, ui, utils}`
+
+## Reglas críticas durante la migración
+
+1. Leer `docs/MIGRATION_SPLIT_RENT_EVENTS.md` antes de cambios arquitectónicos o de estructura.
+2. No añadir features al monolito si afectan código próximo a migrarse.
+3. Código en ≥2 apps → `packages/`. Siempre.
+4. Backend solo se toca para CORS. Sin refactors estructurales.
+5. Carrito vive solo en Rent. Events usa `quoteRequest`.
+6. Un solo `User` en BDD para las 3 apps.
+7. Stock/disponibilidad: solo backend, nunca duplicar en frontend.
+8. Mover un archivo = actualizar todos los imports dependientes.
+
+## Convenciones
+
+- UI copy en español, identificadores en inglés, docs en español.
+- TypeScript estricto, sin `any`.
+- Sin comentarios salvo *por qué* no obvio (hack, invariante, workaround). Nunca comentar el *qué*.
+- Editar antes que crear. Nunca crear `.md` en la raíz del repo — todo va a `docs/`.
+- Actualizar `docs/INDEX.md` al añadir un doc nuevo.
+- Validación con Zod solo en boundaries (endpoints públicos y formularios).
+
+## Documentación y scratchpad
+
+- Docs persistentes → `docs/`. Actualizar `docs/INDEX.md`.
+- Notas temporales de sesión → `.ai-scratch/` (gitignored), no commitear.
+- `archive/` es material histórico. No añadir cosas nuevas ahí.
+
+## Verificación antes de dar un cambio por hecho
+
+- Lógica/TS: correr tests relevantes + `npm run lint` si tocaste muchos archivos.
+- UI: arrancar dev server y probar en navegador. Type-check no valida feature.
+- Backend: verificar endpoint y que tests existentes no se rompen.
+- Prisma: `npm run db:generate` siempre; `db:migrate:dev` si tocas schema.
+- Si no puedes verificar, dilo y no marques como completo.
+
+## Comandos (solo los que existen en package.json)
+
+```
+npm run dev                 # frontend + backend
+npm run dev:frontend
+npm run dev:backend
+npm run build
+npm run test                # unit
+npm run test:e2e            # playwright
+npm run lint:fix
+npm run db:migrate:dev
+npm run db:seed
+npm run db:studio
+npm run docker:up
+```
+
+No inventar comandos. Si no está en un package.json, no existe.
+
+## Git y seguridad
+
+- Nunca hacer commits salvo petición explícita.
+- Nunca `--no-verify`, nunca force push a main, nunca commitear secrets.
+- Preferir commits nuevos a `--amend` sobre commits publicados.
+- Acciones destructivas (reset --hard, rm -rf, drop DB, borrar branches): preguntar siempre.
+- **Nunca `git add .` ni `git add -A`** en este repo (raíz llena de `.md` sueltos y scripts temporales). Añadir archivos por nombre.
+
+## Comunicación
+
+- Español, directo, técnico.
+- Preguntas exploratorias → 2-3 frases con recomendación + tradeoff antes de implementar.
+- Decisiones reversibles: adelante. No reversibles (deploy, push, migración BDD): preguntar.
+- Dos enfoques razonables → presenta ambos y deja elegir.
+
+## No hacer
+
+- No tocar `prisma/schema.prisma` sin entender impacto (80 modelos).
+- No modificar `auth.middleware.ts` a la ligera (roles + additionalRoles).
+- No duplicar lógica de precio (`packages/frontend/src/utils/priceWithVAT.ts`, `cartCalculations.ts`).
+- No mezclar cart y quoteRequest.
+- No mostrar reviews falsos (no hay datos reales).
+- No crear más `.md` en raíz (ya hay ~200 de sesiones viejas).
+
+## Referencias
+
+- `docs/INDEX.md` · `docs/MIGRATION_SPLIT_RENT_EVENTS.md` · `docs/DATABASE_SCHEMA.md` · `docs/API_DOCUMENTATION.md` · `docs/USER_FLOWS.md`
+- `packages/backend/prisma/schema.prisma` — modelo de datos
+- `packages/frontend/src/App.tsx` — mapa de rutas actual

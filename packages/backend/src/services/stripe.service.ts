@@ -651,6 +651,50 @@ export class StripeService {
       country: 'ES',
     };
   }
+
+  /**
+   * Crear Checkout Session para señal de reserva de evento (QuoteRequest).
+   * Usado por /quote-requests/public/with-payment: el cliente reserva un pack y paga la señal online.
+   * El webhook checkout.session.completed marca firstPaymentPaid y convierte el quote.
+   */
+  async createCheckoutSessionForQuoteReservation(params: {
+    quoteRequestId: string;
+    amountEuros: number;
+    customerEmail: string;
+    description: string;
+    successUrl: string;
+    cancelUrl: string;
+  }) {
+    const { quoteRequestId, amountEuros, customerEmail, description, successUrl, cancelUrl } = params;
+
+    const session = await this.stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      customer_email: customerEmail,
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: description,
+              description: 'Señal del 30%. El resto se abona 15 días antes del evento.',
+            },
+            unit_amount: Math.round(amountEuros * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        type: 'quote_reservation',
+        quoteRequestId,
+      },
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      locale: 'es',
+    });
+
+    return { checkoutUrl: session.url, sessionId: session.id };
+  }
 }
 
 export const stripeService = new StripeService();

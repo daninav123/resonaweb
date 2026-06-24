@@ -4,14 +4,16 @@ import {
   ShoppingCart, 
   Wrench, 
   DollarSign,
-  TrendingUp
+  TrendingUp,
+  RefreshCw
 } from 'lucide-react';
 import ContabilidadResumen from './contabilidad/ContabilidadResumen';
 import ContabilidadAlquileres from './contabilidad/ContabilidadAlquileres';
 import ContabilidadMontajes from './contabilidad/ContabilidadMontajes';
 import ContabilidadGastos from './contabilidad/ContabilidadGastos';
+import RecurringExpensesManager from './RecurringExpensesManager';
 
-type Tab = 'resumen' | 'alquileres' | 'montajes' | 'gastos';
+type Tab = 'resumen' | 'alquileres' | 'montajes' | 'gastos' | 'recurrentes';
 
 const ContabilidadTabs = () => {
   const [activeTab, setActiveTab] = useState<Tab>('resumen');
@@ -40,6 +42,12 @@ const ContabilidadTabs = () => {
       label: 'Gastos Reales',
       icon: DollarSign,
       color: 'orange'
+    },
+    {
+      id: 'recurrentes' as Tab,
+      label: 'Gastos Recurrentes',
+      icon: RefreshCw,
+      color: 'red'
     }
   ];
 
@@ -56,7 +64,10 @@ const ContabilidadTabs = () => {
         : 'bg-white text-purple-600 hover:bg-purple-50',
       orange: isActive 
         ? 'bg-orange-600 text-white' 
-        : 'bg-white text-orange-600 hover:bg-orange-50'
+        : 'bg-white text-orange-600 hover:bg-orange-50',
+      red: isActive 
+        ? 'bg-red-600 text-white' 
+        : 'bg-white text-red-600 hover:bg-red-50'
     };
 
     const tab = tabs.find(t => t.id === tabId);
@@ -110,6 +121,7 @@ const ContabilidadTabs = () => {
         {activeTab === 'alquileres' && <ContabilidadAlquileres />}
         {activeTab === 'montajes' && <ContabilidadMontajes />}
         {activeTab === 'gastos' && <ContabilidadGastos />}
+        {activeTab === 'recurrentes' && <RecurringExpensesManager />}
       </div>
     </div>
   );

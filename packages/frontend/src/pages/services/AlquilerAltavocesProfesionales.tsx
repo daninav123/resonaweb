@@ -3,9 +3,9 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerAltavocesProfesionales = () => {
   const pageData = {
-    title: "Altavoces Profesionales Valencia | DAS Audio | ReSona",
-    metaDescription: "Altavoces profesionales en Valencia. DAS Audio, ICOA. 1000-1500W. Técnico incluido. Desde 159€. ☎️ 613 88 14 14",
-    keywords: "alquiler altavoces valencia, altavoces profesionales valencia, alquiler altavoces JBL valencia, alquiler sonido valencia",
+    title: "Alquiler Altavoces Valencia desde 35€ · Entrega 24h",
+    metaDescription: "Alquiler de altavoces profesionales en Valencia desde 35€/día. DAS Audio, ICOA, JBL, QSC. Trípodes y cables incluidos. Entrega en Valencia ☎ 613 88 14 14",
+    keywords: "alquiler altavoces valencia, alquilar altavoces valencia, alquiler altavoces, alquiler altavoces para fiestas, alquiler altavoces precio",
     canonicalUrl: "https://resonaevents.com/servicios/alquiler-altavoces-profesionales",
     heroTitle: "Alquiler de Altavoces Profesionales en Valencia",
     heroSubtitle: "DAS Audio 515A, ICOA 12A/15A - Altavoces profesionales de 1000-1500W",

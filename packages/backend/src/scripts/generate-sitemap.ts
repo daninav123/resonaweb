@@ -78,7 +78,7 @@ async function generateSitemap() {
     // Blog posts
     const posts = await prisma.blogPost.findMany({
       where: { 
-        published: true,
+        status: 'PUBLISHED',
         publishedAt: { lte: new Date() }
       },
       select: { 

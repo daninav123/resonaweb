@@ -4,14 +4,15 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// All event routes require admin authentication
+// All event routes require staff authentication
 router.use(authenticate);
-router.use(authorize('ADMIN', 'SUPERADMIN'));
+router.use(authorize('ADMIN', 'SUPERADMIN', 'COMMERCIAL', 'WAREHOUSE', 'TECHNICIAN'));
 
 // CRUD principal
 router.get('/stats', eventController.getStats);
 router.get('/', eventController.list);
 router.post('/', eventController.create);
+router.post('/from-order/:orderId', eventController.createFromOrder);
 router.get('/:id', eventController.getById);
 router.put('/:id', eventController.update);
 router.delete('/:id', eventController.delete);

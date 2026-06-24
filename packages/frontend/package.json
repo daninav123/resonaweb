@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.0.2",
+    "@resona/api-client": "*",
+    "@resona/shared-types": "*",
     "@stripe/react-stripe-js": "^2.9.0",
     "@stripe/stripe-js": "^2.4.0",
     "@stripe/terminal-js": "^0.26.0",

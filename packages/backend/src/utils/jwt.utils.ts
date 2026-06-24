@@ -18,6 +18,7 @@ export interface TokenPayload {
   userId: string;
   email: string;
   role: string;
+  additionalRoles?: string[];
 }
 
 export const generateAccessToken = (user: User): string => {
@@ -25,6 +26,7 @@ export const generateAccessToken = (user: User): string => {
     userId: user.id,
     email: user.email,
     role: user.role,
+    additionalRoles: user.additionalRoles || [],
   };
 
   // @ts-expect-error - expiresIn accepts string but types are overly restrictive
@@ -36,6 +38,7 @@ export const generateRefreshToken = (user: User): string => {
     userId: user.id,
     email: user.email,
     role: user.role,
+    additionalRoles: user.additionalRoles || [],
   };
 
   // @ts-expect-error - expiresIn accepts string but types are overly restrictive

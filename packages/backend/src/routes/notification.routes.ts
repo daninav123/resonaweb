@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { notificationController } from '../controllers/notification.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
 // All routes require authentication
 router.use(authenticate);
+
+// Admin routes (must be before /:id routes)
+router.get('/admin', authorize('ADMIN', 'SUPERADMIN'), notificationController.getAdminNotifications.bind(notificationController));
+router.post('/send-email', authorize('ADMIN', 'SUPERADMIN'), notificationController.sendEmail.bind(notificationController));
 
 // Get notifications
 router.get('/', notificationController.getNotifications.bind(notificationController));

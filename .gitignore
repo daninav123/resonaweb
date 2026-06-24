@@ -74,11 +74,12 @@ playwright-report/
 **/playwright-report/
 .auth/
 
-# Documentation files (pueden ser muchos)
-*.md
-!README.md
-!CONTRIBUTING.md
-!CHANGELOG.md
+# Documentation files: solo ignorar .md sueltos en la raíz (usar docs/ para documentación)
+/*.md
+!/README.md
+!/CONTRIBUTING.md
+!/CHANGELOG.md
+!/CLAUDE.md
 
 # Scripts de desarrollo
 *.bat
@@ -100,3 +101,9 @@ debug-*.js
 /docs/gsc/
 /docs/ga4/
 /docs/gbp/
+
+# Scratchpad para notas temporales de asistentes IA (no commitear)
+.ai-scratch/
+
+# Archivos subidos (facturas, etc.) — datos de cliente, nunca al repo
+/packages/backend/uploads/

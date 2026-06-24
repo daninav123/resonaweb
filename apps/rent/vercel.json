@@ -16,7 +16,7 @@
       "source": "/sitemap.xml",
       "destination": "https://resona-backend.onrender.com/sitemap-rent.xml"
     },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ],
   "redirects": [
     {

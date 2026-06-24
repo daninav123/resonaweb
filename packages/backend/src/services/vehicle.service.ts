@@ -30,6 +30,47 @@ export class VehicleService {
     return prisma.vehicle.findMany({ where: { status: 'available' }, orderBy: { plate: 'asc' } });
   }
 
+  // ============= ASIGNACIONES DE VEHÍCULOS =============
+
+  async listAssignments(filters?: { vehicleId?: string; startDate?: string; endDate?: string; eventId?: string }) {
+    const where: any = {};
+    if (filters?.vehicleId) where.vehicleId = filters.vehicleId;
+    if (filters?.eventId) where.eventId = filters.eventId;
+    if (filters?.startDate && filters?.endDate) {
+      where.OR = [
+        { startDate: { lte: new Date(filters.endDate) }, endDate: { gte: new Date(filters.startDate) } },
+      ];
+    }
+    return prisma.vehicleAssignment.findMany({ where, orderBy: { startDate: 'asc' } });
+  }
+
+  async createAssignment(data: any) {
+    data.startDate = new Date(data.startDate);
+    data.endDate = new Date(data.endDate);
+    return prisma.vehicleAssignment.create({ data });
+  }
+
+  async updateAssignment(id: string, data: any) {
+    if (data.startDate) data.startDate = new Date(data.startDate);
+    if (data.endDate) data.endDate = new Date(data.endDate);
+    return prisma.vehicleAssignment.update({ where: { id }, data });
+  }
+
+  async deleteAssignment(id: string) {
+    return prisma.vehicleAssignment.delete({ where: { id } });
+  }
+
+  async getCalendar(startDate: string, endDate: string) {
+    const [vehicles, assignments] = await Promise.all([
+      prisma.vehicle.findMany({ orderBy: { plate: 'asc' } }),
+      prisma.vehicleAssignment.findMany({
+        where: { startDate: { lte: new Date(endDate) }, endDate: { gte: new Date(startDate) } },
+        orderBy: { startDate: 'asc' },
+      }),
+    ]);
+    return { vehicles, assignments };
+  }
+
   // Informe de costes (ITV + seguro + mantenimiento basado en km)
   async getCostReport() {
     const vehicles = await prisma.vehicle.findMany({ orderBy: { plate: 'asc' } });

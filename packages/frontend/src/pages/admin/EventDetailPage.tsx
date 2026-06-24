@@ -4,9 +4,10 @@ import {
   ArrowLeft, Calendar, MapPin, Users as UsersIcon, Phone, Mail, Building2,
   Clock, CheckCircle2, Circle, Plus, Trash2, Edit, X, Loader2, AlertTriangle,
   Package, FileText, MessageSquare, Camera, Save, ChevronDown, MoreHorizontal,
-  CircleDot, DollarSign, Wrench,
+  CircleDot, DollarSign, Wrench, Truck,
 } from 'lucide-react';
 import { eventService } from '../../services/event.service';
+import { api } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 import toast from 'react-hot-toast';
 
@@ -25,6 +26,7 @@ const PHASE_CONFIG: Record<string, { label: string; color: string; bgColor: stri
 const PHASES_ORDER = ['INQUIRY', 'PLANNING', 'PREPARATION', 'SETUP', 'LIVE', 'TEARDOWN', 'REVIEW', 'CLOSED'];
 const TABS = [
   { id: 'resumen', label: 'Resumen', icon: CircleDot },
+  { id: 'rentabilidad', label: 'P&L', icon: DollarSign },
   { id: 'timeline', label: 'Timeline', icon: Clock },
   { id: 'checklist', label: 'Checklist', icon: CheckCircle2 },
   { id: 'equipo', label: 'Equipos', icon: Package },
@@ -32,6 +34,7 @@ const TABS = [
   { id: 'incidencias', label: 'Incidencias', icon: AlertTriangle },
   { id: 'notas', label: 'Notas', icon: MessageSquare },
   { id: 'documentos', label: 'Docs', icon: FileText },
+  { id: 'logistica', label: 'Logística', icon: Truck },
 ];
 
 const formatDate = (d: string) => new Date(d).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
@@ -115,6 +118,7 @@ const EventDetailPage = () => {
             <span className="flex items-center gap-1"><UsersIcon className="w-4 h-4" /> {event.clientName}</span>
             {event.venueName && <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {event.venueName}</span>}
             {event.attendees && <span className="flex items-center gap-1"><UsersIcon className="w-4 h-4" /> {event.attendees} asistentes</span>}
+            {event.orderId && <Link to={`/admin/orders/${event.orderId}`} className="flex items-center gap-1 text-blue-600 hover:underline"><Package className="w-4 h-4" /> Ver pedido</Link>}
           </div>
         </div>
       </div>
@@ -179,6 +183,7 @@ const EventDetailPage = () => {
 
         <div className="p-5">
           {activeTab === 'resumen' && <TabResumen event={event} />}
+          {activeTab === 'rentabilidad' && <TabRentabilidad event={event} onRefresh={loadEvent} />}
           {activeTab === 'timeline' && <TabTimeline event={event} onRefresh={loadEvent} />}
           {activeTab === 'checklist' && <TabChecklist event={event} onRefresh={loadEvent} />}
           {activeTab === 'equipo' && <TabEquipment event={event} onRefresh={loadEvent} />}
@@ -186,6 +191,7 @@ const EventDetailPage = () => {
           {activeTab === 'incidencias' && <TabIncidents event={event} onRefresh={loadEvent} />}
           {activeTab === 'notas' && <TabNotes event={event} onRefresh={loadEvent} />}
           {activeTab === 'documentos' && <TabDocuments event={event} onRefresh={loadEvent} />}
+          {activeTab === 'logistica' && <TabLogistica event={event} />}
         </div>
       </div>
     </div>
@@ -228,6 +234,120 @@ const TabResumen = ({ event }: { event: any }) => (
         </Section>
       )}
     </div>
+  </div>
+);
+
+// ============= TAB: RENTABILIDAD (P&L) =============
+const TabRentabilidad = ({ event, onRefresh }: { event: any; onRefresh: () => void }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [actualCost, setActualCost] = useState(Number(event.actualCost || 0));
+  const [actualRevenue, setActualRevenue] = useState(Number(event.actualRevenue || 0));
+  const [subcontractCost, setSubcontractCost] = useState(0);
+  const [subcontractCount, setSubcontractCount] = useState(0);
+
+  useEffect(() => {
+    api.get(`/subcontracts?eventId=${event.id}`).then((res: any) => {
+      const subs = res?.data || (Array.isArray(res) ? res : []);
+      setSubcontractCount(subs.length);
+      setSubcontractCost(subs.reduce((s: number, c: any) => s + Number(c.agreedAmount || 0), 0));
+    }).catch(() => {});
+  }, [event.id]);
+
+  // Cálculos automáticos de costes
+  const staffCost = (event.staff || []).reduce((sum: number, s: any) => {
+    const hours = s.startTime && s.endTime
+      ? Math.max(1, (new Date(`2000-01-01T${s.endTime}`).getTime() - new Date(`2000-01-01T${s.startTime}`).getTime()) / 3600000)
+      : 8;
+    return sum + (Number(s.hourlyRate || 15) * hours);
+  }, 0);
+
+  const incidentsCost = (event.incidents || []).reduce((sum: number, i: any) => sum + Number(i.cost || 0), 0);
+  const estimatedRevenue = Number(event.estimatedRevenue || 0);
+  const estimatedCost = Number(event.estimatedCost || 0);
+  const autoCalcCost = staffCost + incidentsCost + subcontractCost;
+  const totalCost = editMode ? actualCost : (actualCost > 0 ? actualCost : (estimatedCost || autoCalcCost));
+  const totalRevenue = editMode ? actualRevenue : (actualRevenue > 0 ? actualRevenue : estimatedRevenue);
+  const margin = totalRevenue - totalCost;
+  const marginPct = totalRevenue > 0 ? ((margin / totalRevenue) * 100) : 0;
+
+  const handleSave = async () => {
+    try {
+      await eventService.update(event.id, { actualCost, actualRevenue });
+      toast.success('Costes actualizados');
+      setEditMode(false);
+      onRefresh();
+    } catch { toast.error('Error al guardar'); }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Resumen P&L */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+          <p className="text-xs text-green-600 font-medium">Ingresos</p>
+          <p className="text-xl font-bold text-green-800">{formatCurrency(totalRevenue)}</p>
+        </div>
+        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+          <p className="text-xs text-red-600 font-medium">Costes</p>
+          <p className="text-xl font-bold text-red-800">{formatCurrency(totalCost)}</p>
+        </div>
+        <div className={`rounded-lg p-4 border ${margin >= 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-orange-50 border-orange-200'}`}>
+          <p className="text-xs font-medium" style={{ color: margin >= 0 ? '#065f46' : '#9a3412' }}>Margen</p>
+          <p className="text-xl font-bold" style={{ color: margin >= 0 ? '#065f46' : '#9a3412' }}>{formatCurrency(margin)}</p>
+        </div>
+        <div className={`rounded-lg p-4 border ${marginPct >= 20 ? 'bg-emerald-50 border-emerald-200' : marginPct >= 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'}`}>
+          <p className="text-xs font-medium text-gray-600">Margen %</p>
+          <p className="text-xl font-bold">{marginPct.toFixed(1)}%</p>
+        </div>
+      </div>
+
+      {/* Desglose de costes */}
+      <div className="bg-white border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900 text-sm">Desglose de costes</h3>
+          <button
+            onClick={() => editMode ? handleSave() : setEditMode(true)}
+            className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-1"
+          >
+            {editMode ? <><Save className="w-3 h-3" /> Guardar</> : <><Edit className="w-3 h-3" /> Editar</>}
+          </button>
+        </div>
+        <div className="divide-y">
+          <CostRow label="Personal" detail={`${event.staff?.length || 0} personas`} amount={staffCost} auto />
+          <CostRow label="Subcontrataciones" detail={`${subcontractCount} proveedor${subcontractCount !== 1 ? 'es' : ''}`} amount={subcontractCost} auto />
+          <CostRow label="Incidencias / Reparaciones" detail={`${event.incidents?.filter((i: any) => i.cost > 0).length || 0} con coste`} amount={incidentsCost} auto />
+          {estimatedCost > 0 && <CostRow label="Coste estimado (manual)" amount={estimatedCost} />}
+          {editMode && (
+            <div className="p-4 bg-blue-50 space-y-3">
+              <div>
+                <label className="text-xs text-gray-600">Ingreso real</label>
+                <input type="number" step="0.01" value={actualRevenue} onChange={e => setActualRevenue(Number(e.target.value))} className="w-full mt-1 px-3 py-2 border rounded text-sm" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-600">Coste real total</label>
+                <input type="number" step="0.01" value={actualCost} onChange={e => setActualCost(Number(e.target.value))} className="w-full mt-1 px-3 py-2 border rounded text-sm" />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Info */}
+      <p className="text-xs text-gray-400 italic">
+        Los costes de personal se calculan automáticamente (horas × tarifa). Puedes introducir el coste real total para mayor precisión.
+      </p>
+    </div>
+  );
+};
+
+const CostRow = ({ label, detail, amount, auto }: { label: string; detail?: string; amount: number; auto?: boolean }) => (
+  <div className="flex items-center justify-between px-4 py-3">
+    <div>
+      <span className="text-sm font-medium text-gray-900">{label}</span>
+      {detail && <span className="text-xs text-gray-500 ml-2">({detail})</span>}
+      {auto && <span className="text-xs text-blue-500 ml-2">auto</span>}
+    </div>
+    <span className="text-sm font-semibold text-gray-900">{formatCurrency(amount)}</span>
   </div>
 );
 
@@ -631,6 +751,93 @@ const TabDocuments = ({ event, onRefresh }: { event: any; onRefresh: () => void 
     </div>
   </div>
 );
+
+// ============= TAB: LOGÍSTICA =============
+const TabLogistica = ({ event }: { event: any }) => {
+  const [subcontracts, setSubcontracts] = useState<any[]>([]);
+  const [vehicleAssignments, setVehicleAssignments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const [subRes, vehRes]: any[] = await Promise.all([
+          api.get(`/subcontracts?eventId=${event.id}`).catch(() => ({ data: [] })),
+          api.get(`/vehicles/assignments?eventId=${event.id}`).catch(() => ({ data: [] })),
+        ]);
+        setSubcontracts(subRes?.data || (Array.isArray(subRes) ? subRes : []));
+        setVehicleAssignments(vehRes?.data || (Array.isArray(vehRes) ? vehRes : []));
+      } catch { /* ignore */ } finally { setLoading(false); }
+    };
+    load();
+  }, [event.id]);
+
+  const fmtCur = (n: number) => `${Number(n).toLocaleString('es-ES', { minimumFractionDigits: 2 })} €`;
+  const totalSubcontracts = subcontracts.reduce((s, c) => s + Number(c.agreedAmount || 0), 0);
+
+  if (loading) return <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin" /></div>;
+
+  return (
+    <div className="space-y-6">
+      {/* Subcontrataciones */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-gray-900 text-sm">Subcontrataciones ({subcontracts.length})</h3>
+          <Link to={`/admin/subcontracts?eventId=${event.id}`} className="text-xs text-blue-600 hover:underline">Gestionar →</Link>
+        </div>
+        {subcontracts.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center py-4">Sin subcontrataciones vinculadas</p>
+        ) : (
+          <div className="space-y-2">
+            {subcontracts.map((s: any) => (
+              <div key={s.id} className="flex items-center justify-between p-3 bg-white border rounded-lg">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{s.supplierName}</p>
+                  <p className="text-xs text-gray-400">{s.category || 'General'} · {s.description?.substring(0, 60)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{fmtCur(Number(s.agreedAmount))}</p>
+                  <p className={`text-xs ${Number(s.paidAmount) >= Number(s.agreedAmount) ? 'text-green-600' : 'text-orange-500'}`}>
+                    Pagado: {fmtCur(Number(s.paidAmount || 0))}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div className="text-right text-sm font-bold text-gray-700 pt-1">Total subcontrataciones: {fmtCur(totalSubcontracts)}</div>
+          </div>
+        )}
+      </div>
+
+      {/* Asignaciones de vehículos */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-gray-900 text-sm">Vehículos asignados ({vehicleAssignments.length})</h3>
+          <Link to="/admin/vehicle-calendar" className="text-xs text-blue-600 hover:underline">Calendario →</Link>
+        </div>
+        {vehicleAssignments.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center py-4">Sin vehículos asignados</p>
+        ) : (
+          <div className="space-y-2">
+            {vehicleAssignments.map((va: any) => (
+              <div key={va.id} className="flex items-center gap-3 p-3 bg-white border rounded-lg">
+                <Truck className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">{va.vehicle?.plate || va.vehicleId}</p>
+                  <p className="text-xs text-gray-400">
+                    {va.purpose || 'General'} · {va.driverName || 'Sin conductor'}
+                    {va.startDate && ` · ${new Date(va.startDate).toLocaleDateString('es-ES')}`}
+                    {va.endDate && ` → ${new Date(va.endDate).toLocaleDateString('es-ES')}`}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 // ============= HELPERS =============
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (

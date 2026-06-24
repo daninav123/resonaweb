@@ -7,7 +7,7 @@ const TrustBar = () => {
         <div className="flex items-center justify-center gap-4 sm:gap-8 py-2 text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
           <div className="flex items-center gap-1.5 text-gray-700">
             <Truck className="w-4 h-4 text-green-600 flex-shrink-0" />
-            <span className="font-medium">Entrega gratis Valencia</span>
+            <span className="font-medium">Montaje y desmontaje incluido</span>
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-gray-700">
             <Shield className="w-4 h-4 text-blue-600 flex-shrink-0" />

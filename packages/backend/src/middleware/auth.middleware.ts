@@ -75,8 +75,21 @@ export const authenticate = async (
 
     next();
   } catch (error: any) {
-    secureLog.error('Error en auth middleware', error);
-    
+    // Token expirado / inválido no es un error del servidor — es flujo normal (sesión caducada).
+    // Solo loguea como error si es algo inesperado (500 real).
+    const isExpectedAuthError =
+      error instanceof AppError ||
+      error?.name === 'JsonWebTokenError' ||
+      error?.name === 'TokenExpiredError' ||
+      error?.message?.includes('jwt') ||
+      error?.message?.includes('token');
+
+    if (isExpectedAuthError) {
+      secureLog.warn('Auth rechazada', { reason: error.message });
+    } else {
+      secureLog.error('Error en auth middleware', error);
+    }
+
     if (error instanceof AppError) {
       next(error);
     } else {
@@ -86,7 +99,27 @@ export const authenticate = async (
 };
 
 /**
- * Middleware to authorize based on user roles
+ * Obtener todos los roles efectivos de un usuario (rol principal + adicionales)
+ */
+export const getAllUserRoles = (user: { role: string; additionalRoles?: string[] }): string[] => {
+  const roles = new Set<string>();
+  roles.add(user.role);
+  if (user.additionalRoles && Array.isArray(user.additionalRoles)) {
+    user.additionalRoles.forEach(r => roles.add(r));
+  }
+  return Array.from(roles);
+};
+
+/**
+ * Comprobar si un usuario tiene al menos uno de los roles indicados
+ */
+export const userHasRole = (user: { role: string; additionalRoles?: string[] }, ...roles: string[]): boolean => {
+  const allRoles = getAllUserRoles(user);
+  return roles.some(r => allRoles.includes(r));
+};
+
+/**
+ * Middleware to authorize based on user roles (checks role + additionalRoles)
  */
 export const authorize = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -94,13 +127,21 @@ export const authorize = (...roles: string[]) => {
       return next(new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED'));
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (!userHasRole(req.user, ...roles)) {
       return next(new AppError(403, 'No tienes permisos para acceder a este recurso', 'FORBIDDEN'));
     }
 
     next();
   };
 };
+
+// Helpers de autorización por área
+export const authorizeAdmin = () => authorize('SUPERADMIN', 'ADMIN');
+export const authorizeSales = () => authorize('SUPERADMIN', 'ADMIN', 'COMMERCIAL');
+export const authorizeWarehouse = () => authorize('SUPERADMIN', 'ADMIN', 'WAREHOUSE');
+export const authorizeOperations = () => authorize('SUPERADMIN', 'ADMIN', 'TECHNICIAN', 'WAREHOUSE');
+export const authorizeFinance = () => authorize('SUPERADMIN', 'ADMIN', 'ACCOUNTANT');
+export const authorizeAnyStaff = () => authorize('SUPERADMIN', 'ADMIN', 'COMMERCIAL', 'WAREHOUSE', 'TECHNICIAN', 'ACCOUNTANT');
 
 /**
  * Middleware to optionally authenticate (for public routes that may have authenticated users)

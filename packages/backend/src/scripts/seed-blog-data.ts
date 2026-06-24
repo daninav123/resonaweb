@@ -281,7 +281,7 @@ En ReSona Events te asesoramos en todo el proceso para evitar estos errores.
     const createdPosts = await Promise.all(
       blogPosts.map((post) =>
         prisma.blogPost.create({
-          data: post,
+          data: post as any,
         })
       )
     );

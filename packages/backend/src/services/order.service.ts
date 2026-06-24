@@ -471,67 +471,38 @@ export class OrderService {
 
       // Si userId está presente, usar findFirst (permite múltiples condiciones)
       // Si no, usar findUnique (más eficiente para búsqueda por id solo)
+      const orderInclude = {
+        items: {
+          include: {
+            product: {
+              include: {
+                category: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+          },
+        },
+        payment: true,
+        invoice: true,
+        event: { select: { id: true, eventNumber: true, phase: true, name: true } },
+        installments: {
+          orderBy: {
+            installmentNumber: 'asc' as const,
+          },
+        },
+      };
+
       const order = userId 
-        ? await prisma.order.findFirst({
-            where,
-            include: {
-              items: {
-                include: {
-                  product: {
-                    include: {
-                      category: true,
-                    },
-                  },
-                },
-              },
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  firstName: true,
-                  lastName: true,
-                  phone: true,
-                },
-              },
-              payment: true,
-              invoice: true,
-              installments: {
-                orderBy: {
-                  installmentNumber: 'asc'
-                }
-              },
-            },
-          })
-        : await prisma.order.findUnique({
-            where: { id: orderId },
-            include: {
-              items: {
-                include: {
-                  product: {
-                    include: {
-                      category: true,
-                    },
-                  },
-                },
-              },
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  firstName: true,
-                  lastName: true,
-                  phone: true,
-                },
-              },
-              payment: true,
-              invoice: true,
-              installments: {
-                orderBy: {
-                  installmentNumber: 'asc'
-                }
-              },
-            },
-          });
+        ? await prisma.order.findFirst({ where, include: orderInclude })
+        : await prisma.order.findUnique({ where: { id: orderId }, include: orderInclude });
 
       if (!order) {
         throw new AppError(404, 'Pedido no encontrado', 'ORDER_NOT_FOUND');
@@ -736,6 +707,28 @@ export class OrderService {
           }
         }
       });
+
+      // Cancelar evento vinculado si existe
+      try {
+        const linkedEvent = await prisma.event.findUnique({ where: { orderId } });
+        if (linkedEvent && linkedEvent.phase !== 'CLOSED') {
+          await prisma.event.update({ where: { id: linkedEvent.id }, data: { phase: 'CLOSED', closedAt: new Date(), technicalNotes: `${linkedEvent.technicalNotes || ''}\n[CANCELADO] Pedido cancelado el ${new Date().toLocaleDateString('es-ES')}`.trim() } });
+          logger.info(`[cancelOrder] Evento ${linkedEvent.eventNumber} cerrado por cancelación de pedido`);
+        }
+      } catch (evErr: any) {
+        logger.warn(`[cancelOrder] No se pudo cancelar evento vinculado: ${evErr.message}`);
+      }
+
+      // Cancelar contrato vinculado si existe
+      try {
+        const linkedContract = await prisma.contract.findFirst({ where: { orderId } });
+        if (linkedContract && linkedContract.status !== 'cancelled') {
+          await prisma.contract.update({ where: { id: linkedContract.id }, data: { status: 'cancelled' } });
+          logger.info(`[cancelOrder] Contrato ${linkedContract.contractNumber} cancelado`);
+        }
+      } catch (ctErr: any) {
+        logger.warn(`[cancelOrder] No se pudo cancelar contrato vinculado: ${ctErr.message}`);
+      }
 
       logger.info(`Order ${orderId} cancelled${reason ? ` with reason: ${reason}` : ''}`);
 

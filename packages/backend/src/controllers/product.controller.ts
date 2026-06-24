@@ -94,8 +94,16 @@ export class ProductController {
           }
         });
         
+        // Pack no tiene pricePerDay → remapear a finalPrice (el equivalente)
+        const packOrderBy: any = (() => {
+          const key = Object.keys(orderBy)[0];
+          if (key === 'pricePerDay') return { finalPrice: orderBy[key] };
+          if (key === 'viewCount') return { createdAt: 'desc' }; // Pack no tiene viewCount
+          return orderBy;
+        })();
+
         const packs = await prisma.pack.findMany({
-          where: { 
+          where: {
             isActive: true,
             // IMPORTANTE: Solo mostrar packs con categoryId de "Packs"
             // Esto excluye montajes y otros tipos de packs
@@ -103,7 +111,7 @@ export class ProductController {
           },
           skip,
           take: limit,
-          orderBy: orderBy === 'createdAt' ? { createdAt: 'desc' } : orderBy,
+          orderBy: packOrderBy,
           include: {
             categoryRef: true, // Incluir referencia a categoría
             items: {

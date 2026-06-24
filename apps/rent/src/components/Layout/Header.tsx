@@ -286,13 +286,13 @@ const Header = () => {
             </li>
             <li className="md:ml-auto">
               <a
-                href="https://resonarent.com"
+                href="https://resonaevents.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block py-2 md:py-3 text-xs text-gray-500 hover:text-resona transition-colors italic"
                 title="Si buscas que organicemos tu evento completo con montaje"
               >
-                ¿Evento completo? → ReSona Rent
+                ¿Evento completo? → ReSona Events
               </a>
             </li>
             {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') && (

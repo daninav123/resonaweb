@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../services/api';
 import { invoiceService } from '../../services/invoice.service';
@@ -9,6 +9,7 @@ import { Package, User, Calendar, MapPin, CreditCard, Truck, ArrowLeft, Download
 import toast from 'react-hot-toast';
 import { canDownloadInvoice, getDocumentAction } from '../../utils/invoiceHelper';
 import { QRCodeSVG } from 'qrcode.react';
+import { StatusModal, EditModal, CancelModal, ReturnModal, DepositModal, QRModal } from '../../components/orders/OrderDetailModals';
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -31,6 +32,38 @@ const OrderDetailPage = () => {
   const [editData, setEditData] = useState<any>({});
   const [returnNotes, setReturnNotes] = useState('');
   const [returnCondition, setReturnCondition] = useState<'PERFECT' | 'GOOD' | 'DAMAGED'>('GOOD');
+  const [creatingEvent, setCreatingEvent] = useState(false);
+  const [creatingContract, setCreatingContract] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCreateEvent = async () => {
+    if (!id) return;
+    try {
+      setCreatingEvent(true);
+      const res: any = await api.post(`/events/from-order/${id}`);
+      const eventId = res?.id || res?.data?.id;
+      toast.success('Evento creado desde pedido');
+      if (eventId) navigate(`/admin/events/${eventId}`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Error al crear evento');
+    } finally {
+      setCreatingEvent(false);
+    }
+  };
+
+  const handleCreateContract = async () => {
+    if (!id) return;
+    try {
+      setCreatingContract(true);
+      await api.post(`/contracts-mgmt/from-order/${id}`);
+      queryClient.invalidateQueries({ queryKey: ['order-contract', id] });
+      toast.success('Contrato generado. Ve a Documentos > Contratos para revisarlo.');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Error al crear contrato');
+    } finally {
+      setCreatingContract(false);
+    }
+  };
 
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['admin-order-detail', id],
@@ -38,6 +71,17 @@ const OrderDetailPage = () => {
       const response: any = await api.get(`/orders/${id}`);
       return response;
     },
+  });
+
+  // Buscar contrato vinculado
+  const { data: linkedContract } = useQuery({
+    queryKey: ['order-contract', id, order?.orderNumber],
+    queryFn: async () => {
+      const res: any = await api.get('/contracts-mgmt?limit=200');
+      const contracts = res?.data || [];
+      return contracts.find((c: any) => c.orderId === id || c.budgetRef === order?.orderNumber) || null;
+    },
+    enabled: !!order,
   });
 
   // Función auxiliar para cerrar modal de estado
@@ -49,7 +93,6 @@ const OrderDetailPage = () => {
   // Mutation para cambiar estado
   const updateStatusMutation = useMutation({
     mutationFn: async (status: string) => {
-      console.log('📤 Enviando actualización de estado:', status);
       return await api.patch(`/orders/${id}/status`, { status });
     },
     onSuccess: () => {
@@ -181,16 +224,12 @@ const OrderDetailPage = () => {
       
       // Generate invoice
       const response: any = await invoiceService.generateInvoice(id!);
-      console.log('📄 Respuesta de generar factura:', response);
-      
       // Extraer el invoice de la respuesta
       const invoice = response?.invoice || response;
       
       if (!invoice || !invoice.id) {
         throw new Error('No se pudo generar la factura');
       }
-      
-      console.log('📄 Factura ID:', invoice.id);
       
       // Download PDF
       const blob = await invoiceService.downloadInvoice(invoice.id);
@@ -358,14 +397,6 @@ const OrderDetailPage = () => {
 
   const badge = getStatusBadge(order.status);
 
-  // Debug: Ver el estado de la fianza
-  console.log('🔍 Estado de Fianza:', {
-    depositAmount: order.depositAmount,
-    depositStatus: order.depositStatus,
-    showCobrarButton: order.depositAmount > 0 && (order.depositStatus === 'PENDING' || order.depositStatus === 'AUTHORIZED'),
-    showDevolverButton: order.depositAmount > 0 && (order.depositStatus === 'CAPTURED' || order.depositStatus === 'AUTHORIZED')
-  });
-
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -497,6 +528,49 @@ const OrderDetailPage = () => {
               {cancelOrderMutation.isPending ? 'Cancelando...' : 'Cancelar'}
             </button>
           </div>
+
+          {/* Flujo integrado: Conversiones */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wide">Flujo integrado</p>
+            <div className="flex flex-wrap gap-2">
+              {order.event ? (
+                <Link
+                  to={`/admin/events/${order.event.id}`}
+                  className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition flex items-center gap-2 text-sm font-medium"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Ver Evento {order.event.eventNumber}
+                </Link>
+              ) : (
+                <button
+                  onClick={handleCreateEvent}
+                  disabled={creatingEvent || order.status === 'CANCELLED'}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
+                >
+                  {creatingEvent ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+                  Crear Evento
+                </button>
+              )}
+              {linkedContract ? (
+                <Link
+                  to="/admin/contracts"
+                  className="px-4 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition flex items-center gap-2 text-sm font-medium"
+                >
+                  <FileText className="w-4 h-4" />
+                  Ver Contrato {linkedContract.contractNumber}
+                </Link>
+              ) : (
+                <button
+                  onClick={handleCreateContract}
+                  disabled={creatingContract || order.status === 'CANCELLED'}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
+                >
+                  {creatingContract ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                  Generar Contrato
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -536,8 +610,6 @@ const OrderDetailPage = () => {
               </h2>
               <div className="space-y-4">
                 {order.items?.map((item: any) => {
-                  console.log('🔍 Item en OrderDetailPage:', item);
-                  console.log('🔍 Item.eventMetadata:', item.eventMetadata);
                   return (
                   <div key={item.id} className="border-b pb-4 last:border-0">
                     {/* Información básica del item */}
@@ -902,411 +974,61 @@ const OrderDetailPage = () => {
           </div>
         </div>
 
-        {/* Modal para cambiar estado */}
-        {showStatusModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold mb-4">Cambiar Estado del Pedido</h3>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nuevo Estado
-                </label>
-                <select
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Selecciona un estado</option>
-                  <option value="PENDING">Pendiente</option>
-                  <option value="IN_PROGRESS">En Proceso</option>
-                  <option value="COMPLETED">Completado</option>
-                  <option value="CANCELLED">Cancelado</option>
-                </select>
-              </div>
+        <StatusModal
+          show={showStatusModal}
+          newStatus={newStatus}
+          setNewStatus={setNewStatus}
+          onClose={handleCloseStatusModal}
+          onConfirm={handleChangeStatus}
+          isPending={updateStatusMutation.isPending}
+        />
 
-              <div className="flex gap-3">
-                <button
-                  onClick={handleCloseStatusModal}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleChangeStatus}
-                  disabled={!newStatus || updateStatusMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {updateStatusMutation.isPending ? 'Actualizando...' : 'Confirmar'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <EditModal
+          show={showEditModal}
+          editData={editData}
+          setEditData={setEditData}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleSaveEdit}
+        />
 
-        {/* Modal para editar pedido */}
-        {showEditModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold mb-4">Editar Pedido</h3>
-              
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas del Cliente
-                  </label>
-                  <textarea
-                    value={editData.notes || ''}
-                    onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Notas visibles para el cliente..."
-                  />
-                </div>
+        <CancelModal
+          show={showCancelModal}
+          cancelReason={cancelReason}
+          setCancelReason={setCancelReason}
+          onClose={() => setShowCancelModal(false)}
+          onConfirm={handleCancelOrder}
+          isPending={cancelOrderMutation.isPending}
+        />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas Internas (Admin)
-                  </label>
-                  <textarea
-                    value={editData.internalNotes || ''}
-                    onChange={(e) => setEditData({ ...editData, internalNotes: e.target.value })}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Notas internas solo para administradores..."
-                  />
-                </div>
-              </div>
+        <ReturnModal
+          show={showReturnModal}
+          returnNotes={returnNotes}
+          setReturnNotes={setReturnNotes}
+          returnCondition={returnCondition}
+          setReturnCondition={setReturnCondition}
+          onClose={() => setShowReturnModal(false)}
+          onConfirm={handleMarkAsReturned}
+          isPending={markAsReturnedMutation.isPending}
+        />
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditData({});
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSaveEdit}
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                >
-                  Guardar Cambios
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <DepositModal
+          show={showDepositModal}
+          depositAction={depositAction}
+          depositAmount={Number(order.depositAmount)}
+          depositRetainedAmount={depositRetainedAmount}
+          setDepositRetainedAmount={setDepositRetainedAmount}
+          depositNotes={depositNotes}
+          setDepositNotes={setDepositNotes}
+          onClose={() => setShowDepositModal(false)}
+          onConfirm={() => depositMutation.mutate()}
+          isPending={depositMutation.isPending}
+        />
 
-        {/* Modal para cancelar pedido con razón */}
-        {showCancelModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold mb-4 text-red-600">Cancelar Pedido</h3>
-              
-              <div className="mb-6">
-                <p className="text-gray-600 mb-4">
-                  Esta acción <strong>no se puede deshacer</strong>. Por favor indica el motivo de la cancelación.
-                </p>
-                
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Motivo de Cancelación <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
-                  rows={4}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
-                  placeholder="Ej: Cliente solicitó cancelación, Error en el pedido, etc."
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowCancelModal(false);
-                    setCancelReason('');
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Volver
-                </button>
-                <button
-                  data-testid="confirm-cancel"
-                  onClick={handleCancelOrder}
-                  disabled={!cancelReason.trim() || cancelOrderMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {cancelOrderMutation.isPending ? 'Cancelando...' : 'Confirmar Cancelación'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal para marcar como devuelto */}
-        {showReturnModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold mb-4 text-teal-600">Marcar Devolución</h3>
-              
-              <div className="mb-6 space-y-4">
-                <p className="text-gray-600">
-                  Confirma la devolución del material. El stock se actualizará automáticamente.
-                </p>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Estado del Material <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={returnCondition}
-                    onChange={(e) => setReturnCondition(e.target.value as any)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                  >
-                    <option value="PERFECT">Perfecto Estado</option>
-                    <option value="GOOD">Buen Estado (normal)</option>
-                    <option value="DAMAGED">Dañado</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas de Devolución <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    value={returnNotes}
-                    onChange={(e) => setReturnNotes(e.target.value)}
-                    rows={4}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                    placeholder="Describe el estado del material, observaciones, etc..."
-                  />
-                </div>
-
-                {returnCondition === 'DAMAGED' && (
-                  <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded">
-                    <p className="text-sm text-red-800">
-                      ⚠️ Material dañado: La fianza podría retenerse parcial o totalmente.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowReturnModal(false);
-                    setReturnNotes('');
-                    setReturnCondition('GOOD');
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleMarkAsReturned}
-                  disabled={!returnNotes.trim() || markAsReturnedMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {markAsReturnedMutation.isPending ? 'Procesando...' : 'Confirmar Devolución'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal para gestionar fianza */}
-        {showDepositModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold mb-4 text-yellow-600">
-                {depositAction === 'capture' ? '💰 Cobrar Fianza' : '↩️ Devolver Fianza'}
-              </h3>
-              
-              <div className="mb-6 space-y-4">
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                  <p className="text-sm text-blue-800">
-                    <strong>Importe de la fianza:</strong> €{Number(order.depositAmount).toFixed(2)}
-                  </p>
-                </div>
-
-                {depositAction === 'release' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Importe Retenido (opcional)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max={Number(order.depositAmount)}
-                      step="0.01"
-                      value={depositRetainedAmount}
-                      onChange={(e) => setDepositRetainedAmount(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                      placeholder="0.00"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Dejar en 0 para devolver la fianza completa
-                    </p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas (opcional)
-                  </label>
-                  <textarea
-                    value={depositNotes}
-                    onChange={(e) => setDepositNotes(e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                    placeholder={
-                      depositAction === 'capture' 
-                        ? 'Motivo del cobro de fianza (opcional)...' 
-                        : 'Describe el estado del material, daños si aplica...'
-                    }
-                  />
-                </div>
-
-                {depositAction === 'release' && depositRetainedAmount > 0 && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded">
-                    <p className="text-sm text-yellow-800">
-                      <strong>⚠️ Retención parcial:</strong><br/>
-                      Retenido: €{depositRetainedAmount.toFixed(2)}<br/>
-                      A devolver: €{(Number(order.depositAmount) - depositRetainedAmount).toFixed(2)}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowDepositModal(false);
-                    setDepositNotes('');
-                    setDepositRetainedAmount(0);
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => depositMutation.mutate()}
-                  disabled={depositMutation.isPending}
-                  className={`flex-1 px-4 py-2 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${
-                    depositAction === 'capture' 
-                      ? 'bg-yellow-600 hover:bg-yellow-700' 
-                      : 'bg-green-600 hover:bg-green-700'
-                  }`}
-                >
-                  {depositMutation.isPending ? 'Procesando...' : 
-                    depositAction === 'capture' ? 'Generar Terminal de Cobro' : 'Confirmar Devolución'
-                  }
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal de Código QR */}
-        {showQRModal && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowQRModal(false)}
-          >
-            <div 
-              className="bg-white rounded-lg max-w-md w-full p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Smartphone className="w-5 h-5" />
-                    Terminal de Cobro
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Escanea para usar Tap to Pay
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowQRModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Código QR */}
-              <div className="flex justify-center items-center bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border-2 border-blue-200">
-                <QRCodeSVG 
-                  value={paymentLinkQR} 
-                  size={280}
-                  level="H"
-                  includeMargin={true}
-                />
-              </div>
-
-              {/* Instrucciones */}
-              <div className="mt-6 space-y-3">
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                  <p className="text-sm text-blue-800">
-                    <strong>📱 Paso 1:</strong> Escanea el QR con tu móvil
-                  </p>
-                </div>
-                <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
-                  <p className="text-sm text-green-800">
-                    <strong>🔓 Paso 2:</strong> Inicia sesión si pide
-                  </p>
-                </div>
-                <div className="bg-purple-50 border-l-4 border-purple-500 p-3 rounded">
-                  <p className="text-sm text-purple-800">
-                    <strong>💳 Paso 3:</strong> Tap en "Cobrar con Tap to Pay"
-                  </p>
-                </div>
-                <div className="bg-orange-50 border-l-4 border-orange-500 p-3 rounded">
-                  <p className="text-sm text-orange-800">
-                    <strong>👋 Paso 4:</strong> Cliente acerca su tarjeta → ✅ Cobrado
-                  </p>
-                </div>
-              </div>
-
-              {/* Botón para abrir en el navegador */}
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => window.open(paymentLinkQR, '_blank')}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
-                >
-                  Abrir en Nueva Pestaña
-                </button>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(paymentLinkQR);
-                    toast.success('Link copiado al portapapeles');
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
-                >
-                  Copiar Link
-                </button>
-              </div>
-
-              {/* Nota sobre Tap to Pay */}
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                💡 Asegúrate de tener NFC activado en tu móvil para usar Tap to Pay
-              </p>
-
-              {/* Botón de cerrar */}
-              <button
-                onClick={() => setShowQRModal(false)}
-                className="w-full mt-4 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        )}
+        <QRModal
+          show={showQRModal}
+          paymentLinkQR={paymentLinkQR}
+          onClose={() => setShowQRModal(false)}
+        />
       </div>
     </div>
   );

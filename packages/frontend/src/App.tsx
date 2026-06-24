@@ -27,6 +27,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const CheckoutPageStripe = lazy(() => import('./pages/CheckoutPageStripe'));
 const CheckoutPageRedsys = lazy(() => import('./pages/CheckoutPageRedsys'));
 const ManualPaymentInstructionsPage = lazy(() => import('./pages/ManualPaymentInstructionsPage'));
+const PaymentTokenPage = lazy(() => import('./pages/PaymentTokenPage'));
 const PaymentSuccessPage = lazy(() => import('./pages/checkout/PaymentSuccessPage'));
 const PaymentErrorPage = lazy(() => import('./pages/checkout/PaymentErrorPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
@@ -61,16 +62,17 @@ const ManualInvoicePage = lazy(() => import('./pages/admin/ManualInvoicePage'));
 const InvoicesListPage = lazy(() => import('./pages/admin/InvoicesListPage'));
 const ShippingConfigPage = lazy(() => import('./pages/admin/ShippingConfigPage'));
 const UsersManager = lazy(() => import('./pages/admin/UsersManager'));
-const CalendarManager = lazy(() => import('./pages/admin/CalendarManager'));
+const RolePermissionsManager = lazy(() => import('./pages/admin/RolePermissionsManager'));
+const CalendarPage = lazy(() => import('./pages/admin/CalendarPage'));
 const SettingsManager = lazy(() => import('./pages/admin/SettingsManager'));
 const CategoriesManager = lazy(() => import('./pages/admin/CategoriesManager'));
-const StockAlerts = lazy(() => import('./pages/admin/StockAlerts'));
+const StockPage = lazy(() => import('./pages/admin/StockPage'));
 const CalculatorManager = lazy(() => import('./pages/admin/CalculatorManager'));
 const BackupManager = lazy(() => import('./pages/admin/BackupManager'));
 const CouponsManager = lazy(() => import('./pages/admin/CouponsManager'));
-const StockManager = lazy(() => import('./pages/admin/StockManager'));
 const InventoryManager = lazy(() => import('./pages/admin/InventoryManager'));
 const AdminQuoteRequestsPage = lazy(() => import('./pages/admin/QuoteRequestsManager'));
+const CreateQuotePage = lazy(() => import('./pages/admin/CreateQuotePage'));
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/public/BlogPostPage'));
 const CompanySettingsPage = lazy(() => import('./pages/admin/CompanySettingsPage'));
@@ -79,7 +81,6 @@ const PacksManager = lazy(() => import('./pages/admin/PacksManager'));
 const PersonalManager = lazy(() => import('./pages/admin/PersonnelProductsManager'));
 const MontajesManager = lazy(() => import('./pages/admin/MontajesManager'));
 const ExtraCategoriesManager = lazy(() => import('./pages/admin/ExtraCategoriesManager'));
-const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
 const PurchaseLotsManager = lazy(() => import('./pages/admin/PurchaseLotsManager'));
 const ContabilidadManager = lazy(() => import('./pages/admin/ContabilidadTabs'));
@@ -87,12 +88,29 @@ const EventsManager = lazy(() => import('./pages/admin/EventsManager'));
 const EventDetailPage = lazy(() => import('./pages/admin/EventDetailPage'));
 const CRMPage = lazy(() => import('./pages/admin/CRMPage'));
 const CRMDetailPage = lazy(() => import('./pages/admin/CRMDetailPage'));
-const ResourceCalendar = lazy(() => import('./pages/admin/ResourceCalendar'));
-const StaffHRManager = lazy(() => import('./pages/admin/StaffManager'));
+const StaffHRManager = lazy(() => import('./pages/admin/StaffPage'));
 const ContractsManager = lazy(() => import('./pages/admin/ContractsManager'));
 const VehiclesManager = lazy(() => import('./pages/admin/VehiclesManager'));
 const WarehouseManager = lazy(() => import('./pages/admin/WarehouseManager'));
-const RecurringExpensesManager = lazy(() => import('./pages/admin/RecurringExpensesManager'));
+const EquipmentAvailabilityPage = lazy(() => import('./pages/admin/EquipmentAvailabilityPage'));
+const MaterialCheckPage = lazy(() => import('./pages/admin/MaterialCheckPage'));
+const LoadingSheetPage = lazy(() => import('./pages/admin/LoadingSheetPage'));
+const NotificationsManager = lazy(() => import('./pages/admin/NotificationsManager'));
+const ReportsPage = lazy(() => import('./pages/admin/ReportsPage'));
+const PickingListPage = lazy(() => import('./pages/admin/PickingListPage'));
+const PipelinePage = lazy(() => import('./pages/admin/PipelinePage'));
+const EventTemplatesManager = lazy(() => import('./pages/admin/EventTemplatesManager'));
+const SuppliersManager = lazy(() => import('./pages/admin/SuppliersManager'));
+const MaintenanceManager = lazy(() => import('./pages/admin/MaintenanceManager'));
+const VehicleCalendarPage = lazy(() => import('./pages/admin/VehicleCalendarPage'));
+const CommissionsManager = lazy(() => import('./pages/admin/CommissionsManager'));
+const SubcontractsManager = lazy(() => import('./pages/admin/SubcontractsManager'));
+const FiscalAccountingPage = lazy(() => import('./pages/admin/FiscalAccountingPage'));
+const ClientPortalPage = lazy(() => import('./pages/admin/ClientPortalPage'));
+const TechMobileView = lazy(() => import('./pages/admin/TechMobileView'));
+const RoleDashboardPage = lazy(() => import('./pages/admin/RoleDashboardPage'));
+const EmailMarketingPage = lazy(() => import('./pages/admin/EmailMarketingPage'));
+const PortfolioManager = lazy(() => import('./pages/admin/PortfolioManager'));
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
@@ -272,6 +290,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             
+            {/* Public payment link */}
+            <Route path="/pagar/:token" element={<PaymentTokenPage />} />
+
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
@@ -313,29 +334,29 @@ function App() {
               <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
               <Route path="/admin/products" element={<AdminLayout><ProductsManager /></AdminLayout>} />
               <Route path="/admin/categories" element={<AdminLayout><CategoriesManager /></AdminLayout>} />
-              <Route path="/admin/stock-alerts" element={<AdminLayout><StockAlerts /></AdminLayout>} />
               <Route path="/admin/orders" element={<AdminLayout><OrdersManager /></AdminLayout>} />
               <Route path="/admin/orders/:id" element={<AdminLayout><OrderDetailPage /></AdminLayout>} />
               <Route path="/admin/refunds" element={<AdminLayout><RefundsPage /></AdminLayout>} />
               <Route path="/admin/invoices" element={<AdminLayout><InvoicesListPage /></AdminLayout>} />
               <Route path="/admin/invoices/manual" element={<AdminLayout><ManualInvoicePage /></AdminLayout>} />
               <Route path="/admin/users" element={<AdminLayout><UsersManager /></AdminLayout>} />
+              <Route path="/admin/roles" element={<AdminLayout><RolePermissionsManager /></AdminLayout>} />
               <Route path="/admin/company-settings" element={<AdminLayout><CompanySettingsPage /></AdminLayout>} />
-              <Route path="/admin/calendar" element={<AdminLayout><CalendarManager /></AdminLayout>} />
+              <Route path="/admin/calendar" element={<AdminLayout><CalendarPage /></AdminLayout>} />
               <Route path="/admin/blog" element={<AdminLayout><BlogManager /></AdminLayout>} />
               <Route path="/admin/backups" element={<AdminLayout><BackupManager /></AdminLayout>} />
               <Route path="/admin/calculator" element={<AdminLayout><CalculatorManager /></AdminLayout>} />
               <Route path="/admin/extra-categories" element={<AdminLayout><ExtraCategoriesManager /></AdminLayout>} />
               <Route path="/admin/coupons" element={<AdminLayout><CouponsManager /></AdminLayout>} />
-              <Route path="/admin/stock" element={<AdminLayout><StockManager /></AdminLayout>} />
+              <Route path="/admin/stock" element={<AdminLayout><StockPage /></AdminLayout>} />
               <Route path="/admin/inventory" element={<AdminLayout><InventoryManager /></AdminLayout>} />
               <Route path="/admin/quote-requests" element={<AdminLayout><AdminQuoteRequestsPage /></AdminLayout>} />
+              <Route path="/admin/quote-requests/new" element={<AdminLayout><CreateQuotePage /></AdminLayout>} />
               <Route path="/admin/settings" element={<AdminLayout><SettingsManager /></AdminLayout>} />
               <Route path="/admin/shipping-config" element={<AdminLayout><ShippingConfigPage /></AdminLayout>} />
               <Route path="/admin/packs" element={<AdminLayout><PacksManager /></AdminLayout>} />
               <Route path="/admin/personal" element={<AdminLayout><PersonalManager /></AdminLayout>} />
               <Route path="/admin/montajes" element={<AdminLayout><MontajesManager /></AdminLayout>} />
-              <Route path="/admin/analytics" element={<AdminLayout><AnalyticsPage /></AdminLayout>} />
               <Route path="/admin/statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
               <Route path="/admin/contabilidad" element={<AdminLayout><ContabilidadManager /></AdminLayout>} />
               <Route path="/admin/purchase-lots" element={<AdminLayout><PurchaseLotsManager /></AdminLayout>} />
@@ -343,12 +364,29 @@ function App() {
               <Route path="/admin/events/:id" element={<AdminLayout><EventDetailPage /></AdminLayout>} />
               <Route path="/admin/crm" element={<AdminLayout><CRMPage /></AdminLayout>} />
               <Route path="/admin/crm/:id" element={<AdminLayout><CRMDetailPage /></AdminLayout>} />
-              <Route path="/admin/resource-calendar" element={<AdminLayout><ResourceCalendar /></AdminLayout>} />
               <Route path="/admin/staff-hr" element={<AdminLayout><StaffHRManager /></AdminLayout>} />
               <Route path="/admin/contracts-mgmt" element={<AdminLayout><ContractsManager /></AdminLayout>} />
               <Route path="/admin/vehicles" element={<AdminLayout><VehiclesManager /></AdminLayout>} />
               <Route path="/admin/warehouse-locations" element={<AdminLayout><WarehouseManager /></AdminLayout>} />
-              <Route path="/admin/recurring-expenses" element={<AdminLayout><RecurringExpensesManager /></AdminLayout>} />
+              <Route path="/admin/equipment-availability" element={<AdminLayout><EquipmentAvailabilityPage /></AdminLayout>} />
+              <Route path="/admin/material-check" element={<AdminLayout><MaterialCheckPage /></AdminLayout>} />
+              <Route path="/admin/loading-sheets" element={<AdminLayout><LoadingSheetPage /></AdminLayout>} />
+              <Route path="/admin/notifications" element={<AdminLayout><NotificationsManager /></AdminLayout>} />
+              <Route path="/admin/reports" element={<AdminLayout><ReportsPage /></AdminLayout>} />
+              <Route path="/admin/picking-list" element={<AdminLayout><PickingListPage /></AdminLayout>} />
+              <Route path="/admin/pipeline" element={<AdminLayout><PipelinePage /></AdminLayout>} />
+              <Route path="/admin/event-templates" element={<AdminLayout><EventTemplatesManager /></AdminLayout>} />
+              <Route path="/admin/suppliers" element={<AdminLayout><SuppliersManager /></AdminLayout>} />
+              <Route path="/admin/maintenance" element={<AdminLayout><MaintenanceManager /></AdminLayout>} />
+              <Route path="/admin/vehicle-calendar" element={<AdminLayout><VehicleCalendarPage /></AdminLayout>} />
+              <Route path="/admin/commissions" element={<AdminLayout><CommissionsManager /></AdminLayout>} />
+              <Route path="/admin/subcontracts" element={<AdminLayout><SubcontractsManager /></AdminLayout>} />
+              <Route path="/admin/fiscal" element={<AdminLayout><FiscalAccountingPage /></AdminLayout>} />
+              <Route path="/admin/client-portal" element={<AdminLayout><ClientPortalPage /></AdminLayout>} />
+              <Route path="/admin/tech-view" element={<AdminLayout><TechMobileView /></AdminLayout>} />
+              <Route path="/admin/role-dashboard" element={<AdminLayout><RoleDashboardPage /></AdminLayout>} />
+              <Route path="/admin/email-marketing" element={<AdminLayout><EmailMarketingPage /></AdminLayout>} />
+              <Route path="/admin/portfolio" element={<AdminLayout><PortfolioManager /></AdminLayout>} />
               <Route path="/admin/*" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             </Route>
             

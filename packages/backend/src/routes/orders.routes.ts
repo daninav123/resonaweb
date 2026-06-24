@@ -44,11 +44,11 @@ router.delete(
 // Update order status
 router.patch('/:id/status', authenticate, orderController.updateOrderStatus.bind(orderController));
 
-// Admin routes
+// Admin routes (all staff can view orders)
 router.get(
   '/',
   authenticate,
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'COMMERCIAL', 'WAREHOUSE', 'TECHNICIAN', 'ACCOUNTANT'),
   orderController.getAllOrders.bind(orderController)
 );
 
@@ -61,14 +61,14 @@ router.get(
 router.get(
   '/upcoming',
   authenticate,
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'COMMERCIAL', 'WAREHOUSE', 'TECHNICIAN'),
   orderController.getUpcomingEvents.bind(orderController)
 );
 
 router.get(
   '/stats',
   authenticate,
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'),
   orderController.getOrderStats.bind(orderController)
 );
 

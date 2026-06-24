@@ -1,5 +1,8 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { filterMenuItems, getRoleLabel, getRoleColor, setDynamicRoleConfigs, type UserRole } from '../config/rolePermissions';
+import { api } from '../services/api';
 import { 
   Package, 
   ShoppingCart, 
@@ -31,7 +34,18 @@ import {
   Zap,
   PieChart,
   Barcode,
-  Briefcase
+  Briefcase,
+  ArrowLeftRight,
+  Bell,
+  Receipt,
+  FileSignature,
+  PenTool,
+  UserCog,
+  Warehouse,
+  ScrollText,
+  Wrench,
+  Smartphone,
+  Shield
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -52,11 +66,42 @@ interface MenuSection {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const location = useLocation();
+  const { user } = useAuthStore();
+  const userRole = (user?.role || 'CLIENT') as UserRole;
+  const additionalRoles = user?.additionalRoles || [];
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(['analytics']);
 
+  // Cargar definiciones de roles dinámicos desde la API
+  useEffect(() => {
+    const loadRoleDefinitions = async () => {
+      try {
+        const roles: any = await api.get('/role-definitions');
+        if (Array.isArray(roles) && roles.length > 0) {
+          const configs: Record<string, any> = {};
+          roles.forEach((r: any) => {
+            configs[r.name] = {
+              label: r.label,
+              description: r.description,
+              color: r.color,
+              allowedPaths: r.allowedPaths || [],
+              defaultRedirect: r.defaultRedirect || '/admin',
+            };
+          });
+          setDynamicRoleConfigs(configs);
+        }
+      } catch {
+        // Fallback a config hardcoded si falla
+      }
+    };
+    loadRoleDefinitions();
+  }, []);
+
   const isActive = (path?: string) => {
-    return path && location.pathname === path;
+    if (!path) return false;
+    if (location.pathname === path) return true;
+    if (path !== '/admin' && location.pathname.startsWith(path + '/')) return true;
+    return false;
   };
 
   const toggleSection = (section: string) => {
@@ -67,19 +112,24 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     );
   };
 
-  const menuSections: MenuSection[] = [
+  const allMenuSections: MenuSection[] = [
     {
-      title: 'Análisis y Reportes',
-      icon: BarChart4,
+      title: 'Dashboard',
+      icon: TrendingUp,
       items: [
-        { path: '/admin', icon: TrendingUp, label: 'Dashboard' },
-        { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
-        { path: '/admin/contabilidad', icon: PieChart, label: 'Contabilidad' },
-        { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
+        { path: '/admin', icon: TrendingUp, label: 'Centro de Control' },
       ]
     },
     {
-      title: 'Gestión de Productos',
+      title: 'Análisis',
+      icon: BarChart4,
+      items: [
+        { path: '/admin/statistics', icon: BarChart3, label: 'Estadísticas' },
+        { path: '/admin/contabilidad', icon: PieChart, label: 'Contabilidad' },
+      ]
+    },
+    {
+      title: 'Catálogo',
       icon: Package,
       items: [
         { path: '/admin/products', icon: Package, label: 'Productos' },
@@ -87,58 +137,105 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         { path: '/admin/personal', icon: Users, label: 'Personal' },
         { path: '/admin/montajes', icon: Truck, label: 'Montajes' },
         { path: '/admin/categories', icon: Grid, label: 'Categorías' },
-        { path: '/admin/extra-categories', icon: Layers, label: 'Categorías de Extras' },
+        { path: '/admin/extra-categories', icon: Layers, label: 'Cat. Extras' },
         { path: '/admin/calculator', icon: Calculator, label: 'Calculadora' },
       ]
     },
     {
-      title: 'Ventas y Pedidos',
+      title: 'Ventas',
       icon: ShoppingCart,
       items: [
+        { path: '/admin/pipeline', icon: Zap, label: 'Pipeline Eventos' },
         { path: '/admin/orders', icon: ShoppingCart, label: 'Pedidos' },
         { path: '/admin/crm', icon: Users, label: 'CRM Clientes' },
-        { path: '/admin/quote-requests', icon: Mail, label: 'Solicitudes de Presupuesto' },
+        { path: '/admin/client-portal', icon: Users, label: 'Portal Cliente' },
+        { path: '/admin/quote-requests', icon: Mail, label: 'Presupuestos' },
+        { path: '/admin/portfolio', icon: Grid, label: 'Portfolio' },
+        { path: '/admin/commissions', icon: DollarSign, label: 'Comisiones' },
         { path: '/admin/coupons', icon: Tag, label: 'Cupones' },
-        { path: '/admin/refunds', icon: DollarSign, label: 'Gestión de Reembolsos' },
+        { path: '/admin/refunds', icon: DollarSign, label: 'Reembolsos' },
       ]
     },
     {
       title: 'Operaciones',
       icon: Zap,
       items: [
-        { path: '/admin/events', icon: Briefcase, label: 'Gestión de Eventos' },
-        { path: '/admin/resource-calendar', icon: Calendar, label: 'Calendario Recursos' },
+        { path: '/admin/events', icon: Briefcase, label: 'Eventos' },
+        { path: '/admin/event-templates', icon: ClipboardList, label: 'Plantillas Evento' },
         { path: '/admin/calendar', icon: Calendar, label: 'Calendario' },
         { path: '/admin/staff-hr', icon: Users, label: 'Personal / RRHH' },
-        { path: '/admin/shipping-config', icon: Truck, label: 'Envío y Montaje' },
-        { path: '/admin/vehicles', icon: Truck, label: 'Flota Vehículos' },
-        { path: '/admin/stock-alerts', icon: AlertTriangle, label: 'Alertas de Stock' },
-        { path: '/admin/inventory', icon: Barcode, label: 'Inventario Unidades' },
-        { path: '/admin/warehouse-locations', icon: Grid, label: 'Almacén Ubicaciones' },
+        { path: '/admin/subcontracts', icon: FileText, label: 'Subcontrataciones' },
+        { path: '/admin/tech-view', icon: Smartphone, label: 'Vista Técnicos' },
       ]
     },
     {
-      title: 'Documentos y Facturación',
+      title: 'Logística',
+      icon: Truck,
+      items: [
+        { path: '/admin/picking-list', icon: Package, label: 'Picking List' },
+        { path: '/admin/loading-sheets', icon: ClipboardList, label: 'Hojas de Carga' },
+        { path: '/admin/material-check', icon: ArrowLeftRight, label: 'Check-in/out Material' },
+        { path: '/admin/shipping-config', icon: Wrench, label: 'Envío y Montaje' },
+        { path: '/admin/vehicles', icon: Truck, label: 'Flota Vehículos' },
+        { path: '/admin/vehicle-calendar', icon: Calendar, label: 'Calendario Vehículos' },
+      ]
+    },
+    {
+      title: 'Inventario',
+      icon: Barcode,
+      items: [
+        { path: '/admin/equipment-availability', icon: Calendar, label: 'Disponibilidad Equipos' },
+        { path: '/admin/stock', icon: Package, label: 'Stock y Alertas' },
+        { path: '/admin/inventory', icon: Barcode, label: 'Unidades / Códigos' },
+        { path: '/admin/warehouse-locations', icon: Warehouse, label: 'Almacén' },
+        { path: '/admin/maintenance', icon: Wrench, label: 'Mantenimiento' },
+        { path: '/admin/purchase-lots', icon: Box, label: 'Lotes de Compra' },
+      ]
+    },
+    {
+      title: 'Documentos',
       icon: FileText,
       items: [
-        { path: '/admin/invoices', icon: FileText, label: 'Todas las Facturas' },
-        { path: '/admin/invoices/manual', icon: FileText, label: 'Crear Factura Manual' },
-        { path: '/admin/contracts-mgmt', icon: FileText, label: 'Contratos' },
-        { path: '/admin/company-settings', icon: Building2, label: 'Datos de Facturación' },
-        { path: '/admin/recurring-expenses', icon: DollarSign, label: 'Gastos Recurrentes' },
+        { path: '/admin/invoices', icon: Receipt, label: 'Facturas' },
+        { path: '/admin/invoices/manual', icon: PenTool, label: 'Factura Manual' },
+        { path: '/admin/contracts-mgmt', icon: FileSignature, label: 'Contratos' },
+        { path: '/admin/suppliers', icon: Truck, label: 'Proveedores' },
+        { path: '/admin/fiscal', icon: Calculator, label: 'Contabilidad Fiscal' },
+        { path: '/admin/company-settings', icon: Building2, label: 'Datos Empresa' },
       ]
     },
     {
       title: 'Administración',
       icon: Settings,
       items: [
-        { path: '/admin/users', icon: Users, label: 'Usuarios' },
-        { path: '/admin/blog', icon: FileText, label: 'Blog' },
+        { path: '/admin/role-dashboard', icon: PieChart, label: 'Dashboard por Rol' },
+        { path: '/admin/reports', icon: BarChart3, label: 'Informes' },
+        { path: '/admin/email-marketing', icon: Mail, label: 'Email Marketing' },
+        { path: '/admin/notifications', icon: Bell, label: 'Notificaciones' },
+        { path: '/admin/users', icon: UserCog, label: 'Usuarios' },
+        { path: '/admin/roles', icon: Shield, label: 'Roles y Permisos' },
+        { path: '/admin/blog', icon: ScrollText, label: 'Blog' },
         { path: '/admin/backups', icon: Database, label: 'Backups' },
         { path: '/admin/settings', icon: Settings, label: 'Configuración' },
       ]
     },
   ];
+
+  const menuSections = useMemo(() => {
+    // SUPERADMIN y ADMIN ven todo el menú
+    if (userRole === 'SUPERADMIN' || userRole === 'ADMIN') {
+      return allMenuSections;
+    }
+    return allMenuSections
+      .map(section => ({
+        ...section,
+        items: filterMenuItems(section.items, userRole, additionalRoles),
+      }))
+      .filter(section => section.items.length > 0);
+  }, [userRole, additionalRoles]);
+
+  const roleLabel = getRoleLabel(userRole);
+  const roleColor = getRoleColor(userRole);
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -171,6 +268,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <div className="p-4">
             <Link to="/admin" className="block mb-4">
               <h2 className="text-2xl font-bold">Panel Admin</h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium bg-${roleColor}-500/20 text-${roleColor}-300`}>
+                  {roleLabel}
+                </span>
+                <span className="text-xs text-gray-400 truncate">{user?.firstName}</span>
+              </div>
             </Link>
             
             {/* Botón Ver Sitio Web */}

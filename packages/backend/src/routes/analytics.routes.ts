@@ -4,9 +4,9 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// All analytics routes require admin authentication
+// All analytics routes require staff authentication
 router.use(authenticate);
-router.use(authorize('ADMIN', 'SUPERADMIN'));
+router.use(authorize('ADMIN', 'SUPERADMIN', 'COMMERCIAL', 'WAREHOUSE', 'TECHNICIAN', 'ACCOUNTANT'));
 
 // Dashboard stats
 router.get('/dashboard', analyticsController.getDashboardStats);

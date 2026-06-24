@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Mail, Phone, Calendar, Users, MapPin, Package, CheckCircle, Clock, XCircle, Trash2, Eye, Plus, Calculator, X } from 'lucide-react';
 import { api } from '../../services/api';
-import { companyService } from '../../services/company.service';
-import jsPDF from 'jspdf';
+import { generateQuotePDF } from '../../utils/quotePdfGenerator';
 
 interface QuoteRequest {
   id: string;
@@ -51,6 +51,8 @@ interface QuoteSection {
 }
 
 const QuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { apiBasePath?: string }) => {
+  const qrmNavigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
@@ -105,6 +107,13 @@ const QuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { apiBasePath
     loadCategories();
     loadProducts();
   }, []);
+
+  // Redirigir a la nueva página si viene con ?create=true
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      qrmNavigate('/admin/quote-requests/new', { replace: true });
+    }
+  }, [searchParams]);
 
   const loadCategories = async () => {
     try {
@@ -456,289 +465,19 @@ const QuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { apiBasePath
     if (!confirm('¿Convertir este presupuesto en un pedido?')) return;
     
     try {
-      // Aquí deberías llamar al endpoint para crear el pedido
-      // await api.post('/orders', { ...datos del pedido });
-      alert('✅ Pedido creado correctamente');
+      const res: any = await api.post(`/quote-requests/${request.id}/convert-to-order`);
+      const orderId = res?.data?.order?.id || res?.order?.id;
+      alert(`✅ Pedido creado correctamente${orderId ? `. ID: ${orderId}` : ''}`);
       await loadQuoteRequests();
-    } catch (error) {
+      setSelectedRequest(null);
+    } catch (error: any) {
       console.error('Error creando pedido:', error);
-      alert('❌ Error al crear el pedido');
+      alert(`❌ Error al crear el pedido: ${error?.response?.data?.message || error.message || 'Error desconocido'}`);
     }
   };
 
-  // Generar PDF del presupuesto
   const generatePDF = async (request: QuoteRequest) => {
-    try {
-      // Cargar datos de la empresa
-      let companyData: any = {
-        companyName: 'Resona Events',
-        taxId: 'B-XXXXXXXX',
-        address: 'C/ Ejemplo, 123',
-        city: 'Madrid',
-        postalCode: '28000',
-        phone: '+34 XXX XXX XXX',
-        email: 'info@resonaevents.com',
-      };
-      
-      try {
-        const settings = await companyService.getSettings();
-        if (settings) {
-          companyData = settings;
-        }
-      } catch (e) {
-        console.warn('No se pudieron cargar los datos de la empresa, usando valores por defecto');
-      }
-      
-      const doc = new jsPDF();
-      
-      // Parsear datos del presupuesto
-      let pdfConcepts: Array<{name: string, price: number}> = [];
-      let pdfTitle = 'Presupuesto';
-      let pdfFooter = 'Gracias por confiar en nosotros';
-      
-      try {
-        if (request.selectedExtras && request.selectedExtras !== '[]' && request.selectedExtras !== '{}') {
-          let extras;
-          
-          // Intentar parsear el JSON
-          try {
-            extras = typeof request.selectedExtras === 'string' 
-              ? JSON.parse(request.selectedExtras) 
-              : request.selectedExtras;
-          } catch (parseError) {
-            console.warn('No se pudo parsear selectedExtras:', parseError);
-            extras = null;
-          }
-          
-          // Formato nuevo (con conceptos personalizados)
-          if (extras && extras.pdfConcepts && Array.isArray(extras.pdfConcepts) && extras.pdfConcepts.length > 0) {
-            pdfConcepts = extras.pdfConcepts;
-            pdfTitle = extras.pdfTitle || 'Presupuesto';
-            pdfFooter = extras.pdfFooter || 'Gracias por confiar en nosotros';
-          } 
-          // Formato viejo (solo productos) - array no vacío
-          else if (extras && Array.isArray(extras) && extras.length > 0) {
-            // Presupuesto viejo: usar productos directamente
-            pdfConcepts = [{
-              name: 'Servicios solicitados',
-              price: Number(request.estimatedTotal) / 1.21 // Quitar IVA porque lo calculamos después
-            }];
-          }
-          // Si no hay datos válidos, usar el total
-          else {
-            pdfConcepts = [{
-              name: 'Servicios solicitados',
-              price: Number(request.estimatedTotal || 0) / 1.21
-            }];
-          }
-        } else {
-          // Si selectedExtras está vacío o es null, usar solo el total
-          pdfConcepts = [{
-            name: 'Servicios solicitados',
-            price: Number(request.estimatedTotal || 0) / 1.21
-          }];
-        }
-      } catch (e) {
-        console.error('Error parseando extras:', e);
-        // Si falla, usar solo el total
-        pdfConcepts = [{
-          name: 'Servicios solicitados',
-          price: Number(request.estimatedTotal || 0) / 1.21
-        }];
-      }
-
-      // Header empresarial tipo factura con color corporativo #5ebbff
-      doc.setFillColor(94, 187, 255); // Color Resona
-      doc.rect(0, 0, 210, 50, 'F');
-      
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(28);
-      doc.setFont('helvetica', 'bold');
-      doc.text(companyData.companyName || 'RESONA EVENTS', 20, 25);
-      
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text('Sonido | Iluminación | Eventos', 20, 32);
-      doc.text(`CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 20, 38);
-      doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'}`, 20, 44);
-      
-      // Tipo de documento en la esquina
-      doc.setFontSize(20);
-      doc.setFont('helvetica', 'bold');
-      doc.text(pdfTitle.toUpperCase(), 190, 30, { align: 'right' });
-      
-      // Número de presupuesto
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      const presupuestoNum = `P-${request.id.substring(0, 8).toUpperCase()}`;
-      doc.text(presupuestoNum, 190, 38, { align: 'right' });
-      doc.text(new Date().toLocaleDateString('es-ES'), 190, 44, { align: 'right' });
-
-      // Información del cliente (tipo factura)
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('DATOS DEL CLIENTE:', 20, 65);
-      
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`${request.customerName || 'Cliente'}`, 20, 72);
-      if (request.customerEmail) doc.text(`Email: ${request.customerEmail}`, 20, 78);
-      if (request.customerPhone) doc.text(`Tel: ${request.customerPhone}`, 20, 84);
-      
-      // Datos del evento
-      doc.setFont('helvetica', 'bold');
-      doc.text('DATOS DEL EVENTO:', 120, 65);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Tipo: ${request.eventType || 'No especificado'}`, 120, 72);
-      if (request.eventDate) doc.text(`Fecha: ${new Date(request.eventDate).toLocaleDateString('es-ES')}`, 120, 78);
-      if (request.eventLocation) doc.text(`Lugar: ${request.eventLocation}`, 120, 84);
-
-      // Línea separadora más gruesa
-      doc.setDrawColor(100, 100, 100);
-      doc.setLineWidth(0.5);
-      doc.line(20, 95, 190, 95);
-
-      // Tabla de conceptos tipo factura
-      let yPos = 105;
-      
-      // Cabecera de tabla
-      doc.setFillColor(240, 240, 240);
-      doc.rect(20, yPos, 170, 8, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor(0, 0, 0);
-      doc.text('DESCRIPCIÓN', 25, yPos + 5);
-      doc.text('IMPORTE', 180, yPos + 5, { align: 'right' });
-      
-      yPos += 10;
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      
-      if (pdfConcepts.length > 0) {
-        pdfConcepts.forEach((concept, index) => {
-          // Fondo alternado
-          if (index % 2 === 0) {
-            doc.setFillColor(250, 250, 250);
-            doc.rect(20, yPos - 3, 170, 7, 'F');
-          }
-          
-          doc.setTextColor(50, 50, 50);
-          doc.text(concept.name, 25, yPos + 2);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${concept.price.toFixed(2)} €`, 185, yPos + 2, { align: 'right' });
-          doc.setFont('helvetica', 'normal');
-          yPos += 7;
-        });
-      } else {
-        doc.setFont('helvetica', 'italic');
-        doc.setTextColor(150, 150, 150);
-        doc.text('No hay conceptos definidos', 25, yPos + 2);
-        yPos += 7;
-      }
-
-      // Línea separadora
-      yPos += 3;
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.line(20, yPos, 190, yPos);
-      yPos += 10;
-
-      // Cuadro de totales tipo factura
-      const subtotal = pdfConcepts.reduce((sum, c) => sum + c.price, 0);
-      const iva = subtotal * 0.21;
-      const total = subtotal * 1.21;
-
-      const boxTop = yPos;
-      
-      // Subtotal
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(0, 0, 0);
-      doc.text('Base imponible:', 125, yPos);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${subtotal.toFixed(2)} €`, 185, yPos, { align: 'right' });
-      
-      yPos += 7;
-      doc.setFont('helvetica', 'normal');
-      doc.text('IVA (21%):', 125, yPos);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${iva.toFixed(2)} €`, 185, yPos, { align: 'right' });
-      
-      // Línea separadora antes del total
-      yPos += 5;
-      doc.setDrawColor(0, 0, 0);
-      doc.setLineWidth(0.5);
-      doc.line(120, yPos, 190, yPos);
-      
-      // Total destacado con color corporativo
-      yPos += 8;
-      doc.setFillColor(94, 187, 255); // Color Resona
-      doc.rect(120, yPos - 5, 70, 10, 'F');
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(255, 255, 255); // Texto blanco sobre fondo azul
-      doc.text('TOTAL:', 125, yPos + 2);
-      doc.text(`${total.toFixed(2)} €`, 185, yPos + 2, { align: 'right' });
-      
-      // Borde del cuadro de totales
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.rect(120, boxTop - 3, 70, yPos - boxTop + 8);
-
-      // Condiciones y notas
-      yPos += 15;
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(0, 0, 0);
-      doc.text('CONDICIONES:', 20, yPos);
-      yPos += 5;
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(80, 80, 80);
-      doc.setFontSize(8);
-      const conditions = [
-        '• Validez del presupuesto: 30 días',
-        '• Forma de pago:',
-        '  - 25% al reservar (señal)',
-        '  - 50% un mes antes del evento',
-        '  - 25% el día del evento',
-        '• El precio no incluye permisos especiales si fueran necesarios'
-      ];
-      conditions.forEach(cond => {
-        doc.text(cond, 20, yPos);
-        yPos += 4;
-      });
-      
-      // Mensaje personalizado
-      if (pdfFooter && pdfFooter !== 'Gracias por confiar en nosotros') {
-        yPos += 5;
-        doc.setFont('helvetica', 'italic');
-        doc.setFontSize(9);
-        doc.text(pdfFooter, 20, yPos, { maxWidth: 170 });
-      }
-
-      // Footer tipo factura con datos reales
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.line(20, 275, 190, 275);
-      
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
-      doc.text(`${companyData.companyName || 'RESONA EVENTS'} | CIF: ${companyData.taxId || 'B-XXXXXXXX'}`, 105, 280, { align: 'center' });
-      const address = `${companyData.address || 'C/ Ejemplo, 123'} - ${companyData.postalCode || '28000'} ${companyData.city || 'Madrid'}`;
-      doc.text(`Dirección: ${address}`, 105, 285, { align: 'center' });
-      doc.text(`Tel: ${companyData.phone || '+34 XXX XXX XXX'} | Email: ${companyData.email || 'info@resonaevents.com'}`, 105, 290, { align: 'center' });
-
-      // Descargar PDF
-      const fileName = `Presupuesto_${presupuestoNum}_${request.customerName?.replace(/[^a-z0-9]/gi, '_')}.pdf`;
-      doc.save(fileName);
-      alert('✅ PDF generado correctamente');
-      
-    } catch (error) {
-      console.error('Error generando PDF:', error);
-      alert('❌ Error al generar el PDF');
-    }
+    await generateQuotePDF(request);
   };
 
   const getStatusColor = (status: string) => {
@@ -795,7 +534,7 @@ const QuoteRequestsManager = ({ apiBasePath = '/quote-requests' }: { apiBasePath
           </p>
         </div>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => qrmNavigate('/admin/quote-requests/new')}
           className="flex items-center gap-2 bg-resona hover:bg-resona-dark text-white px-6 py-3 rounded-lg font-medium transition-colors"
         >
           <Plus className="w-5 h-5" />

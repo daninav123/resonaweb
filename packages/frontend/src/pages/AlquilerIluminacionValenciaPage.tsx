@@ -43,9 +43,9 @@ const AlquilerIluminacionValenciaPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Alquiler Iluminación Valencia 💡 Desde 25€/día | Eventos LED Pro"
-        description="✅ Iluminación profesional Valencia: Focos LED, cabezas móviles, láseres, efectos. Instalación GRATIS. ⭐ 4.9/5 estrellas. Eventos, bodas, discotecas. Presupuesto 24h ☎️ 613881414"
-        keywords="alquiler iluminacion valencia, alquiler luces LED valencia, cabezas moviles valencia, iluminacion bodas valencia, focos LED eventos valencia, iluminacion profesional valencia, alquiler efectos luz valencia"
+        title="Alquiler Iluminación Valencia desde 25€ · Focos LED"
+        description="Alquiler de iluminación profesional en Valencia desde 25€/día. Focos LED RGB, cabezas móviles, láseres, control DMX. Técnico incluido. Presupuesto 24h ☎ 613 88 14 14"
+        keywords="alquiler iluminacion valencia, alquiler luces led valencia, alquiler focos valencia, alquiler iluminacion de obra exterior, iluminacion profesional valencia"
         canonicalUrl="https://resonaevents.com/alquiler-iluminacion-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
       />

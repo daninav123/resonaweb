@@ -12,12 +12,7 @@ datasource db {
 
 // ============= ENUMS =============
 
-enum UserRole {
-  CLIENT
-  ADMIN
-  SUPERADMIN
-  COMMERCIAL  // Comercial con acceso a presupuestos, leads y comisiones
-}
+// UserRole ya no es enum - se gestiona dinámicamente via RoleDefinition
 
 enum QuoteStatus {
   PENDING
@@ -226,8 +221,9 @@ model User {
   firstName String
   lastName  String
   phone     String?
-  role      UserRole  @default(CLIENT)
-  userLevel UserLevel @default(STANDARD)
+  role            String      @default("CLIENT")
+  additionalRoles String[]    @default([])
+  userLevel       UserLevel   @default(STANDARD)
 
   // Dirección
   address Json?
@@ -749,6 +745,9 @@ model Order {
 
   // Presupuesto relacionado (si se convirtió de presupuesto)
   budget Budget?
+
+  // Evento vinculado
+  event Event?
 
   // Unidades físicas asignadas a este pedido
   assignedUnits ProductUnit[] @relation("CurrentUnitOrder")
@@ -2207,6 +2206,7 @@ model Event {
 
   // Relaciones con pedido/presupuesto
   orderId       String?   @unique
+  order         Order?    @relation(fields: [orderId], references: [id])
   budgetId      String?
 
   // Timestamps
@@ -2566,6 +2566,7 @@ model Contract {
   clientName  String
   clientEmail String
   budgetRef   String? // Referencia al presupuesto
+  orderId     String? // Vinculación directa al pedido
 
   // Contenido
   title       String
@@ -2669,6 +2670,269 @@ model WarehouseLocation {
 
   createdAt   DateTime @default(now())
 
+  // Relaciones
+  items       WarehouseItem[]
+
   @@unique([zone, shelf, position])
   @@map("warehouse_locations")
+}
+
+model WarehouseItem {
+  id              String  @id @default(uuid())
+  locationId      String
+  location        WarehouseLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  productId       String?
+  unitId          String? // ProductUnit ID
+  productName     String  // Nombre para mostrar
+  quantity        Int     @default(1)
+  notes           String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([locationId])
+  @@index([productId])
+  @@index([unitId])
+  @@map("warehouse_items")
+}
+
+// ============= PLANTILLAS DE EVENTO =============
+
+model EventTemplate {
+  id          String  @id @default(uuid())
+  name        String
+  eventType   String  // "boda", "corporativo", "concierto", "festival", etc.
+  description String?
+
+  // Plantilla de datos
+  defaultEquipment  Json? // [{ productName, productId?, quantity, notes }]
+  defaultStaff      Json? // [{ role, count, hourlyRate }]
+  defaultChecklist  Json? // [{ text, category, isRequired }]
+  defaultTimeline   Json? // [{ time, title, description }]
+
+  // Estimaciones
+  estimatedCost     Decimal? @db.Decimal(10, 2)
+  estimatedDuration Int?     // Horas
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventType])
+  @@index([isActive])
+  @@map("event_templates")
+}
+
+// ============= PROVEEDORES =============
+
+model Supplier {
+  id          String  @id @default(uuid())
+  name        String
+  taxId       String? // CIF/NIF
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  website     String?
+  category    String? // "audio", "iluminación", "transporte", "catering", etc.
+
+  // Condiciones
+  paymentTerms String? // "contado", "30 días", "60 días"
+  notes        String? @db.Text
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  purchases   SupplierPurchase[]
+
+  @@index([category])
+  @@index([isActive])
+  @@map("suppliers")
+}
+
+model SupplierPurchase {
+  id          String  @id @default(uuid())
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  invoiceRef  String?
+  description String?
+  amount      Decimal @db.Decimal(10, 2)
+  date        DateTime
+  category    String? // "material", "subcontratación", "transporte", etc.
+  eventId     String? // Vinculado a un evento si aplica
+
+  isPaid      Boolean  @default(false)
+  paidAt      DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@index([supplierId])
+  @@index([date])
+  @@index([eventId])
+  @@map("supplier_purchases")
+}
+
+// ============= MANTENIMIENTO DE EQUIPOS =============
+
+model MaintenanceRecord {
+  id          String  @id @default(uuid())
+
+  // Qué equipo
+  productId   String?
+  unitId      String? // ProductUnit ID
+  productName String  // Nombre para mostrar
+
+  // Tipo
+  type        String  // "reparación", "calibración", "limpieza", "revisión"
+  description String? @db.Text
+  severity    String  @default("normal") // "baja", "normal", "alta", "urgente"
+
+  // Proveedor/Taller
+  supplierName String?
+  supplierId   String?
+
+  // Costes
+  cost        Decimal? @db.Decimal(10, 2)
+  invoiceRef  String?
+
+  // Estado
+  status      String  @default("pending") // "pending", "in_progress", "completed", "cancelled"
+  scheduledDate DateTime?
+  completedDate DateTime?
+
+  // Vinculación a evento (si se rompió en un evento)
+  eventId     String?
+
+  notes       String? @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([unitId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("maintenance_records")
+}
+
+// ============= ASIGNACIÓN DE VEHÍCULOS =============
+
+model VehicleAssignment {
+  id          String  @id @default(uuid())
+  vehicleId   String
+  eventId     String?
+  orderId     String?
+
+  // Detalles
+  purpose     String? // "entrega", "recogida", "montaje", etc.
+  startDate   DateTime
+  endDate     DateTime
+  driverName  String?
+  notes       String?
+
+  // Kilometraje
+  kmStart     Int?
+  kmEnd       Int?
+
+  createdAt   DateTime @default(now())
+
+  @@index([vehicleId])
+  @@index([startDate, endDate])
+  @@index([eventId])
+  @@map("vehicle_assignments")
+}
+
+// ============= SUBCONTRATACIONES =============
+
+model Subcontract {
+  id          String  @id @default(uuid())
+
+  // Vinculación
+  eventId     String?
+  orderId     String?
+  supplierId  String?
+
+  // Detalles
+  supplierName   String
+  description    String   @db.Text
+  category       String?  // "sonido", "iluminación", "transporte", "personal", etc.
+
+  // Financiero
+  agreedAmount   Decimal  @db.Decimal(10, 2)
+  paidAmount     Decimal  @default(0) @db.Decimal(10, 2)
+  invoiceRef     String?
+
+  // Estado
+  status         String   @default("draft") // "draft", "confirmed", "in_progress", "completed", "cancelled"
+
+  // Fechas
+  startDate      DateTime?
+  endDate        DateTime?
+
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([supplierId])
+  @@index([status])
+  @@map("subcontracts")
+}
+
+// ============= EMAIL MARKETING =============
+
+model EmailCampaign {
+  id              String   @id @default(uuid())
+  name            String
+  subject         String
+  body            String   @db.Text
+  targetAudience  String   @default("all") // "all", "recent", "vip"
+  status          String   @default("draft") // "draft", "sent", "failed"
+  recipients      Int      @default(0)
+  sentAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@map("email_campaigns")
+}
+
+// ============= PORTFOLIO =============
+
+model PortfolioItem {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  eventType   String?
+  eventDate   DateTime?
+  venue       String?
+  images      Json     @default("[]") // Array de URLs
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published])
+  @@index([featured])
+  @@map("portfolio_items")
+}
+
+model RoleDefinition {
+  id            String   @id @default(uuid())
+  name          String   @unique // Ej: "ADMIN", "COMMERCIAL", "MI_ROL_CUSTOM"
+  label         String   // Ej: "Administrador"
+  description   String   @default("")
+  color         String   @default("gray")
+  icon          String   @default("Users")
+  allowedPaths  Json     @default("[]") // String[] de rutas admin permitidas
+  defaultRedirect String @default("/admin")
+  isSystem      Boolean  @default(false) // true = no se puede eliminar
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("role_definitions")
 }

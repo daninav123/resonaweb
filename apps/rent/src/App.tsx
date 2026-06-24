@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -9,64 +10,64 @@ import { WhatsAppFloat } from '@resona/ui';
 import Layout from './components/Layout/Layout';
 
 // Páginas públicas de alquiler
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const CheckoutPageStripe = lazy(() => import('./pages/CheckoutPageStripe'));
-const CheckoutPageRedsys = lazy(() => import('./pages/CheckoutPageRedsys'));
-const ManualPaymentInstructionsPage = lazy(() => import('./pages/ManualPaymentInstructionsPage'));
-const ModificationPaymentPage = lazy(() => import('./pages/ModificationPaymentPage'));
-const PaymentTokenPage = lazy(() => import('./pages/PaymentTokenPage'));
-const PaymentSuccessPage = lazy(() => import('./pages/checkout/PaymentSuccessPage'));
-const PaymentErrorPage = lazy(() => import('./pages/checkout/PaymentErrorPage'));
+const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
+const ProductsPage = lazyWithRetry(() => import('./pages/ProductsPage'));
+const ProductDetailPage = lazyWithRetry(() => import('./pages/ProductDetailPage'));
+const CartPage = lazyWithRetry(() => import('./pages/CartPage'));
+const CheckoutPage = lazyWithRetry(() => import('./pages/CheckoutPage'));
+const CheckoutPageStripe = lazyWithRetry(() => import('./pages/CheckoutPageStripe'));
+const CheckoutPageRedsys = lazyWithRetry(() => import('./pages/CheckoutPageRedsys'));
+const ManualPaymentInstructionsPage = lazyWithRetry(() => import('./pages/ManualPaymentInstructionsPage'));
+const ModificationPaymentPage = lazyWithRetry(() => import('./pages/ModificationPaymentPage'));
+const PaymentTokenPage = lazyWithRetry(() => import('./pages/PaymentTokenPage'));
+const PaymentSuccessPage = lazyWithRetry(() => import('./pages/checkout/PaymentSuccessPage'));
+const PaymentErrorPage = lazyWithRetry(() => import('./pages/checkout/PaymentErrorPage'));
 
 // Auth
-const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
+const LoginPage = lazyWithRetry(() => import('./pages/auth/LoginPage'));
+const RegisterPage = lazyWithRetry(() => import('./pages/auth/RegisterPage'));
 
 // Cuenta
-const AccountPage = lazy(() => import('./pages/AccountPage'));
-const OrdersPage = lazy(() => import('./pages/OrdersPage'));
-const OrderDetailUserPage = lazy(() => import('./pages/OrderDetailUserPage'));
-const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
-const MyDataPage = lazy(() => import('./pages/MyDataPage'));
+const AccountPage = lazyWithRetry(() => import('./pages/AccountPage'));
+const OrdersPage = lazyWithRetry(() => import('./pages/OrdersPage'));
+const OrderDetailUserPage = lazyWithRetry(() => import('./pages/OrderDetailUserPage'));
+const FavoritesPage = lazyWithRetry(() => import('./pages/FavoritesPage'));
+const MyDataPage = lazyWithRetry(() => import('./pages/MyDataPage'));
 
 // Compartidas
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const FAQsPage = lazy(() => import('./pages/FAQsPage'));
+const ContactPage = lazyWithRetry(() => import('./pages/ContactPage'));
+const AboutPage = lazyWithRetry(() => import('./pages/AboutPage'));
+const FAQsPage = lazyWithRetry(() => import('./pages/FAQsPage'));
 
 // Legal
-const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions'));
-const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
-const CookiesPolicy = lazy(() => import('./pages/legal/CookiesPolicy'));
-const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
+const TermsAndConditions = lazyWithRetry(() => import('./pages/legal/TermsAndConditions'));
+const PrivacyPolicy = lazyWithRetry(() => import('./pages/legal/PrivacyPolicy'));
+const CookiesPolicy = lazyWithRetry(() => import('./pages/legal/CookiesPolicy'));
+const LegalNotice = lazyWithRetry(() => import('./pages/legal/LegalNotice'));
 
 // SEO landings técnicas
-const AlquilerSonidoValenciaPage = lazy(() => import('./pages/AlquilerSonidoValenciaPage'));
-const AlquilerAltavocesValenciaPage = lazy(() => import('./pages/AlquilerAltavocesValenciaPage'));
-const AlquilerIluminacionValenciaPage = lazy(() => import('./pages/AlquilerIluminacionValenciaPage'));
-const AlquilerSonidoTorrentPage = lazy(() => import('./pages/AlquilerSonidoTorrentPage'));
+const AlquilerSonidoValenciaPage = lazyWithRetry(() => import('./pages/AlquilerSonidoValenciaPage'));
+const AlquilerAltavocesValenciaPage = lazyWithRetry(() => import('./pages/AlquilerAltavocesValenciaPage'));
+const AlquilerIluminacionValenciaPage = lazyWithRetry(() => import('./pages/AlquilerIluminacionValenciaPage'));
+const AlquilerSonidoTorrentPage = lazyWithRetry(() => import('./pages/AlquilerSonidoTorrentPage'));
 
 // Services SEO (alquileres específicos)
-const AlquilerSonidoValencia = lazy(() => import('./pages/services/AlquilerSonidoValencia'));
-const AlquilerAltavocesProfesionales = lazy(() => import('./pages/services/AlquilerAltavocesProfesionales'));
-const AlquilerMicrofonosInalambricos = lazy(() => import('./pages/services/AlquilerMicrofonosInalambricos'));
-const AlquilerMesaMezclaDJ = lazy(() => import('./pages/services/AlquilerMesaMezclaDJ'));
-const AlquilerSubwoofers = lazy(() => import('./pages/services/AlquilerSubwoofers'));
-const AlquilerDJValencia = lazy(() => import('./pages/services/AlquilerDJValencia'));
-const IluminacionLEDProfesional = lazy(() => import('./pages/services/IluminacionLEDProfesional'));
-const AlquilerIluminacionBodas = lazy(() => import('./pages/services/AlquilerIluminacionBodas'));
-const AlquilerMovingHeads = lazy(() => import('./pages/services/AlquilerMovingHeads'));
-const AlquilerLaser = lazy(() => import('./pages/services/AlquilerLaser'));
-const AlquilerPantallasLED = lazy(() => import('./pages/services/AlquilerPantallasLED'));
-const AlquilerProyectores = lazy(() => import('./pages/services/AlquilerProyectores'));
-const AlquilerEstructurasTruss = lazy(() => import('./pages/services/AlquilerEstructurasTruss'));
-const AlquilerMaquinasFX = lazy(() => import('./pages/services/AlquilerMaquinasFX'));
+const AlquilerSonidoValencia = lazyWithRetry(() => import('./pages/services/AlquilerSonidoValencia'));
+const AlquilerAltavocesProfesionales = lazyWithRetry(() => import('./pages/services/AlquilerAltavocesProfesionales'));
+const AlquilerMicrofonosInalambricos = lazyWithRetry(() => import('./pages/services/AlquilerMicrofonosInalambricos'));
+const AlquilerMesaMezclaDJ = lazyWithRetry(() => import('./pages/services/AlquilerMesaMezclaDJ'));
+const AlquilerSubwoofers = lazyWithRetry(() => import('./pages/services/AlquilerSubwoofers'));
+const AlquilerDJValencia = lazyWithRetry(() => import('./pages/services/AlquilerDJValencia'));
+const IluminacionLEDProfesional = lazyWithRetry(() => import('./pages/services/IluminacionLEDProfesional'));
+const AlquilerIluminacionBodas = lazyWithRetry(() => import('./pages/services/AlquilerIluminacionBodas'));
+const AlquilerMovingHeads = lazyWithRetry(() => import('./pages/services/AlquilerMovingHeads'));
+const AlquilerLaser = lazyWithRetry(() => import('./pages/services/AlquilerLaser'));
+const AlquilerPantallasLED = lazyWithRetry(() => import('./pages/services/AlquilerPantallasLED'));
+const AlquilerProyectores = lazyWithRetry(() => import('./pages/services/AlquilerProyectores'));
+const AlquilerEstructurasTruss = lazyWithRetry(() => import('./pages/services/AlquilerEstructurasTruss'));
+const AlquilerMaquinasFX = lazyWithRetry(() => import('./pages/services/AlquilerMaquinasFX'));
 
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const NotFoundPage = lazyWithRetry(() => import('./pages/NotFoundPage'));
 
 const queryClient = new QueryClient({
   defaultOptions: {

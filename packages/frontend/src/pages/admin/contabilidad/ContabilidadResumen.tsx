@@ -18,6 +18,7 @@ interface FinancialSummary {
     ingresos: number;
     gastos: number;
     beneficio: number;
+    gastosRecurrentes?: number;
   };
   previousMonth: {
     ingresos: number;
@@ -294,6 +295,11 @@ const ContabilidadResumen = () => {
                   {formatPercentage(financialSummary.changes.gastosChange)} vs mes anterior
                 </span>
               </div>
+              {financialSummary.currentMonth.gastosRecurrentes ? (
+                <div className="mt-2 pt-2 border-t border-white/20 text-xs text-red-100">
+                  Incluye {formatCurrency(financialSummary.currentMonth.gastosRecurrentes)} en gastos recurrentes
+                </div>
+              ) : null}
             </div>
 
             {/* Beneficio */}

@@ -13,9 +13,9 @@ async function testStockAlerts() {
   try {
     // 1. Ver todos los pedidos activos
     console.log('📋 PASO 1: Pedidos activos en la BD');
-    const orders = await prisma.order.findMany({
+    const orders: any[] = await prisma.order.findMany({
       where: {
-        status: { in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'IN_TRANSIT', 'DELIVERED'] },
+        status: { in: ['PENDING', 'IN_PROGRESS'] },
         endDate: { gte: new Date() },
       },
       include: {

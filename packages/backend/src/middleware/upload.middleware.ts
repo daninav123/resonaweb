@@ -2,15 +2,16 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
+import { cloudinaryStorage, isCloudinaryEnabled } from './cloudinaryUpload.middleware';
 
-// Asegurar que el directorio de uploads existe
+// Asegurar que el directorio de uploads existe (fallback en disco local)
 const uploadDir = path.join(__dirname, '../../uploads/products');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configuración de almacenamiento
-const storage = multer.diskStorage({
+// Configuración de almacenamiento local (fallback cuando Cloudinary no está activo)
+const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
@@ -23,6 +24,15 @@ const storage = multer.diskStorage({
     cb(null, `${sanitizedName}-${uniqueSuffix}${ext}`);
   }
 });
+
+// Storage activo: Cloudinary si CLOUDINARY_ENABLED=true, si no disco local
+const storage = cloudinaryStorage || diskStorage;
+
+if (isCloudinaryEnabled()) {
+  console.log('[upload] Cloudinary activo — imágenes persistentes en CDN');
+} else {
+  console.log('[upload] Disco local — atención: Render tiene storage efímero, migrar a Cloudinary');
+}
 
 // Filtro de archivos - solo imágenes
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
@@ -68,8 +78,12 @@ export const handleMulterError = (err: any, req: any, res: any, next: any) => {
  * Procesa la imagen después de subirla y la guarda con la orientación correcta
  */
 export const fixImageOrientation = async (req: any, res: any, next: any) => {
+  // Cloudinary maneja la orientación EXIF automáticamente; saltar en ese caso.
+  if (isCloudinaryEnabled()) {
+    return next();
+  }
   try {
-    // Procesar archivo único
+    // Procesar archivo único (solo disco local)
     if (req.file) {
       const filePath = req.file.path;
       const tempPath = filePath + '.tmp';

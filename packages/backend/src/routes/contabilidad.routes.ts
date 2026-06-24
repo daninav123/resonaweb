@@ -4,9 +4,9 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Todas las rutas requieren autenticación de ADMIN
+// Rutas requieren autenticación de ADMIN o ACCOUNTANT
 router.use(authenticate);
-router.use(authorize('ADMIN', 'SUPERADMIN'));
+router.use(authorize('ADMIN', 'SUPERADMIN', 'ACCOUNTANT'));
 
 /**
  * GET /api/v1/contabilidad/summary

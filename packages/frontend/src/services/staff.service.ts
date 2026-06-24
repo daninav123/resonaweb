@@ -12,6 +12,10 @@ class StaffFrontendService {
   async toggleWorkLogPaid(id: string, logId: string) { return api.patch(`/staff/${id}/work-logs/${logId}/toggle-paid`); }
   async getStats() { return api.get('/staff/stats'); }
   async getMonthlyReport(id: string, year: number, month: number) { return api.get(`/staff/${id}/monthly-report?year=${year}&month=${month}`); }
+  async getAvailabilityCalendar(year: number, month: number) { return api.get(`/staff/availability-calendar?year=${year}&month=${month}`); }
+  async getAvailableForEvent(date: string, specialty?: string) { return api.get(`/staff/available-for-event?date=${date}${specialty ? `&specialty=${specialty}` : ''}`); }
+  async bulkAddAvailability(id: string, data: any) { return api.post(`/staff/${id}/availability/bulk`, data); }
+  async getExpiringDocuments() { return api.get('/staff/expiring-documents'); }
 }
 
 export const staffFrontendService = new StaffFrontendService();

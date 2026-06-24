@@ -104,7 +104,7 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
           "8x Focos LED RGB Decoración",
           "Iluminación de paredes/columnas",
           "Cambios de color programados",
-          "Transporte gratis Valencia capital",
+          "Transporte Valencia capital",
           "Montaje invisible antes de invitados"
         ]
       },

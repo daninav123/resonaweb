@@ -3,9 +3,9 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const ProduccionEventosValencia = () => {
   const pageData = {
-    title: "Producción Eventos Valencia | Desde 800€ | ReSona",
-    metaDescription: "Producción integral de eventos en Valencia desde 800€. Sonido, iluminación, vídeo, streaming. +1000 eventos producidos. ☎️ 613 88 14 14",
-    keywords: "eventos valencia, producción eventos valencia, eventos corporativos valencia, sonido eventos valencia, iluminación eventos valencia, streaming eventos valencia",
+    title: "Producción de Eventos en Valencia · Sonido Luz Vídeo",
+    metaDescription: "Producción técnica integral para eventos en Valencia desde 800€. Sonido, iluminación, vídeo y streaming. +1000 eventos en Palau, Ciudad Artes ☎ 613 88 14 14",
+    keywords: "produccion eventos valencia, empresa de sonido para eventos, eventos corporativos valencia, iluminacion y sonido eventos",
     canonicalUrl: "https://resonaevents.com/servicios/produccion-eventos-valencia",
     heroTitle: "Producción Técnica Completa para Eventos en Valencia",
     heroSubtitle: "DAS Audio, ICOA, Moving Heads 17R/7R, Pioneer RX2 - Producción integral completa",

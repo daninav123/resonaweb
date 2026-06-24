@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../index';
+import { NotificationService } from '../services/notification.service';
+
+const notificationService = new NotificationService();
 
 export class NotificationController {
   /**
@@ -132,6 +135,51 @@ export class NotificationController {
       });
 
       res.json({ message: 'Notificación eliminada' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Admin: Get ALL notifications (no userId filter)
+   */
+  async getAdminNotifications(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { limit, search, type } = req.query;
+      const take = Math.min(parseInt(limit as string) || 100, 500);
+      const where: any = {};
+      if (type) where.type = type as string;
+      if (search) {
+        where.OR = [
+          { title: { contains: search as string, mode: 'insensitive' } },
+          { message: { contains: search as string, mode: 'insensitive' } },
+        ];
+      }
+
+      const notifications = await prisma.notification.findMany({
+        where,
+        include: { user: { select: { id: true, firstName: true, lastName: true, email: true } } },
+        orderBy: { createdAt: 'desc' },
+        take,
+      });
+
+      res.json({ notifications });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Admin: Send email directly
+   */
+  async sendEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { to, subject, html } = req.body;
+      if (!to || !subject || !html) {
+        return res.status(400).json({ error: 'Campos to, subject y html obligatorios' });
+      }
+      await notificationService.sendEmail({ to, subject, html });
+      res.json({ success: true, message: `Email enviado a ${to}` });
     } catch (error) {
       next(error);
     }

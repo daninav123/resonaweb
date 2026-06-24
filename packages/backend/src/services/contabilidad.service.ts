@@ -103,9 +103,9 @@ export class ContabilidadService {
       let recurringTotal = 0;
       try {
         const recurringStats = await recurringExpenseService.getStats();
-        if (period === 'month') recurringTotal = recurringStats.monthlyTotal || 0;
-        else if (period === 'quarter') recurringTotal = (recurringStats.monthlyTotal || 0) * 3;
-        else recurringTotal = (recurringStats.monthlyTotal || 0) * 12;
+        if (period === 'month') recurringTotal = recurringStats.monthlyEstimate || 0;
+        else if (period === 'quarter') recurringTotal = (recurringStats.monthlyEstimate || 0) * 3;
+        else recurringTotal = (recurringStats.monthlyEstimate || 0) * 12;
       } catch { /* tabla puede no existir aún */ }
 
       currentMetrics.gastos += recurringTotal;

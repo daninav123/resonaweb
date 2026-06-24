@@ -3,9 +3,9 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerSonidoValencia = () => {
   const pageData = {
-    title: "Alquiler Sonido Valencia | Equipos DAS Audio | ReSona",
-    metaDescription: "Alquiler de sonido profesional en Valencia. Equipos DAS Audio, ICOA, Behringer. Técnico incluido. Presupuesto gratis 24h. ☎️ 613 88 14 14",
-    keywords: "alquiler sonido valencia, equipos audio valencia, sonido profesional eventos, alquiler altavoces valencia",
+    title: "Alquiler Sonido Valencia desde 120€ · Técnico Incluido",
+    metaDescription: "Alquiler de equipos de sonido profesional en Valencia desde 120€/día. DAS Audio, ICOA, Pioneer. Técnico especializado incluido. +2000 eventos ☎ 613 88 14 14",
+    keywords: "alquiler sonido valencia, alquiler equipos sonido valencia, alquiler de sonido para eventos, alquiler equipo sonido",
     canonicalUrl: "https://resonaevents.com/servicios/alquiler-sonido-valencia",
     heroTitle: "Alquiler de Sonido Profesional en Valencia",
     heroSubtitle: "Equipos DAS Audio, ICOA, Behringer, Pioneer - Técnico especializado incluido",

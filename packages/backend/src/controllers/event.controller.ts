@@ -86,6 +86,17 @@ export class EventController {
     }
   }
 
+  // ============= CONVERSIONS =============
+  async createFromOrder(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new AppError(401, 'No autenticado', 'NOT_AUTHENTICATED');
+      const event = await eventService.createFromOrder(req.params.orderId);
+      res.status(201).json(event);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // ============= SUB-RESOURCES =============
   async addTimelineItem(req: AuthRequest, res: Response, next: NextFunction) {
     try {

@@ -7,40 +7,40 @@ const router = Router();
 // All logistics routes require authentication
 router.use(authenticate);
 
-// Admin routes
+// Admin + warehouse routes
 router.get(
   '/routes',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE', 'TECHNICIAN'),
   logisticsController.planDeliveryRoutes
 );
 
 router.post(
   '/assign-vehicle',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'),
   logisticsController.assignVehicle
 );
 
 router.post(
   '/assign-driver',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'),
   logisticsController.assignDriver
 );
 
 router.get(
   '/schedule',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE', 'TECHNICIAN'),
   logisticsController.getDeliverySchedule
 );
 
 router.get(
   '/returns',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE', 'TECHNICIAN'),
   logisticsController.getReturnSchedule
 );
 
 router.get(
   '/vehicles',
-  authorize('ADMIN', 'SUPERADMIN'),
+  authorize('ADMIN', 'SUPERADMIN', 'WAREHOUSE'),
   logisticsController.getAvailableVehicles
 );
 

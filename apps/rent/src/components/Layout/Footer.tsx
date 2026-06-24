@@ -56,13 +56,13 @@ const Footer = () => {
               </Link></li>
               <li className="pt-2 border-t border-gray-700 mt-2">
                 <a
-                  href="https://resonarent.com"
+                  href="https://resonaevents.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-resona transition flex items-center group text-sm italic"
                 >
                   <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                  ¿Evento completo? ReSona Rent ↗
+                  ¿Evento completo? ReSona Events ↗
                 </a>
               </li>
             </ul>

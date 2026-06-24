@@ -14,54 +14,29 @@ router.post(
   quoteRequestController.createQuoteRequest.bind(quoteRequestController)
 );
 
+// Crear solicitud + Stripe Checkout Session para señal - PÚBLICO
+router.post(
+  '/public/with-payment',
+  quoteRequestController.createQuoteRequestWithPayment.bind(quoteRequestController)
+);
+
+// Obtener datos de pago por token - PÚBLICO
+router.get(
+  '/payment/:token',
+  quoteRequestController.getByPaymentToken.bind(quoteRequestController)
+);
+
 // ============================================
 // RUTAS PROTEGIDAS (SOLO ADMIN)
 // ============================================
+const admin = [authenticate, authorize('ADMIN', 'SUPERADMIN')];
 
-// Aplicar middlewares de autenticación a todas las rutas siguientes
-router.use(authenticate);
-router.use(authorize('ADMIN', 'SUPERADMIN'));
-
-// Crear solicitud de presupuesto desde panel (ADMIN/SUPERADMIN)
-router.post(
-  '/',
-  quoteRequestController.createQuoteRequest.bind(quoteRequestController)
-);
-
-// Obtener todas las solicitudes
-router.get(
-  '/',
-  quoteRequestController.getAllQuoteRequests.bind(quoteRequestController)
-);
-
-// Obtener estadísticas
-router.get(
-  '/stats',
-  quoteRequestController.getQuoteStats.bind(quoteRequestController)
-);
-
-// Convertir solicitud a pedido
-router.post(
-  '/:id/convert-to-order',
-  quoteRequestController.convertToOrder.bind(quoteRequestController)
-);
-
-// Obtener solicitud por ID
-router.get(
-  '/:id',
-  quoteRequestController.getQuoteRequestById.bind(quoteRequestController)
-);
-
-// Actualizar solicitud
-router.put(
-  '/:id',
-  quoteRequestController.updateQuoteRequest.bind(quoteRequestController)
-);
-
-// Eliminar solicitud
-router.delete(
-  '/:id',
-  quoteRequestController.deleteQuoteRequest.bind(quoteRequestController)
-);
+router.post('/', ...admin, quoteRequestController.createQuoteRequest.bind(quoteRequestController));
+router.get('/', ...admin, quoteRequestController.getAllQuoteRequests.bind(quoteRequestController));
+router.get('/stats', ...admin, quoteRequestController.getQuoteStats.bind(quoteRequestController));
+router.post('/:id/convert-to-order', ...admin, quoteRequestController.convertToOrder.bind(quoteRequestController));
+router.get('/:id', ...admin, quoteRequestController.getQuoteRequestById.bind(quoteRequestController));
+router.put('/:id', ...admin, quoteRequestController.updateQuoteRequest.bind(quoteRequestController));
+router.delete('/:id', ...admin, quoteRequestController.deleteQuoteRequest.bind(quoteRequestController));
 
 export default router;

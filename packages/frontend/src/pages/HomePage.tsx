@@ -395,7 +395,7 @@ const HomePage = () => {
               Alquiler de Equipos en Valencia
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Servicio profesional de alquiler de sonido, iluminación y audiovisuales en Valencia y área metropolitana. Entrega e instalación GRATIS.
+              Servicio profesional de alquiler de sonido, iluminación y audiovisuales en Valencia y área metropolitana. Montaje e instalación incluidos.
             </p>
           </div>
 
@@ -466,7 +466,7 @@ const HomePage = () => {
                 <ArrowRight className="text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" size={20} />
               </div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">Alquiler Sonido Torrent</h3>
-              <p className="text-gray-600 text-sm mb-3">Servicio en Torrent y comarca. Entrega gratis</p>
+              <p className="text-gray-600 text-sm mb-3">Servicio en Torrent y comarca</p>
               <span className="text-green-600 text-sm font-semibold">Ver más →</span>
             </Link>
 

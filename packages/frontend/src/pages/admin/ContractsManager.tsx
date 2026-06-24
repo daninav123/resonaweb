@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FileText, Plus, Search, Loader2, Send, Eye, CheckCircle2, Clock, Edit, Trash2, Save, X, RefreshCw, ExternalLink, Copy } from 'lucide-react';
+import { FileText, Plus, Search, Loader2, Send, Eye, CheckCircle2, Clock, Edit, Trash2, Save, X, RefreshCw, ExternalLink, Copy, Download, Repeat, FileCheck } from 'lucide-react';
 import { contractFrontendService } from '../../services/adminModules.service';
+import { api } from '../../services/api';
 import toast from 'react-hot-toast';
 
 const formatCurrency = (n: number) => `${n.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €`;
@@ -45,6 +46,26 @@ const ContractsManager = () => {
   const handleSend = async (id: string) => { try { await contractFrontendService.send(id); toast.success('Contrato enviado'); loadData(); } catch { toast.error('Error'); } };
   const handleDelete = async (id: string) => { if (!confirm('¿Eliminar contrato?')) return; try { await contractFrontendService.delete(id); toast.success('Eliminado'); loadData(); } catch { toast.error('Error'); } };
   const copyLink = (token: string) => { navigator.clipboard.writeText(`${window.location.origin}/contrato/${token}`); toast.success('Enlace copiado'); };
+  const handleDuplicate = async (id: string) => { try { await api.post(`/contracts-mgmt/${id}/duplicate`); toast.success('Contrato duplicado'); loadData(); } catch { toast.error('Error'); } };
+  const handleDownloadPDF = async (id: string, number: string) => {
+    try {
+      const res = await api.get(`/contracts-mgmt/${id}/pdf`, { responseType: 'blob' }) as any;
+      const blob = new Blob([res.data || res], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `contrato-${number}.pdf`; a.click();
+      URL.revokeObjectURL(url);
+    } catch { toast.error('Error al descargar PDF'); }
+  };
+
+  const CONTRACT_TEMPLATES = [
+    { name: 'Alquiler estándar', content: `<h2>CONTRATO DE ALQUILER DE EQUIPOS DE SONIDO E ILUMINACIÓN</h2>\n\n<p>En ___, a ___ de ___ de 202_</p>\n\n<h3>REUNIDOS</h3>\n<p>De una parte, RESONA EVENTS (en adelante "la empresa"), con CIF ___ y domicilio social en ___.</p>\n<p>De otra parte, <strong>[NOMBRE CLIENTE]</strong> (en adelante "el cliente"), con DNI/CIF ___ y domicilio en ___.</p>\n\n<h3>EXPONEN</h3>\n<p>Que la empresa se dedica al alquiler de equipos de sonido, iluminación y audiovisual para eventos, y el cliente desea contratar dichos servicios para el evento descrito a continuación.</p>\n\n<h3>CLÁUSULAS</h3>\n<p><strong>1. OBJETO:</strong> La empresa alquila al cliente los equipos detallados en el presupuesto adjunto (ref: [REF]) para el evento que se celebrará en [LUGAR] el día [FECHA].</p>\n<p><strong>2. DURACIÓN:</strong> El período de alquiler comprende desde la entrega del material hasta su devolución, según las fechas acordadas.</p>\n<p><strong>3. PRECIO:</strong> El precio total del alquiler asciende a [IMPORTE]€ (IVA incluido).</p>\n<p><strong>4. FORMA DE PAGO:</strong> El cliente abonará el 50% como reserva y el 50% restante antes de la entrega del material.</p>\n<p><strong>5. FIANZA:</strong> Se establece una fianza de [FIANZA]€ que será devuelta tras la comprobación del estado del material.</p>\n<p><strong>6. RESPONSABILIDAD:</strong> El cliente se responsabiliza del material desde la entrega hasta la devolución, debiendo mantenerlo en buen estado y asumir los costes de reparación o reposición en caso de daño o pérdida.</p>\n<p><strong>7. CANCELACIÓN:</strong> En caso de cancelación con menos de 7 días de antelación, se retendrá el 50% del importe. Con menos de 48h, el 100%.</p>\n<p><strong>8. LEGISLACIÓN:</strong> Este contrato se rige por la legislación española vigente.</p>` },
+    { name: 'Servicio integral', content: `<h2>CONTRATO DE SERVICIO INTEGRAL DE EVENTOS</h2>\n\n<p>En ___, a ___ de ___ de 202_</p>\n\n<h3>PARTES</h3>\n<p>RESONA EVENTS ("prestador") y <strong>[NOMBRE CLIENTE]</strong> ("cliente").</p>\n\n<h3>OBJETO</h3>\n<p>Prestación de servicios integrales de sonido, iluminación, montaje y personal técnico para el evento [EVENTO] el [FECHA] en [LUGAR].</p>\n\n<h3>SERVICIOS INCLUIDOS</h3>\n<ul>\n<li>Suministro, transporte, montaje y desmontaje de equipos</li>\n<li>Personal técnico durante el evento</li>\n<li>Prueba de sonido previa</li>\n</ul>\n\n<h3>PRECIO Y PAGO</h3>\n<p>Precio total: [IMPORTE]€ + IVA. Pago: 50% al confirmar, resto 48h antes del evento.</p>\n\n<h3>CANCELACIÓN</h3>\n<p>Más de 15 días: sin coste. 7-15 días: 30%. Menos de 7 días: 50%. Menos de 48h: 100%.</p>` },
+  ];
+
+  const applyTemplate = (template: typeof CONTRACT_TEMPLATES[0]) => {
+    setForm(p => ({ ...p, content: template.content }));
+    toast.success(`Plantilla "${template.name}" aplicada`);
+  };
 
   return (
     <div className="space-y-6">
@@ -70,13 +91,22 @@ const ContractsManager = () => {
       {showCreate && (
         <div className="bg-white rounded-xl border p-5 space-y-3">
           <h3 className="font-semibold">Nuevo contrato</h3>
+          <div className="flex gap-2 flex-wrap">
+            <span className="text-xs text-gray-500 self-center">Plantillas:</span>
+            {CONTRACT_TEMPLATES.map((t, i) => (
+              <button key={i} onClick={() => applyTemplate(t)} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs hover:bg-blue-100 flex items-center gap-1">
+                <FileCheck className="w-3 h-3" /> {t.name}
+              </button>
+            ))}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input type="text" value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="Título *" className="px-3 py-2 border rounded-lg text-sm" />
             <input type="text" value={form.clientName} onChange={e => setForm(p => ({ ...p, clientName: e.target.value }))} placeholder="Nombre cliente *" className="px-3 py-2 border rounded-lg text-sm" />
             <input type="email" value={form.clientEmail} onChange={e => setForm(p => ({ ...p, clientEmail: e.target.value }))} placeholder="Email cliente" className="px-3 py-2 border rounded-lg text-sm" />
             <input type="number" value={form.totalAmount} onChange={e => setForm(p => ({ ...p, totalAmount: e.target.value }))} placeholder="Importe total (€)" className="px-3 py-2 border rounded-lg text-sm" />
+            <input type="text" value={form.budgetRef} onChange={e => setForm(p => ({ ...p, budgetRef: e.target.value }))} placeholder="Ref. presupuesto" className="px-3 py-2 border rounded-lg text-sm" />
           </div>
-          <textarea value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} rows={6} placeholder="Contenido del contrato (HTML)..." className="w-full px-3 py-2 border rounded-lg text-sm resize-none font-mono" />
+          <textarea value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} rows={10} placeholder="Contenido del contrato (HTML)..." className="w-full px-3 py-2 border rounded-lg text-sm resize-none font-mono" />
           <div className="flex gap-2"><button onClick={handleCreate} className="px-4 py-2 bg-resona text-white rounded-lg text-sm">Crear</button><button onClick={() => setShowCreate(false)} className="px-4 py-2 text-gray-500 text-sm">Cancelar</button></div>
         </div>
       )}
@@ -95,9 +125,11 @@ const ContractsManager = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {c.totalAmount && <span className="font-semibold">{formatCurrency(Number(c.totalAmount))}</span>}
-                    {c.status === 'draft' && <button onClick={() => handleSend(c.id)} className="p-1.5 rounded hover:bg-blue-50"><Send className="w-4 h-4 text-blue-600" /></button>}
-                    <button onClick={() => copyLink(c.publicToken)} className="p-1.5 rounded hover:bg-gray-100"><Copy className="w-4 h-4 text-gray-400" /></button>
-                    <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded hover:bg-red-50"><Trash2 className="w-4 h-4 text-red-400" /></button>
+                    <button onClick={() => handleDownloadPDF(c.id, c.contractNumber)} className="p-1.5 rounded hover:bg-green-50" title="Descargar PDF"><Download className="w-4 h-4 text-green-600" /></button>
+                    {c.status === 'draft' && <button onClick={() => handleSend(c.id)} className="p-1.5 rounded hover:bg-blue-50" title="Enviar al cliente"><Send className="w-4 h-4 text-blue-600" /></button>}
+                    <button onClick={() => copyLink(c.publicToken)} className="p-1.5 rounded hover:bg-gray-100" title="Copiar enlace firma"><Copy className="w-4 h-4 text-gray-400" /></button>
+                    <button onClick={() => handleDuplicate(c.id)} className="p-1.5 rounded hover:bg-purple-50" title="Duplicar"><Repeat className="w-4 h-4 text-purple-500" /></button>
+                    <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded hover:bg-red-50" title="Eliminar"><Trash2 className="w-4 h-4 text-red-400" /></button>
                   </div>
                 </div>
                 <div className="flex gap-3 text-xs text-gray-400 mt-1">

@@ -395,6 +395,87 @@ export class AvailabilityService {
   }
 
   /**
+   * Get global availability overview for all products in a date range
+   * Returns products with their bookings for calendar view
+   */
+  async getGlobalAvailability(startDate: Date, endDate: Date, categoryId?: string) {
+    try {
+      const productWhere: any = { isActive: true };
+      if (categoryId) productWhere.categoryId = categoryId;
+
+      const products = await prisma.product.findMany({
+        where: productWhere,
+        select: { id: true, name: true, stock: true, categoryId: true, category: { select: { name: true } } },
+        orderBy: { name: 'asc' },
+      });
+
+      const bookings = await prisma.orderItem.findMany({
+        where: {
+          order: {
+            status: { notIn: ['CANCELLED'] },
+            startDate: { lte: endDate },
+            endDate: { gte: startDate },
+          },
+        },
+        select: {
+          productId: true,
+          quantity: true,
+          startDate: true,
+          endDate: true,
+          order: {
+            select: { id: true, orderNumber: true, status: true, contactPerson: true, eventType: true },
+          },
+        },
+      });
+
+      const bookingsByProduct = new Map<string, typeof bookings>();
+      for (const b of bookings) {
+        const list = bookingsByProduct.get(b.productId) || [];
+        list.push(b);
+        bookingsByProduct.set(b.productId, list);
+      }
+
+      const result = products.map((p) => {
+        const productBookings = bookingsByProduct.get(p.id) || [];
+        const dates = this.getDatesBetween(startDate, endDate);
+        let minAvailable = p.stock;
+
+        for (const date of dates) {
+          const reserved = productBookings
+            .filter((b) => date >= new Date(b.startDate) && date <= new Date(b.endDate))
+            .reduce((sum, b) => sum + b.quantity, 0);
+          const available = p.stock - reserved;
+          if (available < minAvailable) minAvailable = available;
+        }
+
+        return {
+          id: p.id,
+          name: p.name,
+          stock: p.stock,
+          category: p.category?.name || 'Sin categoría',
+          categoryId: p.categoryId,
+          minAvailable,
+          bookings: productBookings.map((b) => ({
+            orderNumber: b.order.orderNumber,
+            orderId: b.order.id,
+            status: b.order.status,
+            contactPerson: b.order.contactPerson,
+            eventType: b.order.eventType,
+            quantity: b.quantity,
+            startDate: b.startDate,
+            endDate: b.endDate,
+          })),
+        };
+      });
+
+      return { products: result, totalProducts: products.length, period: { startDate, endDate } };
+    } catch (error) {
+      logger.error('Error getting global availability:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Helper: Get all dates between two dates
    */
   private getDatesBetween(startDate: Date, endDate: Date): Date[] {

@@ -24,7 +24,7 @@ const AlquilerSonidoTorrentPage = () => {
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title="Alquiler de Sonido en Torrent | Equipos Profesionales ReSona Events"
-        description="Alquiler de sonido profesional en Torrent, Valencia. Altavoces, microfonía y equipos de audio para eventos, bodas y fiestas. Entrega en Torrent y pedanías. Presupuesto gratis. ☎️ 613881414"
+        description="Alquiler de sonido profesional en Torrent, Valencia. Altavoces, microfonía y equipos de audio para eventos, bodas y fiestas. Servicio en Torrent y pedanías. Presupuesto sin compromiso. ☎️ 613881414"
         keywords="alquiler sonido torrent, alquiler altavoces torrent, equipos audio torrent, sonido eventos torrent, sonido profesional torrent valencia"
         canonicalUrl="https://resonaevents.com/alquiler-sonido-torrent"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
@@ -304,7 +304,7 @@ const AlquilerSonidoTorrentPage = () => {
               ¿Necesitas Sonido para tu Evento en Torrent?
             </h2>
             <p className="text-xl mb-6 text-blue-100">
-              Presupuesto gratis en 24h. Entrega incluida en todo Torrent.
+              Presupuesto sin compromiso en 24h. Servicio en todo Torrent.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link

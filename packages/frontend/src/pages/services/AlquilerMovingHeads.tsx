@@ -15,7 +15,7 @@ Nuestro servicio de <strong>alquiler de moving heads en Valencia</strong> está 
 
 Perfectos para bodas (entrada de novios, primera baile), eventos corporativos (presentaciones, galas), conciertos, y fiestas. Incluimos <strong>técnico especializado</strong> que programa y controla los moving heads durante el evento, creando efectos sincronizados perfectamente.
 
-El servicio completo incluye: transporte gratis en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
+El servicio completo incluye: transporte en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
 
 Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, conciertos, eventos corporativos en Palau de la Música y espacios únicos. Combinamos con <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a>.`,
    
@@ -106,7 +106,7 @@ Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/serv
           "Controlador DMX profesional",
           "Programación de escenas básicas",
           "Montaje con soportes de suelo",
-          "Transporte gratis Valencia capital",
+          "Transporte Valencia capital",
           "Asistencia telefónica"
         ]
       },

@@ -1,6 +1,7 @@
 import { prisma } from '../index';
 import { EventPhase, EventPriority, Prisma } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { invoiceService } from './invoice.service';
 
 // ============= TYPES =============
 interface CreateEventInput {
@@ -143,7 +144,14 @@ export class EventService {
 
       const where: Prisma.EventWhereInput = {};
 
-      if (filters.phase) where.phase = filters.phase;
+      if (filters.phase) {
+        const phaseStr = filters.phase as unknown as string;
+        if (phaseStr.includes(',')) {
+          where.phase = { in: phaseStr.split(',').map(p => p.trim()) as EventPhase[] };
+        } else {
+          where.phase = filters.phase;
+        }
+      }
       if (filters.eventType) where.eventType = filters.eventType;
       if (filters.priority) where.priority = filters.priority;
       if (filters.search) {
@@ -251,11 +259,42 @@ export class EventService {
         updateData.closedAt = new Date();
       }
 
-      return await prisma.event.update({
+      const event = await prisma.event.update({
         where: { id },
         data: updateData,
         include: this.fullInclude(),
       });
+
+      // === ACCIONES AUTOMÁTICAS AL CERRAR EVENTO ===
+      if (phase === 'CLOSED' && (event as any).orderId) {
+        const orderId = (event as any).orderId;
+
+        // 1. Marcar pedido como COMPLETED
+        try {
+          await prisma.order.update({
+            where: { id: orderId },
+            data: { status: 'COMPLETED' },
+          });
+          logger.info(`[changePhase] Pedido ${orderId} marcado como COMPLETED`);
+        } catch (orderErr: any) {
+          logger.warn(`[changePhase] No se pudo completar pedido: ${orderErr.message}`);
+        }
+
+        // 2. Generar factura si no existe
+        try {
+          const existingInvoice = await prisma.invoice.findFirst({ where: { orderId } });
+          if (!existingInvoice) {
+            await invoiceService.generateInvoice(orderId);
+            logger.info(`[changePhase] Factura auto-generada para pedido ${orderId}`);
+          } else {
+            logger.info(`[changePhase] Factura ya existe para pedido ${orderId}`);
+          }
+        } catch (invErr: any) {
+          logger.warn(`[changePhase] No se pudo generar factura: ${invErr.message}`);
+        }
+      }
+
+      return event;
     } catch (error) {
       logger.error('Error changing event phase:', error);
       throw error;
@@ -405,6 +444,93 @@ export class EventService {
       };
     } catch (error) {
       logger.error('Error getting event stats:', error);
+      throw error;
+    }
+  }
+
+  // ============= CONVERSIONS =============
+
+  /**
+   * Crear evento a partir de un pedido existente
+   */
+  async createFromOrder(orderId: string) {
+    try {
+      // Verificar que no exista ya un evento para este pedido
+      const existing = await prisma.event.findUnique({ where: { orderId } });
+      if (existing) {
+        return existing;
+      }
+
+      // Obtener pedido con items y usuario
+      const order: any = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          items: { include: { product: true } },
+          user: { select: { firstName: true, lastName: true, email: true, phone: true } },
+        },
+      });
+
+      if (!order) throw new Error('Pedido no encontrado');
+
+      const eventNumber = await this.generateEventNumber();
+      const clientName = order.contactPerson || `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim() || 'Cliente';
+      const location = typeof order.eventLocation === 'string' ? JSON.parse(order.eventLocation) : order.eventLocation;
+
+      // Crear evento con datos del pedido
+      const event = await prisma.event.create({
+        data: {
+          eventNumber,
+          name: `${order.eventType || 'Evento'} - ${clientName} (${order.orderNumber})`,
+          eventType: order.eventType || 'Evento',
+          priority: 'MEDIUM',
+          eventDate: order.startDate,
+          eventEndDate: order.endDate,
+          setupDate: new Date(new Date(order.startDate).getTime() - 24 * 60 * 60 * 1000), // día anterior
+          teardownDate: new Date(new Date(order.endDate).getTime() + 24 * 60 * 60 * 1000), // día siguiente
+          venueName: location?.address || location?.city || null,
+          venueAddress: location?.address ? `${location.address}, ${location.city || ''} ${location.postalCode || ''}`.trim() : null,
+          clientName,
+          clientEmail: order.user?.email || null,
+          clientPhone: order.contactPhone || order.user?.phone || null,
+          clientCompany: order.user?.company || null,
+          attendees: order.attendees,
+          briefing: order.notes || null,
+          estimatedRevenue: order.total,
+          orderId: order.id,
+          phase: 'PLANNING',
+        },
+        include: this.fullInclude(),
+      });
+
+      // Crear checklist por defecto
+      await this.createDefaultChecklist(event.id, order.eventType || 'Evento');
+
+      // Añadir equipos del pedido como EventEquipment
+      if (order.items.length > 0) {
+        const equipmentData = order.items.map(item => ({
+          eventId: event.id,
+          productName: item.product?.name || `Producto ${item.productId}`,
+          productId: item.productId,
+          quantity: item.quantity,
+          notes: item.notes || null,
+        }));
+        await prisma.eventEquipment.createMany({ data: equipmentData });
+      }
+
+      // Añadir nota automática
+      await prisma.eventNote.create({
+        data: {
+          eventId: event.id,
+          content: `Evento creado automáticamente desde pedido ${order.orderNumber}. Total: ${Number(order.total).toFixed(2)}€`,
+          authorName: 'Sistema',
+          isInternal: true,
+        },
+      });
+
+      logger.info(`Event ${eventNumber} created from order ${order.orderNumber}`);
+      return await this.getById(event.id);
+    } catch (error) {
+      logger.error('Error creating event from order:', error);
       throw error;
     }
   }

@@ -1,12 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { ADMIN_ROLES, COMMERCIAL_ROLES, getAllUserRoles, type UserRole } from '../config/rolePermissions';
 
 interface PrivateRouteProps {
   requireAdmin?: boolean;
   requireCommercial?: boolean;
+  allowedRoles?: UserRole[];
 }
 
-const PrivateRoute = ({ requireAdmin = false, requireCommercial = false }: PrivateRouteProps) => {
+const PrivateRoute = ({ requireAdmin = false, requireCommercial = false, allowedRoles }: PrivateRouteProps) => {
   const { isAuthenticated, user, loading } = useAuthStore();
 
   if (loading) {
@@ -21,11 +23,17 @@ const PrivateRoute = ({ requireAdmin = false, requireCommercial = false }: Priva
     return <Navigate to="/login" replace />;
   }
 
-  if (requireAdmin && user?.role !== 'ADMIN' && user?.role !== 'SUPERADMIN') {
+  const allRoles = getAllUserRoles({ role: user?.role, additionalRoles: user?.additionalRoles });
+
+  if (allowedRoles && !allowedRoles.some(r => allRoles.includes(r))) {
     return <Navigate to="/" replace />;
   }
 
-  if (requireCommercial && user?.role !== 'COMMERCIAL' && user?.role !== 'ADMIN' && user?.role !== 'SUPERADMIN') {
+  if (requireAdmin && !allRoles.some(r => ADMIN_ROLES.includes(r))) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (requireCommercial && !allRoles.some(r => COMMERCIAL_ROLES.includes(r))) {
     return <Navigate to="/" replace />;
   }
 

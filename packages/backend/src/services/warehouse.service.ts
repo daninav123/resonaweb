@@ -28,6 +28,53 @@ export class WarehouseService {
     return prisma.warehouseLocation.update({ where: { id: locationId }, data: { currentItems: 0 } });
   }
 
+  // ============= WAREHOUSE ITEMS (vinculación productos) =============
+
+  async listLocationsWithItems() {
+    return prisma.warehouseLocation.findMany({
+      include: { items: { orderBy: { productName: 'asc' } } },
+      orderBy: [{ zone: 'asc' }, { shelf: 'asc' }, { position: 'asc' }],
+    });
+  }
+
+  async getLocationItems(locationId: string) {
+    return prisma.warehouseItem.findMany({ where: { locationId }, orderBy: { productName: 'asc' } });
+  }
+
+  async addItem(locationId: string, data: { productId?: string; unitId?: string; productName: string; quantity?: number; notes?: string }) {
+    const item = await prisma.warehouseItem.create({
+      data: { locationId, ...data, quantity: data.quantity || 1 },
+    });
+    // Actualizar conteo de ubicación
+    const count = await prisma.warehouseItem.aggregate({ where: { locationId }, _sum: { quantity: true } });
+    await prisma.warehouseLocation.update({ where: { id: locationId }, data: { currentItems: count._sum.quantity || 0 } });
+    return item;
+  }
+
+  async removeItem(itemId: string) {
+    const item = await prisma.warehouseItem.findUnique({ where: { id: itemId } });
+    if (!item) throw new Error('Item no encontrado');
+    await prisma.warehouseItem.delete({ where: { id: itemId } });
+    // Actualizar conteo
+    const count = await prisma.warehouseItem.aggregate({ where: { locationId: item.locationId }, _sum: { quantity: true } });
+    await prisma.warehouseLocation.update({ where: { id: item.locationId }, data: { currentItems: count._sum.quantity || 0 } });
+  }
+
+  async updateItem(itemId: string, data: any) {
+    const item = await prisma.warehouseItem.update({ where: { id: itemId }, data });
+    // Actualizar conteo
+    const count = await prisma.warehouseItem.aggregate({ where: { locationId: item.locationId }, _sum: { quantity: true } });
+    await prisma.warehouseLocation.update({ where: { id: item.locationId }, data: { currentItems: count._sum.quantity || 0 } });
+    return item;
+  }
+
+  async findProductLocation(productId: string) {
+    return prisma.warehouseItem.findMany({
+      where: { productId },
+      include: { location: true },
+    });
+  }
+
   // Estadísticas del almacén
   async getStats() {
     const all = await prisma.warehouseLocation.findMany();

@@ -156,7 +156,8 @@ export class AuthService {
         lastName: true,
         phone: true,
         role: true,
-        userLevel: true, // ⭐ AÑADIDO
+        additionalRoles: true,
+        userLevel: true,
         isActive: true,
         emailVerified: true,
         createdAt: true,

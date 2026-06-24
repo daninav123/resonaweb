@@ -71,6 +71,68 @@ export class ContractMgmtService {
     return prisma.contract.create({ data: { ...rest, contractNumber, publicToken: crypto.randomUUID(), status: 'draft' } });
   }
 
+  // Crear contrato desde un pedido
+  async createFromOrder(orderId: string) {
+    // Evitar duplicados
+    const existing = await prisma.contract.findFirst({ where: { orderId } });
+    if (existing) return existing;
+
+    const order: any = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        items: { include: { product: { select: { name: true } } } },
+        user: { select: { firstName: true, lastName: true, email: true, phone: true } },
+      },
+    });
+    if (!order) throw new Error('Pedido no encontrado');
+
+    const clientName = order.contactPerson || `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim() || 'Cliente';
+    const itemsList = order.items.map((i: any) => `- ${i.product?.name || 'Producto'} x${i.quantity}`).join('\n');
+    const total = Number(order.total || 0);
+    const startDate = new Date(order.startDate).toLocaleDateString('es-ES');
+    const endDate = new Date(order.endDate).toLocaleDateString('es-ES');
+
+    const content = `CONTRATO DE ALQUILER DE EQUIPOS DE SONIDO E ILUMINACIÓN
+
+Entre RESONA SOUND S.L. (en adelante "la empresa") y ${clientName} (en adelante "el cliente").
+
+CLÁUSULAS:
+
+1. OBJETO: La empresa se compromete a proporcionar los siguientes equipos en régimen de alquiler:
+${itemsList}
+
+2. DURACIÓN: Desde el ${startDate} hasta el ${endDate}.
+
+3. PRECIO: El precio total del alquiler asciende a ${total.toFixed(2)}€ (IVA incluido).
+
+4. FIANZA: El cliente depositará una fianza de ${Number(order.depositAmount || 0).toFixed(2)}€ que será devuelta tras la verificación del estado del material.
+
+5. RESPONSABILIDAD: El cliente se responsabiliza del buen uso y conservación del material durante el período de alquiler. Cualquier daño o pérdida será facturado al coste de reposición.
+
+6. ENTREGA Y DEVOLUCIÓN: El material será entregado y recogido según las condiciones pactadas. Cualquier retraso en la devolución supondrá un cargo adicional del precio diario por cada día de retraso.
+
+7. CANCELACIÓN: La cancelación con menos de 48h de antelación supondrá el cobro del 50% del importe total.
+
+Firmado en Valencia, a ${new Date().toLocaleDateString('es-ES')}.`;
+
+    const contractNumber = await this.generateNumber();
+    const crypto = await import('crypto');
+    return prisma.contract.create({
+      data: {
+        contractNumber,
+        title: `Alquiler - ${order.orderNumber} - ${clientName}`,
+        clientName,
+        clientEmail: order.user?.email || '',
+        budgetRef: order.orderNumber,
+        orderId: order.id,
+        content,
+        totalAmount: total,
+        publicToken: crypto.randomUUID(),
+        status: 'draft',
+      },
+    });
+  }
+
   // Generar PDF del contrato de gestión
   async generatePDF(id: string): Promise<Buffer> {
     const PDFDocument = (await import('pdfkit')).default;

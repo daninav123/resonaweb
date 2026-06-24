@@ -104,7 +104,7 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, <a href="/serv
           "1x DAS Audio 215A (doble 15\", 2000W)",
           "Cables XLR profesionales incluidos",
           "Configuración y ajuste de crossover",
-          "Transporte gratis Valencia capital",
+          "Transporte Valencia capital",
           "Montaje y desmontaje incluido"
         ]
       },

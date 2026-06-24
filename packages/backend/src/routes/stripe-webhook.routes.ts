@@ -45,11 +45,29 @@ router.post(
         case 'checkout.session.completed': {
           const session = event.data.object as Stripe.Checkout.Session;
           logger.info(`Checkout session completed: ${session.id}`);
-          
-          // Verificar si es pago de fianza
+
+          // Señal de reserva de evento (QuoteRequest) — flujo self-serve de resonaevents.com
+          if (session.metadata?.type === 'quote_reservation') {
+            const quoteRequestId = session.metadata.quoteRequestId;
+            if (quoteRequestId) {
+              await prisma.quoteRequest.update({
+                where: { id: quoteRequestId },
+                data: {
+                  status: 'CONVERTED',
+                  firstPaymentPaid: true,
+                  firstPaymentDate: new Date(),
+                  adminNotes: `Señal pagada vía Stripe Checkout — Session: ${session.id}. Pendiente verificar disponibilidad y confirmar cliente.`,
+                },
+              });
+              logger.info(`Quote reservation paid: ${quoteRequestId} - session ${session.id}`);
+            }
+            break;
+          }
+
+          // Verificar si es pago de fianza (flujo Rent)
           if (session.metadata?.type === 'deposit') {
             const orderId = session.metadata.orderId;
-            
+
             if (orderId) {
               // Actualizar el estado de la fianza a CAPTURED
               await prisma.order.update({
@@ -60,7 +78,7 @@ router.post(
                   depositNotes: `Fianza pagada mediante Stripe - Session: ${session.id}`,
                 },
               });
-              
+
               logger.info(`Deposit payment captured for order ${orderId}`);
             }
           }
