@@ -52,6 +52,33 @@ interface ContactForm {
   message: string;
 }
 
+const leadLines = (f: ContactForm): string[] => {
+  const typeLabel = EVENT_TYPES.find((t) => t.key === f.eventType)?.label;
+  return [
+    `Nombre: ${f.name}`,
+    `Email: ${f.email}`,
+    `Teléfono: ${f.phone}`,
+    ...(typeLabel ? [`Tipo de evento: ${typeLabel}`] : []),
+    ...(f.date ? [`Fecha aproximada: ${f.date}`] : []),
+    ...(f.place.trim() ? [`Lugar o ciudad: ${f.place.trim()}`] : []),
+    '',
+    f.message.trim() || '(sin mensaje adicional)',
+  ];
+};
+
+const buildMailto = (f: ContactForm): string => {
+  const typeLabel = EVENT_TYPES.find((t) => t.key === f.eventType)?.label;
+  const subject = typeLabel ? `Evento — ${typeLabel}` : 'Consulta de evento';
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+    leadLines(f).join('\n')
+  )}`;
+};
+
+const buildWhatsapp = (f: ContactForm): string =>
+  `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
+    'Hola, quiero información para mi evento:\n\n' + leadLines(f).join('\n')
+  )}`;
+
 const EventContact = () => {
   const [searchParams] = useSearchParams();
   const tipoParam = searchParams.get('tipo');
@@ -69,6 +96,7 @@ const EventContact = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showFallback, setShowFallback] = useState(false);
 
   const set = <K extends keyof ContactForm>(key: K, value: ContactForm[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -85,6 +113,7 @@ const EventContact = () => {
     }
     setSubmitting(true);
     setError(null);
+    setShowFallback(false);
     try {
       const typeLabel = EVENT_TYPES.find((t) => t.key === form.eventType)?.label;
       const subject = typeLabel ? `Nuevo evento — ${typeLabel}` : 'Consulta desde la web';
@@ -109,10 +138,14 @@ const EventContact = () => {
       trackLead({ leadType: 'contacto' });
       setSubmitted(true);
     } catch (err: any) {
+      const status = err?.response?.status;
+      // 400 = validación que el usuario puede corregir; el resto (401/red/5xx) →
+      // ofrecemos enviar el mismo mensaje por email/WhatsApp para no perder el lead.
+      setShowFallback(status !== 400);
       setError(
         friendlyError(
           err,
-          `No hemos podido enviar tu mensaje. Inténtalo otra vez, llámanos al ${PHONE_DISPLAY} o escríbenos a ${CONTACT_EMAIL}.`
+          'No hemos podido enviar el formulario automáticamente. Mándanoslo en un clic — llega igual a nuestro equipo:'
         )
       );
     } finally {
@@ -284,8 +317,28 @@ const EventContact = () => {
                 </Field>
 
                 {error && (
-                  <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-                    {error}
+                  <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 flex flex-col gap-4">
+                    <p className="text-sm text-red-700">{error}</p>
+                    {showFallback && (
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <a
+                          href={buildMailto(form)}
+                          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-ink text-cream text-sm font-medium hover:bg-ink-800 transition"
+                        >
+                          <Mail className="w-4 h-4" />
+                          Enviar por email
+                        </a>
+                        <a
+                          href={buildWhatsapp(form)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-ink/30 text-sm hover:border-ink transition"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Enviar por WhatsApp
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 
