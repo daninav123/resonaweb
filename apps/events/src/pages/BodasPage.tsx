@@ -29,7 +29,7 @@ const MOMENTS = [
     key: 'banquete',
     label: 'Banquete',
     desc: 'Discursos nítidos, primer baile impecable y transiciones invisibles entre DJ y banda en vivo si la hay.',
-    image: 'https://images.unsplash.com/photo-1470905906913-3f2f4c2cf98d?q=80&w=1800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1800&auto=format&fit=crop',
   },
   {
     key: 'disco',

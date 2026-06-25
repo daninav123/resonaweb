@@ -47,7 +47,7 @@ export const PACKS: Pack[] = [
     gallery: [
       'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=1800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1470905906913-3f2f4c2cf98d?q=80&w=1800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1800&auto=format&fit=crop',
     ],
     includes: [
       'Sonido completo (2 line array + 2 subs + monitoraje)',
@@ -89,7 +89,7 @@ export const PACKS: Pack[] = [
       'https://images.unsplash.com/photo-1529634597503-139d3726fed5?q=80&w=1800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1470905906913-3f2f4c2cf98d?q=80&w=1800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1800&auto=format&fit=crop',
     ],
     includes: [
       'Sonido reforzado (4 line array + 4 subs cardioides + monitoraje)',

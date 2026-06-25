@@ -22,10 +22,13 @@ const PortfolioCasePage = () => {
   const currentIdx = PORTFOLIO.findIndex((c) => c.slug === item.slug);
   const next = PORTFOLIO[(currentIdx + 1) % PORTFOLIO.length];
 
+  const withType = `${item.title} · ${item.typeLabel} — ReSona Events`;
+  const seoTitle = withType.length <= 60 ? withType : `${item.title} — ReSona Events`;
+
   return (
     <>
       <SEOHead
-        title={`${item.title} — ${item.typeLabel} · ReSona Events`}
+        title={seoTitle}
         description={`${item.typeLabel} en ${item.place} producida por ReSona Events. ${item.approach.slice(0, 120)}`}
         canonicalUrl={`https://resonaevents.com/portfolio/${item.slug}`}
         ogImage={item.cover}

@@ -281,7 +281,7 @@ const BlogPostPage = () => {
                   Ver Productos
                 </Link>
                 <Link
-                  to="/calculadora-evento"
+                  to="/brief"
                   className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-resona transition-colors"
                 >
                   Calcular Presupuesto

@@ -100,7 +100,7 @@ const ContactPage = () => {
                 Usa nuestra calculadora de eventos para obtener un presupuesto estimado al instante.
               </p>
               <a
-                href="/calculadora-evento"
+                href="/brief"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark transition text-sm"
               >
                 Calcular Presupuesto

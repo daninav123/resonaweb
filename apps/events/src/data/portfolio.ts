@@ -75,10 +75,10 @@ export const PORTFOLIO: PortfolioCase[] = [
     place: 'Villa privada, Altea',
     year: 2024,
     guests: 90,
-    cover: 'https://images.unsplash.com/photo-1470905906913-3f2f4c2cf98d?q=80&w=1800&auto=format&fit=crop',
+    cover: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1800&auto=format&fit=crop',
     heroLandscape: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=2400&auto=format&fit=crop',
     gallery: [
-      'https://images.unsplash.com/photo-1470905906913-3f2f4c2cf98d?q=80&w=1800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1800&auto=format&fit=crop',
     ],
