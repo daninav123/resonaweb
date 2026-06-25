@@ -44,8 +44,8 @@ const ContactPage = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <SEOHead
         title="Contacto y presupuesto de eventos en Valencia — ReSona"
-        description="Contáctanos en Valencia para presupuesto personalizado de alquiler de sonido, iluminación y equipos audiovisuales. Respuesta en 24h. Teléfono: +34 613881414"
-        keywords="contacto resona valencia, presupuesto alquiler equipos valencia, presupuesto sonido eventos valencia, alquiler material eventos valencia"
+        description="Contáctanos en Valencia para tu boda o evento: presupuesto de producción, sonido e iluminación. Te respondemos en 24 h. ☎ 613 88 14 14"
+        keywords="contacto eventos valencia, presupuesto bodas valencia, produccion eventos valencia, sonido iluminacion eventos valencia"
         canonicalUrl="https://resonaevents.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
