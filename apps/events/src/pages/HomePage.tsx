@@ -23,7 +23,7 @@ const HomePage = () => {
   return (
     <>
       <SEOHead
-        title="ReSona Events — Producción integral de bodas y eventos en Valencia"
+        title="Producción de bodas y eventos en Valencia — ReSona Events"
         description="Bodas, eventos corporativos y privados llave en mano en Valencia. Sonido, iluminación, DJ y producción técnica. Te acompañamos del brief al día del evento."
         ogImage="https://resonaevents.com/og-image.png"
         canonicalUrl="https://resonaevents.com/"

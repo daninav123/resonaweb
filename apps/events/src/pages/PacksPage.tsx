@@ -24,7 +24,7 @@ const PacksPage = () => {
   return (
     <>
       <SEOHead
-        title="Packs cerrados — ReSona Events"
+        title="Packs de bodas y eventos en Valencia — ReSona Events"
         description="Packs de producción para bodas y eventos corporativos en Valencia con precio cerrado. Resérvalos online o adáptalos a tu evento."
         canonicalUrl="https://resonaevents.com/packs"
       />

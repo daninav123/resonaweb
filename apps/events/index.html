@@ -18,30 +18,11 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="heRuYSvPSIOtTXD7AAS5z4v9Xck_-pnWAIPaAtAxGQE">
     
-    <!-- SEO por defecto (sobrescrito dinámicamente por SEOHead.tsx en cada página) -->
-    <meta name="description" content="Producción integral de bodas y eventos en Valencia. Sonido, iluminación y montaje llave en mano. Te acompañamos del brief al día del evento. ☎ 613 88 14 14">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <!-- Autor (estático). El SEO por página (title, description, canonical, robots, Open Graph, Twitter)
+         lo inyecta SEOHead.tsx con react-helmet. No duplicar aquí: react-helmet NO elimina los tags
+         estáticos del HTML, generaría canonicals/descriptions múltiples y en conflicto. -->
     <meta name="author" content="ReSona Events">
-    <link rel="canonical" href="https://resonaevents.com/">
 
-    <!-- Open Graph por defecto -->
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="ReSona Events">
-    <meta property="og:locale" content="es_ES">
-    <meta property="og:url" content="https://resonaevents.com/">
-    <meta property="og:title" content="ReSona Events — Producción integral de bodas y eventos en Valencia">
-    <meta property="og:description" content="Bodas, eventos corporativos y privados llave en mano. Sonido, iluminación, DJ y producción técnica en Valencia.">
-    <meta property="og:image" content="https://resonaevents.com/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/png">
-
-    <!-- Twitter Card por defecto -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ReSona Events — Producción integral de bodas y eventos en Valencia">
-    <meta name="twitter:description" content="Bodas, eventos corporativos y privados llave en mano en Valencia.">
-    <meta name="twitter:image" content="https://resonaevents.com/og-image.png">
-    
     <!-- Performance Optimizations - ORDEN CORRECTO -->
     <!-- 1. Backend API (CRÍTICO - Ahorra 300ms LCP) -->
     <link rel="preconnect" href="https://resona-backend.onrender.com" crossorigin="anonymous">

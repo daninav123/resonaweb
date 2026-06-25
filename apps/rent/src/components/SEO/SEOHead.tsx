@@ -112,12 +112,10 @@ const SEOHead = ({
       <meta name="geo.region" content="ES" />
       <meta name="geo.placename" content="España" />
       <meta name="revisit-after" content="7 days" />
-      <meta name="author" content="Resona Rent" />
-      
-      {/* Mobile */}
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-      <meta name="theme-color" content="#667eea" />
-      
+
+      {/* author, viewport y theme-color son invariantes por página: viven en index.html.
+          No duplicarlos aquí (react-helmet no dedupe contra los estáticos). */}
+
       {/* Schema.org JSON-LD */}
       {schema && (
         Array.isArray(schema) ? (

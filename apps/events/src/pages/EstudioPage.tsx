@@ -35,7 +35,7 @@ const EstudioPage = () => {
   return (
     <>
       <SEOHead
-        title="Estudio — ReSona Events"
+        title="Estudio de producción de eventos en Valencia — ReSona"
         description="Quince años produciendo eventos en Valencia. Un estudio obsesionado con que la técnica sirva a la emoción, no al revés."
         canonicalUrl="https://resonaevents.com/estudio"
       />

@@ -16,7 +16,7 @@ const ServiciosPage = () => {
   return (
     <>
       <SEOHead
-        title="Servicios — ReSona Events"
+        title="Producción técnica de eventos en Valencia — ReSona Events"
         description="Sonido, iluminación, DJ, vídeo, streaming y producción integral para bodas y eventos en Valencia. Un único equipo, cinco disciplinas."
         canonicalUrl="https://resonaevents.com/servicios"
       />

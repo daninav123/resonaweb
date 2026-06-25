@@ -27,7 +27,7 @@ const PortfolioPage = () => {
   return (
     <>
       <SEOHead
-        title="Portfolio — ReSona Events"
+        title="Portfolio de bodas y eventos en Valencia — ReSona Events"
         description="Bodas, eventos corporativos, conciertos y eventos privados producidos por ReSona Events en Valencia y toda la Comunidad Valenciana."
         canonicalUrl="https://resonaevents.com/portfolio"
       />
