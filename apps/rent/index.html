@@ -18,10 +18,28 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="heRuYSvPSIOtTXD7AAS5z4v9Xck_-pnWAIPaAtAxGQE">
     
-    <!-- Autor (estático). El SEO por página (title, description, canonical, robots, Open Graph, Twitter)
-         lo inyecta SEOHead.tsx con react-helmet. No duplicar aquí: react-helmet NO elimina los tags
-         estáticos del HTML, generaría canonicals/descriptions múltiples y en conflicto. -->
     <meta name="author" content="Resona Rent">
+
+    <!-- Open Graph / Twitter ESTÁTICOS (valores de la home). Los scrapers sociales (WhatsApp,
+         Facebook, LinkedIn, Twitter) NO ejecutan JS, así que necesitan estos tags en el HTML
+         estático para la previsualización al compartir. SEOHead.tsx (react-helmet) los sobrescribe
+         por página en navegadores/bots que renderizan JS (Googlebot).
+         OJO: NO añadir aquí canonical ni meta description estáticos: react-helmet no los dedupe y
+         reaparecerían los canonicals en conflicto y las descriptions múltiples (el bug que arreglamos). -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Resona Rent">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:url" content="https://resonarent.com/">
+    <meta property="og:title" content="Resona Rent — Alquiler de Sonido, Iluminación y Audiovisuales en Valencia">
+    <meta property="og:description" content="Alquiler de equipos de sonido, iluminación y audiovisuales en Valencia. Reserva online con entrega y técnico opcional.">
+    <meta property="og:image" content="https://resonarent.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Resona Rent — Alquiler de Sonido, Iluminación y Audiovisuales en Valencia">
+    <meta name="twitter:description" content="Alquiler de equipos de sonido, iluminación y audiovisuales en Valencia. Reserva online con entrega y técnico opcional.">
+    <meta name="twitter:image" content="https://resonarent.com/og-image.png">
 
     <!-- Performance Optimizations - ORDEN CORRECTO -->
     <!-- 1. Backend API (CRÍTICO - Ahorra 300ms LCP) -->
