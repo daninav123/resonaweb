@@ -274,12 +274,12 @@ const BlogPostPage = () => {
                 Descubre nuestro catálogo completo y calcula el presupuesto de tu evento
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Link
-                  to="/productos"
+                <a
+                  href="https://resonarent.com/productos"
                   className="px-6 py-3 bg-white text-resona font-semibold rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   Ver Productos
-                </Link>
+                </a>
                 <Link
                   to="/brief"
                   className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-resona transition-colors"

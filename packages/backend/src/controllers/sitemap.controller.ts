@@ -18,8 +18,13 @@ interface SitemapOptions {
 const SHARED_SEO_SLUGS = new Set(['contacto', 'faqs', 'sobre-nosotros']);
 // Una SEO page es de Rent si su slug habla de alquiler o del catálogo de productos.
 // Las landings de alquiler viven bajo `servicios/alquiler-*`, de ahí el `includes`.
+// `iluminacion-led-profesional` es de Rent (alquiler de iluminación LED) aunque su slug
+// no contenga "alquiler"; sin esto se cuela en el sitemap de Events y falta en el de Rent.
 const isRentSeoSlug = (slug: string) =>
-  slug.includes('alquiler') || slug === 'productos' || slug.startsWith('productos/');
+  slug.includes('alquiler') ||
+  slug.includes('iluminacion-led-profesional') ||
+  slug === 'productos' ||
+  slug.startsWith('productos/');
 
 export class SitemapController {
   /**
