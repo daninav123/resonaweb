@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Phone, Mail, Calculator, CheckCircle } from 'lucide-react';
+import { trackLead } from '@resona/utils';
 import SEOHead from '../SEO/SEOHead';
 
 interface Package {
@@ -197,6 +198,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="https://wa.me/34613881414"
+                  onClick={() => trackLead({ leadType: 'whatsapp' })}
                   className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
                 >
                   <Phone className="w-5 h-5 mr-2" />
@@ -378,6 +380,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="https://wa.me/34613881414"
+                onClick={() => trackLead({ leadType: 'whatsapp' })}
                 className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
               >
                 <Phone className="w-5 h-5 mr-2" />
@@ -385,6 +388,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               </a>
               <a
                 href="mailto:info@resonarent.com"
+                onClick={() => trackLead({ leadType: 'email' })}
                 className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
               >
                 <Mail className="w-5 h-5 mr-2" />
