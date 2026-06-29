@@ -11,6 +11,7 @@ interface EmailOptions {
   subject: string;
   html?: string;
   text?: string;
+  replyTo?: string;
   template?: string;
   data?: any;
   attachments?: Array<{
@@ -48,6 +49,7 @@ class NodemailerProvider implements EmailProvider {
         subject: options.subject,
         html: options.html,
         text: options.text,
+        ...(options.replyTo && { replyTo: options.replyTo }),
         attachments: options.attachments,
       });
       logger.info(`Email sent via Nodemailer to ${options.to}`);
@@ -75,6 +77,7 @@ class SendGridProvider implements EmailProvider {
         subject: options.subject,
         html: options.html,
         text: options.text,
+        ...(options.replyTo && { replyTo: options.replyTo }),
       });
       logger.info(`Email sent via SendGrid to ${options.to}`);
     } catch (error) {
@@ -113,6 +116,7 @@ class ResendProvider implements EmailProvider {
         subject: options.subject,
         html: options.html || '',
         text: options.text,
+        ...(options.replyTo && { replyTo: options.replyTo }),
       });
       
       logger.info('✅ [RESEND] Email enviado correctamente:', {

@@ -140,9 +140,9 @@ export class ContactController {
               </div>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/admin/contactos/${contactMessage.id}" 
+                <a href="mailto:${email}?subject=${encodeURIComponent('Re: ' + subject + ' - Resona Events')}"
                    style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-                  📋 Ver en Admin Panel
+                  ✉️ Responder a ${name}
                 </a>
               </div>
             </div>
@@ -159,6 +159,7 @@ export class ContactController {
       logger.info('🚀 [CONTACT] Intentando enviar email al equipo...');
       await emailService.send({
         to: contactEmail,
+        replyTo: email,
         subject: `📨 Nuevo mensaje de contacto: ${subject}`,
         html: emailHtml
       });
