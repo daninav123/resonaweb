@@ -15,13 +15,22 @@ const AlquilerPantallasLED = () => {
 
     introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2026 en Valencia" style="width:100%;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
-<strong>El Mundial de fútbol 2026 ya está en marcha</strong>, y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>. En ReSona Rent alquilamos pantallas LED profesionales en Valencia para que bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados disfruten cada partido <strong>en grande, con imagen brillante y nítida</strong>.
+<p><strong>El Mundial de fútbol 2026 ya está en marcha.</strong> Y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>.</p>
 
-A diferencia de un proyector, una <strong>pantalla LED P3.9</strong> ofrece mucho más brillo y se ve perfectamente incluso con luz ambiente, de día y de noche. Son aptas <strong>para interior y exterior</strong>, así que valen igual para una terraza, una plaza o un salón. Disponemos de dos formatos: <strong>3×2 metros (6 m²)</strong> y <strong>3×4 metros (12 m²)</strong>, para adaptarnos a tu espacio y a tu aforo. Tenemos <strong>dos pantallas de 3×2 m</strong>, así que también puedes cubrir varias zonas a la vez.
+<p>En ReSona Rent alquilamos pantallas LED profesionales en Valencia para <strong>bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados</strong>. Imagen <strong>brillante y nítida</strong> para disfrutar cada partido en grande.</p>
 
-Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la provincia de Valencia</strong>: tú solo eliges la fecha y nosotros lo dejamos listo para el saque inicial. Además del fútbol, la pantalla es perfecta para conciertos, ferias, presentaciones de empresa, bodas y todo tipo de eventos.
+<p><strong>¿Por qué LED y no un proyector?</strong></p>
 
-<strong>Las fechas de partido vuelan</strong>: reserva con antelación llamando al 613 88 14 14 o por WhatsApp y te confirmamos disponibilidad al momento.`,
+<ul>
+<li><strong>Mucho más brillo:</strong> una pantalla LED P3.9 se ve perfecta incluso con luz ambiente, de día y de noche.</li>
+<li><strong>Interior y exterior:</strong> vale igual para una terraza, una plaza o un salón.</li>
+<li><strong>Dos formatos:</strong> 3×2 m (6 m²) y 3×4 m (12 m²), para adaptarnos a tu espacio y aforo.</li>
+<li><strong>Doble pantalla:</strong> tenemos dos de 3×2 m, así que puedes cubrir varias zonas a la vez.</li>
+</ul>
+
+<p>Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la provincia de Valencia</strong>: tú solo eliges la fecha y nosotros lo dejamos listo para el saque inicial. Además del fútbol, la pantalla es perfecta para <strong>conciertos, ferias, presentaciones, bodas</strong> y todo tipo de eventos.</p>
+
+<p><strong>Las fechas de partido vuelan.</strong> Reserva con antelación llamando al <strong>613 88 14 14</strong> o por WhatsApp y te confirmamos disponibilidad al momento.</p>`,
 
     whyChooseUs: [
       {
