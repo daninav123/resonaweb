@@ -13,7 +13,7 @@ const AlquilerPantallasLED = () => {
     heroSubtitle:
       "Vive el Mundial 2026 en pantalla gigante — y cualquier evento — con calidad LED profesional",
 
-    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2026 en Valencia" style="width:100%;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2026 en Valencia" width="1000" height="666" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
 <p><strong>El Mundial de fútbol 2026 ya está en marcha.</strong> Y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>.</p>
 

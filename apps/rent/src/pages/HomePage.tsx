@@ -143,6 +143,8 @@ const HomePage = () => {
                 src="/images/banner-mundial-2026.jpg"
                 alt="Alquiler de pantallas LED gigantes para ver el Mundial 2026 en Valencia"
                 className="w-full rounded-xl shadow-2xl transition-transform group-hover:scale-[1.01]"
+                width={1200}
+                height={673}
                 loading="lazy"
               />
             </Link>
