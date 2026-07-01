@@ -23,7 +23,7 @@ const AlquilerSonidoTorrentPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Alquiler de Sonido en Torrent | Equipos Profesionales ReSona Rent"
+        title="Alquiler de Sonido en Torrent | ReSona Rent"
         description="Alquiler de sonido profesional en Torrent, Valencia. Altavoces, microfonía y equipos de audio para eventos, bodas y fiestas. Servicio en Torrent y pedanías. Presupuesto sin compromiso. ☎️ 613881414"
         keywords="alquiler sonido torrent, alquiler altavoces torrent, equipos audio torrent, sonido eventos torrent, sonido profesional torrent valencia"
         canonicalUrl="https://resonarent.com/alquiler-sonido-torrent"

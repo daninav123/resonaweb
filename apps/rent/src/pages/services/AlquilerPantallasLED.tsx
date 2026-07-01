@@ -3,7 +3,7 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerPantallasLED = () => {
   const pageData = {
-    title: "Alquiler de Pantalla LED Gigante en Valencia | Mundial 2026 | Resona Rent",
+    title: "Pantalla LED Gigante en Valencia | Mundial 2026 | ReSona",
     metaDescription:
       "Alquila una pantalla LED gigante en Valencia para ver el Mundial 2026 en grande. P3.9 interior y exterior. 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
     keywords:

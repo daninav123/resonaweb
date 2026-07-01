@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Sobre Nosotros - Alquiler de Equipos para Eventos en Valencia | ReSona Rent"
+        title="Sobre ReSona Rent | Alquiler Audiovisual en Valencia"
         description="ReSona Rent, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
         keywords="resona rent valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
         canonicalUrl="https://resonarent.com/sobre-nosotros"

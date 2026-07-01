@@ -158,7 +158,7 @@ const ProductsPage = () => {
   const categoryName = visibleCategories.find((c: Category) => c.slug === filters.category)?.name;
   const pageTitle = categoryName
     ? `Alquiler de ${categoryName} en Valencia | ReSona Rent`
-    : 'Catálogo de alquiler de equipos audiovisuales en Valencia | ReSona Rent';
+    : 'Catálogo de alquiler audiovisual en Valencia | ReSona Rent';
 
   const pageDescription = categoryName
     ? `Alquiler de ${categoryName.toLowerCase()} en Valencia. Precio por día claro, entrega y recogida, técnico opcional y depósito reembolsable.`
