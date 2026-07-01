@@ -1,21 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { Mail, Lock, Eye, EyeOff, User, Phone, AlertCircle } from 'lucide-react';
 import Layout from '../../components/Layout/Layout';
+import SEOHead from '../../components/SEO/SEOHead';
 
 const RegisterPage = () => {
-  // Evitar indexación de página de registro
-  useEffect(() => {
-    const metaRobots = document.createElement('meta');
-    metaRobots.name = 'robots';
-    metaRobots.content = 'noindex, nofollow';
-    document.head.appendChild(metaRobots);
-    
-    return () => {
-      document.head.removeChild(metaRobots);
-    };
-  }, []);
   const navigate = useNavigate();
   const { register, loading, error } = useAuthStore();
   
@@ -83,6 +73,12 @@ const RegisterPage = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="Crear cuenta | ReSona Rent"
+        description="Regístrate en ReSona Rent para reservar equipos de alquiler y seguir tus pedidos."
+        canonicalUrl="https://resonarent.com/registro"
+        noindex
+      />
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">

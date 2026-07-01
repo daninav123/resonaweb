@@ -1,21 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Layout from '../../components/Layout/Layout';
+import SEOHead from '../../components/SEO/SEOHead';
 
 const LoginPage = () => {
-  // Evitar indexación de página de login
-  useEffect(() => {
-    const metaRobots = document.createElement('meta');
-    metaRobots.name = 'robots';
-    metaRobots.content = 'noindex, nofollow';
-    document.head.appendChild(metaRobots);
-    
-    return () => {
-      document.head.removeChild(metaRobots);
-    };
-  }, []);
   const navigate = useNavigate();
   const location = useLocation();
   const { login, loading, error } = useAuthStore();
@@ -50,6 +40,12 @@ const LoginPage = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="Iniciar sesión | ReSona Rent"
+        description="Accede a tu cuenta de ReSona Rent para gestionar tus pedidos de alquiler."
+        canonicalUrl="https://resonarent.com/login"
+        noindex
+      />
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">

@@ -11,6 +11,7 @@ import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import { CouponInput } from '../components/coupons/CouponInput';
 import { calculateCartTotals } from '../utils/cartCalculations';
+import SEOHead from '../components/SEO/SEOHead';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -918,6 +919,12 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <SEOHead
+        title="Tu carrito | ReSona Rent"
+        description="Revisa los equipos de alquiler seleccionados antes de solicitar tu reserva en ReSona Rent."
+        canonicalUrl="https://resonarent.com/carrito"
+        noindex
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Mi Carrito</h1>
 

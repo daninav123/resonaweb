@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 
 export default function CookiesPolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
+      <SEOHead
+        title="Política de Cookies | ReSona Rent"
+        description="Qué cookies usa ReSona Rent, para qué sirven y cómo gestionar tus preferencias en nuestra web de alquiler audiovisual en Valencia."
+        canonicalUrl="https://resonarent.com/politica-cookies"
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Política de Cookies</h1>

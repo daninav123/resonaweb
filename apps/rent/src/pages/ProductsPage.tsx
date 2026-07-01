@@ -164,10 +164,9 @@ const ProductsPage = () => {
     ? `Alquiler de ${categoryName.toLowerCase()} en Valencia. Precio por día claro, entrega y recogida, técnico opcional y depósito reembolsable.`
     : 'Alquiler de sonido, iluminación, vídeo y estructuras en Valencia. Precio por día, entrega y recogida, técnico opcional.';
 
-  // Canonical dinámico: incluir parámetro de categoría si existe
-  const canonicalUrl = filters.category
-    ? `https://resonarent.com/productos?category=${filters.category}`
-    : 'https://resonarent.com/productos';
+  // Canonical siempre a /productos sin params: los filtros (?category, ?search, ?sort)
+  // son UX, no contenido distinto. Evita canibalización con las landings /alquiler-*-valencia.
+  const canonicalUrl = 'https://resonarent.com/productos';
 
   return (
     <div className="min-h-screen bg-gray-50">

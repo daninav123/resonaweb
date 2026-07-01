@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
+      <SEOHead
+        title="Política de Privacidad | ReSona Rent"
+        description="Información sobre el tratamiento de datos personales y tus derechos RGPD en ReSona Rent, alquiler de material audiovisual en Valencia."
+        canonicalUrl="https://resonarent.com/politica-privacidad"
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Política de Privacidad</h1>
