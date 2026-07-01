@@ -186,7 +186,7 @@ const ProductDetailPage = () => {
     ? imageUrl 
     : `${baseUrl}${imageUrl || '/og-image.jpg'}`;
 
-  const seoTitle = `Alquiler ${product.name} | Equipos Profesionales para Eventos`;
+  const seoTitle = `Alquiler ${product.name} | ReSona Rent`;
   const seoDescription = product.description 
     ? `${product.description.substring(0, 150)}... Desde €${product.pricePerDay}/día. Alquiler profesional en Valencia.`
     : `Alquiler de ${product.name} para eventos. ${product.category?.name || 'Equipo profesional'}. Desde €${product.pricePerDay}/día. Disponibilidad inmediata.`;
