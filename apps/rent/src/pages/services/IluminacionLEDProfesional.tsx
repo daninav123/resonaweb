@@ -187,9 +187,10 @@ Hemos iluminado más de 1.000 eventos en espacios emblemáticos: Palau de la Mú
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
-      { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Moving Heads", url: "/servicios/alquiler-moving-heads" },
+      { title: "Máquinas de Efectos", url: "/servicios/alquiler-maquinas-fx" },
+      { title: "Láser", url: "/servicios/alquiler-laser" },
+      { title: "Iluminación para Bodas", url: "/servicios/alquiler-iluminacion-bodas" }
     ]
   };
 

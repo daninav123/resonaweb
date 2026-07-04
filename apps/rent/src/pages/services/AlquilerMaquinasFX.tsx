@@ -170,9 +170,10 @@ Hemos trabajado en más de 2.000 eventos en Valencia: <a href="/servicios/sonido
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
       { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Moving Heads", url: "/servicios/alquiler-moving-heads" },
+      { title: "Láser", url: "/servicios/alquiler-laser" },
+      { title: "Iluminación para Bodas", url: "/servicios/alquiler-iluminacion-bodas" }
     ]
   };
 

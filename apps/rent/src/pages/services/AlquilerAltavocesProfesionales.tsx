@@ -201,8 +201,9 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
 
     relatedServices: [
       { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
-      { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Subwoofers", url: "/servicios/alquiler-subwoofers" },
+      { title: "Micrófonos Inalámbricos", url: "/servicios/alquiler-microfonos-inalambricos" },
+      { title: "Mesa de Mezclas DJ", url: "/servicios/alquiler-mesa-mezcla-dj" }
     ]
   };
 

@@ -219,9 +219,10 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
       { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Moving Heads", url: "/servicios/alquiler-moving-heads" },
+      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
+      { title: "Máquinas de Efectos", url: "/servicios/alquiler-maquinas-fx" }
     ]
   };
 

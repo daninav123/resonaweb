@@ -186,9 +186,10 @@ Hemos iluminado más de 500 eventos con moving heads en Valencia: <a href="/serv
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
       { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Láser", url: "/servicios/alquiler-laser" },
+      { title: "Máquinas de Efectos", url: "/servicios/alquiler-maquinas-fx" },
+      { title: "Iluminación para Bodas", url: "/servicios/alquiler-iluminacion-bodas" }
     ]
   };
 

@@ -17,7 +17,7 @@ Disponemos de equipos de última generación, perfectamente mantenidos y calibra
 
 El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
 
-Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, formaciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-pantallas-led-eventos" class="text-primary-600 hover:underline font-semibold">pantallas LED</a> y <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">sonido corporativo</a>.`,
+Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentaciones, formaciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-pantallas-led" class="text-primary-600 hover:underline font-semibold">pantallas LED</a> y <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">sonido corporativo</a>.`,
    
     whyChooseUs: [
       {
@@ -168,9 +168,10 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conferencias, presentacion
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
+      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led" },
       { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
+      { title: "Estructuras Truss", url: "/servicios/alquiler-estructuras-truss" }
     ]
   };
 

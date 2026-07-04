@@ -178,9 +178,10 @@ Hemos trabajado en más de 2.000 eventos en Valencia: conciertos, festivales, ev
 ],
 
     relatedServices: [
-      { title: "Sonido Profesional", url: "/servicios/alquiler-sonido-valencia" },
       { title: "Iluminación LED", url: "/servicios/iluminacion-led-profesional" },
-      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led-eventos" }
+      { title: "Moving Heads", url: "/servicios/alquiler-moving-heads" },
+      { title: "Máquinas de Efectos", url: "/servicios/alquiler-maquinas-fx" },
+      { title: "Pantallas LED", url: "/servicios/alquiler-pantallas-led" }
     ]
   };
 
