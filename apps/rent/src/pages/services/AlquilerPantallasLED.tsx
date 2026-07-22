@@ -13,7 +13,7 @@ const AlquilerPantallasLED = () => {
     heroSubtitle:
       "Pantalla gigante con calidad LED profesional para cine de verano, conciertos, eventos de empresa y deporte en directo",
 
-    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para eventos en Valencia" width="1000" height="666" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-evento.jpg" alt="Pantalla LED gigante en un cine de verano al aire libre en Valencia" width="1400" height="933" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
 <p>Una <strong>pantalla LED gigante</strong> convierte cualquier evento en algo memorable: reúnes a tu público delante de una imagen enorme, brillante y nítida que se ve perfecta de día y de noche.</p>
 
