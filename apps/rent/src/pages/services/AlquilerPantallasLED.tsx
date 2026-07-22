@@ -3,21 +3,21 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 
 const AlquilerPantallasLED = () => {
   const pageData = {
-    title: "Pantalla LED Gigante en Valencia | Mundial 2026 | ReSona",
+    title: "Alquiler Pantalla LED Gigante en Valencia | ReSona Rent",
     metaDescription:
-      "Alquila una pantalla LED gigante en Valencia para ver el Mundial 2026 en grande. P3.9 interior y exterior. 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
+      "Alquiler de pantalla LED gigante en Valencia para cine de verano, conciertos, eventos y deporte en directo. P3.9, 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
     keywords:
-      "alquiler pantalla led valencia, pantalla led gigante mundial, pantalla gigante futbol valencia, alquiler pantalla mundial 2026, videowall eventos valencia, pantalla led exterior valencia",
+      "alquiler pantalla led valencia, pantalla led gigante valencia, alquiler pantalla cine de verano, videowall eventos valencia, pantalla led exterior valencia, pantalla gigante conciertos valencia",
     canonicalUrl: "https://resonarent.com/servicios/alquiler-pantallas-led",
     heroTitle: "Alquiler de Pantalla LED Gigante en Valencia",
     heroSubtitle:
-      "Vive el Mundial 2026 en pantalla gigante — y cualquier evento — con calidad LED profesional",
+      "Pantalla gigante con calidad LED profesional para cine de verano, conciertos, eventos de empresa y deporte en directo",
 
-    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para ver el Mundial 2026 en Valencia" width="1000" height="666" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-3x4.jpg" alt="Pantalla LED gigante de 3×4 m para eventos en Valencia" width="1000" height="666" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
-<p><strong>El Mundial de fútbol 2026 ya está en marcha.</strong> Y no hay mejor forma de vivirlo que reuniendo a tu público delante de una <strong>pantalla LED gigante</strong>.</p>
+<p>Una <strong>pantalla LED gigante</strong> convierte cualquier evento en algo memorable: reúnes a tu público delante de una imagen enorme, brillante y nítida que se ve perfecta de día y de noche.</p>
 
-<p>En ReSona Rent alquilamos pantallas LED profesionales en Valencia para <strong>bares, peñas, cervecerías, fan zones, comunidades, empresas y eventos privados</strong>. Imagen <strong>brillante y nítida</strong> para disfrutar cada partido en grande.</p>
+<p>En ReSona Rent alquilamos pantallas LED profesionales en Valencia para <strong>cine de verano, conciertos, ferias, presentaciones de empresa, bodas, comuniones y retransmisiones deportivas</strong>. Lo mismo para una terraza o una plaza que para un salón o un gran aforo.</p>
 
 <p><strong>¿Por qué LED y no un proyector?</strong></p>
 
@@ -28,15 +28,15 @@ const AlquilerPantallasLED = () => {
 <li><strong>Doble pantalla:</strong> tenemos dos de 3×2 m, así que puedes cubrir varias zonas a la vez.</li>
 </ul>
 
-<p>Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la provincia de Valencia</strong>: tú solo eliges la fecha y nosotros lo dejamos listo para el saque inicial. Además del fútbol, la pantalla es perfecta para <strong>conciertos, ferias, presentaciones, bodas</strong> y todo tipo de eventos.</p>
+<p>Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la provincia de Valencia</strong>: tú solo eliges la fecha y nosotros la dejamos lista y funcionando. Perfecta para montar un <strong>cine de verano</strong> en tu urbanización, proyectar un concierto, ambientar una feria o vivir el deporte en grande.</p>
 
-<p><strong>Las fechas de partido vuelan.</strong> Reserva con antelación llamando al <strong>613 88 14 14</strong> o por WhatsApp y te confirmamos disponibilidad al momento.</p>`,
+<p><strong>La disponibilidad es limitada</strong> y las fechas de temporada alta vuelan. Reserva con antelación llamando al <strong>613 88 14 14</strong> o por WhatsApp y te confirmamos disponibilidad al momento.</p>`,
 
     whyChooseUs: [
       {
-        icon: "⚽",
-        title: "Perfecta para el Mundial 2026",
-        description: "Reúne a tu público para ver los partidos en pantalla gigante",
+        icon: "🎬",
+        title: "Cine de verano y eventos",
+        description: "Cine al aire libre, conciertos, ferias, bodas y deporte en directo",
       },
       {
         icon: "📺",
@@ -87,11 +87,12 @@ const AlquilerPantallasLED = () => {
       {
         title: "Ideal para",
         items: [
-          "Ver los partidos del Mundial 2026 en pantalla gigante",
-          "Bares, peñas, cervecerías y locales de ocio",
-          "Fan zones, plazas y eventos al aire libre",
-          "Comunidades, empresas y eventos privados",
-          "Conciertos, ferias, bodas y presentaciones",
+          "Cine de verano y proyecciones al aire libre",
+          "Conciertos, festivales y espectáculos",
+          "Eventos de empresa, ferias y presentaciones",
+          "Bodas, comuniones y celebraciones",
+          "Deporte en directo: fútbol y grandes citas",
+          "Bares, terrazas, plazas y comunidades",
         ],
       },
     ],
@@ -99,13 +100,13 @@ const AlquilerPantallasLED = () => {
     packages: [
       {
         name: "Pantalla LED 3×2 m",
-        subtitle: "6 m² · ideal para bares, peñas y locales",
+        subtitle: "6 m² · ideal para cine de verano, bares y locales",
         price: "800 € + IVA",
         features: [
           "Superficie de 6 m² (3×2 m) · P3.9",
           "Interior y exterior",
           "Entrega, montaje y desmontaje en la provincia de Valencia",
-          "Perfecta para ver el Mundial en grande",
+          "Perfecta para cine de verano y eventos medianos",
           "968 € IVA incluido · 2 unidades disponibles",
         ],
       },
@@ -117,7 +118,7 @@ const AlquilerPantallasLED = () => {
           "Superficie de 12 m² (3×4 m) · P3.9",
           "Interior y exterior · visible para grandes aforos",
           "Entrega, montaje y desmontaje en la provincia de Valencia",
-          "Ideal para fan zones y eventos grandes",
+          "Ideal para conciertos, ferias y grandes eventos",
           "1.815 € IVA incluido",
         ],
         highlighted: true,
@@ -137,14 +138,19 @@ const AlquilerPantallasLED = () => {
 
     faqs: [
       {
-        question: "¿Puedo alquilar una pantalla LED gigante para ver el Mundial 2026?",
+        question: "¿Para qué eventos puedo alquilar una pantalla LED gigante?",
         answer:
-          "Sí. Una pantalla LED gigante es la mejor forma de reunir a tu público para vivir los partidos del Mundial 2026 en grande, ya sea en un bar, una peña, una empresa, una comunidad de vecinos o un evento al aire libre. Como solo disponemos de un número limitado de pantallas, te recomendamos reservar tu fecha con antelación, sobre todo para los días de partido.",
+          "Para casi cualquier ocasión en la que quieras una imagen grande y de calidad: cine de verano al aire libre, conciertos y festivales, eventos de empresa, ferias y presentaciones, bodas y comuniones, o retransmisiones deportivas. Sirve tanto en interior como en exterior. Como disponemos de un número limitado de pantallas, te recomendamos reservar tu fecha con antelación.",
       },
       {
         question: "¿Qué tamaños de pantalla LED tenéis y cuánto cuestan?",
         answer:
           "Tenemos dos formatos, ambos con pixel pitch P3.9: la pantalla de 3×2 metros (6 m²) por 800 € + IVA (968 € IVA incluido), y la pantalla de 3×4 metros (12 m²) por 1.500 € + IVA (1.815 € IVA incluido). Disponemos de dos pantallas de 3×2 m, por lo que también puedes alquilar las dos a la vez (1.600 € + IVA) para cubrir varias zonas. Todas incluyen entrega y montaje en la provincia de Valencia.",
+      },
+      {
+        question: "¿Sirve para montar un cine de verano?",
+        answer:
+          "Sí, es una de sus mejores aplicaciones. Con una pantalla LED gigante montas un cine de verano en una terraza, una piscina, una urbanización o una plaza, con una imagen que se ve nítida incluso al anochecer. Nos encargamos del montaje y, si lo necesitas, también del sonido para que la experiencia sea completa.",
       },
       {
         question: "¿La pantalla sirve para interior y exterior?",
@@ -159,21 +165,17 @@ const AlquilerPantallasLED = () => {
       {
         question: "¿La pantalla LED se ve bien de día y con luz ambiente?",
         answer:
-          "Sí. A diferencia de un proyector, una pantalla LED tiene mucho más brillo, por lo que ofrece una imagen nítida incluso con luz, tanto de día como de noche. Es la mejor opción para que todo el público vea el partido con claridad.",
+          "Sí. A diferencia de un proyector, una pantalla LED tiene mucho más brillo, por lo que ofrece una imagen nítida incluso con luz, tanto de día como de noche. Es la mejor opción para que todo el público vea el contenido con claridad.",
       },
       {
         question: "¿Con cuánta antelación debo reservar?",
         answer:
-          "Cuanto antes, mejor, especialmente para los días de partido del Mundial y los fines de semana: la disponibilidad es limitada porque solo contamos con estas unidades. Puedes consultar disponibilidad y reservar tu fecha llamando al 613 88 14 14 o por WhatsApp; te respondemos rápido.",
-      },
-      {
-        question: "¿Sirve para otros eventos además del fútbol?",
-        answer:
-          "Por supuesto. Además de retransmisiones deportivas, la pantalla LED es ideal para conciertos, ferias, presentaciones de empresa, bodas, comuniones, eventos corporativos y cualquier ocasión en la que quieras una imagen grande y de calidad.",
+          "Cuanto antes, mejor, especialmente en fines de semana y en temporada alta de verano: la disponibilidad es limitada porque solo contamos con estas unidades. Puedes consultar disponibilidad y reservar tu fecha llamando al 613 88 14 14 o por WhatsApp; te respondemos rápido.",
       },
     ],
 
     relatedServices: [
+      { title: "Alquiler de proyectores", url: "/servicios/alquiler-proyectores" },
       { title: "Alquiler de sonido", url: "/servicios/alquiler-sonido-valencia" },
       { title: "Ver todo el catálogo", url: "/productos" },
     ],
