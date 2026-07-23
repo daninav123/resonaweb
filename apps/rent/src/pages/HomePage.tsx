@@ -134,29 +134,29 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Banner Mundial 2026 - Pantalla LED */}
+      {/* Banner Cine de Verano - Pantalla LED / Proyector */}
       <section className="bg-gray-950">
         <div className="container mx-auto px-4 py-10 md:py-12">
           <div className="max-w-5xl mx-auto">
-            <Link to="/servicios/alquiler-pantallas-led" className="block group">
+            <Link to="/servicios/cine-de-verano-valencia" className="block group">
               <img
-                src="/images/banner-mundial-2026.jpg"
-                alt="Alquiler de pantallas LED gigantes para ver el Mundial 2026 en Valencia"
+                src="/images/banner-cine-verano.jpg"
+                alt="Alquiler de cine de verano en Valencia con pantalla gigante"
                 className="w-full rounded-xl shadow-2xl transition-transform group-hover:scale-[1.01]"
                 width={1200}
-                height={673}
+                height={675}
                 loading="lazy"
               />
             </Link>
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
               <p className="text-white/90">
-                Pantalla LED P3.9 (3×2 m o 3×4 m) · Entrega y montaje en Valencia · Desde 800 € + IVA
+                Monta tu cine de verano · Pantalla LED o proyector + sonido · Entrega y montaje en Valencia
               </p>
               <Link
-                to="/servicios/alquiler-pantallas-led"
+                to="/servicios/cine-de-verano-valencia"
                 className="inline-flex items-center gap-2 bg-resona hover:opacity-90 text-white font-semibold px-6 py-3 rounded-lg transition whitespace-nowrap"
               >
-                Ver pantallas LED <ArrowRight className="w-5 h-5" />
+                Ver cine de verano <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </div>
