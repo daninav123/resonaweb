@@ -140,11 +140,11 @@ const HomePage = () => {
           <div className="max-w-5xl mx-auto">
             <Link to="/servicios/cine-de-verano-valencia" className="block group">
               <img
-                src="/images/banner-cine-verano.jpg"
-                alt="Alquiler de cine de verano en Valencia con pantalla gigante"
+                src="/images/pantalla-led-montaje.jpg"
+                alt="Montaje de pantalla LED de ReSona Rent para cine de verano en Valencia"
                 className="w-full rounded-xl shadow-2xl transition-transform group-hover:scale-[1.01]"
-                width={1200}
-                height={675}
+                width={1050}
+                height={700}
                 loading="lazy"
               />
             </Link>

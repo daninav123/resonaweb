@@ -13,7 +13,7 @@ const CineDeVeranoValencia = () => {
     heroSubtitle:
       "Pantalla LED o proyector, sonido y montaje llave en mano para tus proyecciones al aire libre",
 
-    introduction: `<img src="https://resonarent.com/images/cine-de-verano.jpg" alt="Cine de verano al aire libre con pantalla gigante en una plaza de Valencia" width="1400" height="933" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
+    introduction: `<img src="https://resonarent.com/images/pantalla-led-montaje.jpg" alt="Montaje de pantalla LED de ReSona Rent en Valencia" width="1050" height="700" style="width:100%;height:auto;border-radius:12px;margin-bottom:24px;" loading="lazy" />
 
 <p>¿Quieres montar un <strong>cine de verano</strong> en tu urbanización, tu pueblo o tu terraza? En ReSona Rent lo dejamos todo listo: <strong>pantalla, proyector o pantalla LED gigante, sonido y montaje</strong>, para que solo tengas que elegir la película.</p>
 
