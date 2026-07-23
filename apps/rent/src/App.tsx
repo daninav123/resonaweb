@@ -66,6 +66,7 @@ const AlquilerPantallasLED = lazyWithRetry(() => import('./pages/services/Alquil
 const AlquilerProyectores = lazyWithRetry(() => import('./pages/services/AlquilerProyectores'));
 const AlquilerEstructurasTruss = lazyWithRetry(() => import('./pages/services/AlquilerEstructurasTruss'));
 const AlquilerMaquinasFX = lazyWithRetry(() => import('./pages/services/AlquilerMaquinasFX'));
+const CineDeVeranoValencia = lazyWithRetry(() => import('./pages/services/CineDeVeranoValencia'));
 
 const NotFoundPage = lazyWithRetry(() => import('./pages/NotFoundPage'));
 
@@ -160,6 +161,7 @@ export default function App() {
                 <Route path="/servicios/alquiler-proyectores" element={<AlquilerProyectores />} />
                 <Route path="/servicios/alquiler-estructuras-truss" element={<AlquilerEstructurasTruss />} />
                 <Route path="/servicios/alquiler-maquinas-fx" element={<AlquilerMaquinasFX />} />
+                <Route path="/servicios/cine-de-verano-valencia" element={<CineDeVeranoValencia />} />
 
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
