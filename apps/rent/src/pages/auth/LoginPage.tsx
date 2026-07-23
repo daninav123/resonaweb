@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import Layout from '../../components/Layout/Layout';
 import SEOHead from '../../components/SEO/SEOHead';
 
 const LoginPage = () => {
@@ -39,7 +38,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Layout>
+    <>
       <SEOHead
         title="Iniciar sesión | ReSona Rent"
         description="Accede a tu cuenta de ReSona Rent para gestionar tus pedidos de alquiler."
@@ -190,7 +189,7 @@ const LoginPage = () => {
         </div>
       </div>
       </div>
-    </Layout>
+    </>
   );
 };
 
