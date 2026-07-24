@@ -9,6 +9,8 @@ interface WhatsAppFloatProps {
   showAfterMs?: number;
   /** Texto del tooltip (se oculta al hacer hover) */
   tooltip?: string;
+  /** Callback al pulsar el botón (para medir conversión de lead) */
+  onContactClick?: () => void;
 }
 
 export function WhatsAppFloat({
@@ -16,6 +18,7 @@ export function WhatsAppFloat({
   message = 'Hola, me gustaría información sobre vuestros servicios.',
   showAfterMs = 800,
   tooltip = '¿Hablamos?',
+  onContactClick,
 }: WhatsAppFloatProps) {
   const [visible, setVisible] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -57,7 +60,10 @@ export function WhatsAppFloat({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contactar por WhatsApp"
-        onClick={() => setTooltipOpen(false)}
+        onClick={() => {
+          setTooltipOpen(false);
+          onContactClick?.();
+        }}
         className="group flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition-transform hover:scale-110 hover:bg-[#1ea957] focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
       >
         <svg

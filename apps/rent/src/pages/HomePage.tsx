@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { trackLead } from '@resona/utils';
 import {
   Search,
   Package,
@@ -311,6 +312,7 @@ const HomePage = () => {
           <div className="flex flex-wrap justify-center gap-3">
             <a
               href="tel:+34613881414"
+              onClick={() => trackLead({ leadType: 'telefono' })}
               className="inline-flex items-center gap-2 bg-white text-resona hover:bg-gray-100 font-medium px-5 py-2.5 rounded-md transition"
             >
               <Phone className="w-4 h-4" /> 613 88 14 14

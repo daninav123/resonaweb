@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAuthStore, startTokenRefresh } from '@resona/api-client';
 import { WhatsAppFloat } from '@resona/ui';
+import { trackLead } from '@resona/utils';
 import Layout from './components/Layout/Layout';
 
 // Páginas públicas de alquiler
@@ -172,6 +173,7 @@ export default function App() {
             phone="34613881414"
             message="Hola, quería información sobre el alquiler de equipos para un evento."
             tooltip="¿Dudas? Escríbenos"
+            onContactClick={() => trackLead({ leadType: 'whatsapp' })}
           />
           {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
         </BrowserRouter>

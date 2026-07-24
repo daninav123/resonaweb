@@ -1437,9 +1437,9 @@ const CartPage = () => {
                       : 'bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 >
-                  {hasInvalidDates() 
-                    ? '🚫 Productos no disponibles' 
-                    : (loading ? 'Verificando sesión...' : (isAuthenticated ? 'Proceder al checkout' : 'Inicia sesión para continuar'))
+                  {hasInvalidDates()
+                    ? '🚫 Productos no disponibles'
+                    : (loading ? 'Un momento...' : 'Continuar con la reserva')
                   }
                 </button>
 
