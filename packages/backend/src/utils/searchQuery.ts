@@ -16,6 +16,8 @@ const SYNONYM_GROUPS: string[][] = [
   ['pantalla', 'pantallas', 'led', 'proyeccion', 'proyector', 'videowall', 'display'],
   ['mesa', 'mesas', 'mezclas', 'mixer', 'mezcladora', 'consola'],
   ['cable', 'cables', 'cableado', 'xlr', 'jack', 'dmx'],
+  // "zapatilla" es como se conoce popularmente a la regleta eléctrica.
+  ['regleta', 'regletas', 'zapatilla', 'zapatillas', 'ladron', 'ladrones', 'alargador', 'alargadera'],
   ['dj', 'plato', 'platos', 'controladora', 'giradiscos'],
   ['humo', 'niebla', 'maquina', 'fx', 'confeti'],
 ];
