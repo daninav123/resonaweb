@@ -109,13 +109,16 @@ class ProductService {
    */
   async searchProducts(query: string, page: number = 1, limit: number = 12) {
     const response: any = await api.get(`/products/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
-    const products = response?.data || [];
-    
+
     // Filtrar productos de categoría "Personal"
-    return products.filter((product: any) => {
-      const categoryName = product.category?.name?.toLowerCase() || '';
-      return categoryName !== 'personal';
-    });
+    if (response?.data) {
+      response.data = response.data.filter((product: any) => {
+        const categoryName = product.category?.name?.toLowerCase() || '';
+        return categoryName !== 'personal';
+      });
+    }
+
+    return response || { data: [], pagination: { page, limit, total: 0 } };
   }
 
   /**

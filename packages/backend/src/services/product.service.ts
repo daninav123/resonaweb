@@ -4,6 +4,7 @@ import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import slugify from 'slugify';
 import { cacheService, cacheKeys } from './cache.service';
+import { buildSearchFilter } from '../utils/searchQuery';
 
 // Lock para serializar eliminaciones y evitar race conditions
 class DeletionLock {
@@ -406,16 +407,11 @@ export class ProductService {
     } = params;
 
     // Build where clause
+    const searchFilter = buildSearchFilter(query);
     const where: Prisma.ProductWhereInput = {
       isActive: true,
       isPack: false, // Excluir packs de búsquedas
-      ...(query && {
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          { sku: { contains: query, mode: 'insensitive' } },
-        ],
-      }),
+      ...(searchFilter && searchFilter),
       ...(categoryId && { categoryId }),
       ...(minPrice !== undefined && { pricePerDay: { gte: minPrice } }),
       ...(maxPrice !== undefined && { pricePerDay: { lte: maxPrice } }),

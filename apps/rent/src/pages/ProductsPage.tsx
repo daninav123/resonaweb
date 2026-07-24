@@ -77,8 +77,7 @@ const ProductsPage = () => {
     queryKey: ['products', page, filters],
     queryFn: async () => {
       if (filters.search) {
-        const result = await productService.searchProducts(filters.search, page, 12);
-        return { data: result || [], pagination: { page, limit: 12, total: result?.length || 0 } };
+        return await productService.searchProducts(filters.search, page, 12);
       }
       
       const params = {
