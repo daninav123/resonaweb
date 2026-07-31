@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
+import { trackLead } from '@resona/utils';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -26,6 +27,7 @@ const Footer = () => {
               </Link>
               <a
                 href="https://wa.me/34613881414?text=Hola,%20me%20gustaría%20organizar%20un%20evento"
+                onClick={() => trackLead({ leadType: 'whatsapp' })}
                 className="inline-flex items-center justify-between max-w-md px-6 py-5 rounded-full border border-cream/30 hover:border-cream transition"
               >
                 <span className="font-medium">WhatsApp · 613 88 14 14</span>
@@ -48,7 +50,11 @@ const Footer = () => {
                 Valencia y toda la Comunidad Valenciana.<br />
                 Lunes a Viernes · 10:00 – 19:00
               </p>
-              <a href="mailto:info@resonaevents.com" className="hover:text-accent-300 transition">
+              <a
+                href="mailto:info@resonaevents.com"
+                onClick={() => trackLead({ leadType: 'email' })}
+                className="hover:text-accent-300 transition"
+              >
                 info@resonaevents.com
               </a>
               <a

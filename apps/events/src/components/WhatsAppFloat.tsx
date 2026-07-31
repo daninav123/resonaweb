@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
+import { trackLead } from '@resona/utils';
 
 const WHATSAPP_NUMBER = '34613881414';
 const DEFAULT_MESSAGE = 'Hola, me gustaría organizar un evento con vosotros.';
@@ -30,6 +31,7 @@ const WhatsAppFloat = () => {
   }, [isTooltipVisible]);
 
   const handleClick = () => {
+    trackLead({ leadType: 'whatsapp' });
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };

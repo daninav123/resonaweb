@@ -193,13 +193,14 @@ const EventContact = () => {
 
                 <div className="flex flex-col border-y border-ink/10 divide-y divide-ink/10">
                   {[
-                    { href: `tel:+${WHATSAPP}`, icon: Phone, label: PHONE_DISPLAY, ext: false },
-                    { href: `https://wa.me/${WHATSAPP}`, icon: MessageCircle, label: 'WhatsApp directo', ext: true },
-                    { href: `mailto:${CONTACT_EMAIL}`, icon: Mail, label: CONTACT_EMAIL, ext: false },
-                  ].map(({ href, icon: Icon, label, ext }) => (
+                    { href: `tel:+${WHATSAPP}`, icon: Phone, label: PHONE_DISPLAY, ext: false, leadType: 'telefono' },
+                    { href: `https://wa.me/${WHATSAPP}`, icon: MessageCircle, label: 'WhatsApp directo', ext: true, leadType: 'whatsapp' },
+                    { href: `mailto:${CONTACT_EMAIL}`, icon: Mail, label: CONTACT_EMAIL, ext: false, leadType: 'email' },
+                  ].map(({ href, icon: Icon, label, ext, leadType }) => (
                     <a
                       key={label}
                       href={href}
+                      onClick={() => trackLead({ leadType })}
                       {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                       className="group flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
                     >

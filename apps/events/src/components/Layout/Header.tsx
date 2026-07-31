@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { trackLead } from '@resona/utils';
 
 const NAV = [
   { to: '/bodas', label: 'Bodas' },
@@ -136,6 +137,7 @@ const Header = () => {
               </Link>
               <a
                 href="https://wa.me/34613881414?text=Hola,%20me%20gustaría%20organizar%20un%20evento"
+                onClick={() => trackLead({ leadType: 'whatsapp' })}
                 className="text-sm text-center text-cream/70 hover:text-cream"
               >
                 WhatsApp · 613 88 14 14

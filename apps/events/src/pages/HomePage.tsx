@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { trackLead } from '@resona/utils';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { Reveal } from '../components/motion/Reveal';
@@ -447,6 +448,7 @@ const ClosingCTA = () => (
           </Link>
           <a
             href="https://wa.me/34613881414?text=Hola,%20me%20gustaría%20organizar%20un%20evento"
+            onClick={() => trackLead({ leadType: 'whatsapp' })}
             className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full border border-ink/30 hover:border-ink transition"
           >
             <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
