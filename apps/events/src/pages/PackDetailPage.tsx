@@ -121,7 +121,7 @@ const PackDetailPage = () => {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-20 md:py-28 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           <div className="lg:col-span-7">
             <Reveal>
@@ -296,7 +296,7 @@ const PackDetailPage = () => {
                 </p>
               </div>
 
-              <div className="p-6 md:p-8 bg-cream border border-ink/15">
+              <div className="p-6 md:p-8 bg-paper border border-ink/15">
                 <span className="eyebrow">Cómo funciona</span>
                 <ol className="mt-4 flex flex-col gap-3 text-sm text-ink/75">
                   <li className="flex gap-3">
@@ -322,7 +322,7 @@ const PackDetailPage = () => {
         </div>
       </section>
 
-      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-cream">
+      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-paper">
         <div className="max-w-[1600px] mx-auto">
           <Reveal>
             <span className="eyebrow">Cómo se ve</span>
@@ -348,7 +348,7 @@ const PackDetailPage = () => {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-5 md:px-10 bg-cream text-ink border-t border-ink/10">
+      <section className="py-16 md:py-24 px-5 md:px-10 bg-paper text-ink border-t border-ink/10">
         <div className="max-w-[1600px] mx-auto">
           <Link
             to={`/packs/${next.slug}`}

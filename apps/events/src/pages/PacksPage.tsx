@@ -29,7 +29,7 @@ const PacksPage = () => {
         canonicalUrl="https://resonaevents.com/packs"
       />
 
-      <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-cream text-ink">
+      <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1600px] mx-auto">
           <Reveal>
             <span className="eyebrow">Packs cerrados</span>
@@ -50,7 +50,7 @@ const PacksPage = () => {
         </div>
       </section>
 
-      <section className="sticky top-16 md:top-20 z-30 bg-cream/90 backdrop-blur-md border-y border-ink/10">
+      <section className="sticky top-16 md:top-20 z-30 bg-paper/90 backdrop-blur-md border-y border-ink/10">
         <div className="max-w-[1600px] mx-auto px-5 md:px-10">
           <div className="flex items-center gap-2 md:gap-6 py-4 overflow-x-auto scrollbar-hide">
             {FILTERS.map((f) => {
@@ -78,7 +78,7 @@ const PacksPage = () => {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-5 md:px-10 bg-cream">
+      <section className="py-16 md:py-24 px-5 md:px-10 bg-paper">
         <div className="max-w-[1400px] mx-auto flex flex-col gap-8">
           <AnimatePresence mode="popLayout">
             {filtered.map((pack, i) => (
@@ -103,7 +103,7 @@ const PacksPage = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
                   <div className="absolute left-5 top-5 md:left-7 md:top-7">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/90 text-ink text-xs tracking-wide">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-paper/90 text-ink text-xs tracking-wide">
                       {pack.typeLabel}
                     </span>
                   </div>
@@ -147,7 +147,7 @@ const PacksPage = () => {
                   <div className="mt-6 flex flex-col sm:flex-row gap-3">
                     <Link
                       to={`/packs/${pack.slug}`}
-                      className="inline-flex items-center justify-between gap-3 px-5 py-3 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group/cta flex-1"
+                      className="inline-flex items-center justify-between gap-3 px-5 py-3 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group/cta flex-1"
                     >
                       <span className="text-sm font-medium">Ver detalle</span>
                       <ArrowRight className="w-4 h-4 group-hover/cta:translate-x-1 transition-transform" />
@@ -185,7 +185,7 @@ const PacksPage = () => {
           <Reveal delay={0.3}>
             <Link
               to="/brief"
-              className="mt-10 inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-cream text-ink hover:bg-white transition-all group"
+              className="mt-10 inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
             >
               <span className="font-medium">Empezar brief personalizado</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

@@ -30,7 +30,7 @@ export default function TermsAndConditions() {
                 términos y condiciones en su totalidad.
               </p>
               
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Datos de la Empresa:</strong><br />
                   ReSona Events<br />
@@ -268,7 +268,7 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Protección de Datos</h2>
               
               <p className="text-gray-700 mb-4">
-                Los datos personales proporcionados serán tratados conforme al <Link to="/politica-privacidad" className="text-blue-600 hover:underline">Política de Privacidad</Link> y 
+                Los datos personales proporcionados serán tratados conforme al <Link to="/politica-privacidad" className="text-accent-700 hover:underline">Política de Privacidad</Link> y 
                 el Reglamento General de Protección de Datos (RGPD).
               </p>
               <p className="text-gray-700 mb-4">
@@ -326,7 +326,7 @@ export default function TermsAndConditions() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <Link 
               to="/" 
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent-700 hover:text-accent-800 font-medium"
             >
               ← Volver a la página principal
             </Link>

@@ -76,7 +76,7 @@ const EstudioPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-4">
             <Reveal>
@@ -109,7 +109,7 @@ const EstudioPage = () => {
         </div>
       </section>
 
-      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-cream text-ink">
+      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto">
           <Reveal>
             <span className="eyebrow">Principios</span>
@@ -157,7 +157,7 @@ const EstudioPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1100px] mx-auto text-center flex flex-col items-center">
           <Reveal>
             <span className="eyebrow">Trabajar juntos</span>
@@ -176,7 +176,7 @@ const EstudioPage = () => {
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Link
                 to="/brief"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Empezar brief</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

@@ -21,7 +21,7 @@ const ServiciosPage = () => {
         canonicalUrl="https://resonaevents.com/servicios"
       />
 
-      <section ref={heroRef} className="relative min-h-[70svh] md:min-h-[80svh] w-full overflow-hidden bg-cream text-ink flex items-end">
+      <section ref={heroRef} className="relative min-h-[70svh] md:min-h-[80svh] w-full overflow-hidden bg-paper text-ink flex items-end">
         <motion.div
           style={{ y: heroY }}
           className="absolute inset-0 -top-[10%] -bottom-[10%] opacity-80"
@@ -35,7 +35,7 @@ const ServiciosPage = () => {
             fetchPriority="high"
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/40 via-cream/70 to-cream" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-b from-paper/40 via-paper/70 to-paper" aria-hidden />
 
         <div className="relative z-10 w-full px-5 md:px-10 pb-20 md:pb-32 pt-32">
           <div className="max-w-[1600px] mx-auto">
@@ -69,7 +69,7 @@ const ServiciosPage = () => {
         </div>
       </section>
 
-      <nav aria-label="Servicios" className="sticky top-16 md:top-20 z-30 bg-cream/90 backdrop-blur-md border-y border-ink/10">
+      <nav aria-label="Servicios" className="sticky top-16 md:top-20 z-30 bg-paper/90 backdrop-blur-md border-y border-ink/10">
         <div className="max-w-[1600px] mx-auto px-5 md:px-10">
           <div className="flex items-center gap-2 md:gap-6 py-4 overflow-x-auto scrollbar-hide">
             {SERVICES.map((s) => (
@@ -90,7 +90,7 @@ const ServiciosPage = () => {
         <ServiceChapter key={service.slug} service={service} alt={i % 2 === 1} />
       ))}
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink border-t border-ink/10">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink border-t border-ink/10">
         <div className="max-w-[1100px] mx-auto text-center flex flex-col items-center">
           <Reveal>
             <span className="eyebrow">Siguiente paso</span>
@@ -110,7 +110,7 @@ const ServiciosPage = () => {
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Link
                 to="/brief"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Empezar brief</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -138,7 +138,7 @@ const ServiceChapter = ({ service, alt }: { service: Service; alt: boolean }) =>
     <section
       id={service.slug}
       ref={ref}
-      className="relative py-24 md:py-40 px-5 md:px-10 bg-cream text-ink border-t border-ink/10 scroll-mt-24"
+      className="relative py-24 md:py-40 px-5 md:px-10 bg-paper text-ink border-t border-ink/10 scroll-mt-24"
     >
       <div className="max-w-[1600px] mx-auto">
         <div className={`grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center ${alt ? 'md:[&>*:first-child]:order-2' : ''}`}>

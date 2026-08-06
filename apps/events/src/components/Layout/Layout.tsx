@@ -15,7 +15,7 @@ const Layout = ({ children }: LayoutProps) => {
   useSmoothScroll();
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream text-ink overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-paper text-ink overflow-x-hidden">
       <ScrollToTop />
       <Header />
       <main className="flex-grow w-full">

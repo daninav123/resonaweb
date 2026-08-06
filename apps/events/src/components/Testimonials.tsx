@@ -26,7 +26,7 @@ const Testimonials = ({
   });
   const x = useTransform(scrollYProgress, [0, 1], ['5%', '-40%']);
 
-  const bg = dark ? 'bg-ink text-cream' : 'bg-cream text-ink';
+  const bg = dark ? 'bg-ink text-cream' : 'bg-paper text-ink';
   const accent = dark ? 'text-accent-300' : 'text-accent-500';
   const cardBorder = dark ? 'border-cream/15' : 'border-ink/15';
   const eyebrowColor = dark ? 'text-cream/60' : '';

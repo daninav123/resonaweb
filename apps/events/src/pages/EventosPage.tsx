@@ -99,7 +99,7 @@ const EventosPage = () => {
             >
               <Link
                 to="/brief?tipo=corporativo"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-cream text-ink hover:bg-white transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Solicitar propuesta</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -109,7 +109,7 @@ const EventosPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1600px] mx-auto">
           <div className="mb-14">
             <Reveal>
@@ -184,7 +184,7 @@ const EventosPage = () => {
             {corporateFeatured.map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.08}>
                 <Link to={`/portfolio/${c.slug}`} className="group block">
-                  <div className="relative overflow-hidden aspect-[4/3] bg-cream/5">
+                  <div className="relative overflow-hidden aspect-[4/3] bg-paper/5">
                     <img src={c.cover} alt={c.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-transparent" />
                     <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-7">
@@ -199,7 +199,7 @@ const EventosPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1100px] mx-auto text-center flex flex-col items-center">
           <Reveal>
             <span className="eyebrow">Briefing</span>
@@ -219,7 +219,7 @@ const EventosPage = () => {
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Link
                 to="/brief?tipo=corporativo"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Empezar brief</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

@@ -27,7 +27,7 @@ export default function CookiesPolicy() {
                 recuerde tus acciones y preferencias durante un período de tiempo.
               </p>
               
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   Las cookies NO pueden:
                 </p>
@@ -62,7 +62,7 @@ export default function CookiesPolicy() {
               <div className="space-y-6">
                 <div className="border rounded-lg p-4">
                   <div className="flex items-start">
-                    <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded mr-3">
+                    <span className="bg-accent-100 text-accent-800 text-xs font-semibold px-2 py-1 rounded mr-3">
                       ESENCIALES
                     </span>
                     <div className="flex-1">
@@ -109,7 +109,7 @@ export default function CookiesPolicy() {
 
                 <div className="border rounded-lg p-4">
                   <div className="flex items-start">
-                    <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded mr-3">
+                    <span className="bg-accent-100 text-accent-800 text-xs font-semibold px-2 py-1 rounded mr-3">
                       ANALÍTICAS
                     </span>
                     <div className="flex-1">
@@ -156,7 +156,7 @@ export default function CookiesPolicy() {
                         <p>Información recopilada: Páginas visitadas, tiempo de permanencia, 
                         dispositivo, ubicación aproximada (ciudad), navegador.</p>
                         <p className="mt-2">
-                          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-700 hover:underline">
                             Ver política de privacidad de Google
                           </a>
                         </p>
@@ -167,7 +167,7 @@ export default function CookiesPolicy() {
 
                 <div className="border rounded-lg p-4">
                   <div className="flex items-start">
-                    <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded mr-3">
+                    <span className="bg-accent-100 text-accent-800 text-xs font-semibold px-2 py-1 rounded mr-3">
                       PREFERENCIAS
                     </span>
                     <div className="flex-1">
@@ -220,7 +220,7 @@ export default function CookiesPolicy() {
                     <strong>Finalidad:</strong> Procesar pagos de forma segura
                   </p>
                   <p className="text-sm text-gray-700">
-                    <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-700 hover:underline">
                       Política de privacidad de Stripe
                     </a>
                   </p>
@@ -232,7 +232,7 @@ export default function CookiesPolicy() {
                     <strong>Finalidad:</strong> Estadísticas de uso del sitio
                   </p>
                   <p className="text-sm text-gray-700">
-                    <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener noreferrer" className="text-accent-700 hover:underline">
                       Información sobre cookies de Google
                     </a>
                   </p>
@@ -249,7 +249,7 @@ export default function CookiesPolicy() {
                 en cualquier momento:
               </p>
               
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition mb-6">
+              <button className="bg-accent-700 text-white px-6 py-3 rounded-lg hover:bg-accent-700 transition mb-6">
                 ⚙️ Configurar Cookies
               </button>
 
@@ -288,7 +288,7 @@ export default function CookiesPolicy() {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Importante:</strong> Bloquear todas las cookies puede afectar al 
                   funcionamiento del sitio web y algunas funcionalidades podrían no estar disponibles.
@@ -304,7 +304,7 @@ export default function CookiesPolicy() {
                   href="https://tools.google.com/dlpage/gaoptout" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-600 hover:underline"
+                  className="text-accent-700 hover:underline"
                 >
                   Complemento de inhabilitación de Google Analytics
                 </a>
@@ -351,9 +351,9 @@ export default function CookiesPolicy() {
               </p>
               
               <ul className="text-sm text-gray-700 space-y-2">
-                <li>• <Link to="/politica-privacidad" className="text-blue-600 hover:underline">Política de Privacidad</Link></li>
-                <li>• <Link to="/terminos-condiciones" className="text-blue-600 hover:underline">Términos y Condiciones</Link></li>
-                <li>• <Link to="/aviso-legal" className="text-blue-600 hover:underline">Aviso Legal</Link></li>
+                <li>• <Link to="/politica-privacidad" className="text-accent-700 hover:underline">Política de Privacidad</Link></li>
+                <li>• <Link to="/terminos-condiciones" className="text-accent-700 hover:underline">Términos y Condiciones</Link></li>
+                <li>• <Link to="/aviso-legal" className="text-accent-700 hover:underline">Aviso Legal</Link></li>
               </ul>
             </section>
 
@@ -377,7 +377,7 @@ export default function CookiesPolicy() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <Link 
               to="/" 
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent-700 hover:text-accent-800 font-medium"
             >
               ← Volver a la página principal
             </Link>

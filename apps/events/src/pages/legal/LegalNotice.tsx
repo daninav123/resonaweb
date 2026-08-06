@@ -27,7 +27,7 @@ export default function LegalNotice() {
                 usuarios de los datos identificativos del titular de este sitio web:
               </p>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-4">
                 <p className="text-sm text-gray-700 space-y-1">
                   <strong>Denominación Social:</strong> ReSona Events<br />
                   <strong>Titular:</strong> Daniel Navarro Campos<br />
@@ -60,7 +60,7 @@ export default function LegalNotice() {
                 Aviso Legal.
               </p>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Importante:</strong> Si no está de acuerdo con cualquiera de las condiciones 
                   aquí establecidas, no debe usar ni acceder a este sitio web.
@@ -208,7 +208,7 @@ export default function LegalNotice() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Protección de Datos</h2>
               
               <p className="text-gray-700 mb-4">
-                El tratamiento de datos personales se rige por nuestra <Link to="/politica-privacidad" className="text-blue-600 hover:underline">Política de Privacidad</Link>, 
+                El tratamiento de datos personales se rige por nuestra <Link to="/politica-privacidad" className="text-accent-700 hover:underline">Política de Privacidad</Link>, 
                 elaborada conforme al Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).
               </p>
 
@@ -223,7 +223,7 @@ export default function LegalNotice() {
               
               <p className="text-gray-700 mb-4">
                 Este sitio web utiliza cookies propias y de terceros. Para más información, 
-                consulta nuestra <Link to="/politica-cookies" className="text-blue-600 hover:underline">Política de Cookies</Link>.
+                consulta nuestra <Link to="/politica-cookies" className="text-accent-700 hover:underline">Política de Cookies</Link>.
               </p>
             </section>
 
@@ -281,7 +281,7 @@ export default function LegalNotice() {
                   href="https://ec.europa.eu/consumers/odr" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-600 hover:underline"
+                  className="text-accent-700 hover:underline"
                 >
                   https://ec.europa.eu/consumers/odr
                 </a>
@@ -337,12 +337,12 @@ export default function LegalNotice() {
               </div>
             </section>
 
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
+            <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-6">
               <h3 className="font-semibold text-gray-900 mb-2">📋 Documentos Relacionados</h3>
               <ul className="text-sm text-gray-700 space-y-1">
-                <li>• <Link to="/terminos-condiciones" className="text-blue-600 hover:underline">Términos y Condiciones</Link></li>
-                <li>• <Link to="/politica-privacidad" className="text-blue-600 hover:underline">Política de Privacidad</Link></li>
-                <li>• <Link to="/politica-cookies" className="text-blue-600 hover:underline">Política de Cookies</Link></li>
+                <li>• <Link to="/terminos-condiciones" className="text-accent-700 hover:underline">Términos y Condiciones</Link></li>
+                <li>• <Link to="/politica-privacidad" className="text-accent-700 hover:underline">Política de Privacidad</Link></li>
+                <li>• <Link to="/politica-cookies" className="text-accent-700 hover:underline">Política de Cookies</Link></li>
               </ul>
             </div>
           </div>
@@ -350,7 +350,7 @@ export default function LegalNotice() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <Link 
               to="/" 
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent-700 hover:text-accent-800 font-medium"
             >
               ← Volver a la página principal
             </Link>

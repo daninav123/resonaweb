@@ -32,7 +32,7 @@ const PortfolioPage = () => {
         canonicalUrl="https://resonaevents.com/portfolio"
       />
 
-      <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-cream text-ink">
+      <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1600px] mx-auto">
           <Reveal>
             <span className="eyebrow">Portfolio</span>
@@ -51,7 +51,7 @@ const PortfolioPage = () => {
         </div>
       </section>
 
-      <section className="sticky top-16 md:top-20 z-30 bg-cream/90 backdrop-blur-md border-y border-ink/10">
+      <section className="sticky top-16 md:top-20 z-30 bg-paper/90 backdrop-blur-md border-y border-ink/10">
         <div className="max-w-[1600px] mx-auto px-5 md:px-10">
           <div className="flex items-center gap-2 md:gap-6 py-4 overflow-x-auto scrollbar-hide">
             {FILTERS.map((f) => {
@@ -79,7 +79,7 @@ const PortfolioPage = () => {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-5 md:px-10 bg-cream">
+      <section className="py-16 md:py-24 px-5 md:px-10 bg-paper">
         <div className="max-w-[1600px] mx-auto">
           <motion.div layout className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
             <AnimatePresence mode="popLayout">
@@ -117,7 +117,7 @@ const PortfolioPage = () => {
                                 {item.place}
                               </div>
                             </div>
-                            <div className="w-10 h-10 flex-shrink-0 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-cream group-hover:text-ink group-hover:border-cream transition-all">
+                            <div className="w-10 h-10 flex-shrink-0 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-paper group-hover:text-ink group-hover:border-cream transition-all">
                               <ArrowRight className="w-4 h-4" />
                             </div>
                           </div>

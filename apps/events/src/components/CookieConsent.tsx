@@ -97,12 +97,12 @@ export const CookieConsent = () => {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 {/* Contenido */}
                 <div className="flex-1 flex items-start gap-3">
-                  <Cookie className="w-6 h-6 flex-shrink-0 mt-1 text-yellow-400" />
+                  <Cookie className="w-6 h-6 flex-shrink-0 mt-1 text-accent-400" />
                   <div>
                     <h3 className="font-bold text-lg mb-1">🍪 Utilizamos Cookies</h3>
                     <p className="text-sm text-gray-300">
                       Usamos cookies propias y de terceros para mejorar tu experiencia, analizar el uso del sitio y personalizar contenidos.{' '}
-                      <a href="/politica-cookies" className="underline hover:text-yellow-400" target="_blank">
+                      <a href="/politica-cookies" className="underline hover:text-accent-400" target="_blank">
                         Más información
                       </a>
                     </p>
@@ -168,7 +168,7 @@ export const CookieConsent = () => {
                     </p>
                   </div>
                   <div className="ml-4">
-                    <div className="relative inline-block w-12 h-6 bg-green-500 rounded-full cursor-not-allowed opacity-50">
+                    <div className="relative inline-block w-12 h-6 bg-accent-500 rounded-full cursor-not-allowed opacity-50">
                       <div className="absolute right-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export const CookieConsent = () => {
                     <button
                       onClick={() => setPreferences(prev => ({ ...prev, analytics: !prev.analytics }))}
                       className={`relative inline-block w-12 h-6 rounded-full transition-colors ${
-                        preferences.analytics ? 'bg-green-500' : 'bg-gray-300'
+                        preferences.analytics ? 'bg-accent-500' : 'bg-gray-300'
                       }`}
                     >
                       <div className={`absolute top-1 bg-white w-4 h-4 rounded-full transition-transform ${
@@ -219,7 +219,7 @@ export const CookieConsent = () => {
                     <button
                       onClick={() => setPreferences(prev => ({ ...prev, marketing: !prev.marketing }))}
                       className={`relative inline-block w-12 h-6 rounded-full transition-colors ${
-                        preferences.marketing ? 'bg-green-500' : 'bg-gray-300'
+                        preferences.marketing ? 'bg-accent-500' : 'bg-gray-300'
                       }`}
                     >
                       <div className={`absolute top-1 bg-white w-4 h-4 rounded-full transition-transform ${
@@ -235,7 +235,7 @@ export const CookieConsent = () => {
               </div>
 
               {/* Info */}
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+              <div className="bg-accent-50 border-l-4 border-accent-600 p-4">
                 <p className="text-sm text-gray-700">
                   ℹ️ Puedes cambiar tus preferencias en cualquier momento desde el enlace "Configuración de Cookies" en el pie de página.
                 </p>

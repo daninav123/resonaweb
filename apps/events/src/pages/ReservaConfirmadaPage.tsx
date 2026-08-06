@@ -25,7 +25,7 @@ const ReservaConfirmadaPage = () => {
       canonicalUrl="https://resonaevents.com/reserva-confirmada"
     />
 
-    <section className="min-h-[100svh] pt-28 md:pt-36 pb-24 px-5 md:px-10 bg-cream text-ink flex items-center">
+    <section className="min-h-[100svh] pt-28 md:pt-36 pb-24 px-5 md:px-10 bg-paper text-ink flex items-center">
       <div className="max-w-[1000px] mx-auto w-full text-center flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.6 }}
@@ -103,7 +103,7 @@ const ReservaConfirmadaPage = () => {
         >
           <Link
             to="/portfolio"
-            className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group"
+            className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
           >
             <span className="font-medium">Mientras, mira el portfolio</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

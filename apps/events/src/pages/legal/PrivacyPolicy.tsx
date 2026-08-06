@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Responsable del Tratamiento</h2>
               
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Identidad:</strong> ReSona Events<br />
                   <strong>Titular:</strong> Daniel Navarro Campos<br />
@@ -74,7 +74,7 @@ export default function PrivacyPolicy() {
                 <li>Navegador y dispositivo</li>
                 <li>Páginas visitadas</li>
                 <li>Fecha y hora de acceso</li>
-                <li>Cookies (ver <Link to="/politica-cookies" className="text-blue-600 hover:underline">Política de Cookies</Link>)</li>
+                <li>Cookies (ver <Link to="/politica-cookies" className="text-accent-700 hover:underline">Política de Cookies</Link>)</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-800 mb-3">3.3 Datos de Transacciones</h3>
@@ -173,7 +173,7 @@ export default function PrivacyPolicy() {
               </p>
 
               <div className="space-y-3">
-                <div className="border-l-4 border-blue-500 pl-4">
+                <div className="border-l-4 border-accent-600 pl-4">
                   <h4 className="font-semibold text-gray-900">Proveedores de Servicios</h4>
                   <ul className="list-disc pl-6 text-sm text-gray-700 space-y-1 mt-2">
                     <li><strong>Stripe:</strong> Procesamiento de pagos (USA - Privacy Shield)</li>
@@ -183,14 +183,14 @@ export default function PrivacyPolicy() {
                   </ul>
                 </div>
 
-                <div className="border-l-4 border-blue-500 pl-4">
+                <div className="border-l-4 border-accent-600 pl-4">
                   <h4 className="font-semibold text-gray-900">Administraciones Públicas</h4>
                   <p className="text-sm text-gray-700 mt-2">
                     Hacienda, Seguridad Social, cuando sea legalmente obligatorio.
                   </p>
                 </div>
 
-                <div className="border-l-4 border-blue-500 pl-4">
+                <div className="border-l-4 border-accent-600 pl-4">
                   <h4 className="font-semibold text-gray-900">Terceros con Consentimiento</h4>
                   <p className="text-sm text-gray-700 mt-2">
                     Solo compartiremos tus datos con terceros si has dado tu consentimiento expreso.
@@ -198,7 +198,7 @@ export default function PrivacyPolicy() {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-500 p-4 my-4">
                 <p className="text-sm text-gray-700">
                   <strong>Importante:</strong> No vendemos, alquilamos ni cedemos tus datos a terceros 
                   con fines comerciales.
@@ -231,42 +231,42 @@ export default function PrivacyPolicy() {
               </p>
 
               <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Acceso</h4>
                   <p className="text-sm text-gray-700">
                     Saber qué datos tenemos sobre ti y obtener una copia.
                   </p>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Rectificación</h4>
                   <p className="text-sm text-gray-700">
                     Corregir datos inexactos o incompletos.
                   </p>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Supresión</h4>
                   <p className="text-sm text-gray-700">
                     Solicitar la eliminación de tus datos (derecho al olvido).
                   </p>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Limitación</h4>
                   <p className="text-sm text-gray-700">
                     Solicitar que limitemos el tratamiento de tus datos.
                   </p>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Portabilidad</h4>
                   <p className="text-sm text-gray-700">
                     Recibir tus datos en formato estructurado y transmitirlos a otro responsable.
                   </p>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-accent-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">✓ Oposición</h4>
                   <p className="text-sm text-gray-700">
                     Oponerte al tratamiento de tus datos (marketing directo).
@@ -274,7 +274,7 @@ export default function PrivacyPolicy() {
                 </div>
               </div>
 
-              <div className="bg-green-50 border-l-4 border-green-500 p-4 my-4">
+              <div className="bg-accent-50 border-l-4 border-accent-500 p-4 my-4">
                 <h4 className="font-semibold text-gray-900 mb-2">¿Cómo ejercer tus derechos?</h4>
                 <p className="text-sm text-gray-700 mb-2">
                   Puedes ejercer tus derechos enviando un email a:
@@ -293,7 +293,7 @@ export default function PrivacyPolicy() {
                 de Protección de Datos (AEPD)</strong> si consideras que hemos vulnerado tus derechos:
               </p>
               <p className="text-sm text-gray-700">
-                <strong>AEPD:</strong> <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">www.aepd.es</a>
+                <strong>AEPD:</strong> <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" className="text-accent-700 hover:underline">www.aepd.es</a>
               </p>
             </section>
 
@@ -372,12 +372,12 @@ export default function PrivacyPolicy() {
               </div>
             </section>
 
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
+            <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-6">
               <h3 className="font-semibold text-gray-900 mb-2">📋 Documentos Relacionados</h3>
               <ul className="text-sm text-gray-700 space-y-1">
-                <li>• <Link to="/terminos-condiciones" className="text-blue-600 hover:underline">Términos y Condiciones</Link></li>
-                <li>• <Link to="/politica-cookies" className="text-blue-600 hover:underline">Política de Cookies</Link></li>
-                <li>• <Link to="/aviso-legal" className="text-blue-600 hover:underline">Aviso Legal</Link></li>
+                <li>• <Link to="/terminos-condiciones" className="text-accent-700 hover:underline">Términos y Condiciones</Link></li>
+                <li>• <Link to="/politica-cookies" className="text-accent-700 hover:underline">Política de Cookies</Link></li>
+                <li>• <Link to="/aviso-legal" className="text-accent-700 hover:underline">Aviso Legal</Link></li>
               </ul>
             </div>
           </div>
@@ -385,7 +385,7 @@ export default function PrivacyPolicy() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <Link 
               to="/" 
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent-700 hover:text-accent-800 font-medium"
             >
               ← Volver a la página principal
             </Link>

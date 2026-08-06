@@ -87,7 +87,7 @@ const PortfolioCasePage = () => {
         </div>
       </section>
 
-      <section className="py-24 md:py-32 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-24 md:py-32 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-4">
             <Reveal>
@@ -148,7 +148,7 @@ const PortfolioCasePage = () => {
         </div>
       </section>
 
-      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-cream">
+      <section className="pb-24 md:pb-32 px-5 md:px-10 bg-paper">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6">
           {item.gallery.map((src, i) => {
             const aspect = i % 4 === 0 ? 'aspect-[16/10]' : i % 3 === 0 ? 'aspect-[3/4]' : 'aspect-[4/5]';
@@ -189,7 +189,7 @@ const PortfolioCasePage = () => {
         </section>
       )}
 
-      <section className="py-16 md:py-24 px-5 md:px-10 bg-cream text-ink border-t border-ink/10">
+      <section className="py-16 md:py-24 px-5 md:px-10 bg-paper text-ink border-t border-ink/10">
         <div className="max-w-[1600px] mx-auto">
           <Link
             to={`/portfolio/${next.slug}`}
