@@ -34,6 +34,8 @@ const LegalNotice = lazy(() => import('./pages/legal/LegalNotice'));
 
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
+const HomePageV14 = lazy(() => import('./pages/HomePageV14'));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { staleTime: 60_000, retry: 1 },
@@ -42,7 +44,7 @@ const queryClient = new QueryClient({
 
 function PageFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream text-ink/40">
+    <div className="flex min-h-screen items-center justify-center bg-paper text-ink/40">
       Cargando…
     </div>
   );
@@ -61,8 +63,10 @@ export default function App() {
         <BrowserRouter>
           <Suspense fallback={<PageFallback />}>
             <Routes>
+              <Route path="/v1" element={<HomePage />} />
+
               <Route element={<Layout />}>
-                <Route index element={<HomePage />} />
+                <Route index element={<HomePageV14 />} />
 
                 {/* Landings editoriales */}
                 <Route path="/bodas" element={<BodasPage />} />

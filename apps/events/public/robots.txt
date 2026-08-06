@@ -8,6 +8,9 @@ Disallow: /login
 Disallow: /registro
 Disallow: /api/
 
+# Home anterior, accesible para comparar pero fuera del índice
+Disallow: /v1
+
 # Parámetros UTM / tracking (evitar duplicados en índice)
 Disallow: /*?utm_
 Disallow: /*&utm_
@@ -18,6 +21,7 @@ Allow: /
 Disallow: /login
 Disallow: /registro
 Disallow: /api/
+Disallow: /v1
 
 # Bots agresivos
 User-agent: AhrefsBot
