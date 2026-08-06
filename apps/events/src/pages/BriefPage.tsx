@@ -8,6 +8,7 @@ import { quoteRequestService } from '../services/quoteRequest.service';
 import { api } from '@resona/api-client';
 import { getPackBySlug, formatEuros, Pack } from '../data/packs';
 import { trackLead } from '@resona/utils';
+import { useLeadLink } from '@resona/ui';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const WHATSAPP = '34613881414';
@@ -98,6 +99,11 @@ const EventContact = () => {
   const [error, setError] = useState<string | null>(null);
   const [showFallback, setShowFallback] = useState(false);
 
+  const leadBase = { app: 'events' as const, section: 'brief' };
+  const telefono = useLeadLink({ ...leadBase, channel: 'telefono', phone: WHATSAPP });
+  const whatsapp = useLeadLink({ ...leadBase, channel: 'whatsapp', phone: WHATSAPP, message: 'Hola, quería pedir presupuesto para un evento' });
+  const email = useLeadLink({ ...leadBase, channel: 'email', email: CONTACT_EMAIL, message: 'Consulta desde la web' });
+
   const set = <K extends keyof ContactForm>(key: K, value: ContactForm[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
@@ -134,6 +140,8 @@ const EventContact = () => {
         phone: form.phone.trim(),
         subject,
         message,
+        app: 'events',
+        sourcePath: window.location.pathname + window.location.search,
       });
       trackLead({ leadType: 'contacto' });
       setSubmitted(true);
@@ -174,7 +182,7 @@ const EventContact = () => {
         canonicalUrl="https://resonaevents.com/brief"
       />
 
-      <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-cream text-ink">
+      <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
             <aside className="md:col-span-5">
@@ -193,15 +201,13 @@ const EventContact = () => {
 
                 <div className="flex flex-col border-y border-ink/10 divide-y divide-ink/10">
                   {[
-                    { href: `tel:+${WHATSAPP}`, icon: Phone, label: PHONE_DISPLAY, ext: false, leadType: 'telefono' },
-                    { href: `https://wa.me/${WHATSAPP}`, icon: MessageCircle, label: 'WhatsApp directo', ext: true, leadType: 'whatsapp' },
-                    { href: `mailto:${CONTACT_EMAIL}`, icon: Mail, label: CONTACT_EMAIL, ext: false, leadType: 'email' },
-                  ].map(({ href, icon: Icon, label, ext, leadType }) => (
+                    { link: telefono, icon: Phone, label: PHONE_DISPLAY },
+                    { link: whatsapp, icon: MessageCircle, label: 'WhatsApp directo' },
+                    { link: email, icon: Mail, label: CONTACT_EMAIL },
+                  ].map(({ link, icon: Icon, label }) => (
                     <a
                       key={label}
-                      href={href}
-                      onClick={() => trackLead({ leadType })}
-                      {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      {...link}
                       className="group flex items-center gap-4 py-4 text-ink/80 hover:text-ink transition-colors"
                     >
                       <Icon className="w-5 h-5 text-accent-500" />
@@ -227,7 +233,7 @@ const EventContact = () => {
                           className={`group text-left p-5 rounded-xl border transition-all duration-300 ${
                             active
                               ? 'border-ink bg-ink text-cream shadow-sm'
-                              : 'border-ink/15 bg-cream-50 hover:border-ink/40 hover:bg-white hover:-translate-y-0.5'
+                              : 'border-ink/15 bg-paper-50 hover:border-ink/40 hover:bg-white hover:-translate-y-0.5'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
@@ -534,7 +540,7 @@ const PackBrief = ({ pack }: { pack: Pack }) => {
         canonicalUrl="https://resonaevents.com/brief"
       />
 
-      <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-cream text-ink">
+      <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
             <aside className="md:col-span-4">
@@ -616,7 +622,7 @@ const PackBrief = ({ pack }: { pack: Pack }) => {
    ────────────────────────────────────────────────────────────────────────── */
 
 const inputClass =
-  'w-full px-4 py-3.5 bg-cream-50 border border-ink/15 rounded-xl text-ink placeholder:text-ink/35 focus:border-accent-500 focus:bg-white focus:ring-0 transition-colors';
+  'w-full px-4 py-3.5 bg-paper-50 border border-ink/15 rounded-xl text-ink placeholder:text-ink/35 focus:border-accent-500 focus:bg-white focus:ring-0 transition-colors';
 
 const StepWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
@@ -789,7 +795,7 @@ const PackSummary = ({
 );
 
 const ThankYou = ({ name }: { name: string }) => (
-  <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-cream text-ink flex items-center">
+  <section className="min-h-[100svh] pt-28 md:pt-36 pb-20 px-5 md:px-10 bg-paper text-ink flex items-center">
     <div className="max-w-[900px] mx-auto text-center">
       <motion.span
         initial={{ opacity: 0, y: 12 }}

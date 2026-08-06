@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, ArrowRight } from 'lucide-react';
-import { trackLead } from '@resona/utils';
+import { useLeadLink } from '@resona/ui';
 import SEOHead from '../components/SEO/SEOHead';
 import { Reveal } from '../components/motion/Reveal';
 
@@ -85,7 +85,10 @@ const FAQ_GROUPS: FAQGroup[] = [
   },
 ];
 
-const FAQsPage = () => (
+const FAQsPage = () => {
+  const whatsapp = useLeadLink({ app: 'events', section: 'faqs', channel: 'whatsapp', phone: '34613881414', message: 'Hola, tengo una pregunta' });
+
+  return (
   <>
     <SEOHead
       title="Preguntas frecuentes — ReSona Events"
@@ -93,7 +96,7 @@ const FAQsPage = () => (
       canonicalUrl="https://resonaevents.com/faqs"
     />
 
-    <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-cream text-ink">
+    <section className="pt-32 md:pt-40 pb-16 px-5 md:px-10 bg-paper text-ink">
       <div className="max-w-[1400px] mx-auto">
         <Reveal>
           <span className="eyebrow">Preguntas frecuentes</span>
@@ -112,7 +115,7 @@ const FAQsPage = () => (
       </div>
     </section>
 
-    <section className="pb-24 md:pb-32 px-5 md:px-10 bg-cream text-ink">
+    <section className="pb-24 md:pb-32 px-5 md:px-10 bg-paper text-ink">
       <div className="max-w-[1400px] mx-auto flex flex-col gap-20 md:gap-28">
         {FAQ_GROUPS.map((group) => (
           <FAQGroupBlock key={group.title} group={group} />
@@ -134,14 +137,13 @@ const FAQsPage = () => (
           <div className="mt-10 flex flex-col sm:flex-row gap-3">
             <Link
               to="/brief"
-              className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-cream text-ink hover:bg-white transition-all group"
+              className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-paper text-ink hover:bg-white transition-all group"
             >
               <span className="font-medium">Escríbenos</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
-              href="https://wa.me/34613881414?text=Hola,%20tengo%20una%20pregunta"
-              onClick={() => trackLead({ leadType: 'whatsapp' })}
+              {...whatsapp}
               className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full border border-cream/30 hover:border-cream transition"
             >
               <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
@@ -151,7 +153,8 @@ const FAQsPage = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 const FAQGroupBlock = ({ group }: { group: FAQGroup }) => (
   <div className="grid grid-cols-1 md:grid-cols-12 gap-10">

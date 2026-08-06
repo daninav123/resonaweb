@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { trackLead } from '@resona/utils';
+import { useLeadLink } from '@resona/ui';
 import SEOHead from '../components/SEO/SEOHead';
 import { Reveal } from '../components/motion/Reveal';
 import Testimonials from '../components/Testimonials';
@@ -47,6 +47,13 @@ const BodasPage = () => {
   const heroOverlay = useTransform(scrollYProgress, [0, 1], [0.35, 0.7]);
 
   const bodas = getCasesByType('boda');
+  const whatsapp = useLeadLink({
+    app: 'events',
+    section: 'bodas',
+    channel: 'whatsapp',
+    phone: '34613881414',
+    message: 'Hola, nos casamos y queríamos pedir propuesta',
+  });
 
   return (
     <>
@@ -105,7 +112,7 @@ const BodasPage = () => {
             >
               <Link
                 to="/brief?tipo=boda"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-cream text-ink hover:bg-white transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-paper text-ink hover:bg-white transition-all group"
               >
                 <span className="font-medium">Pedir propuesta para nuestra boda</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -115,7 +122,7 @@ const BodasPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-3">
             <Reveal>
@@ -134,7 +141,7 @@ const BodasPage = () => {
         </div>
       </section>
 
-      <section className="pb-28 md:pb-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="pb-28 md:pb-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1600px] mx-auto">
           <div className="mb-14">
             <Reveal>
@@ -204,7 +211,7 @@ const BodasPage = () => {
                 className={i === 0 ? 'md:col-span-6 md:row-span-2' : 'md:col-span-6'}
               >
                 <Link to={`/portfolio/${c.slug}`} className="group block">
-                  <div className={`relative overflow-hidden bg-cream/5 ${i === 0 ? 'aspect-[4/5] md:aspect-[4/5]' : 'aspect-[4/3]'}`}>
+                  <div className={`relative overflow-hidden bg-paper/5 ${i === 0 ? 'aspect-[4/5] md:aspect-[4/5]' : 'aspect-[4/3]'}`}>
                     <img src={c.cover} alt={c.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-transparent" />
                     <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-7">
@@ -219,7 +226,7 @@ const BodasPage = () => {
         </div>
       </section>
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink border-t border-ink/10">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink border-t border-ink/10">
         <div className="max-w-[1600px] mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-6 mb-10 md:mb-14">
             <div>
@@ -273,7 +280,7 @@ const BodasPage = () => {
                       </p>
                       <div className="mt-4 pt-4 border-t border-cream/20 flex items-center justify-between">
                         <span className="text-xs text-cream/70">hasta {pack.maxGuests} invitados</span>
-                        <div className="w-9 h-9 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-cream group-hover:text-ink group-hover:border-cream transition-all">
+                        <div className="w-9 h-9 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-paper group-hover:text-ink group-hover:border-cream transition-all">
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
@@ -296,7 +303,7 @@ const BodasPage = () => {
         }
       />
 
-      <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+      <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
         <div className="max-w-[1100px] mx-auto text-center flex flex-col items-center">
           <Reveal>
             <span className="eyebrow">Siguiente paso</span>
@@ -322,8 +329,7 @@ const BodasPage = () => {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="https://wa.me/34613881414?text=Hola,%20nos%20casamos%20y%20quer%C3%ADamos%20pedir%20propuesta"
-                onClick={() => trackLead({ leadType: 'whatsapp' })}
+                {...whatsapp}
                 className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full border border-ink/30 hover:border-ink transition"
               >
                 <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>

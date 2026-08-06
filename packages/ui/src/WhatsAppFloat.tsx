@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { openWhatsAppLead, type LeadApp } from '@resona/utils';
 
 interface WhatsAppFloatProps {
   /** Teléfono en formato internacional sin + (ej. 34613881414) */
   phone: string;
+  /** App desde la que se contacta; sin ella el clic no se atribuye. */
+  app?: LeadApp;
   /** Mensaje inicial pre-rellenado */
   message?: string;
   /** Delay en ms antes de mostrar el botón (evita FCP jank) */
@@ -15,6 +18,7 @@ interface WhatsAppFloatProps {
 
 export function WhatsAppFloat({
   phone,
+  app,
   message = 'Hola, me gustaría información sobre vuestros servicios.',
   showAfterMs = 800,
   tooltip = '¿Hablamos?',
@@ -40,7 +44,18 @@ export function WhatsAppFloat({
 
   if (!visible) return null;
 
+  // href sin código como plan B: si el JS del clic falla, el enlace sigue llevando a
+  // WhatsApp. El código se genera al pulsar porque el botón es global y persiste entre
+  // páginas: fijarlo al montar daría la sección equivocada.
   const href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setTooltipOpen(false);
+    onContactClick?.();
+    if (!app) return;
+    e.preventDefault();
+    window.open(openWhatsAppLead(app, 'whatsapp', phone, message), '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2">
@@ -60,10 +75,7 @@ export function WhatsAppFloat({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contactar por WhatsApp"
-        onClick={() => {
-          setTooltipOpen(false);
-          onContactClick?.();
-        }}
+        onClick={handleClick}
         className="group flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition-transform hover:scale-110 hover:bg-[#1ea957] focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
       >
         <svg

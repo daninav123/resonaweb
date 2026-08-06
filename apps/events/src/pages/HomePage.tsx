@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { trackLead } from '@resona/utils';
+import { useLeadLink } from '@resona/ui';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { Reveal } from '../components/motion/Reveal';
@@ -83,7 +83,7 @@ const HomePage = () => {
             >
               <Link
                 to="/brief"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-cream text-ink hover:bg-white transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-paper text-ink hover:bg-white transition-all group"
               >
                 <span className="font-medium">Cuéntanos tu evento</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -105,7 +105,7 @@ const HomePage = () => {
           transition={{ delay: 1.4, duration: 0.8 }}
           className="absolute bottom-8 right-5 md:right-10 z-10 hidden md:flex items-center gap-3 text-cream/60 text-xs tracking-[0.2em] uppercase"
         >
-          <span className="w-8 h-px bg-cream/40" />
+          <span className="w-8 h-px bg-paper/40" />
           Scroll
         </motion.div>
       </section>
@@ -122,7 +122,7 @@ const HomePage = () => {
 };
 
 const Manifesto = () => (
-  <section className="py-28 md:py-40 px-5 md:px-10 bg-cream text-ink">
+  <section className="py-28 md:py-40 px-5 md:px-10 bg-paper text-ink">
     <div className="max-w-[1400px] mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
         <div className="md:col-span-3">
@@ -162,7 +162,7 @@ const Manifesto = () => (
 );
 
 const DualFork = () => (
-  <section className="pb-24 md:pb-32 px-5 md:px-10 bg-cream text-ink">
+  <section className="pb-24 md:pb-32 px-5 md:px-10 bg-paper text-ink">
     <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       <Reveal>
         <Link to="/bodas" className="group relative block overflow-hidden aspect-[4/5] md:aspect-[4/5] bg-ink/10">
@@ -222,7 +222,7 @@ const DualFork = () => (
 const PacksTeaser = () => {
   const packs = getFeaturedPacks();
   return (
-    <section className="pb-28 md:pb-40 px-5 md:px-10 bg-cream text-ink">
+    <section className="pb-28 md:pb-40 px-5 md:px-10 bg-paper text-ink">
       <div className="max-w-[1600px] mx-auto">
         <div className="flex items-end justify-between flex-wrap gap-6 mb-10 md:mb-14">
           <div>
@@ -254,7 +254,7 @@ const PacksTeaser = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
                   <div className="absolute top-5 left-5 right-5 flex items-start justify-between gap-3">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/90 text-ink text-xs tracking-wide">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-paper/90 text-ink text-xs tracking-wide">
                       {pack.typeLabel}
                     </span>
                   </div>
@@ -275,7 +275,7 @@ const PacksTeaser = () => {
                     </p>
                     <div className="mt-4 pt-4 border-t border-cream/20 flex items-center justify-between">
                       <span className="text-xs text-cream/70">hasta {pack.maxGuests} invitados</span>
-                      <div className="w-9 h-9 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-cream group-hover:text-ink group-hover:border-cream transition-all">
+                      <div className="w-9 h-9 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-paper group-hover:text-ink group-hover:border-cream transition-all">
                         <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -293,7 +293,7 @@ const PacksTeaser = () => {
 const PortfolioTeaser = () => {
   const teaser = getFeaturedCases().slice(0, 3);
   return (
-    <section className="pb-28 md:pb-40 px-5 md:px-10 bg-cream text-ink">
+    <section className="pb-28 md:pb-40 px-5 md:px-10 bg-paper text-ink">
       <div className="max-w-[1600px] mx-auto">
         <div className="flex items-end justify-between flex-wrap gap-6 mb-10 md:mb-14">
           <div>
@@ -341,7 +341,7 @@ const PortfolioTeaser = () => {
                           {item.title}
                         </div>
                       </div>
-                      <div className="w-10 h-10 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-cream group-hover:text-ink group-hover:border-cream transition-all">
+                      <div className="w-10 h-10 rounded-full border border-cream/40 flex items-center justify-center group-hover:bg-paper group-hover:text-ink group-hover:border-cream transition-all">
                         <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -422,8 +422,11 @@ const Process = () => (
   </section>
 );
 
-const ClosingCTA = () => (
-  <section className="relative bg-cream text-ink py-28 md:py-40 px-5 md:px-10 overflow-hidden border-t border-ink/10">
+const ClosingCTA = () => {
+  const whatsapp = useLeadLink({ app: 'events', section: 'home', channel: 'whatsapp', phone: '34613881414', message: 'Hola, me gustaría organizar un evento' });
+
+  return (
+  <section className="relative bg-paper text-ink py-28 md:py-40 px-5 md:px-10 overflow-hidden border-t border-ink/10">
     <div className="relative max-w-[1200px] mx-auto text-center flex flex-col items-center">
       <span className="eyebrow">Tu evento empieza aquí</span>
       <Reveal delay={0.1}>
@@ -447,8 +450,7 @@ const ClosingCTA = () => (
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
           <a
-            href="https://wa.me/34613881414?text=Hola,%20me%20gustaría%20organizar%20un%20evento"
-            onClick={() => trackLead({ leadType: 'whatsapp' })}
+            {...whatsapp}
             className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full border border-ink/30 hover:border-ink transition"
           >
             <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
@@ -457,6 +459,7 @@ const ClosingCTA = () => (
       </Reveal>
     </div>
   </section>
-);
+  );
+};
 
 export default HomePage;

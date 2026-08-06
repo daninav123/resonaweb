@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { trackLead } from '@resona/utils';
+import { useGlobalWhatsApp } from '@resona/ui';
 
 const NAV = [
   { to: '/bodas', label: 'Bodas' },
@@ -13,6 +13,7 @@ const NAV = [
 ];
 
 const Header = () => {
+  const whatsapp = useGlobalWhatsApp('events', '34613881414', 'Hola, me gustaría organizar un evento');
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -41,8 +42,8 @@ const Header = () => {
       <motion.header
         initial={false}
         animate={{
-          backgroundColor: onDark ? 'rgba(11,11,12,0)' : 'rgba(247,243,235,0.92)',
-          borderBottomColor: onDark ? 'rgba(255,255,255,0)' : 'rgba(196,196,199,0.6)',
+          backgroundColor: onDark ? 'rgba(11,11,12,0)' : 'rgba(238,244,249,0.92)',
+          borderBottomColor: onDark ? 'rgba(255,255,255,0)' : 'rgba(196,208,219,0.6)',
           color: onDark ? '#f7f3eb' : '#0b0b0c',
         }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -83,7 +84,7 @@ const Header = () => {
               to="/brief"
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 onDark
-                  ? 'bg-cream text-ink hover:bg-white'
+                  ? 'bg-paper text-ink hover:bg-white'
                   : 'bg-ink text-cream hover:bg-ink-800'
               }`}
             >
@@ -131,13 +132,12 @@ const Header = () => {
             <div className="p-8 border-t border-ink-700 flex flex-col gap-3">
               <Link
                 to="/brief"
-                className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full bg-cream text-ink text-sm font-medium"
+                className="inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full bg-paper text-ink text-sm font-medium"
               >
                 Cuéntanos tu evento
               </Link>
               <a
-                href="https://wa.me/34613881414?text=Hola,%20me%20gustaría%20organizar%20un%20evento"
-                onClick={() => trackLead({ leadType: 'whatsapp' })}
+                {...whatsapp}
                 className="text-sm text-center text-cream/70 hover:text-cream"
               >
                 WhatsApp · 613 88 14 14
