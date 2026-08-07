@@ -34,6 +34,8 @@
 18. **[DEPLOYMENT.md](DEPLOYMENT.md)** - Guía de despliegue
 19. **[MONITORING.md](MONITORING.md)** - Monitorización y alertas
 20. **[ADS_TRACKING_SETUP.md](ADS_TRACKING_SETUP.md)** - 📈 Publicidad y conversiones (Google Ads + Meta): cómo obtener y configurar los IDs
+21. **[SEO_ORGANIC_PLAN.md](SEO_ORGANIC_PLAN.md)** - 🔍 Auditoría SEO técnica y plan de tráfico orgánico (rent + events)
+22. **[LEAD_ATTRIBUTION.md](LEAD_ATTRIBUTION.md)** - 💬 Atribución de contactos por WhatsApp/teléfono/email: de qué web y página viene cada conversación
 
 ## 📚 Orden de Lectura Recomendado
 

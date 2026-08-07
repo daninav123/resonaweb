@@ -47,6 +47,7 @@ import contabilidadRouter from './routes/contabilidad.routes';
 import diagnosticRouter from './routes/diagnostic.routes';
 import calculatorConfigRouter from './routes/calculatorConfig.routes';
 import contactRouter from './routes/contact.routes';
+import leadClickRouter from './routes/leadClick.routes';
 import budgetRouter from './routes/budget.routes';
 import gdprRouter from './routes/gdpr.routes'; // RGPD: Derechos de protección de datos
 import seoPageRouter from './routes/seoPage.routes'; // SEO Pages management
@@ -378,6 +379,7 @@ app.use('/api/v1/contabilidad', contabilidadRouter);
 // Calculator config - GET es PÚBLICO, POST/DELETE requieren auth
 app.use('/api/v1/calculator-config', calculatorConfigRouter);
 app.use('/api/v1/contact', contactRouter);
+app.use('/api/v1/lead-clicks', leadClickRouter); // Atribución de contactos directos (WhatsApp/teléfono/email)
 app.use('/api/v1/budgets', budgetRouter);
 app.use('/api/v1/gdpr', gdprRouter); // RGPD: Derechos de protección de datos
 app.use('/api/v1/seo-pages', seoPageRouter); // SEO Pages management

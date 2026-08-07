@@ -2936,3 +2936,30 @@ model RoleDefinition {
 
   @@map("role_definitions")
 }
+
+// Registro de clics en los enlaces de contacto directo (WhatsApp, teléfono, email).
+// Existe porque el canal real de captación es WhatsApp y no deja rastro: el `ref` viaja
+// dentro del mensaje prellenado, así que al recibir la conversación se puede recuperar
+// de qué app, página y anuncio salió. Se escribe best-effort desde el cliente: si falla,
+// el lead pasa igual.
+model LeadClick {
+  id      String @id @default(uuid())
+  ref     String @unique
+  app     String
+  section String
+  path    String
+  channel String
+
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  gclid       String?
+  device      String?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([app, createdAt])
+  @@map("lead_clicks")
+}

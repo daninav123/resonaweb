@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import SEOHead from '../components/SEO/SEOHead';
+import { useLeadLink } from '@resona/ui';
 import { getFAQSchema } from '../components/SEO/schemas';
 
 const FAQsPage = () => {
+  const whatsapp = useLeadLink({ app: 'rent', section: 'faqs', channel: 'whatsapp', phone: '34613881414', message: 'Hola, tengo una duda sobre el alquiler' });
+
   const faqs = [
     {
       question: '¿Cómo funciona el alquiler de equipos con ReSona Rent?',
@@ -94,9 +97,7 @@ const FAQsPage = () => {
             Pedir presupuesto
           </Link>
           <a
-            href="https://wa.me/34613881414"
-            target="_blank"
-            rel="noopener noreferrer"
+            {...whatsapp}
             className="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-lg font-semibold transition"
           >
             WhatsApp

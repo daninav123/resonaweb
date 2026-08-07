@@ -118,10 +118,16 @@ class ResendProvider implements EmailProvider {
         text: options.text,
         ...(options.replyTo && { replyTo: options.replyTo }),
       });
-      
+
+      // Resend no lanza ante un rechazo de la API: devuelve { data: null, error }. Sin
+      // esta comprobación un email no entregado quedaba registrado como enviado.
+      if (result.error) {
+        throw new Error(`Resend rechazó el envío: ${result.error.message || JSON.stringify(result.error)}`);
+      }
+
       logger.info('✅ [RESEND] Email enviado correctamente:', {
         to: options.to,
-        result: result
+        id: result.data?.id
       });
     } catch (error: any) {
       logger.error('❌ [RESEND] Error al enviar email:', {
@@ -138,6 +144,14 @@ class ResendProvider implements EmailProvider {
 // Console Provider (for development)
 class ConsoleProvider implements EmailProvider {
   async send(options: EmailOptions): Promise<void> {
+    if (process.env.NODE_ENV === 'production') {
+      logger.error(
+        '🚨 [EMAIL SERVICE] EMAIL_PROVIDER no está configurado en producción: el mensaje NO se ha enviado a nadie. ' +
+          'Revisa la variable EMAIL_PROVIDER (resend | sendgrid | smtp).',
+        { to: options.to, subject: options.subject },
+      );
+      throw new Error('EMAIL_PROVIDER no configurado en producción');
+    }
     console.log('📧 EMAIL SIMULATION:');
     console.log('To:', options.to);
     console.log('Subject:', options.subject);

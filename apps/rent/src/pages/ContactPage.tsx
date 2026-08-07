@@ -20,7 +20,11 @@ const ContactPage = () => {
 
     try {
       const api = (await import('../services/api')).default;
-      await api.post('/contact', formData);
+      await api.post('/contact', {
+        ...formData,
+        app: 'rent',
+        sourcePath: window.location.pathname + window.location.search,
+      });
 
       trackLead({ leadType: 'contacto' });
       toast.success('Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');

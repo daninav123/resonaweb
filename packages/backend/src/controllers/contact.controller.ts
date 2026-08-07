@@ -11,7 +11,16 @@ interface ContactFormData {
   phone?: string;
   subject: string;
   message: string;
+  /** Web desde la que se envía. Ambas apps postean aquí y sin esto los correos son indistinguibles. */
+  app?: 'rent' | 'events';
+  /** Ruta de la página donde estaba el formulario. */
+  sourcePath?: string;
 }
+
+const ORIGEN = {
+  rent: { etiqueta: 'RENT', web: 'resonarent.com' },
+  events: { etiqueta: 'EVENTS', web: 'resonaevents.com' },
+} as const;
 
 export class ContactController {
   /**
@@ -21,7 +30,11 @@ export class ContactController {
     try {
       logger.info('🔵 [CONTACT] Petición recibida desde:', req.ip, req.get('origin'));
       
-      const { name, email, phone, subject, message }: ContactFormData = req.body;
+      const { name, email, phone, subject, message, app, sourcePath }: ContactFormData = req.body;
+      const origen = app === 'rent' || app === 'events' ? ORIGEN[app] : null;
+      const origenTexto = origen
+        ? `${origen.web}${sourcePath ? ` · ${sourcePath}` : ''}`
+        : 'origen no identificado';
 
       // Validar campos requeridos
       if (!name || !email || !subject || !message) {
@@ -55,6 +68,8 @@ export class ContactController {
             ip: req.ip,
             userAgent: req.get('user-agent'),
             referrer: req.get('referrer'),
+            app: app || null,
+            sourcePath: sourcePath || null,
             timestamp: new Date().toISOString()
           }
         }
@@ -94,6 +109,14 @@ export class ContactController {
             </div>
             
             <div class="content">
+              <div class="section">
+                <h2>🌐 Origen</h2>
+                <div class="info-row">
+                  <span class="info-label">Web:</span>
+                  <span class="info-value"><strong>${origenTexto}</strong></span>
+                </div>
+              </div>
+
               <div class="section">
                 <h2>👤 Datos del Contacto</h2>
                 <div class="info-row">
@@ -160,7 +183,7 @@ export class ContactController {
       await emailService.send({
         to: contactEmail,
         replyTo: email,
-        subject: `📨 Nuevo mensaje de contacto: ${subject}`,
+        subject: `📨 [${origen?.etiqueta ?? '?'}] ${subject}`,
         html: emailHtml
       });
 
@@ -215,14 +238,22 @@ export class ContactController {
         </html>
       `;
 
+      // La confirmación al cliente es secundaria: si su servidor la rechaza, el lead ya
+      // está guardado y notificado al equipo, así que no puede tumbar la petición.
       logger.info('🚀 [CONTACT] Intentando enviar email de confirmación al cliente...');
-      await emailService.send({
-        to: email,
-        subject: '✅ Hemos recibido tu mensaje - ReSona Events',
-        html: confirmationHtml
-      });
-
-      logger.info('✅ [CONTACT] Email de confirmación enviado al cliente:', email);
+      try {
+        await emailService.send({
+          to: email,
+          subject: '✅ Hemos recibido tu mensaje - ReSona Events',
+          html: confirmationHtml
+        });
+        logger.info('✅ [CONTACT] Email de confirmación enviado al cliente:', email);
+      } catch (confirmError: any) {
+        logger.warn('⚠️ [CONTACT] No se pudo enviar la confirmación al cliente (el aviso al equipo sí salió):', {
+          email,
+          error: confirmError?.message
+        });
+      }
 
       // 4. Responder al cliente
       res.status(200).json({

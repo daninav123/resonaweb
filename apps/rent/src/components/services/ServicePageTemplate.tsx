@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Phone, Mail, Calculator, CheckCircle } from 'lucide-react';
-import { trackLead } from '@resona/utils';
+import { useLeadLink } from '@resona/ui';
 import SEOHead from '../SEO/SEOHead';
 
 interface Package {
@@ -56,6 +56,11 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
   faqs,
   relatedServices,
 }) => {
+  const leadBase = { app: 'rent' as const, section: 'servicios' };
+  const whatsappHero = useLeadLink({ ...leadBase, channel: 'whatsapp', phone: '34613881414', message: 'Hola, quería información sobre el alquiler de equipos' });
+  const whatsappCta = useLeadLink({ ...leadBase, channel: 'whatsapp', phone: '34613881414', message: 'Hola, quería pedir presupuesto de alquiler' });
+  const emailCta = useLeadLink({ ...leadBase, channel: 'email', email: 'info@resonarent.com', message: 'Consulta de alquiler desde la web' });
+
   // Memoizar URL para evitar recalcular en cada render
   const currentUrl = useMemo(
     () => typeof window !== 'undefined' ? `https://resonarent.com${window.location.pathname}` : '',
@@ -197,8 +202,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://wa.me/34613881414"
-                  onClick={() => trackLead({ leadType: 'whatsapp' })}
+                  {...whatsappHero}
                   className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
                 >
                   <Phone className="w-5 h-5 mr-2" />
@@ -379,16 +383,14 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://wa.me/34613881414"
-                onClick={() => trackLead({ leadType: 'whatsapp' })}
+                {...whatsappCta}
                 className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 WhatsApp Directo
               </a>
               <a
-                href="mailto:info@resonarent.com"
-                onClick={() => trackLead({ leadType: 'email' })}
+                {...emailCta}
                 className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
               >
                 <Mail className="w-5 h-5 mr-2" />
