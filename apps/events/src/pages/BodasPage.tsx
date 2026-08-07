@@ -5,38 +5,41 @@ import { ArrowRight } from 'lucide-react';
 import { useLeadLink } from '@resona/ui';
 import SEOHead from '../components/SEO/SEOHead';
 import { Reveal } from '../components/motion/Reveal';
+import Photo from '../components/Photo';
+import { type PhotoSlug } from '../data/photos';
 import Testimonials from '../components/Testimonials';
 import { getCasesByType } from '../data/portfolio';
 import { getPacksByType, formatEuros } from '../data/packs';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const HERO = 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=2400&auto=format&fit=crop';
+// TODO(dani): falta una foto real de ceremonia; es la única que sigue siendo de stock.
+const CEREMONIA_STOCK = 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1800&auto=format&fit=crop';
 
-const MOMENTS = [
+const MOMENTS: Array<{ key: string; label: string; desc: string; photo?: PhotoSlug; stock?: string }> = [
   {
     key: 'ceremonia',
     label: 'Ceremonia',
     desc: 'Micros inalámbricos discretos para los votos, sonido ambiente para los invitados y la música que elegisteis sin cortes ni acoples.',
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1800&auto=format&fit=crop',
+    stock: CEREMONIA_STOCK,
   },
   {
     key: 'coctel',
     label: 'Cóctel',
     desc: 'Sonido distribuido por zonas para que la música acompañe sin tapar las conversaciones. Iluminación cálida para el atardecer.',
-    image: 'https://images.unsplash.com/photo-1529634597503-139d3726fed5?q=80&w=1800&auto=format&fit=crop',
+    photo: 'guirnaldas-noche',
   },
   {
     key: 'banquete',
     label: 'Banquete',
     desc: 'Discursos nítidos, primer baile impecable y transiciones invisibles entre DJ y banda en vivo si la hay.',
-    image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1800&auto=format&fit=crop',
+    photo: 'banquete-masia',
   },
   {
     key: 'disco',
     label: 'Disco',
     desc: 'Energía controlada hasta la última hora. Graves sin molestar a vecinos, pista iluminada para moverse, barra iluminada para respirar.',
-    image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1800&auto=format&fit=crop',
+    photo: 'iluminacion-truss-azul',
   },
 ];
 
@@ -47,6 +50,8 @@ const BodasPage = () => {
   const heroOverlay = useTransform(scrollYProgress, [0, 1], [0.35, 0.7]);
 
   const bodas = getCasesByType('boda');
+  const packsBoda = getPacksByType('boda');
+  const packDesde = Math.min(...packsBoda.map((pack) => pack.price));
   const whatsapp = useLeadLink({
     app: 'events',
     section: 'bodas',
@@ -64,13 +69,13 @@ const BodasPage = () => {
       />
 
       <section ref={heroRef} className="relative h-[100svh] w-full overflow-hidden bg-ink text-cream">
-        <motion.div style={{ y: heroY }} className="absolute inset-0 -top-[10%] -bottom-[10%]">
-          <img
-            src={HERO}
-            alt="Boda iluminada al atardecer por ReSona Events"
+        <motion.div style={{ y: heroY }} className="absolute inset-0 -top-[10%] -bottom-[10%] [&>picture]:block [&>picture]:h-full">
+          <Photo
+            slug="boda-disco-cabina"
+            alt="Cabina de DJ, cabezas móviles y pantallas durante la disco de una boda montada por ReSona Events en Valencia"
+            sizes="100vw"
+            priority
             className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
           />
         </motion.div>
         <motion.div className="absolute inset-0 bg-ink" style={{ opacity: heroOverlay }} aria-hidden />
@@ -90,25 +95,36 @@ const BodasPage = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 1.1, ease: EASE }}
-              className="mt-5 font-display text-display-lg md:text-display-xl text-cream text-balance"
+              className="mt-5 font-display text-display-md md:text-display-lg text-cream text-balance"
             >
-              El día más <span className="display-italic text-accent-300">vuestro</span>,<br />
-              sonando como lo <span className="display-italic text-accent-300">imaginasteis</span>.
+              Sonido, DJ e iluminación para
+              <br />
+              <span className="display-italic text-accent-300">bodas en Valencia</span>.
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.9, ease: EASE }}
-              className="mt-8 max-w-xl text-cream/80 text-lg leading-relaxed"
+              className="mt-6 max-w-xl text-cream/85 text-lg leading-relaxed"
             >
-              Un único equipo que os acompaña desde el primer "sí" hasta el último baile.
-              Ceremonia, cóctel, banquete y disco con transiciones invisibles.
+              Un único equipo para ceremonia, cóctel, banquete y disco. Nos ocupamos de
+              toda la técnica: vosotros no tenéis que coordinar a nadie más.
             </motion.p>
+            <motion.ul
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.78, duration: 0.9, ease: EASE }}
+              className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-cream/70"
+            >
+              <li>Packs cerrados desde {formatEuros(packDesde)}</li>
+              <li>Valencia y Comunidad Valenciana</li>
+              <li>Respuesta en menos de 24 h</li>
+            </motion.ul>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.85, duration: 0.9, ease: EASE }}
-              className="mt-10"
+              className="mt-8 flex flex-col sm:flex-row gap-3"
             >
               <Link
                 to="/brief?tipo=boda"
@@ -117,6 +133,12 @@ const BodasPage = () => {
                 <span className="font-medium">Pedir propuesta para nuestra boda</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
+              <a
+                {...whatsapp}
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-cream/40 text-cream hover:border-cream hover:bg-cream/10 transition"
+              >
+                <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
+              </a>
             </motion.div>
           </div>
         </div>
@@ -163,8 +185,16 @@ const BodasPage = () => {
                 }`}
               >
                 <Reveal className="md:col-span-7">
-                  <div className="relative overflow-hidden aspect-[4/5] md:aspect-[4/3] bg-ink/10">
-                    <img src={m.image} alt={m.label} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="relative overflow-hidden aspect-[4/5] md:aspect-[4/3] bg-ink/10 [&>picture]:absolute [&>picture]:inset-0 [&>picture]:block [&>picture]:h-full">
+                    {m.photo ? (
+                      <Photo
+                        slug={m.photo}
+                        sizes="(min-width: 768px) 58vw, 100vw"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img src={m.stock} alt={m.label} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                    )}
                   </div>
                 </Reveal>
                 <div className="md:col-span-5">
@@ -252,7 +282,7 @@ const BodasPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-            {getPacksByType('boda').map((pack, i) => (
+            {packsBoda.map((pack, i) => (
               <Reveal key={pack.slug} delay={i * 0.08}>
                 <Link to={`/packs/${pack.slug}`} className="group block h-full">
                   <div className="relative overflow-hidden aspect-[4/5] bg-ink/10">

@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useLeadLink } from '@resona/ui';
+import Photo from '../components/Photo';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { Reveal } from '../components/motion/Reveal';
@@ -10,7 +11,6 @@ import Testimonials from '../components/Testimonials';
 import { getFeaturedCases } from '../data/portfolio';
 import { getFeaturedPacks, formatEuros } from '../data/packs';
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2400&auto=format&fit=crop';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -32,13 +32,13 @@ const HomePage = () => {
       />
 
       <section ref={heroRef} className="relative h-[100svh] w-full overflow-hidden bg-ink text-cream">
-        <motion.div style={{ y: heroImageY }} className="absolute inset-0 -top-[10%] -bottom-[10%]">
-          <img
-            src={HERO_IMAGE}
-            alt="Boda íntima al atardecer iluminada por ReSona Events"
+        <motion.div style={{ y: heroImageY }} className="absolute inset-0 -top-[10%] -bottom-[10%] [&>picture]:block [&>picture]:h-full">
+          <Photo
+            slug="boda-disco-cabina"
+            alt="Cabina de DJ e iluminación montadas por ReSona Events durante la disco de una boda en Valencia"
+            sizes="100vw"
+            priority
             className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
           />
         </motion.div>
         <motion.div className="absolute inset-0 bg-ink" style={{ opacity: heroOverlay }} aria-hidden />
@@ -61,8 +61,9 @@ const HomePage = () => {
               transition={{ delay: 0.2, duration: 1.1, ease: EASE }}
               className="mt-5 font-display text-display-lg md:text-display-xl text-cream text-balance"
             >
-              Bodas que <span className="display-italic text-accent-300">suenan</span><br />
-              como se <span className="display-italic text-accent-300">ven</span>.
+              Bodas y eventos que
+              <br />
+              <span className="display-italic text-accent-300">suenan como se ven</span>.
             </motion.h1>
 
             <motion.p
@@ -71,9 +72,20 @@ const HomePage = () => {
               transition={{ delay: 0.7, duration: 0.9, ease: EASE }}
               className="mt-8 max-w-xl text-cream/80 text-lg leading-relaxed"
             >
-              Producimos el día que vas a recordar para siempre. Sonido, iluminación y
-              montaje pensados para emocionar, no para caber en un catálogo.
+              Sonido, DJ, iluminación y montaje para bodas y eventos en Valencia.
+              Un único equipo se encarga de toda la técnica, de principio a fin.
             </motion.p>
+
+            <motion.ul
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.78, duration: 0.9, ease: EASE }}
+              className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-cream/70"
+            >
+              <li>Valencia y Comunidad Valenciana</li>
+              <li>Packs con precio cerrado</li>
+              <li>Respuesta en menos de 24 h</li>
+            </motion.ul>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -4,32 +4,44 @@ import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { Reveal } from '../components/motion/Reveal';
+import Photo from '../components/Photo';
+import { type PhotoSlug } from '../data/photos';
+import { useLeadLink } from '@resona/ui';
 import { PORTFOLIO } from '../data/portfolio';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const HERO = 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2400&auto=format&fit=crop';
+// TODO(dani): faltan fotos reales de un corporativo y de un concierto; son las dos que
+// siguen tirando de stock.
+type Vertical = {
+  key: string;
+  label: string;
+  desc: string;
+  deliverables: string[];
+  photo?: PhotoSlug;
+  stock?: string;
+};
 
-const VERTICALS = [
+const VERTICALS: Vertical[] = [
   {
     key: 'corporativo',
     label: 'Corporativo',
     desc: 'Convenciones, lanzamientos, galas, kick-offs. Producción que transmite lo que la marca quiere decir sin que la técnica se cuele en la foto.',
-    image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1800&auto=format&fit=crop',
+    stock: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1800&auto=format&fit=crop',
     deliverables: ['Escenario + line array', 'Streaming multicámara', 'Régie centralizada', 'Traducción simultánea'],
   },
   {
     key: 'privado',
     label: 'Eventos privados',
     desc: 'Cumpleaños, aniversarios, fiestas familiares de alto perfil. Discreción, elegancia y la música justa para cada momento.',
-    image: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1800&auto=format&fit=crop',
+    photo: 'cabina-dj-letras',
     deliverables: ['Sonido multizona', 'Iluminación decorativa', 'DJ + técnico', 'Fuegos fríos sincronizados'],
   },
   {
     key: 'concierto',
     label: 'Conciertos y festivales',
     desc: 'Ayuntamientos, promotoras y marcas. Gran formato con capacidad para riders complejos y cambios de escenario ajustados.',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=1800&auto=format&fit=crop',
+    stock: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=1800&auto=format&fit=crop',
     deliverables: ['Line array gran formato', 'Iluminación espectáculo', 'Backline', 'Producción técnica'],
   },
 ];
@@ -41,6 +53,13 @@ const EventosPage = () => {
   const heroOverlay = useTransform(scrollYProgress, [0, 1], [0.4, 0.75]);
 
   const corporateFeatured = PORTFOLIO.filter((c) => c.type !== 'boda').slice(0, 4);
+  const whatsapp = useLeadLink({
+    app: 'events',
+    section: 'eventos',
+    channel: 'whatsapp',
+    phone: '34613881414',
+    message: 'Hola, quería pedir presupuesto para un evento',
+  });
 
   return (
     <>
@@ -51,13 +70,13 @@ const EventosPage = () => {
       />
 
       <section ref={heroRef} className="relative h-[100svh] w-full overflow-hidden bg-ink text-cream">
-        <motion.div style={{ y: heroY }} className="absolute inset-0 -top-[10%] -bottom-[10%]">
-          <img
-            src={HERO}
-            alt="Evento corporativo producido por ReSona Events"
+        <motion.div style={{ y: heroY }} className="absolute inset-0 -top-[10%] -bottom-[10%] [&>picture]:block [&>picture]:h-full">
+          <Photo
+            slug="iluminacion-truss-azul"
+            alt="Estructura de truss con cabezas móviles iluminando la pista durante un evento producido por ReSona Events"
+            sizes="100vw"
+            priority
             className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
           />
         </motion.div>
         <motion.div className="absolute inset-0 bg-ink" style={{ opacity: heroOverlay }} aria-hidden />
@@ -77,25 +96,37 @@ const EventosPage = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 1.1, ease: EASE }}
-              className="mt-5 font-display text-display-lg md:text-display-xl text-cream text-balance"
+              className="mt-5 font-display text-display-md md:text-display-lg text-cream text-balance"
             >
-              Producción que <span className="display-italic text-accent-300">no se nota</span>.<br />
-              Mensajes que <span className="display-italic text-accent-300">sí</span>.
+              Producción técnica de
+              <br />
+              <span className="display-italic text-accent-300">eventos en Valencia</span>.
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.9, ease: EASE }}
-              className="mt-8 max-w-xl text-cream/80 text-lg leading-relaxed"
+              className="mt-6 max-w-xl text-cream/85 text-lg leading-relaxed"
             >
-              De un kick-off de 80 personas a un festival de 8.000.
-              Nos encargamos de la técnica para que podáis concentraros en lo que tengáis que decir.
+              Sonido, iluminación, vídeo y montaje para eventos de empresa, celebraciones
+              privadas y conciertos. En corporativo lo llevamos llave en mano: nos
+              encargamos de todo.
             </motion.p>
+            <motion.ul
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.78, duration: 0.9, ease: EASE }}
+              className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-cream/70"
+            >
+              <li>Llave en mano en corporativo</li>
+              <li>Valencia y Comunidad Valenciana</li>
+              <li>Respuesta en menos de 24 h</li>
+            </motion.ul>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.85, duration: 0.9, ease: EASE }}
-              className="mt-10"
+              className="mt-8 flex flex-col sm:flex-row gap-3"
             >
               <Link
                 to="/brief?tipo=corporativo"
@@ -104,6 +135,12 @@ const EventosPage = () => {
                 <span className="font-medium">Solicitar propuesta</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
+              <a
+                {...whatsapp}
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-cream/40 text-cream hover:border-cream hover:bg-cream/10 transition"
+              >
+                <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
+              </a>
             </motion.div>
           </div>
         </div>
@@ -131,8 +168,16 @@ const EventosPage = () => {
                 }`}
               >
                 <Reveal className="md:col-span-7">
-                  <div className="relative overflow-hidden aspect-[4/5] md:aspect-[4/3] bg-ink/10">
-                    <img src={v.image} alt={v.label} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="relative overflow-hidden aspect-[4/5] md:aspect-[4/3] bg-ink/10 [&>picture]:absolute [&>picture]:inset-0 [&>picture]:block [&>picture]:h-full">
+                    {v.photo ? (
+                      <Photo
+                        slug={v.photo}
+                        sizes="(min-width: 768px) 58vw, 100vw"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img src={v.stock} alt={v.label} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                    )}
                   </div>
                 </Reveal>
                 <div className="md:col-span-5">

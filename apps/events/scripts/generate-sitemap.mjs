@@ -15,6 +15,7 @@ const STATIC_ROUTES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/bodas', changefreq: 'monthly', priority: '0.95' },
   { path: '/eventos', changefreq: 'monthly', priority: '0.9' },
+  { path: '/eventos-corporativos-valencia', changefreq: 'monthly', priority: '0.9' },
   { path: '/servicios', changefreq: 'monthly', priority: '0.85' },
   { path: '/portfolio', changefreq: 'weekly', priority: '0.9' },
   { path: '/portfolio/boda-maria-jorge', changefreq: 'monthly', priority: '0.7' },

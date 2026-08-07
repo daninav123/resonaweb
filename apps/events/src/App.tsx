@@ -10,6 +10,7 @@ import Layout from './components/Layout/Layout';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const BodasPage = lazy(() => import('./pages/BodasPage'));
 const EventosPage = lazy(() => import('./pages/EventosPage'));
+const EventosCorporativosPage = lazy(() => import('./pages/EventosCorporativosPage'));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const PortfolioCasePage = lazy(() => import('./pages/PortfolioCasePage'));
 const ServiciosPage = lazy(() => import('./pages/ServiciosPage'));
@@ -71,6 +72,7 @@ export default function App() {
                 {/* Landings editoriales */}
                 <Route path="/bodas" element={<BodasPage />} />
                 <Route path="/eventos" element={<EventosPage />} />
+                <Route path="/eventos-corporativos-valencia" element={<EventosCorporativosPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/portfolio/:slug" element={<PortfolioCasePage />} />
                 <Route path="/servicios" element={<ServiciosPage />} />

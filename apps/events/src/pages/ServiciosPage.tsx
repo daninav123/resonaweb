@@ -5,6 +5,8 @@ import { ArrowRight } from 'lucide-react';
 import SEOHead from '../components/SEO/SEOHead';
 import { Reveal } from '../components/motion/Reveal';
 import { SERVICES, Service } from '../data/services';
+import Photo from '../components/Photo';
+import { useLeadLink } from '@resona/ui';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -12,6 +14,13 @@ const ServiciosPage = () => {
   const heroRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  const whatsapp = useLeadLink({
+    app: 'events',
+    section: 'servicios',
+    channel: 'whatsapp',
+    phone: '34613881414',
+    message: 'Hola, quería pedir presupuesto para un evento',
+  });
 
   return (
     <>
@@ -24,15 +33,15 @@ const ServiciosPage = () => {
       <section ref={heroRef} className="relative min-h-[70svh] md:min-h-[80svh] w-full overflow-hidden bg-paper text-ink flex items-end">
         <motion.div
           style={{ y: heroY }}
-          className="absolute inset-0 -top-[10%] -bottom-[10%] opacity-80"
+          className="absolute inset-0 -top-[10%] -bottom-[10%] opacity-80 [&>picture]:block [&>picture]:h-full"
           aria-hidden
         >
-          <img
-            src="https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2400&auto=format&fit=crop"
+          <Photo
+            slug="dj-directo"
             alt=""
+            sizes="100vw"
+            priority
             className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-b from-paper/40 via-paper/70 to-paper" aria-hidden />
@@ -62,9 +71,29 @@ const ServiciosPage = () => {
               transition={{ delay: 0.6, duration: 0.9, ease: EASE }}
               className="mt-8 max-w-xl text-ink/70 text-lg leading-relaxed"
             >
-              Trabajamos como una productora, no como un catálogo.
-              Cada servicio sirve a la historia del evento, nunca al revés.
+              Sonido, iluminación, DJ, vídeo y producción integral para bodas y eventos
+              en Valencia. Trabajamos como una productora, no como un catálogo.
             </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.75, duration: 0.9, ease: EASE }}
+              className="mt-8 flex flex-col sm:flex-row gap-3"
+            >
+              <Link
+                to="/brief"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-ink text-cream hover:bg-ink-800 transition-all group"
+              >
+                <span className="font-medium">Pedir presupuesto</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <a
+                {...whatsapp}
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-ink/30 hover:border-ink transition"
+              >
+                <span className="text-sm tracking-wide">WhatsApp · 613 88 14 14</span>
+              </a>
+            </motion.div>
           </div>
         </div>
       </section>
