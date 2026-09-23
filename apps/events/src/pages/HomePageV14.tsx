@@ -29,14 +29,14 @@ type Side = 'bodas' | 'empresa';
 
 const REEL_VIDEO = '/images/resona-events-reel-boda-valencia.mp4';
 const HERO_LOOP = '/images/boda-hero-loop.mp4';
-const REEL_POSTER = '/images/resona-events-dj-cabina-directo.jpg';
+const REEL_POSTER = '/images/opt/dj-directo-1440.webp';
 
 // Fotos propias. Los packs destacados se pisan aquí en vez de en packs.ts
 // porque el resto de la web sigue con las imágenes de stock.
 const PACK_IMG: Record<string, string> = {
-  'boda-esencial': '/images/resona-events-banquete-huerto-montesinos.jpg',
-  'boda-completo': '/images/resona-events-cabina-dj-letras-luminosas.jpg',
-  'boda-premium': '/images/resona-events-iluminacion-pista-azul.jpg',
+  'boda-esencial': '/images/opt/banquete-masia-960.webp',
+  'boda-completo': '/images/opt/cabina-dj-letras-640.webp',
+  'boda-premium': '/images/opt/iluminacion-truss-azul-960.webp',
 };
 
 const SIDES: Record<Side, {
@@ -50,7 +50,7 @@ const SIDES: Record<Side, {
     line: 'Sonido, luz y producción que convierten un sitio bonito en la noche que nadie olvida.',
     stat: '+2.000 eventos producidos',
     to: '/bodas',
-    img: '/images/resona-events-boda-pista-luces-valencia.jpg',
+    img: '/images/opt/boda-disco-cabina-1920.webp',
     video: HERO_LOOP,
     wash: 'linear-gradient(200deg, rgba(61,90,254,0.20), rgba(14,13,12,0.86))',
     accent: BRAND_LIGHT,
@@ -63,7 +63,7 @@ const SIDES: Record<Side, {
     line: 'Producción audiovisual integral para que tu marca brille en el escenario y en directo.',
     stat: '15 años · 9,6 de valoración',
     to: '/eventos',
-    img: '/images/resona-events-luces-guirnalda-noche.jpg',
+    img: '/images/opt/guirnaldas-noche-1920.webp',
     wash: 'linear-gradient(200deg, rgba(17,52,254,0.24), rgba(14,13,12,0.88))',
     accent: '#7B8FFE',
     wa: 'Hola Resona, organizamos un evento de empresa. ¿Hablamos?',
@@ -119,6 +119,8 @@ const Panel = ({ side, active, setActive }: { side: Side; active: Side | null; s
   // En móvil no hay hover: cada lado es un hero apilado con el contenido siempre
   // visible. En escritorio, el lado activo se expande y el otro se atenúa.
   const open = isMobile || isActive;
+  // el video solo en escritorio y con el lado activo: en movil cuesta 2,7 MB
+  const playVideo = !isMobile && isActive && !reduce;
   const isDim = !isMobile && active !== null && !isActive;
   return (
     <motion.div
@@ -135,11 +137,12 @@ const Panel = ({ side, active, setActive }: { side: Side; active: Side | null; s
       transition={{ duration: 0.7, ease: EASE }}
       style={{ flexBasis: 0, flexGrow: 1 }}
     >
-      {/* En escritorio el vídeo solo se reproduce en el lado activo (y el loop
-         solo se descarga al interactuar); en móvil se reproduce directamente. */}
-      {open && c.video && !reduce ? (
+      {/* El loop pesa 2,7 MB, asi que solo entra en escritorio y cuando el
+         visitante se interesa por ese lado. En movil se queda la foto: no
+         merece la pena gastarle los datos por un fondo animado. */}
+      {playVideo && c.video ? (
         <video
-          src={c.video} poster={c.img} autoPlay muted loop playsInline preload="auto" aria-hidden
+          src={c.video} poster={c.img} autoPlay muted loop playsInline preload="none" aria-hidden
           className="absolute inset-0 w-full h-full object-cover"
           style={{ transform: 'scale(1.05)', transition: 'transform .8s ease' }}
         />

@@ -131,7 +131,8 @@ const Header = () => {
             {/* Search - Mobile */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="md:hidden"
+              aria-label={isSearchOpen ? 'Cerrar el buscador' : 'Buscar'}
+              className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 md:hidden"
             >
               <Search className="w-6 h-6 text-gray-700" />
             </button>
@@ -139,10 +140,10 @@ const Header = () => {
             {/* Quick Actions */}
             {isAuthenticated && (
               <>
-                <Link to="/favoritos" className="relative">
+                <Link to="/favoritos" aria-label="Favoritos" className="relative flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100">
                   <Heart className="w-6 h-6 text-gray-700" />
                 </Link>
-                <Link to="/mis-pedidos" className="relative">
+                <Link to="/mis-pedidos" aria-label="Mis pedidos" className="relative flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100">
                   <Package className="w-6 h-6 text-gray-700" />
                 </Link>
               </>
@@ -156,8 +157,8 @@ const Header = () => {
             {/* Cart */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative"
-              title={`Carrito (${cartCount} items)`}
+              className="relative flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100"
+              aria-label={`Carrito, ${cartCount} ${cartCount === 1 ? 'articulo' : 'articulos'}`}
             >
               <ShoppingCart className="w-6 h-6 text-gray-700" />
               {cartCount > 0 && (
@@ -170,7 +171,8 @@ const Header = () => {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden"
+              aria-label={isMenuOpen ? 'Cerrar el menu' : 'Abrir el menu'}
+              className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 md:hidden"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6 text-gray-700" />

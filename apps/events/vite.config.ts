@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
 export default defineConfig({
+  // Los console.log de desarrollo no llegan a produccion: esbuild los descarta
+  // al minificar. console.error y console.warn se mantienen, que si hacen falta
+  // para diagnosticar incidencias reales.
+  esbuild: { pure: ['console.log', 'console.debug', 'console.info'] },
   plugins: [react()],
   resolve: {
     alias: {
