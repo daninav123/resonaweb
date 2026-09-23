@@ -113,13 +113,14 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar productos..."
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                  className="w-full min-h-[44px] rounded border border-gray-300 px-4 py-2.5 pr-12 focus:border-transparent focus:ring-2 focus:ring-resona"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  aria-label="Buscar"
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-gray-100"
                 >
-                  <Search className="w-5 h-5 text-gray-400" />
+                  <Search className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
             </form>
@@ -189,7 +190,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar productos..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona"
+                className="w-full min-h-[44px] rounded border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-resona"
                 autoFocus
               />
             </form>

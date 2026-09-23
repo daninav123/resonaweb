@@ -70,62 +70,61 @@ const HomePage = () => {
       />
 
       {/* Hero */}
-      <section className="relative bg-resona text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/15 to-black/25"></div>
-        <div className="relative container mx-auto px-4 py-16 md:py-24">
+      <section className="relative overflow-hidden border-b border-gray-200 bg-white">
+        <div className="relative container mx-auto px-4 py-14 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl md:text-5xl font-bold mb-3 leading-tight">
+            <h1 className="mb-4 text-[32px] md:text-[52px] font-bold leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
               Alquila equipos audiovisuales profesionales en Valencia
             </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8">
+            <p className="mx-auto mb-8 max-w-2xl text-base md:text-lg leading-relaxed text-[#4D4D4D]">
               Sonido, iluminación, vídeo y estructuras. Entrega y recogida. Precio claro por día.
             </p>
 
             {/* Buscador + fechas */}
             <form
               onSubmit={handleSearch}
-              className="bg-white rounded-xl p-3 md:p-4 shadow-2xl flex flex-col md:flex-row gap-2 md:items-end text-left"
+              className="flex flex-col gap-2.5 rounded-md border border-gray-200 bg-white p-3 text-left shadow-sm md:flex-row md:items-end md:p-3.5"
             >
               <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-500 mb-1">¿Qué necesitas?</label>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">¿Qué necesitas?</label>
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Altavoces, luces, DJ, pantalla LED…"
-                  className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:border-resona focus:ring-1 focus:ring-resona"
+                  className="w-full min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Desde</label>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">Desde</label>
                 <input
                   type="date"
                   min={today}
                   value={dates.start}
                   onChange={(e) => setDates((d) => ({ ...d, start: e.target.value }))}
-                  className="px-3 py-2 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:border-resona focus:ring-1 focus:ring-resona"
+                  className="min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Hasta</label>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">Hasta</label>
                 <input
                   type="date"
                   min={dates.start || today}
                   value={dates.end}
                   onChange={(e) => setDates((d) => ({ ...d, end: e.target.value }))}
-                  className="px-3 py-2 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:border-resona focus:ring-1 focus:ring-resona"
+                  className="min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-resona hover:bg-resona-dark text-white font-semibold px-5 py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
+                className="flex min-h-[44px] items-center justify-center gap-2 rounded bg-resona px-6 py-2.5 font-semibold text-white transition-colors hover:bg-resona-dark"
               >
                 <Search className="w-4 h-4" />
                 Buscar equipos
               </button>
             </form>
 
-            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-white/90">
+            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[#4D4D4D]">
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" /> Depósito reembolsable</span>
               <span className="flex items-center gap-1.5"><Truck className="w-4 h-4" /> Entrega en Valencia</span>
               <span className="flex items-center gap-1.5"><Wrench className="w-4 h-4" /> Técnico opcional</span>
@@ -176,8 +175,8 @@ const HomePage = () => {
               <Step n={1} title="Elige y añade al carrito" icon={Package}>
                 Escoge los equipos y las fechas. Ves el precio por día con IVA incluido.
               </Step>
-              <Step n={2} title="Paga el 25% para reservar" icon={ShieldCheck}>
-                Reservas con un 25%. El resto antes de la entrega. Stripe o transferencia.
+              <Step n={2} title="Elige cómo pagar" icon={ShieldCheck}>
+                Reserva con el 25% y paga el resto al recoger, o paga el 100% online con un 10% de descuento.
               </Step>
               <Step n={3} title="Recoge o te lo llevamos" icon={Truck}>
                 Entrega en Valencia capital y alrededores. Recogida en almacén o envío concertado.
