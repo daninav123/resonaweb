@@ -1,3 +1,4 @@
+export { Logo, default as LogoDefault } from './Logo';
 export { WhatsAppFloat, default as WhatsAppFloatDefault } from './WhatsAppFloat';
 export { TrustBar, default as TrustBarDefault } from './TrustBar';
 export { useLeadLink, useGlobalWhatsApp } from './useLeadLink';

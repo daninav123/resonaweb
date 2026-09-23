@@ -37,6 +37,20 @@
 21. **[SEO_ORGANIC_PLAN.md](SEO_ORGANIC_PLAN.md)** - 🔍 Auditoría SEO técnica y plan de tráfico orgánico (rent + events)
 22. **[LEAD_ATTRIBUTION.md](LEAD_ATTRIBUTION.md)** - 💬 Atribución de contactos por WhatsApp/teléfono/email: de qué web y página viene cada conversación
 
+## 💼 Comercial
+
+Dos dossieres, cada uno con versión interna (costes y márgenes) y versión entregable al cliente.
+
+23. **[comercial/tarifa-montajes-resona-events.pdf](comercial/tarifa-montajes-resona-events.pdf)** - 💰 Tarifa interna de montajes de Resona Events (PVP, coste, margen y suelo de negociación). Versión cliente en [comercial/tarifa-montajes-cliente.pdf](comercial/tarifa-montajes-cliente.pdf). Ambas se generan con `node docs/comercial/generar-tarifa.mjs [--cliente]` a partir de [comercial/tarifa-montajes.data.mjs](comercial/tarifa-montajes.data.mjs)
+24. **[comercial/tarifa-alquiler-interna.pdf](comercial/tarifa-alquiler-interna.pdf)** - 🎛️ Dossier de alquiler de Resona Rent: catálogo completo con precio/día, semana, stock y precio de compra, más packs, personal, consumibles y reglas (fianza, pagos, descuentos, logística). Versión cliente en [comercial/tarifa-alquiler-cliente.pdf](comercial/tarifa-alquiler-cliente.pdf). Se generan con `node docs/comercial/generar-dossier-alquiler.mjs [--cliente]`
+    - El catálogo se vuelca de la BD de producción con `node docs/comercial/extraer-catalogo.mjs` → [comercial/tarifa-alquiler.data.mjs](comercial/tarifa-alquiler.data.mjs) (generado, no editar a mano)
+    - Las reglas comerciales se editan en [comercial/reglas-alquiler.data.mjs](comercial/reglas-alquiler.data.mjs)
+    - Las correcciones de precio sobre lo que hay en la BD viven en [comercial/ajustes-precios.data.mjs](comercial/ajustes-precios.data.mjs) y se aplican al dossier automáticamente. Para llevarlas a la BD: `node docs/comercial/aplicar-ajustes-bd.mjs` (simulacro) y `--escribir` para aplicar
+
+## 🎨 Marca
+
+25. **[../packages/ui/brand/README.md](../packages/ui/brand/README.md)** - 🎨 Archivos maestros de la marca: logotipo, símbolo y favicons en SVG, más la retícula, los colores y las reglas de uso. El logotipo integra el símbolo como inicial, así que **no se ponen símbolo y logotipo juntos**. Cualquier PNG de `ReSona` fuera de esa carpeta está obsoleto.
+
 ## 📚 Orden de Lectura Recomendado
 
 ### Para Product Owner / Stakeholders

@@ -20,6 +20,7 @@ const PacksPage = lazy(() => import('./pages/PacksPage'));
 const PackDetailPage = lazy(() => import('./pages/PackDetailPage'));
 const ReservaConfirmadaPage = lazy(() => import('./pages/ReservaConfirmadaPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
+const HolaPage = lazy(() => import('./pages/HolaPage'));
 const FAQsPage = lazy(() => import('./pages/FAQsPage'));
 
 const BlogListPage = lazy(() => import('./pages/public/BlogListPage'));
@@ -65,6 +66,7 @@ export default function App() {
           <Suspense fallback={<PageFallback />}>
             <Routes>
               <Route path="/v1" element={<HomePage />} />
+              <Route path="/hola" element={<HolaPage />} />
 
               <Route element={<Layout />}>
                 <Route index element={<HomePageV14 />} />
