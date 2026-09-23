@@ -107,3 +107,17 @@ debug-*.js
 
 # Archivos subidos (facturas, etc.) — datos de cliente, nunca al repo
 /packages/backend/uploads/
+
+# Material original de fotografia y video: no entra en el repo.
+# En la web solo van las versiones optimizadas de public/images/opt/.
+# Los originales viven en ../resona-media/originales/
+*.tif
+*.tiff
+*.TIF
+*.JPG
+*.JPEG
+*.MOV
+*.MP4
+apps/*/public/images/*.mp4
+!apps/*/public/images/boda-hero-loop.mp4
+!apps/*/public/images/resona-events-reel-boda-valencia.mp4
