@@ -384,7 +384,7 @@ const CheckoutPageStripe = () => {
     appearance: {
       theme: 'stripe' as const,
       variables: {
-        colorPrimary: '#5ebbff',
+        colorPrimary: '#3D5AFE',
         colorBackground: '#ffffff',
         colorText: '#1f2937',
         colorDanger: '#ef4444',

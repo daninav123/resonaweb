@@ -49,7 +49,7 @@ interface CategoryIconProps {
  * 
  * Paleta de colores:
  * - Base: #9aa3ad (gris iconos)
- * - Hover/Activo: #5ebbff (azul principal)
+ * - Hover/Activo: #3D5AFE (azul principal)
  * - Fondo: #f4f6f8 (gris fondo)
  */
 export const CategoryIcon: FC<CategoryIconProps> = ({ 
