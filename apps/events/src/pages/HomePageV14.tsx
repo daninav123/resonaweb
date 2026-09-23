@@ -5,21 +5,22 @@ import { trackLead } from '@resona/utils';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { getFeaturedPacks, formatEuros } from '../data/packs';
+import { Logo } from '@resona/ui';
 
 /**
  * Home de resonaevents.com. Hero partido (Bodas | Empresa) que se expande al
  * pasar el ratón o tocar, y el resto de la página en voz editorial sobre la
- * paleta corporativa (#3498d3). Se monta dentro de Layout: cabecera, footer,
+ * paleta corporativa (#3D5AFE). Se monta dentro de Layout: cabecera, footer,
  * cookies y WhatsApp flotante vienen de allí.
  */
 
 const INK = '#0e0d0c';
 const CREAM = '#f6f1e7';
 // Papel de los bloques claros: mismo tono corporativo desaturado al máximo.
-const PAPER = '#eef4f9';
-const BRAND = '#3498d3';
-const BRAND_LIGHT = '#8fcbee';
-const BRAND_DEEP = '#1d6d9c';
+const PAPER = '#f6f2ed';
+const BRAND = '#3D5AFE';
+const BRAND_LIGHT = '#5D75FE';
+const BRAND_DEEP = '#1134FE';
 const WA_NUMBER = '34613881414';
 const CONTACT_EMAIL = 'info@resonaevents.com';
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -51,7 +52,7 @@ const SIDES: Record<Side, {
     to: '/bodas',
     img: '/images/resona-events-boda-pista-luces-valencia.jpg',
     video: HERO_LOOP,
-    wash: 'linear-gradient(200deg, rgba(52,152,211,0.45), rgba(14,13,12,0.88))',
+    wash: 'linear-gradient(200deg, rgba(61,90,254,0.42), rgba(14,13,12,0.88))',
     accent: BRAND_LIGHT,
     wa: 'Hola Resona, nos casamos y queremos una boda diferente. ¿Hablamos?',
   },
@@ -63,25 +64,23 @@ const SIDES: Record<Side, {
     stat: '15 años · 9,6 de valoración',
     to: '/eventos',
     img: '/images/resona-events-luces-guirnalda-noche.jpg',
-    wash: 'linear-gradient(200deg, rgba(18,74,112,0.6), rgba(14,13,12,0.9))',
-    accent: '#62b4e2',
+    wash: 'linear-gradient(200deg, rgba(17,52,254,0.55), rgba(14,13,12,0.9))',
+    accent: '#7B8FFE',
     wa: 'Hola Resona, organizamos un evento de empresa. ¿Hablamos?',
   },
 };
 
+// La tipografia de marca (Montserrat) ya viene del index.html; las dos clases
+// se mantienen porque el marcado de esta pagina las usa por todas partes.
 const useFonts = () => {
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Archivo:wght@500;600;700&display=swap';
-    document.head.appendChild(link);
     const style = document.createElement('style');
     style.textContent = `
-      .v14{font-family:'Archivo',ui-sans-serif,system-ui,sans-serif;}
-      .v14-serif{font-family:'Fraunces',Georgia,serif;}
+      .v14{font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;}
+      .v14-serif{font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-weight:700;letter-spacing:-0.015em;}
     `;
     document.head.appendChild(style);
-    return () => { link.remove(); style.remove(); };
+    return () => { style.remove(); };
   }, []);
 };
 
@@ -162,7 +161,7 @@ const Panel = ({ side, active, setActive }: { side: Side; active: Side | null; s
       <div className="relative z-10 h-full flex flex-col justify-end items-center text-center px-6 pb-16 md:pb-24">
         <Kicker color={c.accent}>{c.kicker}</Kicker>
         <h2 className="v14-serif mt-4 leading-[0.92] text-[clamp(2.8rem,7vw,6.5rem)]" style={{ color: CREAM }}>
-          <span className="block font-normal italic" style={{ opacity: 0.85 }}>{c.title[0]}</span>
+          <span className="block font-normal" style={{ opacity: 0.85 }}>{c.title[0]}</span>
           <span className="block" style={{ fontWeight: 600 }}>{c.title[1]}</span>
         </h2>
 
@@ -223,9 +222,9 @@ const Manifesto = () => (
       <div className="md:col-span-9">
         <Reveal>
           <p className="v14-serif text-[clamp(1.9rem,4.2vw,3.4rem)] leading-[1.1]" style={{ fontWeight: 400 }}>
-            No montamos equipos, montamos <span className="italic" style={{ color: BRAND_DEEP }}>atmósferas</span>. Cada boda tiene
+            No montamos equipos, montamos <span className="font-semibold" style={{ color: BRAND_DEEP }}>atmósferas</span>. Cada boda tiene
             su grano, cada empresa su acento. Nuestra obsesión es que el primer beso, el primer discurso
-            y el último baile <span className="italic" style={{ color: BRAND_DEEP }}>suenen</span> exactamente como los imaginaste.
+            y el último baile <span className="font-semibold" style={{ color: BRAND_DEEP }}>suenen</span> exactamente como los imaginaste.
           </p>
         </Reveal>
         <Reveal delay={0.15}>
@@ -261,7 +260,7 @@ const Services = () => (
         <div className="md:col-span-7">
           <Kicker color={BRAND_LIGHT}>En escena</Kicker>
           <h2 className="v14-serif mt-4 text-[clamp(2.2rem,5.5vw,4.5rem)] leading-[1]" style={{ fontWeight: 600 }}>
-            Todo bajo un <span className="italic font-normal">mismo equipo</span>.
+            Todo bajo un <span className="font-normal">mismo equipo</span>.
           </h2>
         </div>
         <p className="md:col-span-5 v14 text-lg" style={{ color: 'rgba(246,241,231,0.65)' }}>
@@ -294,7 +293,7 @@ const Reel = () => {
         <Reveal className="px-5 md:px-0 mb-8 md:mb-12 max-w-2xl">
           <Kicker color={BRAND_LIGHT}>El reel</Kicker>
           <h2 className="v14-serif mt-4 text-[clamp(2.2rem,5.5vw,4.5rem)] leading-[1]" style={{ fontWeight: 600 }}>
-            El día, <span className="italic font-normal">en movimiento</span>.
+            El día, <span className="font-normal">en movimiento</span>.
           </h2>
         </Reveal>
 
@@ -330,7 +329,7 @@ const Packs = () => {
           <div>
             <Kicker color={BRAND_LIGHT}>Packs con precio cerrado</Kicker>
             <h2 className="v14-serif mt-4 text-[clamp(2.2rem,5.5vw,4.5rem)] leading-[1]" style={{ fontWeight: 600 }}>
-              Sabes lo que <span className="italic font-normal">cuesta</span>.
+              Sabes lo que <span className="font-normal">cuesta</span>.
             </h2>
           </div>
           <Link to="/packs" className="v14 text-sm font-bold uppercase tracking-wide pb-1 border-b" style={{ color: CREAM, borderColor: CREAM }}>Ver todos →</Link>
@@ -345,7 +344,7 @@ const Packs = () => {
                 <div className="absolute inset-0 p-7 flex flex-col justify-end">
                   <div className="v14 text-[0.62rem] font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(246,241,231,0.7)' }}>{pack.typeLabel}</div>
                   <div className="v14-serif text-4xl mt-2" style={{ fontWeight: 600 }}>{pack.name}</div>
-                  <p className="v14-serif italic text-base mt-2" style={{ color: 'rgba(246,241,231,0.8)' }}>{pack.tagline}</p>
+                  <p className="v14 text-base mt-2" style={{ color: 'rgba(246,241,231,0.8)' }}>{pack.tagline}</p>
                   <div className="mt-5 pt-5 flex items-center justify-between border-t" style={{ borderColor: 'rgba(246,241,231,0.2)' }}>
                     <span className="v14 text-xs" style={{ color: 'rgba(246,241,231,0.6)' }}>hasta {pack.maxGuests} invitados</span>
                     <div className="text-right">
@@ -378,7 +377,7 @@ const Process = () => (
       <Reveal className="mb-14 md:mb-20 max-w-2xl">
         <Kicker color={BRAND_DEEP}>Cómo trabajamos</Kicker>
         <h2 className="v14-serif mt-4 text-[clamp(2.2rem,5.5vw,4.5rem)] leading-[1]" style={{ fontWeight: 600 }}>
-          Cuatro pasos, <span className="italic font-normal">cero sorpresas</span>.
+          Cuatro pasos, <span className="font-normal">cero sorpresas</span>.
         </h2>
       </Reveal>
       <div className="grid grid-cols-1 md:grid-cols-4 border-t" style={{ borderColor: 'rgba(14,13,12,0.15)' }}>
@@ -403,7 +402,7 @@ const Closing = () => (
     <Reveal>
       <Kicker color="rgba(246,241,231,0.55)">+2.000 eventos · 15 años · 9,6 de valoración</Kicker>
       <h3 className="v14-serif mt-6 text-[clamp(2.4rem,7vw,6rem)] leading-[0.98]" style={{ fontWeight: 600 }}>
-        Cuéntanos qué <span className="italic font-normal" style={{ color: BRAND_LIGHT }}>imaginas</span>.
+        Cuéntanos qué <span className="font-normal" style={{ color: BRAND_LIGHT }}>imaginas</span>.
       </h3>
       <p className="v14 mt-6 max-w-xl mx-auto text-lg" style={{ color: 'rgba(246,241,231,0.7)' }}>
         Un WhatsApp, un email o una llamada. Te responde una persona del equipo, casi siempre el mismo día.
@@ -434,14 +433,14 @@ const Intro = ({ onDone }: { onDone: () => void }) => (
     exit={{ y: '-100%' }}
     transition={{ duration: 0.9, ease: EASE }}
   >
-    <motion.span
-      className="v14-serif text-[clamp(3rem,15vw,13rem)] leading-none" style={{ color: CREAM, fontWeight: 600 }}
-      initial={{ opacity: 0, scale: 0.94, letterSpacing: '0.28em' }}
-      animate={{ opacity: 1, scale: 1, letterSpacing: '0em' }}
+    <motion.div
+      style={{ color: CREAM }}
+      initial={{ opacity: 0, scale: 0.94 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 2.4, ease: EASE }}
     >
-      resona
-    </motion.span>
+      <Logo width={520} className="w-[min(74vw,520px)]" title="ReSona Events" />
+    </motion.div>
     <motion.span
       className="v14 mt-6 text-[0.7rem] font-bold uppercase tracking-[0.35em]" style={{ color: 'rgba(246,241,231,0.55)' }}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 1.4 }}

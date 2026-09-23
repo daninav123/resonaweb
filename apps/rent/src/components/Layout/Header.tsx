@@ -8,6 +8,7 @@ import CartSidebar from '../CartSidebar';
 import NotificationBell from '../notifications/NotificationBell';
 import { productService } from '../../services/product.service';
 import { getCategoryIcon } from '../../utils/categoryIcons';
+import { Logo } from '@resona/ui';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -93,17 +94,14 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src="/logo-resona.png" alt="Resona Rent" className="h-12 w-auto object-contain" />
-            <div className="flex flex-col leading-none">
-              <span
-                className="text-2xl font-bold"
-                style={{ fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif', color: '#2b7bb9' }}
-              >
-                ReSona
-              </span>
-              <span className="text-xs tracking-widest text-gray-600">RENT</span>
-            </div>
+          <Link to="/" className="flex flex-col text-[#0A0A0A] hover:opacity-90 transition-opacity">
+            <Logo width={150} className="w-[132px] md:w-[150px]" title="ReSona Rent" />
+            <span
+              className="mt-1 text-[10px] font-semibold uppercase text-[#4D4D4D]"
+              style={{ letterSpacing: '1.4em', textIndent: '1.4em' }}
+            >
+              Rent
+            </span>
           </Link>
 
           {/* Search Bar - Desktop */}

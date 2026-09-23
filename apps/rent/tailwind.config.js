@@ -44,13 +44,13 @@ export default {
           900: '#0f172a',
         },
         resona: {
-          DEFAULT: '#5ebbff',
-          light: '#7dd3ff',
-          dark: '#0ea5e9',
+          DEFAULT: '#3D5AFE',
+          light: '#5D75FE',
+          dark: '#1134FE',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

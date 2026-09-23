@@ -200,7 +200,8 @@ Escala, para que todas las piezas se monten igual:
 | Apoyo | 400 | 13–14 px | 13 px | Gris `#9A9A9A` sobre negro, `#4D4D4D` sobre claro |
 | Etiqueta | 600 | 11–12 px | 11 px | Mayúsculas, tracking +2 px |
 
-**Pesos a cargar: 400, 600 y 700.** Solo esos tres. El 500 únicamente en las bajadas EVENTS/RENT, que
+**Pesos a cargar: 400, 600, 700 y la itálica 400.** La itálica solo porque el texto de las páginas
+la usa para enfatizar; si algún día se quita ese recurso, se quita también de la carga. El 500 únicamente en las bajadas EVENTS/RENT, que
 van en los SVG, así que no hace falta cargarlo en la web. Cada peso de más son ~25 KB que paga el
 visitante, y en móvil eso se nota.
 

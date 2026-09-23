@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { useGlobalWhatsApp } from '@resona/ui';
+import { Logo, useGlobalWhatsApp } from '@resona/ui';
 
 const NAV = [
   { to: '/bodas', label: 'Bodas' },
@@ -42,8 +42,8 @@ const Header = () => {
       <motion.header
         initial={false}
         animate={{
-          backgroundColor: onDark ? 'rgba(11,11,12,0)' : 'rgba(238,244,249,0.92)',
-          borderBottomColor: onDark ? 'rgba(255,255,255,0)' : 'rgba(196,208,219,0.6)',
+          backgroundColor: onDark ? 'rgba(11,11,12,0)' : 'rgba(246,242,237,0.92)',
+          borderBottomColor: onDark ? 'rgba(255,255,255,0)' : 'rgba(219,208,193,0.6)',
           color: onDark ? '#f7f3eb' : '#0b0b0c',
         }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -51,18 +51,8 @@ const Header = () => {
         style={{ borderBottomWidth: 1 }}
       >
         <div className="container flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="relative flex items-center group" aria-label="ReSona Events">
-            <img
-              src="/logo-events.png"
-              alt="ReSona Events"
-              className={`h-11 md:h-14 w-auto transition-opacity duration-300 ${onDark ? 'opacity-0' : 'opacity-100'}`}
-            />
-            <img
-              src="/logo-events-white.png"
-              alt=""
-              aria-hidden="true"
-              className={`absolute inset-0 h-11 md:h-14 w-auto transition-opacity duration-300 ${onDark ? 'opacity-100' : 'opacity-0'}`}
-            />
+          <Link to="/" className="flex items-center">
+            <Logo width={148} className="w-[126px] md:w-[148px]" title="ReSona Events" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-9">
