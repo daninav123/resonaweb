@@ -48,12 +48,18 @@ export const getRelativePath = (imageUrl: string | null | undefined): string => 
 
   if (!/^https?:\/\//.test(cleanUrl)) return cleanUrl;
 
+  let path: string | null = null;
   try {
-    return new URL(cleanUrl).pathname;
+    path = new URL(cleanUrl).pathname;
   } catch {
     const match = cleanUrl.match(/https?:\/\/[^/]+(\/.*)/);
-    return match ? match[1] : cleanUrl;
+    path = match ? match[1] : null;
   }
+
+  // Solo se relativizan las imágenes que sirve el propio backend (/uploads/...).
+  // Una URL de CDN externo (Cloudinary) deja de funcionar sin su dominio, y era
+  // lo que pasaba: se guardaba /<cloud>/image/upload/... y daba 404.
+  return path && path.startsWith('/uploads/') ? path : cleanUrl;
 };
 
 /**

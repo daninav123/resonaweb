@@ -73,14 +73,17 @@ export const getRelativePath = (imageUrl: string | null | undefined): string => 
   }
 
   // Extraer la parte después del dominio
+  let path: string | null = null;
   try {
-    const url = new URL(cleanUrl);
-    return url.pathname;
+    path = new URL(cleanUrl).pathname;
   } catch {
-    // Si falla el parsing, intentar extraer manualmente
     const match = cleanUrl.match(/https?:\/\/[^/]+(\/.*)/);
-    return match ? match[1] : cleanUrl;
+    path = match ? match[1] : null;
   }
+
+  // Solo se relativizan las imágenes que sirve el propio backend (/uploads/...).
+  // Una URL de CDN externo (Cloudinary) deja de funcionar sin su dominio.
+  return path && path.startsWith('/uploads/') ? path : cleanUrl;
 };
 
 /**
