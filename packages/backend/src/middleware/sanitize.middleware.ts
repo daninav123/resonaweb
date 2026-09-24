@@ -50,10 +50,13 @@ function sanitizeObject(obj: any, parentKey?: string): any {
   if (typeof obj === 'string') {
     // NO sanitizar URLs de imágenes ni rutas
     if (parentKey && (
-      parentKey === 'imageUrl' || 
-      parentKey === 'mainImageUrl' || 
+      parentKey === 'imageUrl' ||
+      parentKey === 'mainImageUrl' ||
       parentKey === 'thumbnailUrl' ||
+      parentKey === 'images' ||
+      parentKey === 'gallery' ||
       parentKey.endsWith('ImageUrl') ||
+      parentKey.endsWith('Images') ||
       parentKey.endsWith('Url')
     )) {
       return obj; // Retornar sin sanitizar

@@ -12,6 +12,8 @@ interface SitemapOptions {
   includeProducts?: boolean;
   includePacks?: boolean;
   includeBlog?: boolean;
+  // Rutas fijas del frontend que no viven en la tabla SeoPage (home, legales...).
+  extraPaths?: { path: string; priority: string; changefreq: string }[];
 }
 
 // Páginas estáticas que ambas webs sirven (mismo slug en rent y events).
@@ -25,6 +27,16 @@ const isRentSeoSlug = (slug: string) =>
   slug.includes('iluminacion-led-profesional') ||
   slug === 'productos' ||
   slug.startsWith('productos/');
+
+// Rutas de Rent que no están en la tabla SeoPage pero sí en el router del frontend.
+const RENT_EXTRA_PATHS = [
+  { path: '', priority: '1.0', changefreq: 'daily' },
+  { path: '/servicios/cine-de-verano-valencia', priority: '0.7', changefreq: 'monthly' },
+  { path: '/terminos-condiciones', priority: '0.3', changefreq: 'yearly' },
+  { path: '/politica-privacidad', priority: '0.3', changefreq: 'yearly' },
+  { path: '/politica-cookies', priority: '0.3', changefreq: 'yearly' },
+  { path: '/aviso-legal', priority: '0.3', changefreq: 'yearly' },
+];
 
 export class SitemapController {
   /**
@@ -54,6 +66,7 @@ export class SitemapController {
       includeProducts: true,
       includePacks: false,
       includeBlog: false,
+      extraPaths: RENT_EXTRA_PATHS,
     });
   }
 
@@ -138,12 +151,31 @@ export class SitemapController {
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 `;
 
+      const emitted = new Set<string>();
+      const today = new Date().toISOString().split('T')[0];
+
+      // Rutas fijas del frontend (home, legales...) que no están en SeoPage
+      (opts.extraPaths || []).forEach(extra => {
+        const url = `${baseUrl}${extra.path}`;
+        emitted.add(url);
+        xml += `
+  <url>
+    <loc>${url}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${extra.changefreq}</changefreq>
+    <priority>${extra.priority}</priority>
+  </url>
+`;
+      });
+
       // ⭐ AÑADIR PÁGINAS SEO PRIMERO (por prioridad) ⭐
       seoPages.forEach(page => {
         const lastmod = page.updatedAt.toISOString().split('T')[0];
         // Si slug está vacío, es la homepage
         const url = page.slug ? `${baseUrl}/${page.slug}` : baseUrl;
-        xml += `  
+        if (emitted.has(url)) return;
+        emitted.add(url);
+        xml += `
   <!-- SEO Page: ${page.slug || 'Homepage'} -->
   <url>
     <loc>${url}</loc>
