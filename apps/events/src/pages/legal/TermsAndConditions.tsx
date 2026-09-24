@@ -3,21 +3,21 @@ import SEOHead from '../../components/SEO/SEOHead';
 
 export default function TermsAndConditions() {
   return (
-    <div className="min-h-screen bg-paper py-12">
+    <div className="min-h-screen bg-paper">
       <SEOHead
         title="Términos y Condiciones | ReSona Events"
         description="Términos y condiciones de contratación de los servicios de producción de eventos de ReSona Events en Valencia."
         canonicalUrl="https://resonaevents.com/terminos-condiciones"
       />
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-paper-50 rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-ink mb-6">Términos y Condiciones</h1>
+      <div className="mx-auto max-w-[820px] px-5 pb-24 pt-32 md:px-10 md:pt-44">
+        <div>
+          <h1 className="mb-10 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[48px]">Términos y Condiciones</h1>
           
           <p className="text-sm text-ink-600 mb-8">
             Última actualización: 25 de noviembre de 2025
           </p>
 
-          <div className="prose prose-blue max-w-none">
+          <div className="prose max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-ink prose-p:leading-relaxed prose-p:text-ink-700 prose-a:text-ink prose-a:underline-offset-4 prose-strong:text-ink prose-li:text-ink-700">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-ink mb-4">1. Información General</h2>
               <p className="text-ink-700 mb-4">

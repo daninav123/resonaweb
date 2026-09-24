@@ -3,21 +3,21 @@ import SEOHead from '../../components/SEO/SEOHead';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-paper py-12">
+    <div className="min-h-screen bg-paper">
       <SEOHead
         title="Política de Privacidad | ReSona Events"
         description="Política de privacidad de ReSona Events: qué datos personales tratamos, con qué finalidad, base legal y tus derechos según el RGPD."
         canonicalUrl="https://resonaevents.com/politica-privacidad"
       />
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-paper-50 rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-ink mb-6">Política de Privacidad</h1>
+      <div className="mx-auto max-w-[820px] px-5 pb-24 pt-32 md:px-10 md:pt-44">
+        <div>
+          <h1 className="mb-10 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[48px]">Política de Privacidad</h1>
           
           <p className="text-sm text-ink-600 mb-8">
             Última actualización: 25 de noviembre de 2025
           </p>
 
-          <div className="prose prose-blue max-w-none">
+          <div className="prose max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-ink prose-p:leading-relaxed prose-p:text-ink-700 prose-a:text-ink prose-a:underline-offset-4 prose-strong:text-ink prose-li:text-ink-700">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-ink mb-4">1. Responsable del Tratamiento</h2>
               
@@ -232,42 +232,42 @@ export default function PrivacyPolicy() {
 
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Acceso</h4>
+                  <h4 className="font-semibold text-ink mb-2">Acceso</h4>
                   <p className="text-sm text-ink-700">
                     Saber qué datos tenemos sobre ti y obtener una copia.
                   </p>
                 </div>
 
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Rectificación</h4>
+                  <h4 className="font-semibold text-ink mb-2">Rectificación</h4>
                   <p className="text-sm text-ink-700">
                     Corregir datos inexactos o incompletos.
                   </p>
                 </div>
 
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Supresión</h4>
+                  <h4 className="font-semibold text-ink mb-2">Supresión</h4>
                   <p className="text-sm text-ink-700">
                     Solicitar la eliminación de tus datos (derecho al olvido).
                   </p>
                 </div>
 
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Limitación</h4>
+                  <h4 className="font-semibold text-ink mb-2">Limitación</h4>
                   <p className="text-sm text-ink-700">
                     Solicitar que limitemos el tratamiento de tus datos.
                   </p>
                 </div>
 
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Portabilidad</h4>
+                  <h4 className="font-semibold text-ink mb-2">Portabilidad</h4>
                   <p className="text-sm text-ink-700">
                     Recibir tus datos en formato estructurado y transmitirlos a otro responsable.
                   </p>
                 </div>
 
                 <div className="bg-accent-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">✓ Oposición</h4>
+                  <h4 className="font-semibold text-ink mb-2">Oposición</h4>
                   <p className="text-sm text-ink-700">
                     Oponerte al tratamiento de tus datos (marketing directo).
                   </p>
@@ -373,7 +373,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-6">
-              <h3 className="font-semibold text-ink mb-2">📋 Documentos Relacionados</h3>
+              <h3 className="font-semibold text-ink mb-2">Documentos Relacionados</h3>
               <ul className="text-sm text-ink-700 space-y-1">
                 <li>• <Link to="/terminos-condiciones" className="text-accent-700 hover:underline">Términos y Condiciones</Link></li>
                 <li>• <Link to="/politica-cookies" className="text-accent-700 hover:underline">Política de Cookies</Link></li>

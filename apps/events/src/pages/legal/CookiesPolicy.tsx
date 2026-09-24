@@ -3,21 +3,21 @@ import SEOHead from '../../components/SEO/SEOHead';
 
 export default function CookiesPolicy() {
   return (
-    <div className="min-h-screen bg-paper py-12">
+    <div className="min-h-screen bg-paper">
       <SEOHead
         title="Política de Cookies | ReSona Events"
         description="Política de cookies de ReSona Events: qué cookies usamos, para qué sirven y cómo configurarlas o desactivarlas."
         canonicalUrl="https://resonaevents.com/politica-cookies"
       />
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-paper-50 rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-ink mb-6">Política de Cookies</h1>
+      <div className="mx-auto max-w-[820px] px-5 pb-24 pt-32 md:px-10 md:pt-44">
+        <div>
+          <h1 className="mb-10 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[48px]">Política de Cookies</h1>
           
           <p className="text-sm text-ink-600 mb-8">
             Última actualización: 25 de noviembre de 2025
           </p>
 
-          <div className="prose prose-blue max-w-none">
+          <div className="prose max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-ink prose-p:leading-relaxed prose-p:text-ink-700 prose-a:text-ink prose-a:underline-offset-4 prose-strong:text-ink prose-li:text-ink-700">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-ink mb-4">1. ¿Qué son las cookies?</h2>
               
@@ -215,7 +215,7 @@ export default function CookiesPolicy() {
 
               <div className="space-y-3">
                 <div className="bg-paper rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">🔒 Stripe (Procesamiento de Pagos)</h4>
+                  <h4 className="font-semibold text-ink mb-2">Stripe (Procesamiento de Pagos)</h4>
                   <p className="text-sm text-ink-700 mb-2">
                     <strong>Finalidad:</strong> Procesar pagos de forma segura
                   </p>
@@ -227,7 +227,7 @@ export default function CookiesPolicy() {
                 </div>
 
                 <div className="bg-paper rounded-lg p-4">
-                  <h4 className="font-semibold text-ink mb-2">📊 Google Analytics</h4>
+                  <h4 className="font-semibold text-ink mb-2">Google Analytics</h4>
                   <p className="text-sm text-ink-700 mb-2">
                     <strong>Finalidad:</strong> Estadísticas de uso del sitio
                   </p>
@@ -250,7 +250,7 @@ export default function CookiesPolicy() {
               </p>
               
               <button className="bg-accent-700 text-white px-6 py-3 rounded-lg hover:bg-accent-700 transition mb-6">
-                ⚙️ Configurar Cookies
+                Configurar Cookies
               </button>
 
               <h3 className="text-xl font-semibold text-ink-800 mb-3">5.2 Desde tu Navegador</h3>

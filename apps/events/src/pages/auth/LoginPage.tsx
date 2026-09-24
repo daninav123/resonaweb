@@ -52,7 +52,7 @@ const LoginPage = () => {
     <Layout>
       <div className="min-h-screen bg-paper flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-bold text-ink">
+          <h2 className="text-center text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[42px]">
           Inicia sesión en tu cuenta
         </h2>
         <p className="mt-2 text-center text-sm text-ink-600">
@@ -67,9 +67,9 @@ const LoginPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-paper-50 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="px-1 py-2">
           {error && (
-            <div className="mb-4 bg-accent-50 border border-accent-200 rounded-md p-4">
+            <div className="mb-5 rounded-sm border border-ink/15 bg-paper-200 p-4">
               <div className="flex">
                 <AlertCircle className="h-5 w-5 text-accent-400" />
                 <div className="ml-3">
@@ -93,7 +93,7 @@ const LoginPage = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-paper-400 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
+                  className="block h-12 w-full appearance-none rounded-sm border border-ink/15 bg-transparent pl-10 pr-3 text-[15px] text-ink placeholder:text-ink-400 focus:border-ink focus:outline-none"
                   placeholder="tu@email.com"
                 />
                 <Mail className="h-5 w-5 text-ink-400 absolute left-3 top-2.5" />
@@ -113,7 +113,7 @@ const LoginPage = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-paper-400 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
+                  className="block h-12 w-full appearance-none rounded-sm border border-ink/15 bg-transparent pl-10 pr-10 text-[15px] text-ink placeholder:text-ink-400 focus:border-ink focus:outline-none"
                   placeholder="••••••••"
                 />
                 <Lock className="h-5 w-5 text-ink-400 absolute left-3 top-2.5" />
@@ -158,7 +158,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-12 w-full items-center justify-center rounded-full bg-ink text-[15px] font-medium text-cream-100 transition-opacity hover:opacity-85 disabled:opacity-40"
               >
                 {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
               </button>
@@ -178,13 +178,13 @@ const LoginPage = () => {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-paper-400 rounded-md shadow-sm bg-paper-50 text-sm font-medium text-ink-500 hover:bg-paper-200"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-ink/20 text-[14px] text-ink-700 transition-colors hover:border-ink/40 hover:text-ink"
               >
                 Google
               </button>
               <button
                 type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-paper-400 rounded-md shadow-sm bg-paper-50 text-sm font-medium text-ink-500 hover:bg-paper-200"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-ink/20 text-[14px] text-ink-700 transition-colors hover:border-ink/40 hover:text-ink"
               >
                 Facebook
               </button>

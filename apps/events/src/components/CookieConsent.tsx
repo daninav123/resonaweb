@@ -92,17 +92,17 @@ export const CookieConsent = () => {
       <div className={`fixed ${showSettings ? 'inset-0 flex items-center justify-center z-50' : 'bottom-0 left-0 right-0 z-50'}`}>
         {!showSettings ? (
           // Banner Simple
-          <div className="bg-gray-900 text-white shadow-2xl">
+          <div className="border-t border-cream/10 bg-ink text-cream">
             <div className="container mx-auto px-4 py-6 md:py-4">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 {/* Contenido */}
                 <div className="flex-1 flex items-start gap-3">
-                  <Cookie className="w-6 h-6 flex-shrink-0 mt-1 text-accent-400" />
+                  <Cookie className="mt-0.5 h-4 w-4 flex-shrink-0 text-cream/40" strokeWidth={1.75} />
                   <div>
-                    <h3 className="font-bold text-lg mb-1">🍪 Utilizamos Cookies</h3>
-                    <p className="text-sm text-gray-300">
+                    <h3 className="mb-1 text-[15px] font-medium">Usamos cookies</h3>
+                    <p className="text-[14px] leading-relaxed text-cream/60">
                       Usamos cookies propias y de terceros para mejorar tu experiencia, analizar el uso del sitio y personalizar contenidos.{' '}
-                      <a href="/politica-cookies" className="underline hover:text-accent-400" target="_blank">
+                      <a href="/politica-cookies" className="underline underline-offset-4 hover:text-cream" target="_blank">
                         Más información
                       </a>
                     </p>
@@ -113,22 +113,22 @@ export const CookieConsent = () => {
                 <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                   <button
                     onClick={() => setShowSettings(true)}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                    className="flex items-center justify-center gap-2 rounded-full border border-cream/20 px-5 py-2.5 text-[14px] text-cream/80 transition-colors hover:bg-white/5 hover:text-cream"
                   >
                     <Settings className="w-4 h-4" />
                     Configurar
                   </button>
                   <button
                     onClick={acceptNecessary}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium"
+                    className="rounded-full border border-cream/20 px-5 py-2.5 text-[14px] text-cream/80 transition-colors hover:bg-white/5 hover:text-cream"
                   >
-                    Solo Necesarias
+                    Solo necesarias
                   </button>
                   <button
                     onClick={acceptAll}
-                    className="px-6 py-2 bg-accent hover:bg-accent-600/90 rounded-lg transition-colors text-sm font-medium shadow-lg"
+                    className="rounded-full bg-cream-100 px-6 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-white"
                   >
-                    Aceptar Todas
+                    Aceptar todas
                   </button>
                 </div>
               </div>
@@ -136,12 +136,12 @@ export const CookieConsent = () => {
           </div>
         ) : (
           // Panel de Configuración Detallado
-          <div className="bg-paper-50 rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-sm bg-paper-50">
             {/* Header */}
-            <div className="sticky top-0 bg-paper-50 border-b px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 flex items-center justify-between border-b border-paper-300 bg-paper-50 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Cookie className="w-6 h-6 text-accent-600" />
-                <h2 className="text-xl font-bold text-ink">Configuración de Cookies</h2>
+                <h2 className="text-xl font-bold text-ink">Configuración de cookies</h2>
               </div>
               <button
                 onClick={() => setShowSettings(false)}
@@ -162,7 +162,7 @@ export const CookieConsent = () => {
               <div className="border rounded-lg p-4 bg-paper">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-bold text-ink mb-1">🔒 Cookies Necesarias</h3>
+                    <h3 className="font-bold text-ink mb-1">Cookies Necesarias</h3>
                     <p className="text-sm text-ink-600">
                       Esenciales para el funcionamiento del sitio web. No se pueden desactivar.
                     </p>
@@ -183,7 +183,7 @@ export const CookieConsent = () => {
               <div className="border rounded-lg p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-bold text-ink mb-1">📊 Cookies Analíticas</h3>
+                    <h3 className="font-bold text-ink mb-1">Cookies Analíticas</h3>
                     <p className="text-sm text-ink-600">
                       Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio mediante la recopilación anónima de información.
                     </p>
@@ -210,7 +210,7 @@ export const CookieConsent = () => {
               <div className="border rounded-lg p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-bold text-ink mb-1">📢 Cookies de Marketing</h3>
+                    <h3 className="font-bold text-ink mb-1">Cookies de Marketing</h3>
                     <p className="text-sm text-ink-600">
                       Se utilizan para mostrar anuncios relevantes y medir la efectividad de nuestras campañas publicitarias.
                     </p>
@@ -237,7 +237,7 @@ export const CookieConsent = () => {
               {/* Info */}
               <div className="bg-accent-50 border-l-4 border-accent-600 p-4">
                 <p className="text-sm text-ink-700">
-                  ℹ️ Puedes cambiar tus preferencias en cualquier momento desde el enlace "Configuración de Cookies" en el pie de página.
+                  ℹPuedes cambiar tus preferencias en cualquier momento desde el enlace "Configuración de cookies" en el pie de página.
                 </p>
               </div>
             </div>
@@ -248,19 +248,19 @@ export const CookieConsent = () => {
                 onClick={acceptNecessary}
                 className="flex-1 px-4 py-2 bg-paper-300 hover:bg-gray-300 rounded-lg transition-colors text-sm font-medium"
               >
-                Solo Necesarias
+                Solo necesarias
               </button>
               <button
                 onClick={saveCustom}
                 className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm font-medium"
               >
-                Guardar Preferencias
+                Guardar preferencias
               </button>
               <button
                 onClick={acceptAll}
                 className="flex-1 px-4 py-2 bg-accent hover:bg-accent-600/90 text-white rounded-lg transition-colors text-sm font-medium"
               >
-                Aceptar Todas
+                Aceptar todas
               </button>
             </div>
           </div>

@@ -48,34 +48,34 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   const imageUrl = post.featuredImage ? getImageUrl(post.featuredImage) : null;
 
   return (
-    <article className="bg-paper-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <article className="group">
       {/* Imagen destacada */}
       {imageUrl ? (
-        <div className="aspect-video overflow-hidden">
+        <div className="aspect-[3/2] overflow-hidden bg-paper-200">
           <img
             src={imageUrl}
             alt={post.title}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
             onError={(e) => {
               // Si falla la carga, mostrar placeholder
               e.currentTarget.style.display = 'none';
-              e.currentTarget.parentElement!.innerHTML = '<div class="aspect-video bg-accent flex items-center justify-center"><span class="text-white text-4xl font-bold opacity-20">ReSona</span></div>';
+              e.currentTarget.parentElement!.innerHTML = '<div class="flex aspect-[3/2] items-center justify-center bg-paper-300"></div>';
             }}
           />
         </div>
       ) : (
-        <div className="aspect-video bg-accent flex items-center justify-center">
-          <span className="text-white text-4xl font-bold opacity-20">ReSona</span>
+        <div className="flex aspect-[3/2] items-center justify-center bg-paper-300">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-ink-400">ReSona</span>
         </div>
       )}
 
       {/* Contenido */}
-      <div className="p-6">
+      <div className="pt-5">
         {/* Categoría */}
         {post.category && (
           <div className="flex items-center gap-2 mb-3">
             <span
-              className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+              className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-white"
               style={{ backgroundColor: post.category.color || '#3D5AFE' }}
             >
               {post.category.name}
@@ -85,7 +85,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         {/* Título */}
         <Link to={`/blog/${post.slug}`}>
-          <h2 className="text-2xl font-bold text-ink mb-3 hover:text-accent-600 transition-colors line-clamp-2">
+          <h2 className="mb-3 line-clamp-2 text-[20px] font-medium leading-snug tracking-tight text-ink transition-opacity hover:opacity-60">
             {post.title}
           </h2>
         </Link>

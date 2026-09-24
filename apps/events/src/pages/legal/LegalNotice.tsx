@@ -3,21 +3,21 @@ import SEOHead from '../../components/SEO/SEOHead';
 
 export default function LegalNotice() {
   return (
-    <div className="min-h-screen bg-paper py-12">
+    <div className="min-h-screen bg-paper">
       <SEOHead
         title="Aviso Legal | ReSona Events"
         description="Aviso legal de ReSona Events: datos identificativos del titular, condiciones de uso y propiedad intelectual del sitio resonaevents.com."
         canonicalUrl="https://resonaevents.com/aviso-legal"
       />
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-paper-50 rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-ink mb-6">Aviso Legal</h1>
+      <div className="mx-auto max-w-[820px] px-5 pb-24 pt-32 md:px-10 md:pt-44">
+        <div>
+          <h1 className="mb-10 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[48px]">Aviso Legal</h1>
           
           <p className="text-sm text-ink-600 mb-8">
             Última actualización: 25 de noviembre de 2025
           </p>
 
-          <div className="prose prose-blue max-w-none">
+          <div className="prose max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-ink prose-p:leading-relaxed prose-p:text-ink-700 prose-a:text-ink prose-a:underline-offset-4 prose-strong:text-ink prose-li:text-ink-700">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-ink mb-4">1. Datos Identificativos</h2>
               
@@ -151,8 +151,8 @@ export default function LegalNotice() {
               </p>
 
               <ul className="list-disc pl-6 text-ink-700 space-y-2 mb-4">
-                <li>✓ Visualizar los contenidos para uso personal y privado</li>
-                <li>✓ Descargar o imprimir material para uso privado no comercial</li>
+                <li>Visualizar los contenidos para uso personal y privado</li>
+                <li>Descargar o imprimir material para uso privado no comercial</li>
               </ul>
 
               <p className="text-ink-700 mb-4">
@@ -160,10 +160,10 @@ export default function LegalNotice() {
               </p>
 
               <ul className="list-disc pl-6 text-ink-700 space-y-2 mb-4">
-                <li>✗ Reproducción, distribución o comunicación pública sin autorización</li>
-                <li>✗ Modificación, transformación o alteración de los contenidos</li>
-                <li>✗ Eliminación de marcas, logos o avisos de propiedad intelectual</li>
-                <li>✗ Uso comercial de los contenidos sin licencia</li>
+                <li>Reproducción, distribución o comunicación pública sin autorización</li>
+                <li>Modificación, transformación o alteración de los contenidos</li>
+                <li>Eliminación de marcas, logos o avisos de propiedad intelectual</li>
+                <li>Uso comercial de los contenidos sin licencia</li>
               </ul>
             </section>
 
@@ -338,7 +338,7 @@ export default function LegalNotice() {
             </section>
 
             <div className="bg-accent-50 border-l-4 border-accent-600 p-4 my-6">
-              <h3 className="font-semibold text-ink mb-2">📋 Documentos Relacionados</h3>
+              <h3 className="font-semibold text-ink mb-2">Documentos Relacionados</h3>
               <ul className="text-sm text-ink-700 space-y-1">
                 <li>• <Link to="/terminos-condiciones" className="text-accent-700 hover:underline">Términos y Condiciones</Link></li>
                 <li>• <Link to="/politica-privacidad" className="text-accent-700 hover:underline">Política de Privacidad</Link></li>

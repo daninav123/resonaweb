@@ -93,27 +93,28 @@ const BlogListPage = () => {
       />
 
       <div className="min-h-screen bg-paper">
-        {/* Hero Section */}
-        <div className="relative bg-accent text-white py-16">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
-          <div className="relative container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog de ReSona</h1>
-            <p className="text-xl text-gray-100 max-w-2xl">
-              Guías, consejos y las últimas tendencias en alquiler de material audiovisual para eventos
-            </p>
-          </div>
-        </div>
+        <section className="mx-auto max-w-[1200px] px-5 pb-14 pt-32 md:px-10 md:pb-20 md:pt-44">
+          <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-500">
+            Diario
+          </p>
+          <h1 className="max-w-3xl text-[38px] font-semibold leading-[1.05] tracking-[-0.03em] text-ink md:text-[64px]">
+            Lo que aprendemos
+            <br className="hidden sm:block" /> montando eventos.
+          </h1>
+          <p className="mt-8 max-w-xl text-[16px] leading-relaxed text-ink-600">
+            Guías y decisiones técnicas explicadas sin jerga, para que sepas qué estás
+            contratando antes de contratarlo.
+          </p>
+        </section>
 
-        {/* Filtros de Categorías */}
-        <div className="bg-paper-50 shadow-sm sticky top-0 z-10">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex flex-wrap gap-2">
+        <div className="mx-auto max-w-[1200px] border-t border-paper-400/60 px-5 py-8 md:px-10">
+          <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handleCategoryFilter(null)}
-                className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                className={`rounded-full px-5 py-2 text-[14px] transition-colors ${
                   !selectedCategory
-                    ? 'bg-accent text-white'
-                    : 'bg-paper-200 text-ink-700 hover:bg-gray-200'
+                    ? 'bg-ink text-cream-100'
+                    : 'border border-ink/15 text-ink-600 hover:border-ink/40 hover:text-ink'
                 }`}
               >
                 Todos
@@ -122,10 +123,10 @@ const BlogListPage = () => {
                 <button
                   key={category.id}
                   onClick={() => handleCategoryFilter(category.id)}
-                  className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                  className={`rounded-full px-5 py-2 text-[14px] transition-colors ${
                     selectedCategory === category.id
                       ? 'text-white'
-                      : 'bg-paper-200 text-ink-700 hover:bg-gray-200'
+                      : 'border border-ink/15 text-ink-600 hover:border-ink/40 hover:text-ink'
                   }`}
                   style={{
                     backgroundColor: selectedCategory === category.id ? category.color : undefined,
@@ -134,7 +135,6 @@ const BlogListPage = () => {
                   {category.name}
                 </button>
               ))}
-            </div>
           </div>
         </div>
 
