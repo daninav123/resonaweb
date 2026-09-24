@@ -92,9 +92,9 @@ const BlogListPage = () => {
         description="Artículos, guías y consejos sobre alquiler de material audiovisual para eventos. Encuentra toda la información que necesitas para tu evento perfecto."
       />
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-paper">
         {/* Hero Section */}
-        <div className="relative bg-resona text-white py-16">
+        <div className="relative bg-accent text-white py-16">
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
           <div className="relative container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog de ReSona</h1>
@@ -105,15 +105,15 @@ const BlogListPage = () => {
         </div>
 
         {/* Filtros de Categorías */}
-        <div className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="bg-paper-50 shadow-sm sticky top-0 z-10">
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handleCategoryFilter(null)}
                 className={`px-4 py-2 rounded-full font-medium transition-colors ${
                   !selectedCategory
-                    ? 'bg-resona text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-accent text-white'
+                    : 'bg-paper-200 text-ink-700 hover:bg-gray-200'
                 }`}
               >
                 Todos
@@ -125,7 +125,7 @@ const BlogListPage = () => {
                   className={`px-4 py-2 rounded-full font-medium transition-colors ${
                     selectedCategory === category.id
                       ? 'text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-paper-200 text-ink-700 hover:bg-gray-200'
                   }`}
                   style={{
                     backgroundColor: selectedCategory === category.id ? category.color : undefined,
@@ -142,11 +142,11 @@ const BlogListPage = () => {
         <div className="container mx-auto px-4 py-12">
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-resona"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-xl text-gray-600">No hay artículos disponibles</p>
+              <p className="text-xl text-ink-600">No hay artículos disponibles</p>
             </div>
           ) : (
             <>
@@ -163,7 +163,7 @@ const BlogListPage = () => {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 rounded-lg border border-paper-400 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper-200 transition-colors"
                   >
                     Anterior
                   </button>
@@ -174,8 +174,8 @@ const BlogListPage = () => {
                       onClick={() => handlePageChange(page)}
                       className={`px-4 py-2 rounded-lg transition-colors ${
                         page === currentPage
-                          ? 'bg-resona text-white'
-                          : 'border border-gray-300 hover:bg-gray-50'
+                          ? 'bg-accent text-white'
+                          : 'border border-paper-400 hover:bg-paper-200'
                       }`}
                     >
                       {page}
@@ -185,7 +185,7 @@ const BlogListPage = () => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === pagination.totalPages}
-                    className="px-4 py-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 rounded-lg border border-paper-400 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper-200 transition-colors"
                   >
                     Siguiente
                   </button>

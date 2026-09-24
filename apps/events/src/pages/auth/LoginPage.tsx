@@ -50,12 +50,12 @@ const LoginPage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-paper flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-bold text-ink">
           Inicia sesión en tu cuenta
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-ink-600">
           ¿No tienes cuenta?{' '}
           <Link
             to="/register"
@@ -67,7 +67,7 @@ const LoginPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-paper-50 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {error && (
             <div className="mb-4 bg-accent-50 border border-accent-200 rounded-md p-4">
               <div className="flex">
@@ -81,7 +81,7 @@ const LoginPage = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-ink-700">
                 Correo electrónico
               </label>
               <div className="mt-1 relative">
@@ -93,15 +93,15 @@ const LoginPage = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
+                  className="appearance-none block w-full px-3 py-2 pl-10 border border-paper-400 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
                   placeholder="tu@email.com"
                 />
-                <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                <Mail className="h-5 w-5 text-ink-400 absolute left-3 top-2.5" />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-ink-700">
                 Contraseña
               </label>
               <div className="mt-1 relative">
@@ -113,14 +113,14 @@ const LoginPage = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
+                  className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-paper-400 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent-600 focus:border-accent-600"
                   placeholder="••••••••"
                 />
-                <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                <Lock className="h-5 w-5 text-ink-400 absolute left-3 top-2.5" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-500"
+                  className="absolute right-3 top-2.5 text-ink-400 hover:text-gray-500"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -137,9 +137,9 @@ const LoginPage = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-accent-700 focus:ring-accent-600 border-gray-300 rounded"
+                  className="h-4 w-4 text-accent-700 focus:ring-accent-600 border-paper-400 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-ink">
                   Recordarme
                 </label>
               </div>
@@ -168,23 +168,23 @@ const LoginPage = () => {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-paper-400" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">O continúa con</span>
+                <span className="px-2 bg-paper-50 text-ink-500">O continúa con</span>
               </div>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                className="w-full inline-flex justify-center py-2 px-4 border border-paper-400 rounded-md shadow-sm bg-paper-50 text-sm font-medium text-ink-500 hover:bg-paper-200"
               >
                 Google
               </button>
               <button
                 type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                className="w-full inline-flex justify-center py-2 px-4 border border-paper-400 rounded-md shadow-sm bg-paper-50 text-sm font-medium text-ink-500 hover:bg-paper-200"
               >
                 Facebook
               </button>

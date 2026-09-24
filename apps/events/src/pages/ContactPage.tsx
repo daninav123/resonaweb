@@ -45,7 +45,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-paper py-8">
       <SEOHead
         title="Contacto y presupuesto de eventos en Valencia — ReSona"
         description="Contáctanos en Valencia para tu boda o evento: presupuesto de producción, sonido e iluminación. Te respondemos en 24 h. ☎ 613 88 14 14"
@@ -53,59 +53,59 @@ const ContactPage = () => {
         canonicalUrl="https://resonaevents.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>
+        <h1 className="text-3xl font-bold text-ink mb-8">Contacto</h1>
         
         <div className="grid md:grid-cols-2 gap-8">
           {/* Información de contacto */}
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-paper-50 rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold mb-6">Información de Contacto</h2>
               
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-resona" />
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-accent-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Teléfono</h3>
-                    <p className="text-gray-600">+34 613 881 414</p>
-                    <p className="text-sm text-gray-500">Lun - Vie: 9:00 - 18:00</p>
+                    <h3 className="font-medium text-ink">Teléfono</h3>
+                    <p className="text-ink-600">+34 613 881 414</p>
+                    <p className="text-sm text-ink-500">Lun - Vie: 9:00 - 18:00</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-resona" />
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-accent-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Email</h3>
-                    <p className="text-gray-600">Usa el formulario abajo</p>
-                    <p className="text-sm text-gray-500">Respuesta en 24h</p>
+                    <h3 className="font-medium text-ink">Email</h3>
+                    <p className="text-ink-600">Usa el formulario abajo</p>
+                    <p className="text-sm text-ink-500">Respuesta en 24h</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-resona" />
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-accent-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Dirección</h3>
-                    <p className="text-gray-600">C/ de l'Illa Cabrera, 13</p>
-                    <p className="text-gray-600">Quatre Carreres</p>
-                    <p className="text-gray-600">46026 València, Valencia, España</p>
+                    <h3 className="font-medium text-ink">Dirección</h3>
+                    <p className="text-ink-600">C/ de l'Illa Cabrera, 13</p>
+                    <p className="text-ink-600">Quatre Carreres</p>
+                    <p className="text-ink-600">46026 València, Valencia, España</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-resona/10 border border-resona/30 rounded-lg p-6">
-              <h3 className="font-semibold text-resona mb-2">¿Necesitas un presupuesto?</h3>
-              <p className="text-sm text-gray-700 mb-4">
+            <div className="bg-accent/10 border border-accent/30 rounded-lg p-6">
+              <h3 className="font-semibold text-accent-600 mb-2">¿Necesitas un presupuesto?</h3>
+              <p className="text-sm text-ink-700 mb-4">
                 Usa nuestra calculadora de eventos para obtener un presupuesto estimado al instante.
               </p>
               <a
                 href="/brief"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark transition text-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition text-sm"
               >
                 Calcular Presupuesto
               </a>
@@ -113,12 +113,12 @@ const ContactPage = () => {
           </div>
 
           {/* Formulario de contacto */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-paper-50 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-6">Envíanos un Mensaje</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-700 mb-1">
                   Nombre *
                 </label>
                 <input
@@ -126,13 +126,13 @@ const ContactPage = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-paper-400 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="Tu nombre"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-700 mb-1">
                   Email *
                 </label>
                 <input
@@ -140,26 +140,26 @@ const ContactPage = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-paper-400 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="tu@email.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-700 mb-1">
                   Teléfono
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-paper-400 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="+34 123 456 789"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-700 mb-1">
                   Asunto *
                 </label>
                 <input
@@ -167,13 +167,13 @@ const ContactPage = () => {
                   required
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-paper-400 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="¿En qué podemos ayudarte?"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-700 mb-1">
                   Mensaje *
                 </label>
                 <textarea
@@ -181,7 +181,7 @@ const ContactPage = () => {
                   rows={5}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent resize-none"
+                  className="w-full px-4 py-2 border border-paper-400 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent resize-none"
                   placeholder="Cuéntanos sobre tu evento..."
                 />
               </div>
@@ -189,7 +189,7 @@ const ContactPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-resona text-white py-3 rounded-lg font-semibold hover:bg-resona-dark transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>Enviando...</>

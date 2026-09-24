@@ -48,7 +48,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   const imageUrl = post.featuredImage ? getImageUrl(post.featuredImage) : null;
 
   return (
-    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <article className="bg-paper-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Imagen destacada */}
       {imageUrl ? (
         <div className="aspect-video overflow-hidden">
@@ -59,12 +59,12 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
             onError={(e) => {
               // Si falla la carga, mostrar placeholder
               e.currentTarget.style.display = 'none';
-              e.currentTarget.parentElement!.innerHTML = '<div class="aspect-video bg-resona flex items-center justify-center"><span class="text-white text-4xl font-bold opacity-20">ReSona</span></div>';
+              e.currentTarget.parentElement!.innerHTML = '<div class="aspect-video bg-accent flex items-center justify-center"><span class="text-white text-4xl font-bold opacity-20">ReSona</span></div>';
             }}
           />
         </div>
       ) : (
-        <div className="aspect-video bg-resona flex items-center justify-center">
+        <div className="aspect-video bg-accent flex items-center justify-center">
           <span className="text-white text-4xl font-bold opacity-20">ReSona</span>
         </div>
       )}
@@ -85,18 +85,18 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         {/* Título */}
         <Link to={`/blog/${post.slug}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-resona transition-colors line-clamp-2">
+          <h2 className="text-2xl font-bold text-ink mb-3 hover:text-accent-600 transition-colors line-clamp-2">
             {post.title}
           </h2>
         </Link>
 
         {/* Extracto */}
-        <p className="text-gray-600 mb-4 line-clamp-3">
+        <p className="text-ink-600 mb-4 line-clamp-3">
           {post.excerpt}
         </p>
 
         {/* Metadatos */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-ink-500">
           {post.publishedAt && (
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
@@ -122,7 +122,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
         {/* Botón Leer más */}
         <Link
           to={`/blog/${post.slug}`}
-          className="inline-block mt-4 text-resona font-semibold hover:text-resona-dark transition-colors"
+          className="inline-block mt-4 text-accent-600 font-semibold hover:text-accent-700 transition-colors"
         >
           Leer más →
         </Link>

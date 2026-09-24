@@ -136,7 +136,7 @@ const HolaPage = () => {
               onMouseEnter={(e) => (e.currentTarget.style.background = AZUL_HOVER)}
               onMouseLeave={(e) => (e.currentTarget.style.background = AZUL)}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-paper-50/20">
                 <MessageCircle size={20} aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">

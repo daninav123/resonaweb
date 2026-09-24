@@ -160,7 +160,7 @@ const EventosCorporativosPage = () => {
             >
               <Link
                 to="/brief?tipo=corporativo"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-cream-100 hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Pedir presupuesto</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -279,7 +279,7 @@ const EventosCorporativosPage = () => {
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Link
                 to="/brief?tipo=corporativo"
-                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
+                className="inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-cream-100 hover:bg-accent-400 transition-all group"
               >
                 <span className="font-medium">Pedir presupuesto</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

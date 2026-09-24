@@ -10,19 +10,19 @@ const NotFoundPage = () => {
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-paper flex items-center justify-center px-4">
         <div className="max-w-lg w-full text-center">
           {/* 404 Number */}
           <div className="mb-8">
-            <h1 className="text-9xl font-black text-resona mb-4">404</h1>
-            <div className="h-2 w-32 bg-resona rounded-full mx-auto"></div>
+            <h1 className="text-9xl font-black text-accent-600 mb-4">404</h1>
+            <div className="h-2 w-32 bg-accent rounded-full mx-auto"></div>
           </div>
 
           {/* Message */}
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-ink mb-4">
             Página no encontrada
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-ink-600 mb-8">
             Lo sentimos, la página que buscas no existe o ha sido movida.
           </p>
 
@@ -30,14 +30,14 @@ const NotFoundPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/"
-              className="inline-flex items-center justify-center gap-2 bg-resona text-white px-6 py-3 rounded-lg hover:bg-resona-dark transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent-600 transition-colors"
             >
               <Home className="w-5 h-5" />
               Ir al Inicio
             </Link>
             <Link
               to="/eventos"
-              className="inline-flex items-center justify-center gap-2 border-2 border-resona text-resona px-6 py-3 rounded-lg hover:bg-resona hover:text-white transition-colors"
+              className="inline-flex items-center justify-center gap-2 border-2 border-accent text-accent-600 px-6 py-3 rounded-lg hover:bg-accent-600 hover:text-white transition-colors"
             >
               <Search className="w-5 h-5" />
               Ver Eventos
@@ -47,7 +47,7 @@ const NotFoundPage = () => {
           {/* Go Back */}
           <button
             onClick={() => window.history.back()}
-            className="mt-8 inline-flex items-center gap-2 text-gray-600 hover:text-resona transition-colors"
+            className="mt-8 inline-flex items-center gap-2 text-ink-600 hover:text-accent-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver atrás

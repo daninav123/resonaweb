@@ -147,7 +147,7 @@ const PacksPage = () => {
                   <div className="mt-6 flex flex-col sm:flex-row gap-3">
                     <Link
                       to={`/packs/${pack.slug}`}
-                      className="inline-flex items-center justify-between gap-3 px-5 py-3 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group/cta flex-1"
+                      className="inline-flex items-center justify-between gap-3 px-5 py-3 rounded-full bg-accent text-cream-100 hover:bg-accent-400 transition-all group/cta flex-1"
                     >
                       <span className="text-sm font-medium">Ver detalle</span>
                       <ArrowRight className="w-4 h-4 group-hover/cta:translate-x-1 transition-transform" />
@@ -185,7 +185,7 @@ const PacksPage = () => {
           <Reveal delay={0.3}>
             <Link
               to="/brief"
-              className="mt-10 inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-ink hover:bg-accent-400 transition-all group"
+              className="mt-10 inline-flex items-center justify-between gap-4 px-7 py-4 rounded-full bg-accent text-cream-100 hover:bg-accent-400 transition-all group"
             >
               <span className="font-medium">Empezar brief personalizado</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

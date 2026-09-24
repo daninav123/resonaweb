@@ -79,7 +79,7 @@ const BlogPostPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-resona"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
       </div>
     );
   }
@@ -87,8 +87,8 @@ const BlogPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Artículo no encontrado</h1>
-        <Link to="/blog" className="text-resona hover:text-resona-dark">
+        <h1 className="text-4xl font-bold text-ink mb-4">Artículo no encontrado</h1>
+        <Link to="/blog" className="text-accent-600 hover:text-accent-700">
           ← Volver al blog
         </Link>
       </div>
@@ -154,13 +154,13 @@ const BlogPostPage = () => {
         schema={articleSchema}
       />
 
-      <article className="min-h-screen bg-gray-50">
+      <article className="min-h-screen bg-paper">
         {/* Header */}
-        <div className="bg-white border-b">
+        <div className="bg-paper-50 border-b">
           <div className="container mx-auto px-4 py-6">
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 text-resona hover:text-resona-dark mb-4"
+              className="inline-flex items-center gap-2 text-accent-600 hover:text-accent-700 mb-4"
             >
               <ArrowLeft className="w-4 h-4" />
               Volver al blog
@@ -170,7 +170,7 @@ const BlogPostPage = () => {
 
         {/* Imagen destacada */}
         {imageUrl && (
-          <div className="w-full aspect-[21/9] overflow-hidden bg-gray-200">
+          <div className="w-full aspect-[21/9] overflow-hidden bg-paper-300">
             <img
               src={imageUrl}
               alt={`${post.title} - Guía sobre alquiler de equipos audiovisuales para eventos | ReSona Events Valencia`}
@@ -198,12 +198,12 @@ const BlogPostPage = () => {
             </div>
 
             {/* Título */}
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-ink mb-6">
               {post.title}
             </h1>
 
             {/* Metadatos */}
-            <div className="flex flex-wrap items-center gap-6 text-gray-600 mb-8 pb-8 border-b">
+            <div className="flex flex-wrap items-center gap-6 text-ink-600 mb-8 pb-8 border-b">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 <span>{formatDate(post.publishedAt)}</span>
@@ -219,21 +219,21 @@ const BlogPostPage = () => {
                 <Share2 className="w-5 h-5" />
                 <button
                   onClick={() => shareOnSocial('facebook')}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-paper-300 rounded-full transition-colors"
                   aria-label="Compartir en Facebook"
                 >
                   <Facebook className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => shareOnSocial('twitter')}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-paper-300 rounded-full transition-colors"
                   aria-label="Compartir en Twitter"
                 >
                   <Twitter className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => shareOnSocial('linkedin')}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-paper-300 rounded-full transition-colors"
                   aria-label="Compartir en LinkedIn"
                 >
                   <Linkedin className="w-5 h-5" />
@@ -254,7 +254,7 @@ const BlogPostPage = () => {
                   {post.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                      className="px-3 py-1 bg-paper-200 text-ink-700 rounded-full text-sm"
                     >
                       {tag.name}
                     </span>
@@ -264,7 +264,7 @@ const BlogPostPage = () => {
             )}
 
             {/* CTA */}
-            <div className="relative mt-12 p-8 bg-resona rounded-xl text-white text-center overflow-hidden">
+            <div className="relative mt-12 p-8 bg-accent rounded-xl text-white text-center overflow-hidden">
               <div className="absolute inset-0 bg-black/15"></div>
               <div className="relative">
               <h3 className="text-2xl font-bold mb-4">
@@ -276,13 +276,13 @@ const BlogPostPage = () => {
               <div className="flex flex-wrap gap-4 justify-center">
                 <a
                   href="https://resonarent.com/productos"
-                  className="px-6 py-3 bg-white text-resona font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+                  className="px-6 py-3 bg-paper-50 text-accent-600 font-semibold rounded-lg hover:bg-paper-300 transition-colors"
                 >
                   Ver Productos
                 </a>
                 <Link
                   to="/brief"
-                  className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-resona transition-colors"
+                  className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-accent-600 transition-colors"
                 >
                   Calcular Presupuesto
                 </Link>
