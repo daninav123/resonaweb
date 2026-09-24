@@ -13,7 +13,9 @@ import Layout from './components/Layout/Layout';
 // Páginas públicas de alquiler
 const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
 const ProductsPage = lazyWithRetry(() => import('./pages/ProductsPage'));
+const MaquetaCatalogoPage = lazyWithRetry(() => import('./pages/MaquetaCatalogoPage'));
 const ProductDetailPage = lazyWithRetry(() => import('./pages/ProductDetailPage'));
+const PackDetailPage = lazyWithRetry(() => import('./pages/PackDetailPage'));
 const CartPage = lazyWithRetry(() => import('./pages/CartPage'));
 const CheckoutPage = lazyWithRetry(() => import('./pages/CheckoutPage'));
 const CheckoutPageStripe = lazyWithRetry(() => import('./pages/CheckoutPageStripe'));
@@ -101,12 +103,17 @@ export default function App() {
         <BrowserRouter>
           <Suspense fallback={<PageFallback />}>
             <Routes>
+              {/* Maqueta de trabajo, fuera del Layout y sin indexar. Borrar al decidir. */}
+              <Route path="/maqueta" element={<MaquetaCatalogoPage />} />
+
               <Route element={<Layout />}>
                 <Route index element={<HomePage />} />
 
                 {/* Catálogo */}
                 <Route path="/productos" element={<ProductsPage />} />
                 <Route path="/productos/:slug" element={<ProductDetailPage />} />
+                <Route path="/packs" element={<Navigate to="/productos?category=packs" replace />} />
+                <Route path="/packs/:slug" element={<PackDetailPage />} />
 
                 {/* Carrito y checkout */}
                 <Route path="/carrito" element={<CartPage />} />
@@ -171,6 +178,7 @@ export default function App() {
           <Toaster position="top-right" />
           <WhatsAppFloat
             phone="34613881414"
+            app="rent"
             message="Hola, quería información sobre el alquiler de equipos para un evento."
             tooltip="¿Dudas? Escríbenos"
             onContactClick={() => trackLead({ leadType: 'whatsapp' })}

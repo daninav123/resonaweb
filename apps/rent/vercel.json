@@ -24,7 +24,50 @@
       "has": [{ "type": "host", "value": "www.resonarent.com" }],
       "destination": "https://resonarent.com/:path*",
       "permanent": true
-    }
+    },
+
+    { "source": "/favoritos", "destination": "/cuenta/favoritos", "permanent": true },
+    { "source": "/mis-pedidos", "destination": "/cuenta/pedidos", "permanent": true },
+    { "source": "/mis-pedidos/:id", "destination": "/cuenta/pedidos/:id", "permanent": true },
+    { "source": "/orders/:id", "destination": "/cuenta/pedidos/:id", "permanent": true },
+    { "source": "/mis-datos", "destination": "/cuenta/datos", "permanent": true },
+    { "source": "/perfil", "destination": "/cuenta", "permanent": true },
+    { "source": "/register", "destination": "/registro", "permanent": true },
+
+    { "source": "/legal/terminos", "destination": "/terminos-condiciones", "permanent": true },
+    { "source": "/legal/privacidad", "destination": "/politica-privacidad", "permanent": true },
+    { "source": "/legal/cookies", "destination": "/politica-cookies", "permanent": true },
+
+    { "source": "/checkout/success", "destination": "/checkout/exito", "permanent": true },
+    { "source": "/checkout/manual-payment", "destination": "/checkout/manual", "permanent": true },
+    { "source": "/pagar/:token", "destination": "/pago/token/:token", "permanent": true },
+    { "source": "/modification-payment/:id", "destination": "/pago/modificacion/:id", "permanent": true },
+
+    { "source": "/catalogo", "destination": "/productos", "permanent": true },
+    { "source": "/servicios", "destination": "/productos", "permanent": true },
+    { "source": "/servicios/alquiler-mesa-mezclas-dj", "destination": "/servicios/alquiler-mesa-mezcla-dj", "permanent": true },
+    { "source": "/servicios/alquiler-pantallas-led-eventos", "destination": "/servicios/alquiler-pantallas-led", "permanent": true },
+    { "source": "/servicios/alquiler-proyectores-profesionales", "destination": "/servicios/alquiler-proyectores", "permanent": true },
+    { "source": "/servicios/alquiler-subwoofers-graves", "destination": "/servicios/alquiler-subwoofers", "permanent": true },
+    { "source": "/servicios/alquiler-laser-eventos", "destination": "/servicios/alquiler-laser", "permanent": true },
+    { "source": "/servicios/alquiler-maquinas-fx-humo-confeti", "destination": "/servicios/alquiler-maquinas-fx", "permanent": true },
+    { "source": "/servicios/alquiler-iluminacion-bodas-valencia", "destination": "/servicios/alquiler-iluminacion-bodas", "permanent": true },
+
+    { "source": "/blog", "destination": "https://resonaevents.com/blog", "permanent": true },
+    { "source": "/blog/:slug", "destination": "https://resonaevents.com/blog/:slug", "permanent": true },
+    { "source": "/bodas-valencia", "destination": "https://resonaevents.com/bodas", "permanent": true },
+    { "source": "/sonido-bodas-valencia", "destination": "https://resonaevents.com/sonido-bodas-valencia", "permanent": true },
+    { "source": "/calculadora", "destination": "https://resonaevents.com/calculadora-evento", "permanent": true },
+    { "source": "/calculadora-evento", "destination": "https://resonaevents.com/calculadora-evento", "permanent": true },
+    { "source": "/calculadora-eventos", "destination": "https://resonaevents.com/calculadora-evento", "permanent": true },
+    { "source": "/servicios/sonido-bodas-valencia", "destination": "https://resonaevents.com/servicios/sonido-bodas-valencia", "permanent": true },
+    { "source": "/servicios/sonido-iluminacion-bodas-valencia", "destination": "https://resonaevents.com/servicios/sonido-iluminacion-bodas-valencia", "permanent": true },
+    { "source": "/servicios/produccion-eventos-valencia", "destination": "https://resonaevents.com/servicios/produccion-eventos-valencia", "permanent": true },
+    { "source": "/servicios/produccion-tecnica-eventos-valencia", "destination": "https://resonaevents.com/servicios/produccion-tecnica-eventos", "permanent": true },
+    { "source": "/servicios/sonido-eventos-corporativos-valencia", "destination": "https://resonaevents.com/servicios/sonido-eventos-corporativos", "permanent": true },
+    { "source": "/servicios/videoescenarios-streaming-eventos", "destination": "https://resonaevents.com/servicios/videoescenarios-streaming", "permanent": true },
+    { "source": "/servicios/iluminacion-arquitectonica-eventos", "destination": "https://resonaevents.com/servicios/iluminacion-arquitectonica", "permanent": true },
+    { "source": "/servicios/iluminacion-escenarios-eventos", "destination": "https://resonaevents.com/servicios/iluminacion-escenarios", "permanent": true }
   ],
   "headers": [
     {
