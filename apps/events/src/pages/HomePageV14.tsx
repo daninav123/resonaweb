@@ -177,7 +177,7 @@ const Panel = ({ side, active, setActive }: { side: Side; active: Side | null; s
           <div className="mt-7 flex flex-wrap gap-3 justify-center">
             <Link to={c.to} onClick={(e) => e.stopPropagation()}
               className="v14 text-sm font-bold uppercase tracking-wide px-7 py-4 rounded-full transition-transform hover:-translate-y-0.5"
-              style={{ background: BRAND, color: INK }}>
+              style={{ background: BRAND, color: CREAM }}>
               Descubrir →
             </Link>
             <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(c.wa)}`}
@@ -411,7 +411,7 @@ const Closing = () => (
         Un WhatsApp, un email o una llamada. Te responde una persona del equipo, casi siempre el mismo día.
       </p>
       <div className="mt-10 flex flex-wrap gap-3 justify-center">
-        <a href={`https://wa.me/${WA_NUMBER}`} onClick={() => trackLead({ leadType: 'whatsapp' })} className="v14 text-sm font-bold uppercase tracking-wide px-8 py-5 rounded-full transition-transform hover:-translate-y-0.5" style={{ background: BRAND, color: INK }}>
+        <a href={`https://wa.me/${WA_NUMBER}`} onClick={() => trackLead({ leadType: 'whatsapp' })} className="v14 text-sm font-bold uppercase tracking-wide px-8 py-5 rounded-full transition-transform hover:-translate-y-0.5" style={{ background: BRAND, color: CREAM }}>
           WhatsApp · 613 88 14 14
         </a>
         <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Consulta sobre mi evento')}`} onClick={() => trackLead({ leadType: 'email' })} className="v14 text-sm font-bold uppercase tracking-wide px-8 py-5 rounded-full transition-transform hover:-translate-y-0.5" style={{ border: '1px solid rgba(246,241,231,0.35)', color: CREAM }}>
