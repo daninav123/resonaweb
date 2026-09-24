@@ -14,6 +14,7 @@
 7. **[MIGRATION_SPLIT_RENT_EVENTS.md](MIGRATION_SPLIT_RENT_EVENTS.md)** - 🚧 Plan de split en 3 apps (Rent / Events / Admin)
 8. **[AI_RULES_SHARED.md](AI_RULES_SHARED.md)** - 🤖 Reglas compartidas para Claude/Windsurf/Cascade (fuente canónica)
 9. **[DEPLOYMENT_3APPS.md](DEPLOYMENT_3APPS.md)** - 🚀 Guía operativa para deployar las 3 apps (Rent / Events / Admin)
+10. **[FOTOS_PRODUCTO_PENDIENTES.md](FOTOS_PRODUCTO_PENDIENTES.md)** - 📷 Fotos que faltan y nombres de producto a corregir en BD
 
 ## 🏗️ Arquitectura
 

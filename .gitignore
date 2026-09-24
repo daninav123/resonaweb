@@ -121,3 +121,6 @@ debug-*.js
 apps/*/public/images/*.mp4
 !apps/*/public/images/boda-hero-loop.mp4
 !apps/*/public/images/resona-events-reel-boda-valencia.mp4
+
+# Plan temporal de la carga masiva de fotos de producto
+plan-fotos.json
