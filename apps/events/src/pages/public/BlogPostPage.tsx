@@ -191,7 +191,7 @@ const BlogPostPage = () => {
             <div className="mb-6">
               <span
                 className="px-4 py-2 rounded-full text-sm font-semibold text-white"
-                style={{ backgroundColor: post.category.color || '#3498d3' }}
+                style={{ backgroundColor: post.category.color || '#3D5AFE' }}
               >
                 {post.category.name}
               </span>

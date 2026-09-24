@@ -76,7 +76,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
           <div className="flex items-center gap-2 mb-3">
             <span
               className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-              style={{ backgroundColor: post.category.color || '#3498d3' }}
+              style={{ backgroundColor: post.category.color || '#3D5AFE' }}
             >
               {post.category.name}
             </span>
