@@ -908,10 +908,11 @@ const CartPage = () => {
     subtotal,
     shippingCost,
     deliveryOption,
-    user?.userLevel, // ⭐ Pasar nivel VIP
-    vipDiscount, // ⭐ Pasar descuento VIP
-    shippingIncludedInPrice, // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
-    fromCalculator // 💳 Pasar si viene de calculadora para aplicar 25%
+    user?.userLevel,
+    vipDiscount,
+    shippingIncludedInPrice,
+    'reserve',
+    0
   );
 
   // Usar guestCartItems como cartItems para mantener compatibilidad con el resto del código

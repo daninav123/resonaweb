@@ -5,7 +5,7 @@ import { api } from '@resona/api-client';
 import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag, Star, Crown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
-import { calculatePaymentBreakdown } from '../utils/depositCalculator';
+import { calculatePaymentBreakdown, type PaymentOption } from '../utils/depositCalculator';
 import { CouponInput } from '../components/coupons/CouponInput';
 import { useAuthStore } from '../stores/authStore';
 import { calculateCartTotals } from '../utils/cartCalculations';
@@ -51,6 +51,7 @@ const CheckoutPage = () => {
   }, [user, isAuthenticated, authChecked]);
   
   const [step, setStep] = useState(1);
+  const [paymentOption, setPaymentOption] = useState<PaymentOption>('reserve');
   const [isProcessing, setIsProcessing] = useState(false);
   
   // 🔍 DEBUG: Log step changes
@@ -456,15 +457,19 @@ const CheckoutPage = () => {
     shippingIncludedInPrice
   });
   
-  const paymentBreakdown = calculatePaymentBreakdown(
+  const breakdownFor = (opt: PaymentOption) => calculatePaymentBreakdown(
     centralizedSubtotal,
     centralizedShipping,
     formData.deliveryOption as 'pickup' | 'delivery',
-    user?.userLevel, // ⭐ Pasar nivel VIP
-    centralizedVipDiscount, // ⭐ Pasar descuento VIP
-    shippingIncludedInPrice, // ⭐ Pasar si tiene transporte/montaje incluido (sin fianza)
-    fromCalculator // 💳 Pasar si viene de calculadora para aplicar 25%
+    user?.userLevel,
+    centralizedVipDiscount,
+    shippingIncludedInPrice,
+    opt,
+    centralizedCouponDiscount
   );
+  const breakdownReserve = breakdownFor('reserve');
+  const breakdownFull = breakdownFor('full');
+  const paymentBreakdown = paymentOption === 'full' ? breakdownFull : breakdownReserve;
   
   console.log('💳 PAYMENT BREAKDOWN RESULTADO:', {
     payNow: paymentBreakdown.payNow,
@@ -653,6 +658,8 @@ const CheckoutPage = () => {
         total: totalAmount,
         deposit: paymentBreakdown.deposit,
         requiresDeposit: paymentBreakdown.requiresDeposit,
+        paymentOption: paymentBreakdown.paymentOption,
+        prontoPagoDiscount: paymentBreakdown.prontoPagoDiscount,
       },
       
       // Tipo de entrega (PICKUP o DELIVERY en mayúsculas)
@@ -757,7 +764,7 @@ const CheckoutPage = () => {
                   <div
                     className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center font-semibold transition-colors ${
                       step > s.n
-                        ? 'bg-green-500 text-white'
+                        ? 'bg-green-700 text-white'
                         : step === s.n
                         ? 'bg-resona text-white shadow-md'
                         : 'bg-gray-200 text-gray-500'
@@ -777,25 +784,37 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        {/* Banner permanente: solo pagas 25% ahora */}
-        {paymentBreakdown.payLater > 0 && (
-          <div className="max-w-3xl mx-auto mb-8">
-            <div className="rounded-xl border-2 border-green-300 bg-gradient-to-r from-green-50 to-emerald-50 p-4 flex items-center gap-4 shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0">
-                25%
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-green-900">
-                  Solo pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> ahora
-                  <span className="text-green-700 font-normal text-sm"> · el 25% de reserva</span>
-                </p>
-                <p className="text-sm text-green-800 mt-0.5">
-                  El resto (<span className="font-semibold">€{paymentBreakdown.payLater.toFixed(2)}</span>) se cobra antes de la entrega. Cancela gratis hasta 48h antes.
-                </p>
-              </div>
-            </div>
+        {/* Selector de forma de pago */}
+        <div className="max-w-3xl mx-auto mb-8">
+          <p className="font-semibold text-gray-900 mb-3">¿Cómo prefieres pagar?</p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setPaymentOption('reserve')}
+              className={`text-left rounded-xl border-2 p-4 transition ${paymentOption === 'reserve' ? 'border-resona bg-resona/5 ring-2 ring-resona/20' : 'border-gray-200 hover:border-gray-300'}`}
+            >
+              <p className="font-semibold text-gray-900">Reserva ahora (25%)</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">€{breakdownReserve.payNow.toFixed(2)}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                El 75% restante (€{breakdownReserve.payLater.toFixed(2)}) lo pagas al recoger.
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaymentOption('full')}
+              className={`text-left rounded-xl border-2 p-4 transition relative ${paymentOption === 'full' ? 'border-green-500 bg-green-50 ring-2 ring-green-500/20' : 'border-gray-200 hover:border-gray-300'}`}
+            >
+              <span className="absolute top-3 right-3 text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">-10%</span>
+              <p className="font-semibold text-gray-900">Pago completo hoy</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">€{breakdownFull.payNow.toFixed(2)}</p>
+              <p className="text-sm text-green-700 mt-1">
+                {breakdownReserve.total > breakdownFull.total
+                  ? `Ahorras €${(breakdownReserve.total - breakdownFull.total).toFixed(2)} pagando todo ahora.`
+                  : 'Pagas todo ahora y te olvidas.'}
+              </p>
+            </button>
           </div>
-        )}
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -1251,7 +1270,7 @@ const CheckoutPage = () => {
                       </span>
                     </div>
                     <p className="text-xs text-gray-600 mt-2">
-                      Reservas con solo el 25%. El resto se cobra antes de la entrega.
+                      Reservas con el 25% y pagas el resto al recoger en tienda.
                     </p>
                   </>
                 )}

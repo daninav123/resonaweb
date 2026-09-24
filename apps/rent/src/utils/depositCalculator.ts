@@ -22,7 +22,17 @@ export const calculateDeposit = (rentalTotal: number): number => {
 };
 
 /**
- * Calcula los montos de pago según el método de entrega
+ * Opción de pago que elige el cliente en el checkout:
+ * - 'full':    paga el 100% online y obtiene un 10% de descuento (pronto pago).
+ * - 'reserve': paga el 25% online y el 75% restante al recoger en tienda.
+ */
+export type PaymentOption = 'full' | 'reserve';
+
+/** Descuento por pronto pago (pagar el 100% online) sobre la base antes de IVA. */
+export const PRONTO_PAGO_DISCOUNT = 0.10;
+
+/**
+ * Calcula los montos de pago según la opción elegida por el cliente.
  */
 export interface PaymentBreakdown {
   subtotal: number;
@@ -33,51 +43,63 @@ export interface PaymentBreakdown {
   payNow: number;
   payLater: number;
   requiresDeposit: boolean;
+  paymentOption: PaymentOption;
+  /** Descuento aplicado por pagar el 100% (0 si no aplica o si otro descuento era mayor). */
+  prontoPagoDiscount: number;
 }
 
 export const calculatePaymentBreakdown = (
   subtotal: number,
   shipping: number,
-  deliveryOption: 'pickup' | 'delivery',
+  _deliveryOption: 'pickup' | 'delivery',
   userLevel?: 'STANDARD' | 'VIP' | 'VIP_PLUS' | null,
   vipDiscount: number = 0,
   hasShippingInstallation: boolean = false, // Indica si productos incluyen transporte/montaje
-  isFromCalculator: boolean = false // 💳 DEPRECADO: ya no se usa, plazos aplican a todos >€500
+  paymentOption: PaymentOption = 'reserve',
+  couponDiscount: number = 0
 ): PaymentBreakdown => {
   // VIP users: No deposit
   const isVIP = userLevel === 'VIP' || userLevel === 'VIP_PLUS';
-  
+
   // Productos con transporte/montaje incluido: No deposit
   const requiresDeposit = !isVIP && !hasShippingInstallation;
-  
-  // Calcular total después del descuento VIP
-  const beforeTax = subtotal + shipping - vipDiscount;
+
+  // Descuentos: no se apilan, se aplica el mayor (coherente con calculateCartTotals).
+  const baseDiscount = Math.max(vipDiscount, couponDiscount);
+  // En pago completo, el 10% de pronto pago compite con el resto (gana el mayor).
+  const effectiveDiscount =
+    paymentOption === 'full'
+      ? Math.max(baseDiscount, subtotal * PRONTO_PAGO_DISCOUNT)
+      : baseDiscount;
+  const prontoPagoDiscount = Math.max(0, effectiveDiscount - baseDiscount);
+
+  const beforeTax = Math.max(0, subtotal + shipping - effectiveDiscount);
   const tax = beforeTax * 0.21; // IVA 21%
   const total = beforeTax + tax;
-  
-  // 💳 PAGO A PLAZOS: Si total > 500€ → Solo pagar 25% (TODOS los pedidos)
-  const isEligibleForInstallments = total > 500;
-  
-  let payNow = total; // Por defecto: pagar todo
-  let payLater = 0;
-  
-  // Si es elegible para plazos: Solo pagar 25% (sin importar si viene de calculadora)
-  if (isEligibleForInstallments) {
-    payNow = total * 0.25; // 25% de reserva
-    payLater = total * 0.75; // 75% restante
+
+  let payNow: number;
+  let payLater: number;
+  if (paymentOption === 'full') {
+    payNow = total; // 100% online (ya con el 10% aplicado)
+    payLater = 0;
+  } else {
+    payNow = total * 0.25; // 25% de reserva online
+    payLater = total * 0.75; // 75% restante al recoger
   }
-  
-  // La fianza se cobra en tienda (no online)
+
+  // La fianza se cobra en tienda (no online), aparte del alquiler
   const deposit = requiresDeposit ? calculateDeposit(subtotal) : 0;
-  
+
   return {
     subtotal,
     shipping,
     tax,
     total,
-    deposit, // Fianza que se cobrará en tienda
-    payNow, // 25% si es de calculadora y > 500€, sino 100%
-    payLater, // 75% si es de calculadora y > 500€, sino 0
-    requiresDeposit, // VIP o productos con transporte/montaje no requieren fianza
+    deposit,
+    payNow,
+    payLater,
+    requiresDeposit,
+    paymentOption,
+    prontoPagoDiscount,
   };
 };
