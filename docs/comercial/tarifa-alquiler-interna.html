@@ -1,0 +1,989 @@
+<meta charset="utf-8">
+<title>Tarifa de alquiler · Resona Rent</title>
+<style>
+  @page { size: A4; margin: 12mm 10mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #14213d; font-size: 8.6pt; line-height: 1.35; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2mm; letter-spacing: -.02em; }
+  h2 { font-size: 11pt; margin: 7mm 0 2mm; padding-bottom: 1.2mm; border-bottom: 1.5pt solid #1b4b8f; color: #1b4b8f; page-break-after: avoid; }
+  h3 { font-size: 9.5pt; margin: 4mm 0 1.5mm; color: #1b4b8f; page-break-after: avoid; }
+  p { margin: 0 0 2mm; }
+  .sub { color: #5a6a85; font-size: 9pt; }
+  .portada { page-break-after: always; padding-top: 6mm; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+  .box { background: #f2f6fb; border-left: 2.5pt solid #1b4b8f; padding: 2.5mm 3.5mm; margin-bottom: 2.5mm; }
+  .box strong { color: #1b4b8f; }
+  .formula { font-family: "SF Mono", Menlo, monospace; font-size: 8.5pt; background: #14213d; color: #fff; padding: 3mm 4mm; border-radius: 1.5mm; margin: 2mm 0 3mm; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #14213d; color: #fff; font-size: 7pt; text-transform: uppercase; letter-spacing: .04em; padding: 1.8mm 1.5mm; text-align: left; font-weight: 600; }
+  th.num, td.num { text-align: right; white-space: nowrap; }
+  td { padding: 1.5mm; vertical-align: top; border-top: .5pt solid #dde5f0; }
+  .id { font-family: "SF Mono", Menlo, monospace; font-size: 7pt; color: #8494ab; white-space: nowrap; }
+  .compra { color: #8494ab; }
+  .ahorro { color: #0f7a4d; font-weight: 600; }
+  table.cambios td { font-size: 7.6pt; }
+  .antes { color: #8494ab; text-decoration: line-through; }
+  .despues { color: #0f7a4d; font-weight: 700; }
+  .pvp { font-weight: 700; color: #1b4b8f; }
+  .iva { color: #5a6a85; }
+  tr.detail td { border-top: 0; padding-top: 0; padding-bottom: 2.5mm; font-size: 7.2pt; color: #5a6a85; }
+  .lbl { display: inline-block; min-width: 13mm; font-size: 6.5pt; text-transform: uppercase; letter-spacing: .04em; color: #8494ab; font-weight: 600; }
+  .nota { font-size: 7.2pt; color: #7b8aa1; }
+  tbody { page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  ul { margin: 0; padding-left: 4mm; }
+  li { margin-bottom: 1.4mm; }
+  footer { margin-top: 6mm; padding-top: 2mm; border-top: .5pt solid #c8d4e4; font-size: 7pt; color: #8494ab; }
+</style>
+
+<div class="portada">
+  <h1>Tarifa de alquiler · Resona Rent</h1>
+  <p class="sub">Documento interno — incluye precio de compra y stock físico. No entregar al cliente.</p>
+  <p class="sub">Precios sin IVA, por día · Catálogo a 2026-08-25 · 78 equipos, 16 packs</p>
+
+  <div class="cols" style="margin-top:6mm">
+    <div>
+      <h2 style="margin-top:0">Cómo funciona el precio</h2>
+      <div class="formula">Total = Precio/día × días × unidades + IVA (21%)</div>
+      <table>
+        <thead><tr><th>Duración</th><th>Precio</th></tr></thead>
+        <tbody><tr><td><strong>1 día</strong><br><span class="nota">Recogida y devolución el mismo día o al día siguiente por la mañana.</span></td><td class="num pvp" style="width:30%">Precio de tarifa</td></tr><tr><td><strong>Fin de semana</strong><br><span class="nota">Viernes desde las 14:00 hasta el lunes a las 10:00. Es la modalidad más habitual y no cuesta más que un día suelto.</span></td><td class="num pvp" style="width:30%">Igual que 1 día</td></tr><tr><td><strong>2 a 6 días</strong><br><span class="nota">A partir de 3 días conviene pedir descuento: es negociable.</span></td><td class="num pvp" style="width:30%">Precio de tarifa × nº de días</td></tr><tr><td><strong>Semana completa (7 días)</strong><br><span class="nota">Dos días gratis sobre el cálculo lineal.</span></td><td class="num pvp" style="width:30%">Precio de tarifa × 5</td></tr><tr><td><strong>Más de una semana</strong><br><span class="nota">Consultar con Dani.</span></td><td class="num pvp" style="width:30%">Presupuesto a medida</td></tr></tbody>
+      </table>
+
+      <h3>Entrega y montaje</h3>
+      <table>
+        <tbody><tr><td><strong>Recogida en almacén (Valencia)</strong><br><span class="nota">Horario acordado. Es la opción por defecto.</span></td><td class="num pvp" style="width:28%">Gratis</td></tr><tr><td><strong>Entrega y recogida a domicilio</strong><br><span class="nota">Se calcula sobre la distancia desde el almacén. Ida y vuelta ya incluidas en esa tarifa.</span></td><td class="num pvp" style="width:28%">1,50 €/km</td></tr><tr><td><strong>Montaje por nuestro equipo</strong><br><span class="nota">El alquiler con montaje no es autoservicio: se presupuesta con la tarifa de montajes de Resona Events.</span></td><td class="num pvp" style="width:28%">Según montaje</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      <h2 style="margin-top:0">Fianza</h2>
+      <div class="box">Dos veces el importe del alquiler, redondeado al alza a bloques de 50 €, con un mínimo de 50 € y un tope de 400 €.</div>
+      <ul class="nota" style="margin-bottom:2.5mm"><li>Clientes VIP y VIP Plus no dejan fianza.</li><li>Pedidos con transporte y montaje incluidos no llevan fianza: el material no sale de nuestras manos.</li></ul>
+      <p class="nota">Se cobra en tienda al recoger, nunca online, y se devuelve íntegra al comprobar el material.</p>
+
+      <h3>Formas de pago</h3>
+      <table>
+        <tbody><tr><td><strong>Reserva online</strong><br><span class="nota">25% al confirmar el pedido, 75% restante al recoger en el almacén.</span></td><td class="num pvp" style="width:32%">Sin descuento.</td></tr><tr><td><strong>Pago completo online</strong><br><span class="nota">100% al confirmar el pedido.</span></td><td class="num pvp" style="width:32%">10% de descuento por pronto pago.</td></tr></tbody>
+      </table>
+
+      <h3>Descuentos</h3>
+      <table>
+        <tbody><tr><td>Pronto pago (100% online)</td><td class="num pvp" style="width:28%">10%</td></tr><tr><td>Cupón promocional</td><td class="num pvp" style="width:28%">Según cupón</td></tr><tr><td>Programa VIP (clientes recurrentes)</td><td class="num pvp" style="width:28%">A consultar</td></tr><tr><td>Nivel VIP en la web</td><td class="num pvp" style="width:28%">25%</td></tr><tr><td>Nivel VIP Plus en la web</td><td class="num pvp" style="width:28%">70%</td></tr></tbody>
+      </table>
+      <p class="nota">Los descuentos NO se acumulan: se aplica solo el mayor de todos los que apliquen.</p>
+    </div>
+  </div>
+
+  
+  <h2>Avisos internos</h2>
+  <div class="cols">
+    <ul><li>La web cobra <strong>precio/día × número de días</strong> de forma lineal: el precio de semana (×5) no está automatizado en el carrito, hay que aplicarlo a mano en el pedido.</li><li>Fin de semana y un día valen lo mismo en BD. No prometas descuento adicional por finde: ya está aplicado.</li><li>Antes de confirmar fecha comprueba <strong>stock real</strong>: la columna Uds es lo que hay físicamente, no lo que queda libre ese día.</li></ul>
+    <ul><li>La columna Compra es lo que nos costó el equipo. Sirve para valorar la fianza y para saber cuánto duele perderlo, no para calcular precio.</li><li>Si el cliente pide montaje, deja de ser Rent: pásalo a la tarifa de montajes de Events.</li><li>Nunca bajes de tarifa sin autorización de Dani. El alquiler ya está ajustado; el margen está en el volumen, no en el descuento.</li></ul>
+  </div>
+  <p class="nota" style="margin-top:3mm">Valor de compra del inventario alquilable: <strong>57.717 €</strong> repartidos en 407 unidades.</p>
+  
+</div>
+
+
+<h2>SONIDO</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">CURV500</td>
+      <td>Altavoz LD System Curv 500TS</td>
+      <td class="num">4</td>
+      <td class="num compra">1329 €</td>
+      <td class="num pvp">100,00 €</td>
+      <td class="num">500 €</td>
+      <td class="num iva">121,00 €</td>
+    </tr><tr>
+      <td class="id">SON-0005</td>
+      <td>Subwoofer Das Audio 218a</td>
+      <td class="num">1</td>
+      <td class="num compra">1367 €</td>
+      <td class="num pvp">66,11 €</td>
+      <td class="num">331 €</td>
+      <td class="num iva">79,99 €</td>
+    </tr><tr>
+      <td class="id">SON-0004</td>
+      <td>Das Audio Action 215a</td>
+      <td class="num">2</td>
+      <td class="num compra">657 €</td>
+      <td class="num pvp">49,58 €</td>
+      <td class="num">248 €</td>
+      <td class="num iva">59,99 €</td>
+    </tr><tr>
+      <td class="id">SON-0003</td>
+      <td>LD System Icoa 15a negros</td>
+      <td class="num">2</td>
+      <td class="num compra">357 €</td>
+      <td class="num pvp">35,00 €</td>
+      <td class="num">175 €</td>
+      <td class="num iva">42,35 €</td>
+    </tr><tr>
+      <td class="id">SON-0001</td>
+      <td>Das Altea 415a</td>
+      <td class="num">4</td>
+      <td class="num compra">409 €</td>
+      <td class="num pvp">25,00 €</td>
+      <td class="num">125 €</td>
+      <td class="num iva">30,25 €</td>
+    </tr><tr>
+      <td class="id">SON-0002</td>
+      <td>LD Systems Icoa 12a White</td>
+      <td class="num">6</td>
+      <td class="num compra">313 €</td>
+      <td class="num pvp">25,00 €</td>
+      <td class="num">125 €</td>
+      <td class="num iva">30,25 €</td>
+    </tr><tr>
+      <td class="id">SON-0006</td>
+      <td>LC 8 Kinson</td>
+      <td class="num">4</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">12,39 €</td>
+      <td class="num">62 €</td>
+      <td class="num iva">14,99 €</td>
+    </tr></tbody>
+</table>
+<h2>CONTROL SONIDO</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">CON-0044</td>
+      <td>Procesador t racks 204</td>
+      <td class="num">1</td>
+      <td class="num compra">246 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr></tbody>
+</table>
+<h2>MESAS DE MEZCLA PARA DIRECTO</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">Behringheir x air18</td>
+      <td>Behringheir xair18</td>
+      <td class="num">1</td>
+      <td class="num compra">402 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr><tr>
+      <td class="id">soundcraft</td>
+      <td>Soundcraft EPM8</td>
+      <td class="num">1</td>
+      <td class="num compra">200 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr></tbody>
+</table>
+<h2>EQUIPAMIENTO DJ</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">EQU-0049</td>
+      <td>Pioneer rx2</td>
+      <td class="num">1</td>
+      <td class="num compra">1500 €</td>
+      <td class="num pvp">100,00 €</td>
+      <td class="num">500 €</td>
+      <td class="num iva">121,00 €</td>
+    </tr></tbody>
+</table>
+<h2>MICROFONIA</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">MIC-0041</td>
+      <td>Set micro 2 micros inalámbricos</td>
+      <td class="num">1</td>
+      <td class="num compra">60 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">MIC-0040</td>
+      <td>Micro inalámbrico</td>
+      <td class="num">1</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">MIC-0038</td>
+      <td>Micro audibax sm570</td>
+      <td class="num">1</td>
+      <td class="num compra">30 €</td>
+      <td class="num pvp">5,00 €</td>
+      <td class="num">25 €</td>
+      <td class="num iva">6,05 €</td>
+    </tr><tr>
+      <td class="id">MIC-0037</td>
+      <td>Micro audibax sm580</td>
+      <td class="num">4</td>
+      <td class="num compra">30 €</td>
+      <td class="num pvp">5,00 €</td>
+      <td class="num">25 €</td>
+      <td class="num iva">6,05 €</td>
+    </tr><tr>
+      <td class="id">MIC-0039</td>
+      <td>Micro Behringer BA 19A</td>
+      <td class="num">1</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">5,00 €</td>
+      <td class="num">25 €</td>
+      <td class="num iva">6,05 €</td>
+    </tr><tr>
+      <td class="id">Micro Piezoelectrico pinza</td>
+      <td>Micro Piezoelectrico pinza</td>
+      <td class="num">1</td>
+      <td class="num compra">10 €</td>
+      <td class="num pvp">5,00 €</td>
+      <td class="num">25 €</td>
+      <td class="num iva">6,05 €</td>
+    </tr></tbody>
+</table>
+<h2>ILUMINACION</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">ILU-0007</td>
+      <td>cabezas 3en1 17r</td>
+      <td class="num">6</td>
+      <td class="num compra">850 €</td>
+      <td class="num pvp">70,25 €</td>
+      <td class="num">351 €</td>
+      <td class="num iva">85,00 €</td>
+    </tr><tr>
+      <td class="id">ILU-0013</td>
+      <td>Láser  RGB 10w</td>
+      <td class="num">2</td>
+      <td class="num compra">390 €</td>
+      <td class="num pvp">50,00 €</td>
+      <td class="num">250 €</td>
+      <td class="num iva">60,50 €</td>
+    </tr><tr>
+      <td class="id">ILU-0012</td>
+      <td>Flash rgb 1000w</td>
+      <td class="num">4</td>
+      <td class="num compra">250 €</td>
+      <td class="num pvp">25,00 €</td>
+      <td class="num">125 €</td>
+      <td class="num iva">30,25 €</td>
+    </tr><tr>
+      <td class="id">ILU-0008</td>
+      <td>Cabeza móvil Beam 7r</td>
+      <td class="num">4</td>
+      <td class="num compra">250 €</td>
+      <td class="num pvp">24,79 €</td>
+      <td class="num">124 €</td>
+      <td class="num iva">30,00 €</td>
+    </tr><tr>
+      <td class="id">ILU-0009</td>
+      <td>mini beam</td>
+      <td class="num">2</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">ILU-0010</td>
+      <td>mini wash</td>
+      <td class="num">2</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">ILU-0014</td>
+      <td>Flash rgb smd</td>
+      <td class="num">10</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">ILU-0011</td>
+      <td>focos spot pequeños</td>
+      <td class="num">3</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr></tbody>
+</table>
+<h2>CONTROL ILUMINACION</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">CON-0045</td>
+      <td>Mesa Chamsys QuickQ 20</td>
+      <td class="num">1</td>
+      <td class="num compra">3100 €</td>
+      <td class="num pvp">100,00 €</td>
+      <td class="num">500 €</td>
+      <td class="num iva">121,00 €</td>
+    </tr><tr>
+      <td class="id">CON-0046</td>
+      <td>cajetín usb dmx</td>
+      <td class="num">1</td>
+      <td class="num compra">200 €</td>
+      <td class="num pvp">30,00 €</td>
+      <td class="num">150 €</td>
+      <td class="num iva">36,30 €</td>
+    </tr><tr>
+      <td class="id">dmx-wireless</td>
+      <td>DMX wirelss</td>
+      <td class="num">1</td>
+      <td class="num compra">60 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr></tbody>
+</table>
+<h2>FX</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">FX-0015</td>
+      <td>Máquina fuego frío 700w</td>
+      <td class="num">4</td>
+      <td class="num compra">165 €</td>
+      <td class="num pvp">70,00 €</td>
+      <td class="num">350 €</td>
+      <td class="num iva">84,70 €</td>
+    </tr><tr>
+      <td class="id">FX-0016</td>
+      <td>Maquinas de humo vertical 1500w</td>
+      <td class="num">2</td>
+      <td class="num compra">70 €</td>
+      <td class="num pvp">30,00 €</td>
+      <td class="num">150 €</td>
+      <td class="num iva">36,30 €</td>
+    </tr><tr>
+      <td class="id">Confeti</td>
+      <td>lanzador confeti</td>
+      <td class="num">2</td>
+      <td class="num compra">51 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr><tr>
+      <td class="id">HAZER</td>
+      <td>Maquina de humo Hazer 1000 w</td>
+      <td class="num">2</td>
+      <td class="num compra">140 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr></tbody>
+</table>
+<h2>PANTALLAS Y PROYECCIÓN</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">LED-3X4-P39</td>
+      <td>Pantalla LED 3×4 m P3.9</td>
+      <td class="num">1</td>
+      <td class="num compra">—</td>
+      <td class="num pvp">1500,00 €</td>
+      <td class="num">1500 €</td>
+      <td class="num iva">1815,00 €</td>
+    </tr><tr>
+      <td class="id">LED-3X2-P39</td>
+      <td>Pantalla LED 3×2 m P3.9</td>
+      <td class="num">2</td>
+      <td class="num compra">—</td>
+      <td class="num pvp">800,00 €</td>
+      <td class="num">800 €</td>
+      <td class="num iva">968,00 €</td>
+    </tr><tr>
+      <td class="id">Modulo pantalla led p3.91 1000x500</td>
+      <td>Modulo pantalla led p3.91 1000x500</td>
+      <td class="num">24</td>
+      <td class="num compra">398 €</td>
+      <td class="num pvp">70,00 €</td>
+      <td class="num">350 €</td>
+      <td class="num iva">84,70 €</td>
+    </tr><tr>
+      <td class="id">PAN-0050</td>
+      <td>Proyector</td>
+      <td class="num">1</td>
+      <td class="num compra">290 €</td>
+      <td class="num pvp">30,00 €</td>
+      <td class="num">150 €</td>
+      <td class="num iva">36,30 €</td>
+    </tr><tr>
+      <td class="id">PAN-0051</td>
+      <td>pantalla</td>
+      <td class="num">1</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr></tbody>
+</table>
+<h2>ESTRUCTURAS</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">TORRE-785</td>
+      <td>Torre elevadora Guil ELC 785</td>
+      <td class="num">4</td>
+      <td class="num compra">1000 €</td>
+      <td class="num pvp">80,00 €</td>
+      <td class="num">400 €</td>
+      <td class="num iva">96,80 €</td>
+    </tr><tr>
+      <td class="id">EST-0021</td>
+      <td>semicírculos 4m diametro</td>
+      <td class="num">2</td>
+      <td class="num compra">500 €</td>
+      <td class="num pvp">75,00 €</td>
+      <td class="num">375 €</td>
+      <td class="num iva">90,75 €</td>
+    </tr><tr>
+      <td class="id">EST-0022</td>
+      <td>cubos</td>
+      <td class="num">2</td>
+      <td class="num compra">300 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr><tr>
+      <td class="id">EST-0023</td>
+      <td>trípodes grandes</td>
+      <td class="num">2</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr><tr>
+      <td class="id">EST-0018</td>
+      <td>truss 2 m</td>
+      <td class="num">6</td>
+      <td class="num compra">200 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr><tr>
+      <td class="id">truss-1.5</td>
+      <td>truss 1.5m</td>
+      <td class="num">2</td>
+      <td class="num compra">150 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">EST-0019</td>
+      <td>bases</td>
+      <td class="num">6</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0024</td>
+      <td>mini truss 2m 14cm</td>
+      <td class="num">3</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0026</td>
+      <td>Soporte Gravity Blanco</td>
+      <td class="num">6</td>
+      <td class="num compra">80 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0020</td>
+      <td>top</td>
+      <td class="num">2</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0025</td>
+      <td>Trípodes negros</td>
+      <td class="num">9</td>
+      <td class="num compra">25 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0017</td>
+      <td>truss 1 m</td>
+      <td class="num">7</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">EST-0027</td>
+      <td>Adapador trípode/mariposa</td>
+      <td class="num">4</td>
+      <td class="num compra">10 €</td>
+      <td class="num pvp">2,00 €</td>
+      <td class="num">5 €</td>
+      <td class="num iva">2,42 €</td>
+    </tr><tr>
+      <td class="id">EST-0028</td>
+      <td>Adaptador trípode/truss</td>
+      <td class="num">2</td>
+      <td class="num compra">5 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">3 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr></tbody>
+</table>
+<h2>ELEMENTOS ESCENARIO</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">Tarima escenario 2x0,5</td>
+      <td>Tarima escenario 2x0,5</td>
+      <td class="num">1</td>
+      <td class="num compra">177 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr><tr>
+      <td class="id">ELE-0029</td>
+      <td>tarima 2x1</td>
+      <td class="num">7</td>
+      <td class="num compra">300 €</td>
+      <td class="num pvp">16,00 €</td>
+      <td class="num">80 €</td>
+      <td class="num iva">19,36 €</td>
+    </tr><tr>
+      <td class="id">PATA 0,6-1</td>
+      <td>Pata regulable 0,6-1m</td>
+      <td class="num">1</td>
+      <td class="num compra">26 €</td>
+      <td class="num pvp">5,00 €</td>
+      <td class="num">25 €</td>
+      <td class="num iva">6,05 €</td>
+    </tr><tr>
+      <td class="id">ELE-0030</td>
+      <td>patas 1 m</td>
+      <td class="num">4</td>
+      <td class="num compra">10 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">5 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr></tbody>
+</table>
+<h2>ELEMENTOS DECORATIVOS</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">ELE-0032</td>
+      <td>Cabina jardin</td>
+      <td class="num">1</td>
+      <td class="num compra">180 €</td>
+      <td class="num pvp">100,00 €</td>
+      <td class="num">500 €</td>
+      <td class="num iva">121,00 €</td>
+    </tr><tr>
+      <td class="id">ELE-0033</td>
+      <td>Letras</td>
+      <td class="num">10</td>
+      <td class="num compra">150 €</td>
+      <td class="num pvp">70,00 €</td>
+      <td class="num">350 €</td>
+      <td class="num iva">84,70 €</td>
+    </tr><tr>
+      <td class="id">ELE-0031</td>
+      <td>Cabina palets</td>
+      <td class="num">1</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">50,00 €</td>
+      <td class="num">250 €</td>
+      <td class="num iva">60,50 €</td>
+    </tr><tr>
+      <td class="id">ELE-0036</td>
+      <td>Luz retro 7x50 RGB</td>
+      <td class="num">2</td>
+      <td class="num compra">140 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr><tr>
+      <td class="id">ELE-0035</td>
+      <td>Ventiladores</td>
+      <td class="num">2</td>
+      <td class="num compra">126 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr><tr>
+      <td class="id">DECORACION-TOTEM-1M</td>
+      <td>Totem madera 1m</td>
+      <td class="num">2</td>
+      <td class="num compra">200 €</td>
+      <td class="num pvp">25,00 €</td>
+      <td class="num">125 €</td>
+      <td class="num iva">30,25 €</td>
+    </tr><tr>
+      <td class="id">DECORACION-TOTEMS-2M</td>
+      <td>Totems madera 2m</td>
+      <td class="num">2</td>
+      <td class="num compra">250 €</td>
+      <td class="num pvp">25,00 €</td>
+      <td class="num">125 €</td>
+      <td class="num iva">30,25 €</td>
+    </tr><tr>
+      <td class="id">ELE-0034</td>
+      <td>Focos rgb decoración batería </td>
+      <td class="num">8</td>
+      <td class="num compra">65 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">guirnalda</td>
+      <td>Guirlanda bombilla incandesdecente 25m</td>
+      <td class="num">10</td>
+      <td class="num compra">25 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr><tr>
+      <td class="id">guirnalda-led</td>
+      <td>Guirnalda led</td>
+      <td class="num">1</td>
+      <td class="num compra">50 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr></tbody>
+</table>
+<h2>GENERACIÓN Y DISTRIBUCIÓN</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">GEN-0047</td>
+      <td>generador 6500w</td>
+      <td class="num">1</td>
+      <td class="num compra">700 €</td>
+      <td class="num pvp">40,00 €</td>
+      <td class="num">200 €</td>
+      <td class="num iva">48,40 €</td>
+    </tr><tr>
+      <td class="id">GEN-0048</td>
+      <td>distribuidor 32a</td>
+      <td class="num">3</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">75 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">Spliter 32a</td>
+      <td>Spliter 32a</td>
+      <td class="num">1</td>
+      <td class="num compra">46 €</td>
+      <td class="num pvp">10,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">12,10 €</td>
+    </tr></tbody>
+</table>
+<h2>CABLEADO</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Equipo</th><th class="num">Uds</th><th class="num">Compra</th><th class="num">€/día</th><th class="num">Semana</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr>
+      <td class="id">CAB-0010</td>
+      <td>Maguera trifasica 5 metros</td>
+      <td class="num">1</td>
+      <td class="num compra">45 €</td>
+      <td class="num pvp">20,00 €</td>
+      <td class="num">100 €</td>
+      <td class="num iva">24,20 €</td>
+    </tr><tr>
+      <td class="id">CAB-0059</td>
+      <td>Manguera trifasica 20 metros</td>
+      <td class="num">1</td>
+      <td class="num compra">100 €</td>
+      <td class="num pvp">15,00 €</td>
+      <td class="num">50 €</td>
+      <td class="num iva">18,15 €</td>
+    </tr><tr>
+      <td class="id">CAB-0056</td>
+      <td>Alargadores shucko</td>
+      <td class="num">20</td>
+      <td class="num compra">20 €</td>
+      <td class="num pvp">3,00 €</td>
+      <td class="num">10 €</td>
+      <td class="num iva">3,63 €</td>
+    </tr><tr>
+      <td class="id">CAB-0052</td>
+      <td>Dmx</td>
+      <td class="num">40</td>
+      <td class="num compra">15 €</td>
+      <td class="num pvp">2,00 €</td>
+      <td class="num">8 €</td>
+      <td class="num iva">2,42 €</td>
+    </tr><tr>
+      <td class="id">CAB-0053</td>
+      <td>Xlr</td>
+      <td class="num">20</td>
+      <td class="num compra">15 €</td>
+      <td class="num pvp">2,00 €</td>
+      <td class="num">8 €</td>
+      <td class="num iva">2,42 €</td>
+    </tr><tr>
+      <td class="id">CAB-0055</td>
+      <td>Zapatillas</td>
+      <td class="num">30</td>
+      <td class="num compra">15 €</td>
+      <td class="num pvp">2,00 €</td>
+      <td class="num">10 €</td>
+      <td class="num iva">2,42 €</td>
+    </tr><tr>
+      <td class="id">powercon</td>
+      <td>alimentacion powercon</td>
+      <td class="num">20</td>
+      <td class="num compra">5 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">5 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr><tr>
+      <td class="id">CAB-0054</td>
+      <td>Cable Schuko-IEC</td>
+      <td class="num">40</td>
+      <td class="num compra">5 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">5 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr><tr>
+      <td class="id">CAB-0058</td>
+      <td>Minijack/jack</td>
+      <td class="num">5</td>
+      <td class="num compra">5 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">3 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr><tr>
+      <td class="id">CAB-0057</td>
+      <td>Rca/rca</td>
+      <td class="num">5</td>
+      <td class="num compra">5 €</td>
+      <td class="num pvp">1,00 €</td>
+      <td class="num">3 €</td>
+      <td class="num iva">1,21 €</td>
+    </tr></tbody>
+</table>
+
+<h2>Packs de alquiler</h2>
+<p class="sub" style="margin-bottom:2mm">Combinaciones cerradas, más baratas que alquilar los equipos sueltos.</p>
+
+<table>
+  <thead><tr>
+    <th>Ref</th><th>Pack</th>
+    <th class="num">Suelto</th><th class="num">€/día</th><th class="num">Ahorras</th><th class="num">Semana</th><th class="num">Con IVA</th>
+  </tr></thead>
+  <tbody>
+  <tr class="head">
+    <td class="id">PACK-7CF8EC26</td>
+    <td class="nombre"><strong>2x altavoces 415a +pioneer rx2</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">190 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">950 €</td>
+    <td class="num iva">230 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-D986A9FF</td>
+    <td class="nombre"><strong>2x altavoces 415a +pioneer rx2+iluminacion basic</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">200 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1000 €</td>
+    <td class="num iva">242 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-87E6D54E</td>
+    <td class="nombre"><strong>2x altavoces 415a +pioneer rx2+iluminacion basic+puente 1</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">250 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1250 €</td>
+    <td class="num iva">303 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-857EAA04</td>
+    <td class="nombre"><strong>2x das audio 215a</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">120 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">600 €</td>
+    <td class="num iva">145 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 2× Das Audio Action 215a</td></tr>
+  <tr class="head">
+    <td class="id">PACK-C62C0933</td>
+    <td class="nombre"><strong>2x das audio 215a 1x sub 218a</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">200 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1000 €</td>
+    <td class="num iva">242 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 1× Subwoofer Das Audio 218a &nbsp;·&nbsp; 2× Das Audio Action 215a</td></tr>
+  <tr class="head">
+    <td class="id">PACK-0AAEEE7B</td>
+    <td class="nombre"><strong>2x das audio 415a</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">50 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">250 €</td>
+    <td class="num iva">61 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 2× Das Altea 415a &nbsp;·&nbsp; 2× Trípodes negros &nbsp;·&nbsp; 2× Alargadores shucko &nbsp;·&nbsp; 2× Zapatillas &nbsp;·&nbsp; 2× Xlr</td></tr>
+  <tr class="head">
+    <td class="id">PACK-85E2DD19</td>
+    <td class="nombre"><strong>2x icoa 15a</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">80 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">400 €</td>
+    <td class="num iva">97 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 2× LD System Icoa 15a negros &nbsp;·&nbsp; 2× Cable Schuko-IEC &nbsp;·&nbsp; 2× Xlr &nbsp;·&nbsp; 2× Zapatillas</td></tr>
+  <tr class="head">
+    <td class="id">PACK-7B49F9BB</td>
+    <td class="nombre"><strong>Boda Basic</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">600 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">3000 €</td>
+    <td class="num iva">726 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-B58541B1</td>
+    <td class="nombre"><strong>Pack Altavoces +dj</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">300 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1500 €</td>
+    <td class="num iva">363 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-673563F3</td>
+    <td class="nombre"><strong>Pack altavoces dj 2</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">350 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1750 €</td>
+    <td class="num iva">424 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-8040F141</td>
+    <td class="nombre"><strong>PACK CONCIERTO BASIC</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">85 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">425 €</td>
+    <td class="num iva">103 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-6E5CF83A</td>
+    <td class="nombre"><strong>Pack fuego frio</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">200 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1000 €</td>
+    <td class="num iva">242 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-7729818B</td>
+    <td class="nombre"><strong>Pack fuego frio 4</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">300 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">1500 €</td>
+    <td class="num iva">363 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-A975DAD7</td>
+    <td class="nombre"><strong>Pack pantalla y proyector</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">40 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">200 €</td>
+    <td class="num iva">48 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 1× pantalla &nbsp;·&nbsp; 1× Proyector</td></tr>
+  <tr class="head">
+    <td class="id">PACK-4329009D</td>
+    <td class="nombre"><strong>Pack sonido 215</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">400 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">2000 €</td>
+    <td class="num iva">484 €</td>
+  </tr>
+  
+  <tr class="head">
+    <td class="id">PACK-D64036C9</td>
+    <td class="nombre"><strong>Pack Sonido + Iluminacion Basic</strong></td>
+    <td class="num compra">—</td>
+    <td class="num pvp">120 €</td>
+    <td class="num ahorro">—</td>
+    <td class="num">600 €</td>
+    <td class="num iva">145 €</td>
+  </tr>
+  <tr class="detail"><td colspan="7"><span class="lbl">Incluye</span> 2× Das Altea 415a &nbsp;·&nbsp; 2× mini beam &nbsp;·&nbsp; 2× Trípodes negros &nbsp;·&nbsp; 4× Cable Schuko-IEC &nbsp;·&nbsp; 2× Alargadores shucko &nbsp;·&nbsp; 2× Zapatillas &nbsp;·&nbsp; 1× Dmx &nbsp;·&nbsp; 2× Xlr</td></tr></tbody>
+</table>
+<p class="nota">Precio sin verificar: falta cargar el contenido del pack en el panel. Confirma qué llevan antes de venderlos.</p>
+
+<h2>Personal</h2>
+<p class="sub" style="margin-bottom:2mm">Precio por hora. Mínimo 4 horas por servicio.</p>
+<table>
+  <thead><tr><th>Perfil</th><th class="num">€/hora</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr><td>DJ</td><td class="num pvp">50,00 €</td><td class="num iva">60,50 €</td></tr><tr><td>Montador</td><td class="num pvp">30,00 €</td><td class="num iva">36,30 €</td></tr><tr><td>Técnico Audiovisual</td><td class="num pvp">40,00 €</td><td class="num iva">48,40 €</td></tr></tbody>
+</table>
+
+
+<h2>Consumibles</h2>
+<p class="sub" style="margin-bottom:2mm">Se venden, no se alquilan: se facturan por unidad gastada.</p>
+<table>
+  <thead><tr><th>Consumible</th><th class="num">€/unidad</th><th class="num">Con IVA</th></tr></thead>
+  <tbody><tr><td>Carga confeti</td><td class="num pvp">10,00 €</td><td class="num iva">12,10 €</td></tr><tr><td>Polvo Fuego Frio</td><td class="num pvp">25,00 €</td><td class="num iva">30,25 €</td></tr></tbody>
+</table>
+
+
+<h2>Cambios sobre la tarifa que había en el panel</h2>
+<p class="sub" style="margin-bottom:2mm">Estos precios ya están aplicados en este documento, pero <strong>todavía no en la base de datos</strong>: la web sigue cobrando los de la columna “Antes” hasta que se ejecute <code>aplicar-ajustes-bd.mjs --escribir</code>.</p>
+<table class="cambios">
+  <thead><tr><th>Ref</th><th>Equipo o pack</th><th class="num">Antes</th><th class="num">Ahora</th><th>Motivo</th></tr></thead>
+  <tbody></tbody>
+</table>
+<p class="nota">Además, el precio de semana pasa a ser 5 × el precio de día en todo el catálogo: había pantallas LED y personal con la semana al mismo precio que un solo día.</p>
+
+<h3>Pendiente de decidir</h3>
+<ul class="nota"><li>Packs más caros que sus piezas sueltas: "2x das audio 215a" cuesta 120 € y sus altavoces sueltos 99 €; "215a + sub" 200 € frente a 165 €. Al revés, "2x das audio 415a" a 50 € regala 34 € de trípodes y cables.</li><li>Precio de semana sin criterio: las dos pantallas LED y el personal tienen la semana al precio de un solo día; otros artículos van a ×2,5, ×3 o ×4 en vez de ×5.</li><li>Cinco artículos tienen el precio con decimales (49,58 · 66,11 · 24,79 · 70,25 · 12,39 €) porque se fijó el precio con IVA en el campo sin IVA.</li><li>La cabeza Beam 7r está a 24,79 €/día y el mercado la alquila entre 50 y 70 €.</li><li>Fianza: el tope de 400 € se queda corto para material de 1.000-3.000 € (mesa Chamsys, sub 218a, pantallas). Subirlo a 1.000 € toca apps/rent/src/utils/depositCalculator.ts y afecta al checkout.</li><li>Diez packs no tienen contenido cargado en el panel: hasta que se cargue, su precio no se puede validar ni recalcular.</li><li>"Pack sonido 215" (400 €/día) y "2x das audio 215a" (120 €/día) parecen lo mismo con nombres distintos. Revisar duplicados.</li><li>"Boda Basic" está en Rent a 600 €/día; el montaje equivalente en Events es de 1.600 €. Decidir si ese pack debe seguir en el catálogo de alquiler.</li><li>Las pantallas LED se alquilan mejor con montaje (Events) que sueltas (Rent): valorar sacarlas del catálogo de autoservicio.</li></ul>
+
+
+<h2>Condiciones</h2>
+<div class="cols">
+  <ul><li>Los precios de este dossier son <strong>sin IVA</strong>. Al total se le suma un 21%.</li><li>El material se entrega revisado y con todo el cableado necesario para funcionar.</li><li>La reserva de fechas no se bloquea hasta que se confirma el pedido y entra el pago.</li></ul>
+  <ul><li>El material se devuelve en el mismo estado. Los daños o pérdidas se descuentan de la fianza al coste de reposición.</li><li>El uso del equipo es responsabilidad del cliente: no se admiten devoluciones por no saber conectarlo. Si tienes dudas, contrata el montaje.</li><li>Cancelación con más de 7 días: devolución íntegra. Con menos de 7 días: se retiene el 25% de reserva.</li></ul>
+</div>
+
+<footer>Resona Rent · Valencia · Catálogo extraído de la base de datos el 2026-08-25. Documento interno: no compartir.</footer>

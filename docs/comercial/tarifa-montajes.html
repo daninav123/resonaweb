@@ -1,0 +1,765 @@
+<meta charset="utf-8">
+<title>Tarifa de montajes · Resona Events</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 10mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #14213d; font-size: 8.4pt; line-height: 1.35; margin: 0; }
+  h1 { font-size: 20pt; margin: 0 0 2mm; letter-spacing: -.02em; }
+  h2 { font-size: 11pt; margin: 7mm 0 2mm; padding-bottom: 1.2mm; border-bottom: 1.5pt solid #1b4b8f; color: #1b4b8f; page-break-after: avoid; }
+  h3 { font-size: 9.5pt; margin: 4mm 0 1.5mm; color: #1b4b8f; page-break-after: avoid; }
+  p { margin: 0 0 2mm; }
+  .sub { color: #5a6a85; font-size: 9pt; }
+  .portada { page-break-after: always; padding-top: 8mm; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
+  .box { background: #f2f6fb; border-left: 2.5pt solid #1b4b8f; padding: 3mm 4mm; margin-bottom: 3mm; }
+  .box strong { color: #1b4b8f; }
+  .formula { font-family: "SF Mono", Menlo, monospace; font-size: 8.5pt; background: #14213d; color: #fff; padding: 3mm 4mm; border-radius: 1.5mm; margin: 2mm 0 3mm; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #14213d; color: #fff; font-size: 7pt; text-transform: uppercase; letter-spacing: .04em; padding: 1.8mm 1.5mm; text-align: left; font-weight: 600; }
+  th.num, td.num { text-align: right; }
+  td { padding: 1.6mm 1.5mm; vertical-align: top; }
+  tr.head td { border-top: .5pt solid #c8d4e4; }
+  tr.head .id { font-family: "SF Mono", Menlo, monospace; font-size: 7pt; color: #8494ab; white-space: nowrap; }
+  tr.head .nombre { width: 30%; }
+  tr.head .resumen { display: block; color: #5a6a85; font-size: 7.4pt; font-weight: 400; }
+  tr.head .coste { color: #8494ab; }
+  tr.head .pvp { font-weight: 700; font-size: 10pt; color: #1b4b8f; white-space: nowrap; }
+  tr.head .iva { color: #5a6a85; white-space: nowrap; }
+  tr.head .margen { color: #0f7a4d; font-weight: 600; }
+  tr.head .suelo { color: #b45309; font-weight: 600; }
+  .pct { display: block; font-size: 6.8pt; font-weight: 400; opacity: .75; }
+  tr.detail td { padding-top: 0; padding-bottom: 3mm; font-size: 7.2pt; color: #4a5a75; }
+  tr.detail .lbl { display: inline-block; min-width: 15mm; font-size: 6.5pt; text-transform: uppercase; letter-spacing: .04em; color: #8494ab; font-weight: 600; }
+  tr.detail .incluye { margin-bottom: .8mm; color: #14213d; }
+  tr.detail .equipo { color: #7b8aa1; }
+  table.simple td { border-top: .5pt solid #dde5f0; padding: 1.8mm 1.5mm; }
+  table.simple .num { white-space: nowrap; font-weight: 600; color: #1b4b8f; }
+  .nota { font-size: 7.2pt; color: #7b8aa1; }
+  tbody { page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  .avisos li { margin-bottom: 1.5mm; }
+  footer { margin-top: 6mm; padding-top: 2mm; border-top: .5pt solid #c8d4e4; font-size: 7pt; color: #8494ab; }
+</style>
+
+
+<div class="portada">
+  <h1>Tarifa de montajes · Resona Events</h1>
+  <p class="sub">Documento interno de uso comercial — contiene costes y márgenes. No entregar al cliente.</p>
+  <p class="sub">Precios sin IVA · Zona Valencia y hasta 50 km · Un día de evento</p>
+
+  <div class="cols" style="margin-top:6mm">
+    <div>
+      <h2 style="margin-top:0">Cómo se calcula un precio</h2>
+      <div class="formula">PVP = (Material × 1,25) + Personal + Transporte</div>
+      <p><strong>Material</strong>: suma de la tarifa de alquiler de Resona Rent de cada equipo. Es lo que cobramos a un tercero por llevárselo él.</p>
+      <p><strong>× 1,25</strong>: recargo de servicio. Cubre montaje y desmontaje, consumibles, desgaste por transporte, revisión previa y el hecho de que el equipo queda bloqueado más de un día.</p>
+      <p><strong>Personal</strong>: horas reales × tarifa (montador 30 €/h · técnico 40 €/h · DJ 50 €/h).</p>
+      <p><strong>Transporte</strong>: según volumen — Furgoneta pequeña 80 € · Furgoneta grande 120 € · Furgón + estructura 180 €. Incluye ida, vuelta, carga y descarga hasta 50 km.</p>
+      <p>El resultado se redondea al alza a múltiplos de 25 € (50 € por encima de 1.000 €).</p>
+    </div>
+    <div>
+      <h2 style="margin-top:0">Cómo leer las columnas</h2>
+      <div class="box"><strong>PVP</strong> — el precio que ofreces. Es el de partida en cualquier presupuesto.</div>
+      <div class="box"><strong>Coste</strong> — lo que nos cuesta de verdad: 20% de la tarifa del material (amortización, revisión, fungibles), 60% del personal facturado (bruto + SS + dietas) y 55% del transporte (combustible, peajes, furgoneta).</div>
+      <div class="box"><strong>Margen</strong> — PVP menos coste, en euros y en porcentaje sobre el PVP.</div>
+      <div class="box"><strong>Suelo</strong> — el precio mínimo al que puedes cerrar sin consultar (15% de descuento máximo). Por debajo, lo autoriza Dani.</div>
+      <h3>Reglas rápidas</h3>
+      <ul class="avisos" style="margin:0; padding-left:4mm">
+        <li>Antes de cerrar fecha, <strong>comprueba stock</strong>: hay equipos con una sola unidad (subgrave 218a, cabina jardín, mesa Chamsys, pantallas LED).</li>
+        <li>Los precios son <strong>por un día de evento</strong>. Día extra: +35% sobre el material.</li>
+        <li>Si el cliente pide algo que no está aquí, cotiza con la fórmula y avisa a Dani antes de enviarlo.</li>
+        <li>Nunca prometas fuego frío ni pirotecnia sin confirmar que la finca lo autoriza.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<h2>Bodas · Ceremonia, cóctel y banquete</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Montaje</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+<tr class="head">
+  <td class="id">BOD-CER-1</td>
+  <td class="nombre"><strong>Ceremonia Básica</strong><span class="resumen">Sonido para ceremonia al aire libre hasta 80 invitados.</span></td>
+  <td class="num">118 €</td>
+  <td class="num">75 €</td>
+  <td class="num">80 €</td>
+  <td class="num coste">113 €</td>
+  <td class="num pvp">325 €</td>
+  <td class="num margen">212 €<span class="pct">65%</span></td>
+  <td class="num suelo">275 €<span class="pct">59%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 2 altavoces con soporte &nbsp;·&nbsp; Micrófono inalámbrico para oficiante &nbsp;·&nbsp; Micro con cable para lecturas &nbsp;·&nbsp; Entrada de música desde móvil/portátil &nbsp;·&nbsp; Montaje, prueba y presencia durante la ceremonia</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 2.5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× LD Icoa 12a (blanco) · 2× Soporte Gravity blanco · 1× Mesa Soundcraft EPM8 · 1× Micro inalámbrico · 1× Micro Audibax SM580 · 4× Cable XLR · 2× Alargador schuko · 2× Cable Schuko-IEC · 1× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-CER-2</td>
+  <td class="nombre"><strong>Ceremonia Plus</strong><span class="resumen">Ceremonia hasta 150 invitados, con música en directo o dos oficiantes.</span></td>
+  <td class="num">221 €</td>
+  <td class="num">170 €</td>
+  <td class="num">80 €</td>
+  <td class="num coste">190 €</td>
+  <td class="num pvp">550 €</td>
+  <td class="num margen">360 €<span class="pct">65%</span></td>
+  <td class="num suelo">450 €<span class="pct">58%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 4 altavoces en refuerzo estéreo &nbsp;·&nbsp; 2 micrófonos inalámbricos &nbsp;·&nbsp; Micro de pinza para instrumento acústico &nbsp;·&nbsp; Técnico presente durante toda la ceremonia</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h · 1x Técnico audiovisual · 2 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× LD Icoa 12a (blanco) · 4× Soporte Gravity blanco · 1× Mesa Soundcraft EPM8 · 1× Set 2 micros inalámbricos · 2× Micro Audibax SM580 · 1× Micro piezoeléctrico pinza · 8× Cable XLR · 4× Alargador schuko · 4× Cable Schuko-IEC · 2× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-COC-1</td>
+  <td class="nombre"><strong>Cóctel Básico</strong><span class="resumen">Sonido ambiente distribuido en zona de cóctel.</span></td>
+  <td class="num">137 €</td>
+  <td class="num">75 €</td>
+  <td class="num">80 €</td>
+  <td class="num coste">116 €</td>
+  <td class="num pvp">350 €</td>
+  <td class="num margen">234 €<span class="pct">67%</span></td>
+  <td class="num suelo">275 €<span class="pct">58%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 4 puntos de sonido repartidos &nbsp;·&nbsp; Música ambiente controlada &nbsp;·&nbsp; Cableado oculto</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 2.5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× LC 8 Kinson · 1× Mesa Soundcraft EPM8 · 4× Alargador schuko · 4× Cable Schuko-IEC · 8× Cable XLR · 4× Trípode negro</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-COC-2</td>
+  <td class="nombre"><strong>Cóctel Plus</strong><span class="resumen">Cóctel amplio o en varias zonas, con micro para bienvenida.</span></td>
+  <td class="num">289 €</td>
+  <td class="num">150 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">214 €</td>
+  <td class="num pvp">650 €</td>
+  <td class="num margen">436 €<span class="pct">67%</span></td>
+  <td class="num suelo">550 €<span class="pct">61%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 6 puntos de sonido &nbsp;·&nbsp; Micro inalámbrico para bienvenida &nbsp;·&nbsp; Cobertura de jardín + zona de barra</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 2.5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 6× LD Icoa 12a (blanco) · 6× Soporte Gravity blanco · 1× Mesa Soundcraft EPM8 · 1× Micro inalámbrico · 6× Alargador schuko · 6× Cable Schuko-IEC · 12× Cable XLR · 3× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-BAN-1</td>
+  <td class="nombre"><strong>Banquete Básico</strong><span class="resumen">Sonido para banquete hasta 120 comensales, con micro para discursos.</span></td>
+  <td class="num">222 €</td>
+  <td class="num">90 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">164 €</td>
+  <td class="num pvp">500 €</td>
+  <td class="num margen">336 €<span class="pct">67%</span></td>
+  <td class="num suelo">425 €<span class="pct">61%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 4 altavoces con trípode &nbsp;·&nbsp; Micrófono inalámbrico para discursos &nbsp;·&nbsp; Música de fondo durante la comida</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× Das Altea 415a · 4× Trípode negro · 1× Mesa Soundcraft EPM8 · 1× Micro inalámbrico · 1× Micro Audibax SM580 · 10× Cable XLR · 8× Alargador schuko · 4× Cable Schuko-IEC · 2× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-BAN-2</td>
+  <td class="nombre"><strong>Banquete Plus</strong><span class="resumen">Banquete grande o en carpa, con soportes blancos y refuerzo homogéneo.</span></td>
+  <td class="num">309 €</td>
+  <td class="num">180 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">236 €</td>
+  <td class="num pvp">700 €</td>
+  <td class="num margen">464 €<span class="pct">66%</span></td>
+  <td class="num suelo">575 €<span class="pct">59%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 6 altavoces blancos sobre soporte Gravity &nbsp;·&nbsp; 2 micros inalámbricos &nbsp;·&nbsp; Reparto homogéneo en toda la sala</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 3 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 6× LD Icoa 12a (blanco) · 6× Soporte Gravity blanco · 1× Mesa Soundcraft EPM8 · 1× Set 2 micros inalámbricos · 1× Micro Audibax SM580 · 14× Cable XLR · 8× Alargador schuko · 6× Cable Schuko-IEC · 3× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-INT-1</td>
+  <td class="nombre"><strong>Integral Ceremonia + Cóctel + Banquete</strong><span class="resumen">Los tres momentos con un solo montaje y un técnico durante todo el evento.</span></td>
+  <td class="num">500 €</td>
+  <td class="num">480 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">454 €</td>
+  <td class="num pvp">1050 €</td>
+  <td class="num margen">596 €<span class="pct">57%</span></td>
+  <td class="num suelo">850 €<span class="pct">47%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Cobertura de ceremonia, cóctel y banquete &nbsp;·&nbsp; Técnico presente todo el evento &nbsp;·&nbsp; Mesa digital y reubicación de equipos entre momentos &nbsp;·&nbsp; Un solo transporte y un solo montaje: más barato y con más equipo que contratar los tres momentos por separado</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 4 h · 1x Técnico audiovisual · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 6× LD Icoa 12a (blanco) · 6× Soporte Gravity blanco · 4× LC 8 Kinson · 2× Das Altea 415a · 2× Trípode negro · 1× Mesa Soundcraft EPM8 · 1× Mesa Behringer XAir 18 · 1× Set 2 micros inalámbricos · 2× Micro Audibax SM580 · 20× Cable XLR · 10× Alargador schuko · 10× Cable Schuko-IEC · 5× Zapatilla</div>
+  </td>
+</tr></tbody>
+</table>
+<h2>Bodas · Disco y barra libre</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Montaje</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+<tr class="head">
+  <td class="id">BOD-DIS-1</td>
+  <td class="nombre"><strong>Disco Básica</strong><span class="resumen">Barra libre hasta 100 invitados. Cabina de palets, sonido y cabezas móviles.</span></td>
+  <td class="num">580 €</td>
+  <td class="num">540 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">506 €</td>
+  <td class="num pvp">1400 €</td>
+  <td class="num margen">894 €<span class="pct">64%</span></td>
+  <td class="num suelo">1150 €<span class="pct">56%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ profesional 6 horas &nbsp;·&nbsp; Cabina de palets iluminada &nbsp;·&nbsp; 2 altavoces Das 215a &nbsp;·&nbsp; 4 cabezas móviles Beam + flashes &nbsp;·&nbsp; Máquina de humo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 4 h · 1x DJ · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 4× Cabeza móvil Beam 7r · 1× Cabina DJ palets · 2× Tótem madera 1 m · 2× Trípode grande · 1× Pioneer RX2 · 1× Cajetín USB-DMX · 4× Flash RGB SMD · 6× Cable DMX · 6× Cable XLR · 4× Alargador schuko · 6× Cable Schuko-IEC · 3× Zapatilla · 4× Alimentación powercon · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-DIS-2</td>
+  <td class="nombre"><strong>Disco Truss + Jardín Vertical</strong><span class="resumen">Cabina de jardín vertical con puente de truss. La opción más vendida.</span></td>
+  <td class="num">699 €</td>
+  <td class="num">600 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">599 €</td>
+  <td class="num pvp">1700 €</td>
+  <td class="num margen">1101 €<span class="pct">65%</span></td>
+  <td class="num suelo">1400 €<span class="pct">57%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ profesional 6 horas &nbsp;·&nbsp; Cabina jardín vertical con puente de truss &nbsp;·&nbsp; Sonido con subgrave &nbsp;·&nbsp; 4 cabezas Beam + 2 flashes RGB &nbsp;·&nbsp; Máquina de humo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 5 h · 1x DJ · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 1× Subwoofer Das 218a · 4× Cabeza móvil Beam 7r · 2× Flash RGB 1000w · 1× Cabina DJ jardín vertical · 2× Truss 1,5 m · 2× Mini truss 2 m · 2× Base · 1× Pioneer RX2 · 1× Cajetín USB-DMX · 8× Cable DMX · 6× Cable XLR · 5× Alargador schuko · 8× Cable Schuko-IEC · 4× Zapatilla · 6× Alimentación powercon · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-DIS-3</td>
+  <td class="nombre"><strong>Disco Semicírculo Básico</strong><span class="resumen">Estructura en semicírculo de 4 m con 6 cabezas 3en1. Impacto visual alto.</span></td>
+  <td class="num">1121 €</td>
+  <td class="num">860 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">839 €</td>
+  <td class="num pvp">2450 €</td>
+  <td class="num margen">1611 €<span class="pct">66%</span></td>
+  <td class="num suelo">2050 €<span class="pct">59%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ profesional 6 horas &nbsp;·&nbsp; Estructura semicírculo 4 m de diámetro &nbsp;·&nbsp; 6 cabezas móviles 3en1 17r &nbsp;·&nbsp; Sonido con subgrave &nbsp;·&nbsp; Técnico de iluminación en directo (mesa Chamsys) &nbsp;·&nbsp; Máquina de humo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 6 h · 1x DJ · 6 h · 1x Técnico audiovisual · 5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 1× Das Audio Action 215a · 1× Subwoofer Das 218a · 1× Semicírculo 4 m Ø · 7× Truss 1 m · 2× Cubo truss · 4× Base · 6× Cabeza 3en1 17r · 1× Mesa Chamsys QuickQ 20 · 1× Pioneer RX2 · 8× Cable DMX · 5× Cable XLR · 6× Alargador schuko · 6× Cable Schuko-IEC · 5× Zapatilla · 9× Alimentación powercon · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-DIS-4</td>
+  <td class="nombre"><strong>Disco Semicírculo Pro</strong><span class="resumen">Semicírculo reforzado con flashes, láser y cabina. Bodas de 200+ invitados.</span></td>
+  <td class="num">1444 €</td>
+  <td class="num">960 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">964 €</td>
+  <td class="num pvp">2950 €</td>
+  <td class="num margen">1986 €<span class="pct">67%</span></td>
+  <td class="num suelo">2500 €<span class="pct">61%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Todo lo del Semicírculo Básico &nbsp;·&nbsp; Sonido reforzado (2x 215a + sub) &nbsp;·&nbsp; 4 flashes RGB 1000w + láser RGB &nbsp;·&nbsp; Cabina jardín vertical &nbsp;·&nbsp; Técnico de iluminación toda la noche</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 7 h · 1x DJ · 6 h · 1x Técnico audiovisual · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 1× Subwoofer Das 218a · 1× Semicírculo 4 m Ø · 7× Truss 1 m · 2× Cubo truss · 4× Base · 6× Cabeza 3en1 17r · 4× Flash RGB 1000w · 1× Láser RGB 10w · 1× Cabina DJ jardín vertical · 1× Mesa Chamsys QuickQ 20 · 1× Pioneer RX2 · 12× Cable DMX · 6× Cable XLR · 8× Alargador schuko · 8× Cable Schuko-IEC · 6× Zapatilla · 12× Alimentación powercon · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-DIS-5</td>
+  <td class="nombre"><strong>Disco Pirámide</strong><span class="resumen">Estructura piramidal de truss con 6 cabezas 3en1 y flashes.</span></td>
+  <td class="num">1291 €</td>
+  <td class="num">860 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">873 €</td>
+  <td class="num pvp">2700 €</td>
+  <td class="num margen">1827 €<span class="pct">68%</span></td>
+  <td class="num suelo">2250 €<span class="pct">61%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ profesional 6 horas &nbsp;·&nbsp; Estructura piramidal de truss &nbsp;·&nbsp; 6 cabezas móviles 3en1 + 4 flashes RGB &nbsp;·&nbsp; Sonido con subgrave &nbsp;·&nbsp; Técnico de iluminación en directo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 6 h · 1x DJ · 6 h · 1x Técnico audiovisual · 5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 3× Cubo truss · 4× Truss 2 m · 4× Truss 1 m · 4× Base · 6× Cabeza 3en1 17r · 4× Flash RGB 1000w · 2× Das Audio Action 215a · 1× Subwoofer Das 218a · 1× Mesa Chamsys QuickQ 20 · 1× Pioneer RX2 · 10× Cable DMX · 6× Cable XLR · 6× Alargador schuko · 6× Cable Schuko-IEC · 4× Zapatilla · 10× Alimentación powercon · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">BOD-DIS-6</td>
+  <td class="nombre"><strong>Disco Pirámide Pro</strong><span class="resumen">Pirámide con LED SMD, láser y sonido reforzado. Máximo espectáculo.</span></td>
+  <td class="num">1591 €</td>
+  <td class="num">960 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">993 €</td>
+  <td class="num pvp">3150 €</td>
+  <td class="num margen">2157 €<span class="pct">68%</span></td>
+  <td class="num suelo">2650 €<span class="pct">63%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Todo lo de la Disco Pirámide &nbsp;·&nbsp; 10 flashes LED SMD + láser RGB &nbsp;·&nbsp; Cabina jardín vertical &nbsp;·&nbsp; Sonido reforzado</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 7 h · 1x DJ · 6 h · 1x Técnico audiovisual · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 3× Cubo truss · 4× Truss 2 m · 6× Truss 1 m · 4× Base · 6× Cabeza 3en1 17r · 10× Flash RGB SMD · 4× Flash RGB 1000w · 1× Láser RGB 10w · 2× Das Audio Action 215a · 1× Subwoofer Das 218a · 1× Cabina DJ jardín vertical · 1× Mesa Chamsys QuickQ 20 · 1× Pioneer RX2 · 14× Cable DMX · 8× Cable XLR · 8× Alargador schuko · 10× Cable Schuko-IEC · 6× Zapatilla · 14× Alimentación powercon · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr></tbody>
+</table>
+<h2>Eventos privados y fiestas</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Montaje</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+<tr class="head">
+  <td class="id">PRI-1</td>
+  <td class="nombre"><strong>Fiesta Privada Básica</strong><span class="resumen">Cumpleaños, aniversarios, fiestas en chalet. Hasta 60 personas.</span></td>
+  <td class="num">303 €</td>
+  <td class="num">290 €</td>
+  <td class="num">80 €</td>
+  <td class="num coste">279 €</td>
+  <td class="num pvp">750 €</td>
+  <td class="num margen">471 €<span class="pct">63%</span></td>
+  <td class="num suelo">625 €<span class="pct">55%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ 4 horas &nbsp;·&nbsp; Cabina de palets &nbsp;·&nbsp; Sonido para 60 personas &nbsp;·&nbsp; Iluminación básica de pista</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h · 1x DJ · 4 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Altea 415a · 2× Trípode negro · 1× Cabina DJ palets · 1× Pioneer RX2 · 2× Mini beam · 2× Flash RGB SMD · 4× Cable DMX · 4× Cable XLR · 3× Alargador schuko · 4× Cable Schuko-IEC · 2× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">PRI-2</td>
+  <td class="nombre"><strong>Fiesta Privada Plus</strong><span class="resumen">Hasta 150 personas, con cabezas móviles y cabina decorada.</span></td>
+  <td class="num">604 €</td>
+  <td class="num">490 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">481 €</td>
+  <td class="num pvp">1400 €</td>
+  <td class="num margen">919 €<span class="pct">66%</span></td>
+  <td class="num suelo">1150 €<span class="pct">58%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> DJ 5 horas &nbsp;·&nbsp; Cabina de palets con tótems de madera &nbsp;·&nbsp; 4 cabezas móviles Beam &nbsp;·&nbsp; Sonido Das 215a &nbsp;·&nbsp; Máquina de humo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 4 h · 1x DJ · 5 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 4× Cabeza móvil Beam 7r · 1× Cabina DJ palets · 2× Tótem madera 1 m · 2× Tótem madera 2 m · 1× Pioneer RX2 · 1× Cajetín USB-DMX · 2× Flash RGB 1000w · 8× Cable DMX · 6× Cable XLR · 5× Alargador schuko · 7× Cable Schuko-IEC · 3× Zapatilla · 1× Máquina humo Hazer 1000w</div>
+  </td>
+</tr></tbody>
+</table>
+<h2>Eventos corporativos</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Montaje</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+<tr class="head">
+  <td class="id">COR-1</td>
+  <td class="nombre"><strong>Sonido Corporativo Básico</strong><span class="resumen">Presentación, inauguración o rueda de prensa. Hasta 100 asistentes.</span></td>
+  <td class="num">124 €</td>
+  <td class="num">90 €</td>
+  <td class="num">80 €</td>
+  <td class="num coste">123 €</td>
+  <td class="num pvp">325 €</td>
+  <td class="num margen">202 €<span class="pct">62%</span></td>
+  <td class="num suelo">275 €<span class="pct">55%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 2 altavoces blancos sobre soporte &nbsp;·&nbsp; Micrófono inalámbrico + micro de atril &nbsp;·&nbsp; Entrada de audio para portátil &nbsp;·&nbsp; Montaje y prueba antes del acto</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× LD Icoa 12a (blanco) · 2× Soporte Gravity blanco · 1× Mesa Soundcraft EPM8 · 1× Micro inalámbrico · 1× Micro Audibax SM580 · 4× Cable XLR · 3× Alargador schuko · 3× Cable Schuko-IEC · 2× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">COR-2</td>
+  <td class="nombre"><strong>Sonido Corporativo + DJ</strong><span class="resumen">Acto corporativo con parte formal y afterwork con música.</span></td>
+  <td class="num">348 €</td>
+  <td class="num">305 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">319 €</td>
+  <td class="num pvp">875 €</td>
+  <td class="num margen">556 €<span class="pct">64%</span></td>
+  <td class="num suelo">725 €<span class="pct">56%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Sonido para la parte formal &nbsp;·&nbsp; DJ 4 horas para el afterwork &nbsp;·&nbsp; 2 micros inalámbricos &nbsp;·&nbsp; Iluminación de ambiente</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3.5 h · 1x DJ · 4 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× LD Icoa 12a (blanco) · 4× Soporte Gravity blanco · 1× Pioneer RX2 · 1× Mesa Soundcraft EPM8 · 1× Set 2 micros inalámbricos · 2× Mini beam · 8× Cable XLR · 5× Alargador schuko · 5× Cable Schuko-IEC · 3× Zapatilla · 3× Cable DMX</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">COR-3</td>
+  <td class="nombre"><strong>Conferencia con Proyección</strong><span class="resumen">Sala de conferencias con proyector, pantalla y técnico durante la jornada.</span></td>
+  <td class="num">297 €</td>
+  <td class="num">410 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">371 €</td>
+  <td class="num pvp">925 €</td>
+  <td class="num margen">554 €<span class="pct">60%</span></td>
+  <td class="num suelo">775 €<span class="pct">52%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Sonido de sala con mesa digital &nbsp;·&nbsp; 2 micros inalámbricos + 2 de atril &nbsp;·&nbsp; Proyector y pantalla &nbsp;·&nbsp; Técnico durante toda la jornada</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h · 1x Técnico audiovisual · 8 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× LD Icoa 12a (blanco) · 4× Soporte Gravity blanco · 1× Mesa Behringer XAir 18 · 1× Set 2 micros inalámbricos · 2× Micro Audibax SM580 · 1× Proyector · 1× Pantalla de proyección · 10× Cable XLR · 6× Alargador schuko · 6× Cable Schuko-IEC · 3× Zapatilla · 2× Cable minijack/jack</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">COR-4</td>
+  <td class="nombre"><strong>Pantalla LED 3x2 m</strong><span class="resumen">Pantalla LED P3.9 de 3x2 m con estructura, procesador y técnico.</span></td>
+  <td class="num">916 €</td>
+  <td class="num">480 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">570 €</td>
+  <td class="num pvp">1850 €</td>
+  <td class="num margen">1280 €<span class="pct">69%</span></td>
+  <td class="num suelo">1550 €<span class="pct">63%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Pantalla LED P3.9 de 6 m² &nbsp;·&nbsp; Estructura de soporte y anclajes &nbsp;·&nbsp; Procesador de vídeo y cableado &nbsp;·&nbsp; Técnico de vídeo durante el evento</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 4 h · 1x Técnico audiovisual · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 1× Pantalla LED 3x2 m P3.9 · 2× Truss 2 m · 4× Base · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 6× Alimentación powercon</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">COR-5</td>
+  <td class="nombre"><strong>Pantalla LED 3x4 m</strong><span class="resumen">Pantalla LED P3.9 de 3x4 m para escenario o congreso.</span></td>
+  <td class="num">1820 €</td>
+  <td class="num">770 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">925 €</td>
+  <td class="num pvp">3250 €</td>
+  <td class="num margen">2325 €<span class="pct">72%</span></td>
+  <td class="num suelo">2750 €<span class="pct">66%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> Pantalla LED P3.9 de 12 m² &nbsp;·&nbsp; Estructura con torres elevadoras &nbsp;·&nbsp; Procesador de vídeo y cableado &nbsp;·&nbsp; Técnico de vídeo durante todo el evento</div>
+    <div class="equipo"><span class="lbl">Personal</span> 3x Montador · 5 h · 1x Técnico audiovisual · 8 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 1× Pantalla LED 3x4 m P3.9 · 4× Truss 2 m · 4× Base · 2× Torre elevadora Guil ELC 785 · 1× Manguera trifásica 20 m · 1× Distribuidor 32a · 10× Alimentación powercon</div>
+  </td>
+</tr></tbody>
+</table>
+<h2>Conciertos y música en directo</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Montaje</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+<tr class="head">
+  <td class="id">CON-1</td>
+  <td class="nombre"><strong>PA Básico Grupo</strong><span class="resumen">Sonido para grupo pequeño o solista. Hasta 150 personas.</span></td>
+  <td class="num">298 €</td>
+  <td class="num">330 €</td>
+  <td class="num">120 €</td>
+  <td class="num coste">324 €</td>
+  <td class="num pvp">825 €</td>
+  <td class="num margen">501 €<span class="pct">61%</span></td>
+  <td class="num suelo">700 €<span class="pct">54%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> PA estéreo Das 215a &nbsp;·&nbsp; Mesa digital Behringer XAir 18 &nbsp;·&nbsp; Set de 5 micrófonos &nbsp;·&nbsp; Técnico de sonido en prueba y directo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 1x Montador · 3 h · 1x Técnico audiovisual · 6 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 2× Trípode grande · 1× Mesa Behringer XAir 18 · 3× Micro Audibax SM580 · 1× Micro Audibax SM570 · 1× Micro Behringer BA 19A · 1× Procesador t.racks 204 · 14× Cable XLR · 5× Alargador schuko · 5× Cable Schuko-IEC · 3× Zapatilla</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">CON-2</td>
+  <td class="nombre"><strong>PA Concierto + Sub</strong><span class="resumen">Grupo completo con subgrave, monitores e iluminación frontal.</span></td>
+  <td class="num">682 €</td>
+  <td class="num">620 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">607 €</td>
+  <td class="num pvp">1700 €</td>
+  <td class="num margen">1093 €<span class="pct">64%</span></td>
+  <td class="num suelo">1400 €<span class="pct">57%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> PA con subgrave &nbsp;·&nbsp; 2 monitores de escenario &nbsp;·&nbsp; Mesa digital y procesado &nbsp;·&nbsp; Set de micros para banda completa &nbsp;·&nbsp; Puente de luces frontal &nbsp;·&nbsp; Técnico en prueba de sonido y directo</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 5 h · 1x Técnico audiovisual · 8 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 2× Das Audio Action 215a · 1× Subwoofer Das 218a · 2× LD Icoa 15a (negro) · 2× Trípode grande · 1× Mesa Behringer XAir 18 · 1× Procesador t.racks 204 · 3× Micro Audibax SM580 · 1× Micro Audibax SM570 · 1× Micro Behringer BA 19A · 1× Micro inalámbrico · 4× Mini beam · 2× Flash RGB 1000w · 2× Truss 2 m · 2× Base · 20× Cable XLR · 6× Cable DMX · 8× Alargador schuko · 8× Cable Schuko-IEC · 4× Zapatilla · 1× Manguera trifásica 20 m · 1× Distribuidor 32a</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">CON-3</td>
+  <td class="nombre"><strong>Escenario 4x2 m</strong><span class="resumen">Tarima modular de 8 m² con faldón y altura regulable.</span></td>
+  <td class="num">100 €</td>
+  <td class="num">180 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">227 €</td>
+  <td class="num pvp">500 €</td>
+  <td class="num margen">273 €<span class="pct">55%</span></td>
+  <td class="num suelo">425 €<span class="pct">47%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 8 m² de tarima modular &nbsp;·&nbsp; Patas regulables 0,6-1 m &nbsp;·&nbsp; Montaje y nivelación</div>
+    <div class="equipo"><span class="lbl">Personal</span> 2x Montador · 3 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 4× Tarima 2x1 m · 16× Pata 1 m · 4× Pata regulable 0,6-1 m</div>
+  </td>
+</tr>
+<tr class="head">
+  <td class="id">CON-4</td>
+  <td class="nombre"><strong>Escenario 6x4 m</strong><span class="resumen">Tarima modular de 24 m² para grupo completo.</span></td>
+  <td class="num">272 €</td>
+  <td class="num">360 €</td>
+  <td class="num">180 €</td>
+  <td class="num coste">369 €</td>
+  <td class="num pvp">900 €</td>
+  <td class="num margen">531 €<span class="pct">59%</span></td>
+  <td class="num suelo">750 €<span class="pct">51%</span></td>
+</tr>
+<tr class="detail">
+  <td></td>
+  <td colspan="8">
+    <div class="incluye"><span class="lbl">Incluye</span> 24 m² de tarima modular &nbsp;·&nbsp; Patas regulables &nbsp;·&nbsp; Montaje, nivelación y desmontaje</div>
+    <div class="equipo"><span class="lbl">Personal</span> 3x Montador · 4 h</div>
+    <div class="equipo"><span class="lbl">Material</span> 12× Tarima 2x1 m · 40× Pata 1 m · 8× Pata regulable 0,6-1 m</div>
+  </td>
+</tr></tbody>
+</table>
+
+<h2>Extras y complementos</h2>
+<p class="sub" style="margin-bottom:2mm">Se suman a cualquier montaje. El precio ya asume que se instalan en el mismo viaje: si el cliente contrata un extra suelto, súmale el transporte (80-180 € según volumen).</p>
+<table>
+  <thead><tr><th>Ref</th><th>Extra</th><th class="num">Material</th><th class="num">Personal</th><th class="num">Transp.</th><th class="num">Coste</th><th class="num">PVP</th><th class="num">Margen</th><th class="num">Suelo</th></tr></thead>
+  <tbody>
+  <tr class="head">
+    <td class="id">EXT-01</td>
+    <td class="nombre"><strong>Fuego frío (2 máquinas)</strong><span class="resumen">Consumible incluido. Requiere autorización de la finca.</span></td>
+    <td class="num">140 €</td>
+    <td class="num">45 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">55 €</td>
+    <td class="num pvp">220 €</td>
+    <td class="num margen">165 €<span class="pct">75%</span></td>
+    <td class="num suelo">180 €<span class="pct">69%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-02</td>
+    <td class="nombre"><strong>Fuego frío (4 máquinas)</strong><span class="resumen">Efecto de entrada + primer baile.</span></td>
+    <td class="num">280 €</td>
+    <td class="num">60 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">92 €</td>
+    <td class="num pvp">410 €</td>
+    <td class="num margen">318 €<span class="pct">78%</span></td>
+    <td class="num suelo">340 €<span class="pct">73%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-03</td>
+    <td class="nombre"><strong>Confeti (2 lanzadores)</strong><span class="resumen">10 cargas incluidas.</span></td>
+    <td class="num">40 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">26 €</td>
+    <td class="num pvp">80 €</td>
+    <td class="num margen">54 €<span class="pct">68%</span></td>
+    <td class="num suelo">60 €<span class="pct">57%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-04</td>
+    <td class="nombre"><strong>Humo vertical (2 máquinas)</strong><span class="resumen">Efecto de columna para entrada o primer baile.</span></td>
+    <td class="num">60 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">30 €</td>
+    <td class="num pvp">110 €</td>
+    <td class="num margen">80 €<span class="pct">73%</span></td>
+    <td class="num suelo">90 €<span class="pct">67%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-05</td>
+    <td class="nombre"><strong>Láser RGB 10w</strong><span class="resumen">Requiere espacio con altura suficiente.</span></td>
+    <td class="num">54 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">29 €</td>
+    <td class="num pvp">100 €</td>
+    <td class="num margen">71 €<span class="pct">71%</span></td>
+    <td class="num suelo">80 €<span class="pct">64%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-06</td>
+    <td class="nombre"><strong>Letras de madera iluminadas</strong><span class="resumen">Consultar disponibilidad de letras según palabra.</span></td>
+    <td class="num">70 €</td>
+    <td class="num">45 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">41 €</td>
+    <td class="num pvp">140 €</td>
+    <td class="num margen">99 €<span class="pct">71%</span></td>
+    <td class="num suelo">110 €<span class="pct">63%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-07</td>
+    <td class="nombre"><strong>Guirnaldas (por cada 50 m)</strong><span class="resumen">Precio por tramo de 50 m. Montaje en altura según finca.</span></td>
+    <td class="num">20 €</td>
+    <td class="num">120 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">76 €</td>
+    <td class="num pvp">150 €</td>
+    <td class="num margen">74 €<span class="pct">49%</span></td>
+    <td class="num suelo">120 €<span class="pct">37%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-08</td>
+    <td class="nombre"><strong>Iluminación decorativa wireless (8 focos)</strong><span class="resumen">Sin cableado. Ideal para paredes y árboles.</span></td>
+    <td class="num">90 €</td>
+    <td class="num">45 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">45 €</td>
+    <td class="num pvp">160 €</td>
+    <td class="num margen">115 €<span class="pct">72%</span></td>
+    <td class="num suelo">130 €<span class="pct">65%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-09</td>
+    <td class="nombre"><strong>Tótems de madera (4 uds)</strong><span class="resumen">Decoración de cabina o accesos.</span></td>
+    <td class="num">100 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">38 €</td>
+    <td class="num pvp">160 €</td>
+    <td class="num margen">122 €<span class="pct">76%</span></td>
+    <td class="num suelo">130 €<span class="pct">71%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-10</td>
+    <td class="nombre"><strong>Cabina DJ jardín vertical</strong><span class="resumen">Upgrade sobre cabina de palets.</span></td>
+    <td class="num">100 €</td>
+    <td class="num">90 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">74 €</td>
+    <td class="num pvp">220 €</td>
+    <td class="num margen">146 €<span class="pct">66%</span></td>
+    <td class="num suelo">180 €<span class="pct">59%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-11</td>
+    <td class="nombre"><strong>Proyector + pantalla</strong><span class="resumen">Para vídeo sorpresa o presentación.</span></td>
+    <td class="num">42 €</td>
+    <td class="num">80 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">56 €</td>
+    <td class="num pvp">140 €</td>
+    <td class="num margen">84 €<span class="pct">60%</span></td>
+    <td class="num suelo">110 €<span class="pct">49%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-12</td>
+    <td class="nombre"><strong>Generador 6500w</strong><span class="resumen">Combustible aparte. Para fincas sin acometida.</span></td>
+    <td class="num">70 €</td>
+    <td class="num">30 €</td>
+    <td class="num">120 €</td>
+    <td class="num coste">98 €</td>
+    <td class="num pvp">240 €</td>
+    <td class="num margen">142 €<span class="pct">59%</span></td>
+    <td class="num suelo">200 €<span class="pct">51%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-13</td>
+    <td class="nombre"><strong>Hora extra de DJ</strong><span class="resumen">Se factura por hora iniciada. Incluye alargar el alquiler de todo el equipo, no solo al DJ.</span></td>
+    <td class="num">0 €</td>
+    <td class="num">50 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">30 €</td>
+    <td class="num pvp">80 €</td>
+    <td class="num margen">50 €<span class="pct">63%</span></td>
+    <td class="num suelo">60 €<span class="pct">50%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-14</td>
+    <td class="nombre"><strong>Hora extra de técnico</strong><span class="resumen">Se factura por hora iniciada. Incluye alargar el alquiler de todo el equipo.</span></td>
+    <td class="num">0 €</td>
+    <td class="num">40 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">24 €</td>
+    <td class="num pvp">70 €</td>
+    <td class="num margen">46 €<span class="pct">66%</span></td>
+    <td class="num suelo">50 €<span class="pct">52%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-15</td>
+    <td class="nombre"><strong>Refuerzo de sonido pista (2x Icoa 15a)</strong><span class="resumen">Añadir a cualquier montaje de disco.</span></td>
+    <td class="num">80 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">34 €</td>
+    <td class="num pvp">130 €</td>
+    <td class="num margen">96 €<span class="pct">74%</span></td>
+    <td class="num suelo">110 €<span class="pct">69%</span></td>
+  </tr>
+  <tr class="head">
+    <td class="id">EXT-16</td>
+    <td class="nombre"><strong>Subgrave adicional Das 218a</strong><span class="resumen">Añadir a cualquier montaje de disco.</span></td>
+    <td class="num">72 €</td>
+    <td class="num">30 €</td>
+    <td class="num">0 €</td>
+    <td class="num coste">32 €</td>
+    <td class="num pvp">130 €</td>
+    <td class="num margen">98 €<span class="pct">75%</span></td>
+    <td class="num suelo">110 €<span class="pct">71%</span></td>
+  </tr></tbody>
+</table>
+
+<h2>Suplementos</h2>
+<table class="simple">
+  <tbody><tr><td>Desplazamiento 50-100 km de Valencia</td><td class="num" style="width:35%">+80 €</td></tr><tr><td>Desplazamiento >100 km</td><td class="num" style="width:35%">+80 € y 1,20 €/km adicional</td></tr><tr><td>Desmontaje nocturno después de las 03:00</td><td class="num" style="width:35%">+120 €</td></tr><tr><td>Montaje en día distinto al evento (finca lo exige)</td><td class="num" style="width:35%">+150 €</td></tr><tr><td>Acceso complicado: sin carga a pie de montaje, escaleras, más de 50 m de porteo</td><td class="num" style="width:35%">+100 €</td></tr><tr><td>Evento en isla o fuera de la Comunidad Valenciana</td><td class="num" style="width:35%">Presupuesto a medida</td></tr><tr><td>Urgencia: contratación con menos de 7 días</td><td class="num" style="width:35%">+15% sobre el total</td></tr><tr><td>Día adicional de alquiler del mismo montaje</td><td class="num" style="width:35%">+35% sobre el material</td></tr></tbody>
+</table>
+
+
+<h2>Condiciones que debes decir siempre</h2>
+<div class="cols">
+  <ul class="avisos" style="margin:0; padding-left:4mm">
+    <li><strong>Precios sin IVA.</strong> Al cliente particular dale siempre el precio con IVA (×1,21) para que no haya sorpresas.</li>
+    <li><strong>Reserva:</strong> 30% a la firma, resto 7 días antes del evento.</li>
+    <li><strong>Validez del presupuesto:</strong> 15 días.</li>
+    <li><strong>La fecha no se bloquea hasta que entra la señal.</strong> No comprometas material sin cobrar reserva.</li>
+  </ul>
+  <ul class="avisos" style="margin:0; padding-left:4mm">
+    <li><strong>Necesitamos acometida eléctrica</strong> a menos de 25 m del montaje. Si no, generador (EXT-12).</li>
+    <li><strong>Acceso de vehículo</strong> hasta el punto de montaje. Si no, suplemento de porteo.</li>
+    <li><strong>Horario de montaje:</strong> necesitamos acceso mínimo 4 h antes del evento (6 h en montajes con estructura).</li>
+    <li><strong>Meteorología:</strong> montajes exteriores requieren carpa o plan B. El equipo no sale bajo lluvia.</li>
+  </ul>
+</div>
+
+<footer>Resona Events · Valencia · Tarifa interna generada desde el catálogo de Resona Rent. Los precios de material provienen de la tabla de productos; si cambian en el panel, hay que regenerar este documento.</footer>
