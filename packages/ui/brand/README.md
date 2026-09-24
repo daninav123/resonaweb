@@ -22,6 +22,7 @@ otro PNG de `ReSona` que circule por el proyecto está obsoleto.
 | `png/og-image-*.png` | 1200×630, la imagen que se ve al compartir un enlace en WhatsApp o LinkedIn |
 | `png/resona-simbolo-*.png` | El símbolo suelto en grande, transparente: marca de agua en vídeo |
 | `stencil/` | Plantillas recortables para pintar con spray en los flightcases |
+| `imprenta/` | **Lo que se manda a un proveedor**: los mismos archivos con el texto ya trazado, en SVG y PDF. Ver [`imprenta/README.md`](imprenta/README.md) |
 | `png/` | El resto, rasterizados con transparencia |
 
 ## Construcción
@@ -52,7 +53,8 @@ Con esas medidas `EVENTS` ocupa el 54 % del ancho del logotipo y `RENT` el 34 %.
 los anchos**: lo que comparten las dos líneas es el tracking, no la longitud.
 
 > Los SVG llevan la bajada como texto, no como trazado. En web funciona si Montserrat está cargada;
-> **para imprenta hay que trazar el texto** antes de mandar el archivo, o el rotulista verá otra fuente.
+> **para imprenta hace falta el texto trazado**, o el proveedor verá otra fuente. Ya está hecho en
+> [`imprenta/`](imprenta/README.md): manda esos archivos, no estos.
 
 ## No hay versión vertical
 
@@ -232,5 +234,4 @@ cuando se rediseñe la web, la fuente pasa al `index.html` y esto se quita.
   `apps/rent/public/logo-resona.png` y `logo.png` siguen siendo la versión anterior.
 - **Revisar los JSON-LD**: `schemas.ts` de cada app referencia el logo por URL; hay que comprobar que
   apunten al archivo nuevo, porque eso es lo que Google lee.
-- **Trazar la bajada** (convertir el texto a curvas) en una copia aparte, para mandar a imprenta.
 - **`apps/admin` no tiene favicon** ninguno.
