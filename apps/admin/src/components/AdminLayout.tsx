@@ -9,6 +9,7 @@ import {
   setDynamicRoleConfigs,
   type UserRole,
 } from '@resona/api-client';
+import { Logo } from '@resona/ui';
 import {
   Package,
   ShoppingCart,
@@ -256,13 +257,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex">
         <aside
-          className={`w-64 bg-gray-900 text-white min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0 ${
+          className={`w-64 bg-ink text-white min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0 ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           <div className="p-4">
-            <Link to="/admin" className="block mb-4">
-              <h2 className="text-2xl font-bold">Panel Admin</h2>
+            <Link to="/admin" className="mb-5 block">
+              <Logo width={118} color="#F7F3EB" accent="#3D5AFE" title="ReSona Gestión" />
+              <span
+                className="mt-1 block text-[8px] font-semibold uppercase text-white/45"
+                style={{ letterSpacing: '1.1em', textIndent: '1.1em' }}
+              >
+                Gestión
+              </span>
               <div className="flex items-center gap-2 mt-1">
                 <span
                   className={`inline-block px-2 py-0.5 rounded text-xs font-medium bg-${roleColor}-500/20 text-${roleColor}-300`}

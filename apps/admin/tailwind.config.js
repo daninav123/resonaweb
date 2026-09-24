@@ -21,6 +21,12 @@ export default {
     },
     extend: {
       colors: {
+        ink: {
+          DEFAULT: '#0B0B0C',
+          800: '#17171A',
+          700: '#232328',
+        },
+        cream: '#F7F3EB',
         primary: {
           50:  '#EBEEFF',
           100: '#D1D8FF',
@@ -40,7 +46,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'system-ui', 'sans-serif'],
       },
     },
   },
