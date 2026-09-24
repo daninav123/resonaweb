@@ -24,12 +24,14 @@ export default defineConfig({
   server: {
     port: 3003,
     proxy: {
+      // Por defecto al backend local. VITE_PROXY_TARGET permite apuntar a
+      // produccion para revisar UI sin levantar backend ni base de datos.
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:3001',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:3001',
         changeOrigin: true,
       },
     },

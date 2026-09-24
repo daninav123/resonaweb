@@ -51,6 +51,17 @@ export default {
       fontFamily: {
         sans: ['Montserrat', 'system-ui', 'sans-serif'],
       },
+      borderRadius: {
+        none: '0px',
+        sm: '2px',
+        DEFAULT: '4px',
+        md: '4px',
+        lg: '4px',
+        xl: '6px',
+        '2xl': '8px',
+        '3xl': '12px',
+        full: '9999px',
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'fade-out': 'fadeOut 0.5s ease-in-out',

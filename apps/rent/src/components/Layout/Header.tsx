@@ -7,7 +7,7 @@ import { useCartCount } from '../../hooks/useCartCount';
 import CartSidebar from '../CartSidebar';
 import NotificationBell from '../notifications/NotificationBell';
 import { productService } from '../../services/product.service';
-import { getCategoryIcon } from '../../utils/categoryIcons';
+import { CategoryIcon } from '../CategoryIcon';
 import { Logo } from '@resona/ui';
 
 const Header = () => {
@@ -252,7 +252,10 @@ const Header = () => {
                       onClick={handleRentalLinkClick}
                       className="block px-4 py-2 hover:bg-resona/10 hover:text-resona transition-colors"
                     >
-                      {getCategoryIcon(cat.slug)} {cat.name}
+                      <span className="flex items-center gap-2.5">
+                        <CategoryIcon slug={cat.slug} size={16} strokeWidth={1.75} className="shrink-0" />
+                        <span>{cat.name}</span>
+                      </span>
                     </Link>
                   </li>
                 ))}

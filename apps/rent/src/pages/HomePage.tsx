@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Phone,
   Star,
-  CalendarCheck,
 } from 'lucide-react';
 import { productService } from '../services/product.service';
 import { getPriceDisplay } from '../utils/priceWithVAT';
@@ -123,13 +122,6 @@ const HomePage = () => {
                 Buscar equipos
               </button>
             </form>
-
-            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[#4D4D4D]">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" /> Depósito reembolsable</span>
-              <span className="flex items-center gap-1.5"><Truck className="w-4 h-4" /> Entrega en Valencia</span>
-              <span className="flex items-center gap-1.5"><Wrench className="w-4 h-4" /> Técnico opcional</span>
-              <span className="flex items-center gap-1.5"><CalendarCheck className="w-4 h-4" /> Reserva 100% online</span>
-            </div>
           </div>
         </div>
       </section>
@@ -247,7 +239,7 @@ const HomePage = () => {
                   <div className="p-3">
                     <div className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">{p.name}</div>
                     <div className="mt-2 text-resona font-semibold text-sm">
-                      {getPriceDisplay(Number(p.pricePerDay) || 0, '').main} <span className="text-gray-400 font-normal">/día</span>
+                      {getPriceDisplay(Number(p.pricePerDay) || 0, '').main} <span className="text-[#6B6B6B] font-normal">/día</span>
                     </div>
                   </div>
                 </Link>

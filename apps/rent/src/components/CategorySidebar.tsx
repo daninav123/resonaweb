@@ -1,38 +1,11 @@
-import { Link } from 'react-router-dom';
+import { LayoutGrid } from 'lucide-react';
+import { CategoryIcon } from './CategoryIcon';
 
 interface CategorySidebarProps {
   categories: any[];
   selectedCategory: string;
   onCategoryChange: (slug: string) => void;
 }
-
-const getCategoryIcon = (slug: string) => {
-  const icons: { [key: string]: string } = {
-    'fotografia-video': '📹',
-    'sonido': '🔊',
-    'iluminacion': '💡',
-    'equipamiento-dj': '🎧',
-    'mobiliario': '🪑',
-    'elementos-escenario': '🎪',
-    'mesas-mezcla': '🎛️',
-    'microfonia': '🎤',
-    'efectos-especiales': '🎆',
-    'energia-distribucion': '⚡',
-    'pantallas-proyeccion': '📺',
-    'elementos-decorativos': '✨',
-    'backline': '🎸',
-    'cables-conectores': '🔌',
-    'comunicaciones': '📡',
-    'packs': '📦',
-    'estructuras': '🏗️',
-    'control-sonido': '🎚️',
-    'control-iluminacion': '🕯️',
-    'generacion-y-distribucion': '🔌',
-    'pantallas-y-proteccion': '🛡️',
-    'cableado': '🔗',
-  };
-  return icons[slug] || '🎉';
-};
 
 export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange }: CategorySidebarProps) => {
   return (
@@ -53,8 +26,8 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
               : 'text-gray-700 hover:bg-gray-100'
           }`}
         >
-          <span className="flex items-center gap-2">
-            <span>🛍️</span>
+          <span className="flex items-center gap-2.5">
+            <LayoutGrid size={16} strokeWidth={1.75} className="shrink-0" />
             <span>Ver Todo el Catálogo</span>
           </span>
         </button>
@@ -89,8 +62,8 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            <span className="flex items-center gap-2">
-              <span>{getCategoryIcon(category.slug)}</span>
+            <span className="flex items-center gap-2.5">
+              <CategoryIcon slug={category.slug} size={16} strokeWidth={1.75} className="shrink-0" />
               <span>{category.name}</span>
             </span>
           </button>

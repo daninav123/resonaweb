@@ -26,6 +26,20 @@ export function formatPrice(price: number): string {
   return price.toFixed(2);
 }
 
+const eurFormatter = new Intl.NumberFormat('es-ES', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+/**
+ * Formatea un importe en euros con la convención española: "1,21 €"
+ */
+export function formatEuro(amount: number): string {
+  return eurFormatter.format(amount);
+}
+
 /**
  * Componente de texto para mostrar precio con IVA (grande) y sin IVA (pequeño)
  * Retorna JSX como objeto para usar en React
@@ -34,7 +48,7 @@ export function getPriceDisplay(priceWithVAT: number, suffix: string = '/día') 
   const withoutVAT = getPriceWithoutVAT(priceWithVAT);
   
   return {
-    main: `€${formatPrice(priceWithVAT)}${suffix}`,
-    sub: `(€${formatPrice(withoutVAT)} + IVA)`
+    main: `${formatEuro(priceWithVAT)}${suffix}`,
+    sub: `(${formatEuro(withoutVAT)} + IVA)`
   };
 }

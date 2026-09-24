@@ -13,7 +13,7 @@ import type { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { breadcrumbSchema } from '../utils/schemas';
 import { getImageUrl, placeholderImage } from '../utils/imageUrl';
-import { getPriceDisplay } from '../utils/priceWithVAT';
+import { getPriceDisplay, formatEuro } from '../utils/priceWithVAT';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -380,11 +380,11 @@ const ProductsPage = () => {
                         <div>
                           {product.isConsumable ? (
                             <div>
-                              <p className="text-2xl font-bold text-green-600">
-                                €{product.pricePerUnit}
+                              <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
+                                {formatEuro(Number(product.pricePerUnit))}
                               </p>
                               <p className="text-xs text-gray-500">Precio de venta por unidad</p>
-                              <p className="text-xs text-gray-400">IVA no incluido</p>
+                              <p className="text-xs text-[#6B6B6B]">IVA no incluido</p>
                             </div>
                           ) : (
                             <div>
@@ -395,13 +395,13 @@ const ProductsPage = () => {
                                   const totalWithVAT = dayPriceWithVAT * rentalDays;
                                   return (
                                     <>
-                                      <p className="text-2xl font-bold text-resona">
-                                        €{totalWithVAT.toFixed(2)}
+                                      <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
+                                        {formatEuro(totalWithVAT)}
                                       </p>
                                       <p className="text-xs text-gray-600 font-medium">
                                         {rentalDays} {rentalDays === 1 ? 'día' : 'días'} · {dayDisplay.main}
                                       </p>
-                                      <p className="text-xs text-gray-400">
+                                      <p className="text-xs text-[#6B6B6B]">
                                         IVA incluido
                                       </p>
                                     </>
@@ -409,8 +409,9 @@ const ProductsPage = () => {
                                 }
                                 return (
                                   <>
-                                    <p className="text-2xl font-bold text-resona">
-                                      desde {dayDisplay.main}
+                                    <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
+                                      <span className="text-sm font-medium text-[#6B6B6B]">desde </span>
+                                      {dayDisplay.main}
                                     </p>
                                     <p className="text-xs text-gray-500">
                                       {dayDisplay.sub}
@@ -422,15 +423,15 @@ const ProductsPage = () => {
                           )}
                         </div>
                         {product.realStock > 0 && product.realStock <= 3 ? (
-                          <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded font-semibold animate-pulse">
+                          <span className="rounded-sm bg-[#FDF0E4] px-2 py-1 text-xs font-semibold text-[#8A4B08]">
                             Quedan {product.realStock}
                           </span>
                         ) : product.realStock > 3 ? (
-                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                          <span className="rounded-sm bg-[#F2F2F3] px-2 py-1 text-xs font-medium text-[#6B6B6B]">
                             Disponible
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                          <span className="rounded-sm bg-[#F2F2F3] px-2 py-1 text-xs font-medium text-[#6B6B6B]">
                             Consultar
                           </span>
                         )}
