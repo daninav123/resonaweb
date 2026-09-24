@@ -6,6 +6,12 @@ import path from 'path';
 
 const router = Router();
 
+// Con Cloudinary activo, multer deja en `path` la URL https publica; con disco
+// local deja una ruta del sistema de archivos. La URL que se guarda en BD debe
+// salir de ahi, no construirse a mano, o apunta a un /uploads que ya no existe.
+const urlPublica = (file: Express.Multer.File): string =>
+  /^https?:\/\//.test(file.path) ? file.path : `/uploads/products/${file.filename}`;
+
 // Ruta para subir una sola imagen
 router.post(
   '/image',
@@ -20,8 +26,7 @@ router.post(
         return res.status(400).json({ error: 'No se proporcionó ningún archivo' });
       }
 
-      // URL pública de la imagen
-      const imageUrl = `/uploads/products/${req.file.filename}`;
+      const imageUrl = urlPublica(req.file);
       
       res.json({
         message: 'Imagen subida exitosamente',
@@ -52,7 +57,7 @@ router.post(
       }
 
       const uploadedImages = req.files.map(file => ({
-        imageUrl: `/uploads/products/${file.filename}`,
+        imageUrl: urlPublica(file),
         filename: file.filename,
         size: file.size,
         mimetype: file.mimetype
