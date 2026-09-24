@@ -32,10 +32,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const [imageError, setImageError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Generar URL de WebP si es posible
+  // Genera la ruta del .webp hermano, que solo existe para lo que servimos
+  // nosotros desde /uploads. Si el <source> de un <picture> da 404 el navegador
+  // NO cae al <img>, asi que apuntar a un .webp inexistente deja la imagen en
+  // el placeholder para siempre: es lo que pasaba con las URLs de Cloudinary,
+  // que ademas ya sirven AVIF/WebP solas via f_auto.
   const getWebPUrl = (url: string) => {
     if (!url || url.startsWith('data:')) return null;
-    // Solo para imágenes PNG/JPG locales
+    if (/^https?:\/\//.test(url)) return null;
     if (url.match(/\.(jpg|jpeg|png)$/i)) {
       return url.replace(/\.(jpg|jpeg|png)$/i, '.webp');
     }
@@ -46,14 +50,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   // Placeholder mientras carga
   const placeholderStyle: React.CSSProperties = {
+    position: 'absolute',
+    inset: 0,
     backgroundColor: '#f3f4f6',
-    minHeight: height || '200px',
     display: isLoaded ? 'none' : 'block',
   };
 
+  // Se oculta con opacidad, nunca con display:none. Con loading="lazy" una
+  // imagen en display:none no entra nunca en pantalla, asi que el navegador no
+  // la descarga, asi que onLoad no dispara y no se deja de ocultar: se muerde
+  // la cola y la imagen no aparece jamas.
   const imageStyle: React.CSSProperties = {
     objectFit,
-    display: isLoaded ? 'block' : 'none',
     transition: 'opacity 0.3s ease-in-out',
     opacity: isLoaded ? 1 : 0,
   };

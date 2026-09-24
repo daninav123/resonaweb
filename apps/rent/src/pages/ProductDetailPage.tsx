@@ -2,23 +2,25 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@resona/api-client';
-import { ShoppingCart, Heart, Share2, Package, Shield, Truck, Clock, Star, CheckCircle, Calendar, Wrench, AlertCircle, Loader2 } from 'lucide-react';
+import { ShoppingCart, Heart, Shield, Truck, CheckCircle, Wrench, AlertCircle, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
-import { getImageUrl, placeholderImage } from '../utils/imageUrl';
+import { getImageUrl } from '../utils/imageUrl';
 import { cartCountManager } from '../hooks/useCartCount';
 import SEOHead from '../components/SEO/SEOHead';
 import Breadcrumbs from '../components/SEO/Breadcrumbs';
 import OptimizedImage from '../components/common/OptimizedImage';
 import { generateProductSchema } from '../utils/seo/schemaGenerator';
-import { getPriceDisplay } from '../utils/priceWithVAT';
+import { getPriceDisplay, formatEuro } from '../utils/priceWithVAT';
+import { ProductTile } from '../components/catalog/ProductTile';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [activa, setActiva] = useState(0);
   const { user } = useAuthStore();
 
   // Selector de fechas inline (prellenado desde URL si vino de /productos con fechas)
@@ -152,8 +154,8 @@ const ProductDetailPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex min-h-screen items-center justify-center bg-ink">
+        <Loader2 className="h-6 w-6 animate-spin text-cream/40" />
       </div>
     );
   }
@@ -166,19 +168,17 @@ const ProductDetailPage = () => {
           description="El producto que buscas no está disponible. Explora nuestro catálogo completo."
           noindex={true}
         />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-ink px-5">
           <div className="text-center">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Producto no encontrado</h1>
-            <p className="text-gray-600 mb-4">El producto que buscas no existe o ha sido eliminado.</p>
-            <p className="text-sm text-gray-500">Serás redirigido al catálogo en 3 segundos...</p>
+            <h1 className="text-[28px] font-semibold tracking-tight text-cream">Producto no encontrado</h1>
+            <p className="mt-3 text-[15px] text-cream/60">Ese equipo no existe o ya no está en catálogo.</p>
+            <p className="mt-6 text-[13px] text-cream/40">Te llevamos al catálogo en 3 segundos…</p>
           </div>
         </div>
       </>
     );
   }
 
-  // SEO: Metadatos dinámicos
   const baseUrl = 'https://resonarent.com';
   const canonicalUrl = `${baseUrl}/productos/${product.slug}`;
   const imageUrl = product.mainImageUrl || product.images?.[0];
@@ -215,343 +215,291 @@ const ProductDetailPage = () => {
     { name: product.name, url: canonicalUrl },
   ];
 
+  const conIVA = Number(product.pricePerDay) * 1.21;
+  const precio = getPriceDisplay(conIVA, '');
+  const consumible = Boolean(product.isConsumable);
+  const galeria: string[] = [...new Set([product.mainImageUrl, ...(product.images || [])].filter(Boolean))] as string[];
+  const dias = (() => {
+    if (!datesValid) return 0;
+    const ms = new Date(endDate).getTime() - new Date(startDate).getTime();
+    return Math.max(1, Math.ceil(ms / 86400000) + 1);
+  })();
+
+  const campoFecha =
+    'h-11 w-full rounded-sm border border-cream/15 bg-transparent px-3 text-[14px] text-cream focus:border-resona-light focus:outline-none [color-scheme:dark]';
+
   return (
     <>
-      {/* SEO Head con todos los metatags */}
       <SEOHead
         title={seoTitle}
         description={seoDescription}
         keywords={seoKeywords}
-        ogImage={fullImageUrl}
-        ogType="product"
         canonicalUrl={canonicalUrl}
+        ogImage={fullImageUrl}
         schema={productSchema}
         product={{
           price: product.pricePerDay,
-          currency: 'EUR',
           availability: product.stock > 0 ? 'InStock' : 'OutOfStock',
         }}
       />
 
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
-          {/* Breadcrumbs con Schema integrado */}
-          <Breadcrumbs items={breadcrumbItems} className="mb-6" />
+      <div className="min-h-screen bg-ink">
+        <div className="mx-auto max-w-[1400px] px-5 py-8 md:px-10 md:py-12">
+          <Breadcrumbs items={breadcrumbItems} className="mb-10 text-cream/45" />
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Product Images */}
-          <div>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              {product.mainImageUrl ? (
-                <OptimizedImage
-                  src={getImageUrl(product.mainImageUrl)}
-                  alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} para eventos Valencia | ReSona Rent`}
-                  className="w-full h-96 object-contain bg-white"
-                  height={384}
-                  priority={true}
-                  objectFit="contain"
-                />
-              ) : (
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
-                  <Package className="w-24 h-24 text-gray-400" />
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+            {/* Galería */}
+            <div>
+              <div className="aspect-square w-full overflow-hidden bg-panel">
+                {galeria[activa] ? (
+                  <OptimizedImage
+                    src={getImageUrl(galeria[activa])}
+                    alt={product.name}
+                    objectFit="contain"
+                    priority
+                    className="h-full w-full object-contain p-8 md:p-12"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-ink-800">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-cream/25">Sin fotografía</span>
+                  </div>
+                )}
+              </div>
+
+              {galeria.length > 1 && (
+                <div className="mt-4 flex gap-3">
+                  {galeria.map((img: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiva(idx)}
+                      aria-label={`Ver imagen ${idx + 1} de ${galeria.length}`}
+                      className={`h-20 w-20 overflow-hidden bg-panel transition-opacity ${
+                        idx === activa ? 'ring-2 ring-resona' : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <OptimizedImage src={getImageUrl(img)} alt="" objectFit="contain" className="h-full w-full object-contain p-2" />
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
-            {product.images && product.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {product.images.map((img: string, idx: number) => (
-                  <OptimizedImage
-                    key={idx}
-                    src={getImageUrl(img)}
-                    alt={`${product.name} vista ${idx + 1} - Detalle del equipo`}
-                    className="w-full h-24 object-contain bg-white rounded-lg cursor-pointer hover:opacity-75"
-                    height={96}
-                    loading="lazy"
-                    objectFit="contain"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Product Info */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            
-            {/* Price */}
-            <div className="mb-6">
-              {(() => {
-                const priceWithVAT = Number(product.pricePerDay) * 1.21;
-                const priceDisplay = getPriceDisplay(priceWithVAT, ' por día');
-                return (
-                  <>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-bold text-blue-600">{priceDisplay.main}</span>
+            {/* Compra */}
+            <div className="lg:pt-4">
+              {product.category?.name && (
+                <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-cream/45">
+                  {product.category.name}
+                </p>
+              )}
+
+              <h1 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.02em] text-cream md:text-[42px]">
+                {product.name}
+              </h1>
+
+              <div className="mt-7 flex items-baseline gap-3">
+                <span className="text-[32px] font-semibold tabular-nums tracking-tight text-cream">
+                  {consumible ? formatEuro(Number(product.pricePerUnit) || 0) : precio.main}
+                </span>
+                <span className="text-[15px] text-cream/50">
+                  {consumible ? 'por unidad' : 'por día, IVA incluido'}
+                </span>
+              </div>
+              {!consumible && <p className="mt-1 text-[13px] text-cream/40">{precio.sub}</p>}
+
+              {!consumible && (
+                <div className="mt-10 border-t border-cream/10 pt-8">
+                  <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+                    Fechas de alquiler
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="fecha-inicio" className="mb-1.5 block text-[12px] text-cream/50">
+                        Desde
+                      </label>
+                      <input
+                        id="fecha-inicio"
+                        type="date"
+                        min={today}
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className={campoFecha}
+                      />
                     </div>
-                    <p className="mt-2 text-sm text-gray-500">{priceDisplay.sub}</p>
-                  </>
-                );
-              })()}
-            </div>
+                    <div>
+                      <label htmlFor="fecha-fin" className="mb-1.5 block text-[12px] text-cream/50">
+                        Hasta
+                      </label>
+                      <input
+                        id="fecha-fin"
+                        type="date"
+                        min={startDate || today}
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className={campoFecha}
+                      />
+                    </div>
+                  </div>
 
-            {/* Selector de fechas inline — muestra disponibilidad en tiempo real */}
-            <div className="mb-5 p-4 bg-gray-50 rounded-xl border border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-resona" />
-                ¿Qué días lo necesitas?
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="block text-xs font-medium text-gray-600 mb-1">Desde</span>
-                  <input
-                    type="date"
-                    min={today}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-resona focus:ring-1 focus:ring-resona"
-                  />
-                </label>
-                <label className="block">
-                  <span className="block text-xs font-medium text-gray-600 mb-1">Hasta</span>
-                  <input
-                    type="date"
-                    min={startDate || today}
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-resona focus:ring-1 focus:ring-resona"
-                  />
-                </label>
-              </div>
-              <div className="mt-3 min-h-[1.5rem] text-sm">
-                {!datesValid && (
-                  <p className="text-gray-500 italic">Elige fechas para ver disponibilidad.</p>
-                )}
-                {datesValid && checkingAvailability && (
-                  <p className="text-gray-500 flex items-center gap-1.5">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Comprobando disponibilidad…
-                  </p>
-                )}
-                {datesValid && !checkingAvailability && availability?.available && (
-                  <p className="text-green-700 font-medium flex items-center gap-1.5">
-                    <CheckCircle className="w-4 h-4" /> Disponible para esas fechas
-                    {typeof availability.availableQuantity === 'number' &&
-                      availability.availableQuantity < 10 && (
-                        <span className="text-orange-600 font-normal">
-                          · quedan {availability.availableQuantity}
-                        </span>
-                      )}
-                  </p>
-                )}
-                {datesValid && !checkingAvailability && availability && !availability.available && (
-                  <p className="text-red-700 font-medium flex items-center gap-1.5">
-                    <AlertCircle className="w-4 h-4" />
-                    {availability.message || 'No disponible en esas fechas. Prueba otras.'}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Cantidad */}
-            <div className="mb-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Cantidad</h3>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
-                  aria-label="Disminuir cantidad"
-                >
-                  −
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setQuantity(isNaN(value) || value < 1 ? 1 : value);
-                  }}
-                  className="w-20 text-lg font-medium text-center border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-resona focus:border-transparent"
-                />
-                <button
-                  onClick={() => setQuantity((prev) => prev + 1)}
-                  className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
-                  aria-label="Aumentar cantidad"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 mb-6">
-              <button
-                data-testid="add-to-cart"
-                onClick={handleAddToCart}
-                disabled={datesValid && availability && !availability.available}
-                className="flex-1 bg-resona text-white py-3 px-6 rounded-lg font-semibold hover:bg-resona-dark transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                Añadir al carrito
-              </button>
-              <button
-                data-testid="favorite-button"
-                data-favorited={isFavorite}
-                onClick={handleAddToFavorites}
-                className={`p-3 border rounded-lg transition ${
-                  isFavorite
-                    ? 'border-red-500 bg-red-50 text-red-600'
-                    : 'border-gray-300 hover:bg-gray-50'
-                }`}
-                aria-label="Añadir a favoritos"
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
-              <button
-                className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                aria-label="Compartir"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Trust signals específicos de alquiler */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="flex items-center gap-2 text-sm text-gray-700 bg-green-50 rounded-lg p-3">
-                <Truck className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span>Entrega y recogida en Valencia</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-700 bg-blue-50 rounded-lg p-3">
-                <Shield className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span>Depósito reembolsable</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 rounded-lg p-3">
-                <Wrench className="w-5 h-5 text-purple-600 flex-shrink-0" />
-                <span>Técnico opcional</span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="border-t pt-6">
-              <h3 className="text-lg font-semibold mb-3">Descripción</h3>
-              <p className="text-gray-600 whitespace-pre-line">{product.description}</p>
-            </div>
-
-            {/* Specifications */}
-            {product.specifications && (
-              <div className="border-t pt-6 mt-6">
-                <h3 className="text-lg font-semibold mb-3">Especificaciones</h3>
-                <dl className="space-y-3">
-                  {typeof product.specifications === 'string' ? (
-                    // Si es un string, mostrar directamente
-                    <dd className="text-gray-600 whitespace-pre-line">{product.specifications}</dd>
-                  ) : typeof product.specifications === 'object' && !Array.isArray(product.specifications) ? (
-                    // Si es un objeto, iterar sobre las propiedades
-                    Object.entries(product.specifications).map(([key, value]: [string, any]) => (
-                      <div key={key} className="grid grid-cols-3 gap-4 pb-2 border-b border-gray-100 last:border-b-0">
-                        <dt className="font-medium text-gray-700 col-span-1">{key}:</dt>
-                        <dd className="text-gray-600 col-span-2">{String(value)}</dd>
-                      </div>
-                    ))
-                  ) : Array.isArray(product.specifications) ? (
-                    // Si es un array, mostrar como lista
-                    product.specifications.map((spec: any, idx: number) => (
-                      <div key={idx} className="pb-2 border-b border-gray-100 last:border-b-0">
-                        <dd className="text-gray-600">{String(spec)}</dd>
-                      </div>
-                    ))
-                  ) : null}
-                </dl>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Sticky Mobile CTA Bar */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-[0_-4px_12px_rgba(0,0,0,0.1)] p-3 z-30 lg:hidden">
-          <div className="container mx-auto flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm truncate">{product.name}</p>
-              {(() => {
-                const priceWithVAT = Number(product.pricePerDay) * 1.21;
-                const priceDisplay = getPriceDisplay(priceWithVAT, '/día');
-                return (
-                  <p className="text-blue-600 font-bold text-lg">{priceDisplay.main}</p>
-                );
-              })()}
-            </div>
-            <button
-              onClick={handleAddToCart}
-              className="flex-shrink-0 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2 active:scale-95"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              Añadir
-            </button>
-          </div>
-        </div>
-
-        {/* Spacer for sticky bar on mobile */}
-        <div className="h-20 lg:hidden"></div>
-
-        {/* Related Products */}
-        {product.relatedProducts && product.relatedProducts.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Productos relacionados
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {product.relatedProducts.map((related: any) => (
-                <div
-                  key={related.id}
-                  onClick={() => {
-                    if (related.isPack) {
-                      navigate(`/packs/${related.slug}`);
-                    } else {
-                      navigate(`/productos/${related.slug}`);
-                    }
-                  }}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                >
-                  <div className="relative">
-                    <img
-                      src={getImageUrl(related.mainImageUrl) || placeholderImage}
-                      alt={related.name}
-                      className="w-full h-48 object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = placeholderImage;
-                      }}
-                    />
-                    {related.isPack && (
-                      <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
-                        <Package className="w-3 h-3" />
-                        Pack
-                      </div>
+                  <div aria-live="polite" className="mt-4 min-h-[22px]">
+                    {checkingAvailability && (
+                      <p className="flex items-center gap-2 text-[13px] text-cream/50">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Comprobando disponibilidad…
+                      </p>
+                    )}
+                    {datesValid && !checkingAvailability && availability?.available && (
+                      <p className="flex items-center gap-2 text-[13px] text-emerald-400">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        Disponible · {dias} {dias === 1 ? 'día' : 'días'} ·{' '}
+                        <span className="tabular-nums text-cream/70">{formatEuro(conIVA * dias)}</span>
+                        {typeof availability.availableQuantity === 'number' && availability.availableQuantity < 10 && (
+                          <span className="text-cream/45">· quedan {availability.availableQuantity}</span>
+                        )}
+                      </p>
+                    )}
+                    {datesValid && !checkingAvailability && availability && !availability.available && (
+                      <p className="flex items-center gap-2 text-[13px] text-amber-400">
+                        <AlertCircle className="h-3.5 w-3.5" />
+                        {availability.message || 'No disponible en esas fechas. Prueba otras.'}
+                      </p>
                     )}
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {related.name}
-                    </h3>
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <p className="text-xl font-bold text-blue-600">
-                          €{Number(related.pricePerDay).toFixed(2)}
-                          <span className="text-sm text-gray-500 font-normal">/día</span>
-                        </p>
-                        {related.isPack && (
-                          <span className="text-xs text-purple-600 font-medium">
-                            Ver pack →
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">Precio por unidad y día. IVA no incluido</p>
-                    </div>
-                  </div>
                 </div>
-              ))}
+              )}
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <div className="flex h-12 items-center rounded-sm border border-cream/15">
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    aria-label="Quitar una unidad"
+                    className="flex h-12 w-11 items-center justify-center text-cream/60 transition-colors hover:text-cream"
+                  >
+                    −
+                  </button>
+                  <span aria-live="polite" className="w-8 text-center text-[15px] tabular-nums text-cream">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    aria-label="Añadir una unidad"
+                    className="flex h-12 w-11 items-center justify-center text-cream/60 transition-colors hover:text-cream"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleAddToCart}
+                  disabled={datesValid && availability && !availability.available}
+                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-sm bg-resona px-8 text-[15px] font-medium text-white transition-colors hover:bg-resona-dark disabled:cursor-not-allowed disabled:bg-cream/15 disabled:text-cream/40"
+                >
+                  <ShoppingCart className="h-[18px] w-[18px]" />
+                  Añadir al carrito
+                </button>
+
+                <button
+                  onClick={handleAddToFavorites}
+                  aria-label={isFavorite ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                  aria-pressed={isFavorite}
+                  className="flex h-12 w-12 items-center justify-center rounded-sm border border-cream/15 text-cream/60 transition-colors hover:text-cream"
+                >
+                  <Heart className={`h-[18px] w-[18px] ${isFavorite ? 'fill-resona text-resona' : ''}`} />
+                </button>
+              </div>
+
+              <ul className="mt-10 space-y-3 border-t border-cream/10 pt-8 text-[14px] text-cream/65">
+                <li className="flex items-center gap-3">
+                  <Shield className="h-4 w-4 shrink-0 text-cream/40" strokeWidth={1.75} />
+                  Depósito reembolsable al devolver en buen estado
+                </li>
+                <li className="flex items-center gap-3">
+                  <Truck className="h-4 w-4 shrink-0 text-cream/40" strokeWidth={1.75} />
+                  Recogida en almacén. Entrega y montaje opcionales
+                </li>
+                <li className="flex items-center gap-3">
+                  <Wrench className="h-4 w-4 shrink-0 text-cream/40" strokeWidth={1.75} />
+                  Técnico opcional, se presupuesta aparte
+                </li>
+              </ul>
             </div>
           </div>
-        )}
+
+          {(product.description || product.specifications) && (
+            <div className="mt-24 grid gap-14 border-t border-cream/10 pt-14 md:grid-cols-2 md:gap-20">
+              {product.description && (
+                <section>
+                  <h2 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+                    Descripción
+                  </h2>
+                  <p className="whitespace-pre-line text-[15px] leading-relaxed text-cream/75">
+                    {product.description}
+                  </p>
+                </section>
+              )}
+
+              {product.specifications && (
+                <section>
+                  <h2 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+                    Características
+                  </h2>
+                  {typeof product.specifications === 'string' ? (
+                    <p className="whitespace-pre-line text-[15px] leading-relaxed text-cream/75">
+                      {product.specifications}
+                    </p>
+                  ) : Array.isArray(product.specifications) ? (
+                    <ul className="space-y-2 text-[15px] text-cream/75">
+                      {product.specifications.map((spec: any, idx: number) => (
+                        <li key={idx} className="border-b border-cream/[0.07] pb-2">
+                          {typeof spec === 'string' ? spec : JSON.stringify(spec)}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <dl className="text-[15px]">
+                      {Object.entries(product.specifications).map(([clave, valor]: [string, any]) => (
+                        <div key={clave} className="flex justify-between gap-6 border-b border-cream/[0.07] py-2.5">
+                          <dt className="text-cream/50">{clave}</dt>
+                          <dd className="text-right text-cream/85">{String(valor)}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                </section>
+              )}
+            </div>
+          )}
+
+          {product.relatedProducts && product.relatedProducts.length > 0 && (
+            <section className="mt-24 border-t border-cream/10 pt-14">
+              <h2 className="mb-12 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+                También te puede servir
+              </h2>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-8">
+                {product.relatedProducts.map((rel: any) => (
+                  <ProductTile key={rel.id} product={rel} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
+      </div>
+
+      {/* Barra fija en móvil: el precio y el botón no deben perderse al bajar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-cream/10 bg-ink/95 px-5 py-3 backdrop-blur lg:hidden">
+        <div>
+          <p className="text-[17px] font-semibold tabular-nums text-cream">
+            {consumible ? formatEuro(Number(product.pricePerUnit) || 0) : precio.main}
+          </p>
+          <p className="text-[12px] text-cream/45">{consumible ? 'por unidad' : 'por día'}</p>
+        </div>
+        <button
+          onClick={handleAddToCart}
+          disabled={datesValid && availability && !availability.available}
+          className="flex h-11 items-center gap-2 rounded-sm bg-resona px-6 text-[14px] font-medium text-white disabled:bg-cream/15 disabled:text-cream/40"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Añadir
+        </button>
       </div>
     </>
   );

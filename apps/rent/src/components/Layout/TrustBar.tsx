@@ -10,6 +10,6 @@ const RENT_ITEMS = [
   { icon: CalendarCheck, label: 'Reserva 100% online', hideBelow: 'md' as const },
 ];
 
-const TrustBar = () => <SharedTrustBar items={RENT_ITEMS} />;
+const TrustBar = () => <SharedTrustBar items={RENT_ITEMS} tone="dark" />;
 
 export default TrustBar;

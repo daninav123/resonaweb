@@ -47,6 +47,16 @@ export default {
           light: '#5D75FE',
           dark: '#1134FE',
         },
+        // Paleta oscura de Rent. El material que alquilamos es casi todo negro,
+        // asi que las fotos van sobre panel blanco aunque la pagina sea oscura:
+        // sobre fondo oscuro un bafle negro desaparece.
+        ink: {
+          DEFAULT: '#0B0B0C',
+          800: '#17171A',
+          700: '#232328',
+        },
+        cream: '#F7F3EB',
+        panel: '#FFFFFF',
       },
       fontFamily: {
         sans: ['Montserrat', 'system-ui', 'sans-serif'],

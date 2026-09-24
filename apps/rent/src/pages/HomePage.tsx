@@ -2,23 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { trackLead } from '@resona/utils';
-import {
-  Search,
-  Package,
-  Truck,
-  ShieldCheck,
-  Wrench,
-  ArrowRight,
-  Phone,
-  Star,
-} from 'lucide-react';
+import { Search, Truck, ShieldCheck, Wrench, ArrowRight, Phone } from 'lucide-react';
 import { productService } from '../services/product.service';
-import { getPriceDisplay } from '../utils/priceWithVAT';
-import { getImageUrl, placeholderImage } from '@resona/utils';
 import { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { getLocalBusinessSchema, getOrganizationSchema, getWebSiteSchema } from '../components/SEO/schemas';
 import { CategoryIcon } from '../components/CategoryIcon';
+import { ProductTile } from '../components/catalog/ProductTile';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -57,8 +47,11 @@ const HomePage = () => {
 
   const today = new Date().toISOString().slice(0, 10);
 
+  const campo =
+    'h-12 w-full rounded-sm border border-cream/15 bg-transparent px-3.5 text-[15px] text-cream placeholder:text-cream/35 focus:border-resona-light focus:outline-none [color-scheme:dark]';
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-ink">
       <SEOHead
         title="Alquiler de equipos audiovisuales en Valencia | ReSona Rent"
         description="Alquiler de sonido, iluminación, vídeo y DJ en Valencia. Entrega y recogida, técnico opcional, precio por día claro. Stock para bodas, eventos corporativos y conciertos."
@@ -69,297 +62,200 @@ const HomePage = () => {
       />
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-gray-200 bg-white">
-        <div className="relative container mx-auto px-4 py-14 md:py-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-4 text-[32px] md:text-[52px] font-bold leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
-              Alquila equipos audiovisuales profesionales en Valencia
-            </h1>
-            <p className="mx-auto mb-8 max-w-2xl text-base md:text-lg leading-relaxed text-[#4D4D4D]">
-              Sonido, iluminación, vídeo y estructuras. Entrega y recogida. Precio claro por día.
-            </p>
+      <section className="mx-auto max-w-[1400px] px-5 pb-20 pt-20 md:px-10 md:pb-28 md:pt-32">
+        <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-cream/45">
+          Alquiler · Valencia
+        </p>
+        <h1 className="max-w-4xl text-[38px] font-semibold leading-[1.03] tracking-[-0.03em] text-cream md:text-[72px]">
+          Equipo de sonido e iluminación,
+          <br className="hidden sm:block" /> listo para recoger.
+        </h1>
+        <p className="mt-8 max-w-xl text-[16px] leading-relaxed text-cream/65">
+          Precio por día, depósito reembolsable y recogida en nuestro almacén. La entrega,
+          el montaje y el técnico son opcionales.
+        </p>
 
-            {/* Buscador + fechas */}
-            <form
-              onSubmit={handleSearch}
-              className="flex flex-col gap-2.5 rounded-md border border-gray-200 bg-white p-3 text-left shadow-sm md:flex-row md:items-end md:p-3.5"
-            >
-              <div className="flex-1">
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">¿Qué necesitas?</label>
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Altavoces, luces, DJ, pantalla LED…"
-                  className="w-full min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">Desde</label>
-                <input
-                  type="date"
-                  min={today}
-                  value={dates.start}
-                  onChange={(e) => setDates((d) => ({ ...d, start: e.target.value }))}
-                  className="min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">Hasta</label>
-                <input
-                  type="date"
-                  min={dates.start || today}
-                  value={dates.end}
-                  onChange={(e) => setDates((d) => ({ ...d, end: e.target.value }))}
-                  className="min-h-[44px] rounded border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-resona focus:outline-none focus:ring-1 focus:ring-resona"
-                />
-              </div>
+        <form onSubmit={handleSearch} className="mt-12 max-w-3xl">
+          <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_auto]">
+            <div>
+              <label htmlFor="q" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">
+                Qué necesitas
+              </label>
+              <input
+                id="q"
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Altavoces, luces, truss…"
+                className={campo}
+              />
+            </div>
+            <div>
+              <label htmlFor="desde" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">
+                Desde
+              </label>
+              <input
+                id="desde"
+                type="date"
+                min={today}
+                value={dates.start}
+                onChange={(e) => setDates((d) => ({ ...d, start: e.target.value }))}
+                className={campo}
+              />
+            </div>
+            <div>
+              <label htmlFor="hasta" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">
+                Hasta
+              </label>
+              <input
+                id="hasta"
+                type="date"
+                min={dates.start || today}
+                value={dates.end}
+                onChange={(e) => setDates((d) => ({ ...d, end: e.target.value }))}
+                className={campo}
+              />
+            </div>
+            <div className="flex items-end">
               <button
                 type="submit"
-                className="flex min-h-[44px] items-center justify-center gap-2 rounded bg-resona px-6 py-2.5 font-semibold text-white transition-colors hover:bg-resona-dark"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-resona px-7 text-[15px] font-medium text-white transition-colors hover:bg-resona-dark sm:w-auto"
               >
-                <Search className="w-4 h-4" />
-                Buscar equipos
+                <Search className="h-4 w-4" />
+                Buscar
               </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* Banner Cine de Verano - Pantalla LED / Proyector */}
-      <section className="bg-gray-950">
-        <div className="container mx-auto px-4 py-10 md:py-12">
-          <div className="max-w-5xl mx-auto">
-            <Link to="/servicios/cine-de-verano-valencia" className="block group">
-              <img
-                src="/images/pantalla-led-montaje.jpg"
-                alt="Montaje de pantalla LED de ReSona Rent para cine de verano en Valencia"
-                className="w-full rounded-xl shadow-2xl transition-transform group-hover:scale-[1.01]"
-                width={1050}
-                height={700}
-                loading="lazy"
-              />
-            </Link>
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
-              <p className="text-white/90">
-                Monta tu cine de verano · Pantalla LED o proyector + sonido · Entrega y montaje en Valencia
-              </p>
-              <Link
-                to="/servicios/cine-de-verano-valencia"
-                className="inline-flex items-center gap-2 bg-resona hover:opacity-90 text-white font-semibold px-6 py-3 rounded-lg transition whitespace-nowrap"
-              >
-                Ver cine de verano <ArrowRight className="w-5 h-5" />
-              </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Cómo alquilar en 3 pasos */}
-      <section className="py-14 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-2">
-              Alquilar en 3 pasos
-            </h2>
-            <p className="text-center text-gray-500 mb-10">Sin llamadas, sin esperas, sin sorpresas.</p>
-            <div className="grid md:grid-cols-3 gap-6">
-              <Step n={1} title="Elige y añade al carrito" icon={Package}>
-                Escoge los equipos y las fechas. Ves el precio por día con IVA incluido.
-              </Step>
-              <Step n={2} title="Elige cómo pagar" icon={ShieldCheck}>
-                Reserva con el 25% y paga el resto al recoger, o paga el 100% online con un 10% de descuento.
-              </Step>
-              <Step n={3} title="Recoge o te lo llevamos" icon={Truck}>
-                Entrega en Valencia capital y alrededores. Recogida en almacén o envío concertado.
-              </Step>
-            </div>
-          </div>
-        </div>
+        </form>
       </section>
 
       {/* Categorías */}
       {visibleCategories.length > 0 && (
-        <section className="py-14 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8">
-              Categorías de alquiler
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {visibleCategories.slice(0, 10).map((cat: any) => (
-                <Link
-                  key={cat.id}
-                  to={`/productos?category=${cat.slug}`}
-                  className="bg-white rounded-lg border border-gray-200 p-4 text-center hover:border-resona hover:shadow-md transition group"
-                >
-                  <div className="text-3xl mb-2">
-                    <CategoryIcon slug={cat.slug} size={36} />
-                  </div>
-                  <div className="text-sm font-medium text-gray-900 group-hover:text-resona transition">
-                    {cat.name}
-                  </div>
-                </Link>
-              ))}
-            </div>
+        <section className="mx-auto max-w-[1400px] border-t border-cream/10 px-5 py-16 md:px-10 md:py-24">
+          <h2 className="mb-12 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+            Qué alquilamos
+          </h2>
+          <div className="grid grid-cols-2 gap-px overflow-hidden border border-cream/10 bg-cream/10 sm:grid-cols-3 lg:grid-cols-5">
+            {visibleCategories.map((cat: any) => (
+              <Link
+                key={cat.id}
+                to={`/productos?category=${cat.slug}`}
+                className="group flex flex-col gap-4 bg-ink p-6 transition-colors hover:bg-ink-800 md:p-8"
+              >
+                <CategoryIcon slug={cat.slug} size={22} strokeWidth={1.5} className="text-cream/45 transition-colors group-hover:text-cream" />
+                <span className="text-[14px] leading-snug text-cream/80 transition-colors group-hover:text-cream">
+                  {cat.name}
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
       )}
 
-      {/* Featured products */}
+      {/* Destacados */}
       {featuredProducts.length > 0 && (
-        <section className="py-14 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Equipos destacados</h2>
-                <p className="text-gray-500 mt-1">Los más reservados este mes.</p>
-              </div>
-              <Link to="/productos" className="hidden md:inline-flex items-center gap-1 text-resona hover:text-resona-dark font-medium">
-                Ver catálogo completo <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {(featuredProducts as Product[]).slice(0, 8).map((p: any) => (
-                <Link
-                  key={p.id}
-                  to={`/productos/${p.slug || p.id}`}
-                  className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg hover:border-resona transition"
-                >
-                  <div className="aspect-square bg-gray-50 overflow-hidden">
-                    <img
-                      src={getImageUrl(p.mainImageUrl || p.images?.[0]) || placeholderImage}
-                      alt={p.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = placeholderImage;
-                      }}
-                    />
-                  </div>
-                  <div className="p-3">
-                    <div className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">{p.name}</div>
-                    <div className="mt-2 text-resona font-semibold text-sm">
-                      {getPriceDisplay(Number(p.pricePerDay) || 0, '').main} <span className="text-[#6B6B6B] font-normal">/día</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-6 text-center md:hidden">
-              <Link to="/productos" className="inline-flex items-center gap-1 text-resona hover:text-resona-dark font-medium">
-                Ver catálogo completo <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+        <section className="mx-auto max-w-[1400px] border-t border-cream/10 px-5 py-16 md:px-10 md:py-24">
+          <div className="mb-12 flex items-baseline justify-between border-b border-cream/10 pb-5">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+              Material destacado
+            </h2>
+            <Link to="/productos" className="flex items-center gap-1.5 text-[13px] text-cream/60 transition-colors hover:text-cream">
+              Ver todo el catálogo
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-8">
+            {(featuredProducts as Product[]).slice(0, 8).map((p) => (
+              <ProductTile key={p.id} product={p} />
+            ))}
           </div>
         </section>
       )}
 
-      {/* Valor */}
-      <section className="py-14 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <ValueCard icon={Truck} title="Entrega y recogida">
-              En Valencia capital y área metropolitana. Envío concertado al resto de España.
-            </ValueCard>
-            <ValueCard icon={Wrench} title="Técnico opcional">
-              Puedes alquilar solo equipo o añadir un técnico que lo monte y opere. Tú eliges.
-            </ValueCard>
-            <ValueCard icon={ShieldCheck} title="Equipos revisados">
-              Testados antes de cada alquiler. Depósito reembolsable al devolver en buen estado.
-            </ValueCard>
-          </div>
-        </div>
+      {/* Cómo funciona */}
+      <section className="mx-auto max-w-[1400px] border-t border-cream/10 px-5 py-16 md:px-10 md:py-24">
+        <h2 className="mb-14 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+          Cómo funciona
+        </h2>
+        <ol className="grid gap-12 md:grid-cols-3 md:gap-16">
+          {[
+            { n: '01', t: 'Elige fechas y equipo', d: 'Buscas por fechas y ves lo que hay libre, con el precio del alquiler completo.' },
+            { n: '02', t: 'Reservas online', d: 'Pagas la reserva con tarjeta y dejas un depósito, que se devuelve al entregar el material en buen estado.' },
+            { n: '03', t: 'Recoges en el almacén', d: 'Te lo llevas tú, o lo llevamos nosotros si contratas entrega. El técnico se presupuesta aparte.' },
+          ].map((paso) => (
+            <li key={paso.n}>
+              <span className="text-[13px] tabular-nums text-cream/30">{paso.n}</span>
+              <h3 className="mt-4 text-[19px] font-medium text-cream">{paso.t}</h3>
+              <p className="mt-3 text-[15px] leading-relaxed text-cream/60">{paso.d}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      {/* Cross-app banner */}
-      <section className="py-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h3 className="text-xl md:text-2xl font-semibold mb-2">
-              ¿Necesitas que organicemos tu evento completo?
-            </h3>
-            <p className="text-gray-300 mb-5">
-              Si buscas bodas, conciertos o corporativos con montaje, diseño técnico y coordinación, visita nuestra división de eventos.
-            </p>
-            <a
-              href="https://resonarent.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-gray-900 hover:bg-gray-100 font-medium px-5 py-2.5 rounded-md transition"
-            >
-              Ir a ReSona Rent <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
+      {/* Garantías */}
+      <section className="mx-auto max-w-[1400px] border-t border-cream/10 px-5 py-16 md:px-10 md:py-24">
+        <div className="grid gap-10 md:grid-cols-3 md:gap-16">
+          {[
+            { icon: ShieldCheck, t: 'Equipos revisados', d: 'Probados antes de cada salida, con el cableado y los soportes que hacen falta.' },
+            { icon: Truck, t: 'Entrega opcional', d: 'Recogida en almacén sin coste. Si prefieres que lo llevemos, se presupuesta.' },
+            { icon: Wrench, t: 'Técnico opcional', d: 'Si no quieres montarlo tú, va uno de los nuestros. Tú decides.' },
+          ].map((v) => (
+            <div key={v.t}>
+              <v.icon className="h-5 w-5 text-cream/40" strokeWidth={1.5} />
+              <h3 className="mt-5 text-[17px] font-medium text-cream">{v.t}</h3>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-cream/60">{v.d}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* CTA final */}
-      <section className="py-14 bg-resona text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">¿Dudas antes de reservar?</h2>
-          <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Te asesoramos sin compromiso. Respondemos en horario laboral por teléfono y WhatsApp.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <a
-              href="tel:+34613881414"
-              onClick={() => trackLead({ leadType: 'telefono' })}
-              className="inline-flex items-center gap-2 bg-white text-resona hover:bg-gray-100 font-medium px-5 py-2.5 rounded-md transition"
-            >
-              <Phone className="w-4 h-4" /> 613 88 14 14
-            </a>
-            <Link
-              to="/contacto"
-              className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white hover:bg-white hover:text-resona font-medium px-5 py-2.5 rounded-md transition"
-            >
-              Escribir un mensaje
-            </Link>
+      <section className="border-t border-cream/10">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-28">
+          <div className="flex flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+            <div>
+              <h2 className="max-w-xl text-[30px] font-semibold leading-[1.1] tracking-[-0.02em] text-cream md:text-[44px]">
+                ¿No sabes qué equipo te hace falta?
+              </h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-cream/60">
+                Cuéntanos el aforo y el espacio y te decimos qué necesitas. Sin compromiso.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="tel:+34613881414"
+                className="flex h-12 items-center gap-2 rounded-sm bg-resona px-7 text-[15px] font-medium text-white transition-colors hover:bg-resona-dark"
+              >
+                <Phone className="h-4 w-4" />
+                613 88 14 14
+              </a>
+              <Link
+                to="/contacto"
+                className="flex h-12 items-center rounded-sm border border-cream/20 px-7 text-[15px] text-cream transition-colors hover:bg-white/5"
+              >
+                Escríbenos
+              </Link>
+            </div>
           </div>
+
+          <a
+            href="https://resonaevents.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-20 flex items-center justify-between gap-6 border-t border-cream/10 pt-8 text-cream/50 transition-colors hover:text-cream/80"
+          >
+            <span className="text-[15px]">
+              ¿Buscas que te organicemos el evento entero, con montaje y producción?
+            </span>
+            <span className="flex shrink-0 items-center gap-2 text-[14px]">
+              ReSona Events
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </a>
         </div>
       </section>
     </div>
   );
 };
-
-function Step({
-  n,
-  title,
-  icon: Icon,
-  children,
-}: {
-  n: number;
-  title: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 relative">
-      <div className="absolute -top-3 -left-3 w-9 h-9 rounded-full bg-resona text-white flex items-center justify-center font-bold shadow-md">
-        {n}
-      </div>
-      <Icon className="w-8 h-8 text-resona mb-3" />
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600">{children}</p>
-    </div>
-  );
-}
-
-function ValueCard({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white rounded-xl p-6 text-center border border-gray-200">
-      <Icon className="w-10 h-10 text-resona mx-auto mb-3" />
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600">{children}</p>
-    </div>
-  );
-}
 
 export default HomePage;

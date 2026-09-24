@@ -2,18 +2,13 @@ import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
 import { productService } from '../services/product.service';
-import { ChevronDown, Grid, List, Package, ShoppingCart } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { guestCart } from '../utils/guestCart';
-import { cartCountManager } from '../hooks/useCartCount';
-import { SearchBar } from '../components/search/SearchBar';
-import { CategorySidebar } from '../components/CategorySidebar';
-import { CategoryChips } from '../components/CategoryChips';
+import { ChevronDown } from 'lucide-react';
 import type { Product, Category } from '../types';
 import SEOHead from '../components/SEO/SEOHead';
 import { breadcrumbSchema } from '../utils/schemas';
-import { getImageUrl, placeholderImage } from '../utils/imageUrl';
-import { getPriceDisplay, formatEuro } from '../utils/priceWithVAT';
+import { formatEuro } from '../utils/priceWithVAT';
+import { esAccesorio } from '../utils/productKind';
+import { ProductTile } from '../components/catalog/ProductTile';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -127,17 +122,10 @@ const ProductsPage = () => {
   const combinedData = (() => {
     if (!productsData?.data) return { data: [], pagination: productsData?.pagination || { total: 0 } };
 
-    const products = productsData.data || [];
-
-    // Ordenar productos por precio (menor a mayor)
-    const sortedProducts = [...products].sort((a, b) => {
-      const priceA = Number(a.pricePerDay) || 0;
-      const priceB = Number(b.pricePerDay) || 0;
-      return priceA - priceB;
-    });
-    
+    // El orden lo aplica el backend segun filters.sort. Reordenar aqui por
+    // precio ascendente dejaba el desplegable de orden sin efecto.
     return {
-      data: sortedProducts,
+      data: productsData.data || [],
       pagination: productsData.pagination,
     };
   })();
@@ -167,8 +155,11 @@ const ProductsPage = () => {
   // son UX, no contenido distinto. Evita canibalización con las landings /alquiler-*-valencia.
   const canonicalUrl = 'https://resonarent.com/productos';
 
+  const accesorios = combinedData.data.filter((p: any) => esAccesorio(p.name));
+  const destacados = combinedData.data.filter((p: any) => !esAccesorio(p.name));
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink">
       <SEOHead
         title={pageTitle}
         description={pageDescription}
@@ -179,29 +170,30 @@ const ProductsPage = () => {
           { name: 'Catálogo', url: 'https://resonarent.com/productos' }
         ])}
       />
-      
-      <div className="container mx-auto px-4 py-8">
-        {/* Search Bar at top */}
-        <div className="mb-6 max-w-2xl mx-auto">
-          <SearchBar
-            onSearch={(query) => handleFilterChange('search', query)}
-            placeholder="Buscar sonido, iluminación, fotografía..."
-            className="w-full"
-          />
-        </div>
 
-        {/* Banner de fechas: el usuario viene con fechas del hero → mostramos precios totales */}
+      <div className="mx-auto max-w-[1400px] px-5 py-14 md:px-10 md:py-20">
+        <header className="mb-14 max-w-3xl">
+          <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-cream/45">
+            Alquiler · Valencia
+          </p>
+          <h1 className="text-[34px] font-semibold leading-[1.05] tracking-[-0.03em] md:text-[56px]">
+            {categoryName ?? 'Equipo de sonido e iluminación'}
+          </h1>
+          <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-cream/65">
+            Precio por día, depósito reembolsable y recogida en almacén. El técnico y el montaje
+            son opcionales.
+          </p>
+        </header>
+
         {hasDates && (
-          <div className="mb-6 max-w-2xl mx-auto flex items-center justify-between gap-3 rounded-lg border border-resona/30 bg-resona/5 px-4 py-3">
-            <div className="text-sm text-gray-800">
-              <span className="font-semibold">Alquilando</span>{' '}
-              <span>
-                del {new Date(startDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                {' al '}
-                {new Date(endDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-              </span>{' '}
-              <span className="text-gray-500">· {rentalDays} {rentalDays === 1 ? 'día' : 'días'}</span>
-            </div>
+          <div className="mb-10 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-resona-light/40 bg-resona/10 px-4 py-3">
+            <p className="text-[14px] text-cream/85">
+              <span className="font-medium">Alquilando</span>{' '}
+              del {new Date(startDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+              {' al '}
+              {new Date(endDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+              <span className="text-cream/50"> · {rentalDays} {rentalDays === 1 ? 'día' : 'días'}</span>
+            </p>
             <button
               onClick={() => {
                 const params = new URLSearchParams(searchParams);
@@ -209,289 +201,158 @@ const ProductsPage = () => {
                 params.delete('end');
                 setSearchParams(params);
               }}
-              className="text-xs text-resona hover:text-resona-dark font-medium underline-offset-2 hover:underline"
+              className="text-[13px] text-cream/60 underline-offset-4 transition-colors hover:text-cream hover:underline"
             >
               Quitar fechas
             </button>
           </div>
         )}
 
-        {/* Category Chips - Only visible on mobile (< 768px) */}
-        <div className="md:hidden">
-          <CategoryChips
-            categories={visibleCategories}
-            selectedCategory={filters.category}
-            onCategoryChange={(slug) => handleFilterChange('category', slug)}
-          />
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Category Sidebar - Hidden on mobile */}
-          <aside className="hidden lg:block lg:w-64">
-            <CategorySidebar
-              categories={visibleCategories}
-              selectedCategory={filters.category}
-              onCategoryChange={(slug) => handleFilterChange('category', slug)}
-            />
+        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
+          <aside className="lg:w-56 lg:shrink-0">
+            <div className="lg:sticky lg:top-28">
+              <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">
+                Categorías
+              </p>
+              <ul className="flex flex-wrap gap-x-4 gap-y-1 lg:block">
+                <li>
+                  <button
+                    onClick={() => handleFilterChange('category', '')}
+                    className={`block py-1.5 text-left text-[14px] transition-colors ${
+                      !filters.category ? 'text-cream' : 'text-cream/55 hover:text-cream'
+                    }`}
+                  >
+                    Todo el catálogo
+                  </button>
+                </li>
+                {visibleCategories.map((cat: any) => (
+                  <li key={cat.id}>
+                    <button
+                      onClick={() => handleFilterChange('category', cat.slug)}
+                      className={`block py-1.5 text-left text-[14px] transition-colors ${
+                        filters.category === cat.slug ? 'text-cream' : 'text-cream/55 hover:text-cream'
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </aside>
 
-          {/* Products Grid */}
-          <div className="flex-1">
-            {/* Header */}
-            <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold">Catálogo de alquiler</h1>
-                  {combinedData && combinedData.pagination && (
-                    <p className="text-gray-600 mt-1">
-                      {combinedData.pagination.total} productos disponibles
-                      {combinedData.data.length < combinedData.pagination.total && (
-                        <span className="text-sm"> · Mostrando {combinedData.data.length}</span>
-                      )}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* Sort */}
+          <div className="min-w-0 flex-1">
+            <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-b border-cream/10 pb-5">
+              <p className="text-[13px] text-cream/50">
+                {isLoading
+                  ? 'Cargando…'
+                  : `${combinedData.pagination?.total ?? combinedData.data.length} referencias`}
+              </p>
+              <div className="flex items-center gap-3">
+                <label htmlFor="orden" className="text-[13px] text-cream/50">
+                  Ordenar
+                </label>
+                <div className="relative">
                   <select
+                    id="orden"
                     value={filters.sort}
                     onChange={(e) => handleFilterChange('sort', e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="h-10 appearance-none rounded-sm border border-cream/15 bg-transparent pl-3 pr-9 text-[14px] text-cream focus:border-resona-light focus:outline-none"
                   >
-                    <option value="newest">Más recientes</option>
-                    <option value="price_asc">Precio: menor a mayor</option>
-                    <option value="price_desc">Precio: mayor a menor</option>
-                    <option value="name">Alfabético</option>
+                    <option value="price_asc" className="bg-ink-800">Precio: menor a mayor</option>
+                    <option value="price_desc" className="bg-ink-800">Precio: mayor a menor</option>
+                    <option value="name_asc" className="bg-ink-800">Nombre A-Z</option>
                   </select>
-
-                  {/* View Mode */}
-                  <div className="flex gap-1 border border-gray-300 rounded-lg p-1">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-1.5 rounded ${
-                        viewMode === 'grid' ? 'bg-resona text-white' : 'text-gray-600'
-                      }`}
-                    >
-                      <Grid className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-1.5 rounded ${
-                        viewMode === 'list' ? 'bg-resona text-white' : 'text-gray-600'
-                      }`}
-                    >
-                      <List className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-cream/45" />
                 </div>
               </div>
             </div>
 
-            {/* Products */}
             {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-3 md:gap-x-8 md:gap-y-20">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="aspect-square w-full bg-ink-800" />
+                    <div className="mt-5 h-4 w-2/3 bg-ink-800" />
+                  </div>
+                ))}
               </div>
-            ) : combinedData?.data.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-semibold mb-2">No se encontraron productos</h3>
-                <p className="text-gray-600 mb-4">
-                  Intenta ajustar los filtros o realizar una nueva búsqueda
-                </p>
+            ) : combinedData.data.length === 0 ? (
+              <div className="py-24 text-center">
+                <p className="text-[18px] text-cream/80">No hay equipos que encajen</p>
+                <p className="mt-2 text-[14px] text-cream/50">Prueba a quitar filtros o buscar otra cosa.</p>
                 <button
                   onClick={() => {
-                    setFilters({
-                      category: '',
-                      minPrice: '',
-                      maxPrice: '',
-                      inStock: false,
-                      sort: 'newest',
-                      search: ''
-                    });
-                    setSearchParams({});
+                    setFilters({ category: '', minPrice: '', maxPrice: '', inStock: false, sort: 'price_asc', search: '' });
+                    setSearchParams(new URLSearchParams());
+                    setPage(1);
                   }}
-                  className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
+                  className="mt-6 rounded-sm bg-resona px-5 py-2.5 text-[14px] font-medium text-white transition-colors hover:bg-resona-dark"
                 >
                   Limpiar filtros
                 </button>
               </div>
             ) : (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
-                {combinedData.data.map((product: Product) => (
-                  <div
-                    key={(product as any).isPack ? `pack-${product.id}` : `product-${product.id}`}
-                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow relative group ${
-                      viewMode === 'list' ? 'flex' : ''
-                    }`}
-                  >
-                    {/* Badge de Pack - Solo en la imagen */}
-                    {(product as any).isPack && (
-                      <div className="absolute top-2 left-2 z-10">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
-                          <Package className="w-3 h-3" />
-                          PACK
-                        </span>
-                      </div>
-                    )}
-                    
-                    {/* Imagen - Clickable para ir al detalle */}
-                    <Link to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}${detailQuery}`}>
-                      {product.images && product.images.length > 0 ? (
-                        <img
-                          src={getImageUrl(product.images[0] as any)}
-                          alt={`Alquiler ${product.name} - ${product.category?.name || 'Equipos audiovisuales'} en alquiler en Valencia | ReSona Rent`}
-                          width={viewMode === 'grid' ? 400 : 192}
-                          height={viewMode === 'grid' ? 192 : 128}
-                          loading="lazy"
-                          decoding="async"
-                          className={`object-contain bg-white ${
-                            viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
-                          }`}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = placeholderImage;
-                          }}
-                        />
-                      ) : (
-                        <div className={`bg-gray-200 flex items-center justify-center ${
-                          viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-48 h-32 rounded-l-lg'
-                        }`}>
-                          <Package className="w-12 h-12 text-gray-400" />
-                        </div>
-                      )}
-                    </Link>
-                    
-                    {/* Contenido */}
-                    <div className="p-4 flex-1">
-                      <Link to={(product as any).isPack ? `/packs/${product.slug}` : `/productos/${product.slug}${detailQuery}`}>
-                        <h3 className="font-semibold mb-2 line-clamp-2 hover:text-blue-600 transition-colors">{product.name}</h3>
-                      </Link>
-                      {viewMode === 'list' && (
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                          {product.description}
-                        </p>
-                      )}
-                      <div className="flex justify-between items-center">
-                        <div>
-                          {product.isConsumable ? (
-                            <div>
-                              <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
-                                {formatEuro(Number(product.pricePerUnit))}
-                              </p>
-                              <p className="text-xs text-gray-500">Precio de venta por unidad</p>
-                              <p className="text-xs text-[#6B6B6B]">IVA no incluido</p>
-                            </div>
-                          ) : (
-                            <div>
-                              {(() => {
-                                const dayPriceWithVAT = Number(product.pricePerDay) * 1.21;
-                                const dayDisplay = getPriceDisplay(dayPriceWithVAT, '/día');
-                                if (hasDates) {
-                                  const totalWithVAT = dayPriceWithVAT * rentalDays;
-                                  return (
-                                    <>
-                                      <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
-                                        {formatEuro(totalWithVAT)}
-                                      </p>
-                                      <p className="text-xs text-gray-600 font-medium">
-                                        {rentalDays} {rentalDays === 1 ? 'día' : 'días'} · {dayDisplay.main}
-                                      </p>
-                                      <p className="text-xs text-[#6B6B6B]">
-                                        IVA incluido
-                                      </p>
-                                    </>
-                                  );
-                                }
-                                return (
-                                  <>
-                                    <p className="text-2xl font-bold tracking-tight text-[#0A0A0A]">
-                                      <span className="text-sm font-medium text-[#6B6B6B]">desde </span>
-                                      {dayDisplay.main}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                      {dayDisplay.sub}
-                                    </p>
-                                  </>
-                                );
-                              })()}
-                            </div>
-                          )}
-                        </div>
-                        {product.realStock > 0 && product.realStock <= 3 ? (
-                          <span className="rounded-sm bg-[#FDF0E4] px-2 py-1 text-xs font-semibold text-[#8A4B08]">
-                            Quedan {product.realStock}
-                          </span>
-                        ) : product.realStock > 3 ? (
-                          <span className="rounded-sm bg-[#F2F2F3] px-2 py-1 text-xs font-medium text-[#6B6B6B]">
-                            Disponible
-                          </span>
-                        ) : (
-                          <span className="rounded-sm bg-[#F2F2F3] px-2 py-1 text-xs font-medium text-[#6B6B6B]">
-                            Consultar
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Quick Add to Cart Button */}
-                      {!(product as any).isPack && (
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            cartCountManager.increment(1);
-                            guestCart.addItem(product, 1);
-                            toast.success(`${product.name} añadido al carrito`);
-                          }}
-                          className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg font-medium text-sm transition-all active:scale-95"
-                        >
-                          <ShoppingCart className="w-4 h-4" />
-                          Añadir al carrito
-                        </button>
-                      )}
-                      {(product as any).isPack && (
-                        <Link
-                          to={`/packs/${product.slug}`}
-                          className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-2.5 px-4 rounded-lg font-medium text-sm transition-all"
-                        >
-                          <Package className="w-4 h-4" />
-                          Ver pack completo
-                        </Link>
-                      )}
-                    </div>
+              <>
+                {destacados.length > 0 && (
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-3 md:gap-x-8 md:gap-y-20">
+                    {destacados.map((product: Product) => (
+                      <ProductTile
+                        key={product.id}
+                        product={product}
+                        detailQuery={detailQuery}
+                        hasDates={hasDates}
+                        rentalDays={rentalDays}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                )}
+
+                {accesorios.length > 0 && (
+                  <section className={destacados.length > 0 ? 'mt-24' : ''}>
+                    <div className="mb-6 flex items-baseline justify-between border-b border-cream/10 pb-5">
+                      <h2 className="text-[13px] font-semibold uppercase tracking-[0.2em]">
+                        Accesorios y cableado
+                      </h2>
+                      <span className="text-[13px] text-cream/45">{accesorios.length}</span>
+                    </div>
+                    <ul>
+                      {accesorios.map((product: Product) => (
+                        <li key={product.id}>
+                          <Link
+                            to={`/productos/${product.slug}${detailQuery}`}
+                            className="flex items-baseline justify-between gap-6 border-b border-cream/[0.07] py-4 transition-colors hover:bg-white/[0.03]"
+                          >
+                            <span className="text-[15px] text-cream/90">{product.name}</span>
+                            <span className="shrink-0 text-[14px] tabular-nums text-cream/55">
+                              {formatEuro(Number(product.pricePerDay) * 1.21)}/día
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </>
             )}
 
-            {/* Pagination */}
-            {combinedData && combinedData.data.length > 0 && (
-              <div className="mt-8 flex justify-center">
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Anterior
-                  </button>
-                  
-                  <span className="px-4 py-2">
-                    Página {page}
-                  </span>
-                  
-                  <button
-                    onClick={() => setPage(p => p + 1)}
-                    disabled={combinedData.data.length < 12}
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Siguiente
-                  </button>
-                </div>
+            {combinedData.data.length > 0 && (
+              <div className="mt-20 flex items-center justify-center gap-6 border-t border-cream/10 pt-8">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="text-[14px] text-cream/70 transition-colors hover:text-cream disabled:cursor-not-allowed disabled:text-cream/25"
+                >
+                  Anterior
+                </button>
+                <span className="text-[13px] text-cream/45">Página {page}</span>
+                <button
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={combinedData.data.length < 12}
+                  className="text-[14px] text-cream/70 transition-colors hover:text-cream disabled:cursor-not-allowed disabled:text-cream/25"
+                >
+                  Siguiente
+                </button>
               </div>
             )}
           </div>

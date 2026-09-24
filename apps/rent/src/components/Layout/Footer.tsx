@@ -4,14 +4,8 @@ import { Logo } from '@resona/ui';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
-      {/* Wave Decoration */}
-      <div className="relative overflow-hidden">
-        <svg className="w-full h-12 text-gray-50" viewBox="0 0 1440 48" preserveAspectRatio="none" style={{ maxWidth: '100%' }}>
-          <path fill="currentColor" d="M0,32L80,29.3C160,27,320,21,480,21.3C640,21,800,27,960,32C1120,37,1280,43,1360,45.3L1440,48L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path>
-        </svg>
-      </div>
-
+    <footer className="border-t border-cream/10 bg-ink text-cream">
+      
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Company Info con Logo */}
@@ -26,7 +20,7 @@ const Footer = () => {
                 Rent
               </span>
             </Link>
-            <p className="text-gray-300 mb-4 text-sm">
+            <p className="mb-4 text-[14px] leading-relaxed text-cream/60">
               Tu partner de confianza para el alquiler de material de eventos.
               Más de 10 años haciendo realidad tus celebraciones.
             </p>
@@ -34,33 +28,28 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona-light">Enlaces Rápidos</h4>
+            <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Enlaces Rápidos</h4>
             <ul className="space-y-2">
-              <li><Link to="/productos" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/productos" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Catálogo
               </Link></li>
-              <li><Link to="/sobre-nosotros" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/sobre-nosotros" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Sobre Nosotros
               </Link></li>
-              <li><Link to="/contacto" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/contacto" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Contacto
               </Link></li>
-              <li><Link to="/faqs" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/faqs" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 FAQs
               </Link></li>
-              <li className="pt-2 border-t border-gray-700 mt-2">
+              <li className="mt-3 border-t border-cream/10 pt-3">
                 <a
                   href="https://resonaevents.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-resona-light transition flex items-center group text-sm italic"
+                  className="flex items-center gap-2 text-[13px] italic text-cream/45 transition-colors hover:text-cream/80"
                 >
-                  <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
-                  ¿Evento completo? ReSona Events ↗
+                    ¿Evento completo? ReSona Events ↗
                 </a>
               </li>
             </ul>
@@ -68,34 +57,27 @@ const Footer = () => {
 
           {/* Servicios Locales SEO */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona-light">Servicios en Valencia</h4>
+            <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Servicios en Valencia</h4>
             <ul className="space-y-2">
-              <li><Link to="/servicios/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/servicios/alquiler-sonido-valencia" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Alquiler Sonido Valencia
               </Link></li>
-              <li><Link to="/servicios/alquiler-altavoces-profesionales" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/servicios/alquiler-altavoces-profesionales" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Alquiler Altavoces Valencia
               </Link></li>
-              <li><Link to="/servicios/iluminacion-led-profesional" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/servicios/iluminacion-led-profesional" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Iluminación Valencia
               </Link></li>
-              <li><Link to="/servicios/alquiler-dj-valencia" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/servicios/alquiler-dj-valencia" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Alquiler DJ Valencia
               </Link></li>
-              <li><Link to="/alquiler-sonido-torrent" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/alquiler-sonido-torrent" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Alquiler Sonido Torrent
               </Link></li>
-              <li><Link to="/productos?category=sonido" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/productos?category=sonido" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Ver Equipos de Sonido
               </Link></li>
-              <li><Link to="/productos?category=iluminacion" className="text-gray-300 hover:text-resona-light transition flex items-center group">
-                <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
+              <li><Link to="/productos?category=iluminacion" className="flex items-center gap-2 text-[14px] text-cream/70 transition-colors hover:text-cream">
                 Ver Iluminación
               </Link></li>
             </ul>
@@ -103,114 +85,111 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona-light">Contacto</h4>
+            <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Contacto</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3 group">
-                <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <MapPin className="w-5 h-5 text-resona-light" />
+                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                  <MapPin className="h-4 w-4 text-cream/55" />
                 </div>
-                <span className="text-gray-300 text-sm pt-2">C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</span>
+                <span className="pt-2 text-[14px] text-cream/70">C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</span>
               </div>
               <div className="flex items-center gap-3 group">
-                <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <Phone className="w-5 h-5 text-resona-light" />
+                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                  <Phone className="h-4 w-4 text-cream/55" />
                 </div>
-                <a href="tel:+34613881414" className="text-gray-300 hover:text-resona-light transition text-sm">
+                <a href="tel:+34613881414" className="text-[14px] text-cream/70 transition-colors hover:text-cream">
                   +34 613 881 414
                 </a>
               </div>
               <div className="flex items-center gap-3 group">
-                <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <Mail className="w-5 h-5 text-resona-light" />
+                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                  <Mail className="h-4 w-4 text-cream/55" />
                 </div>
-                <Link to="/contacto" className="text-gray-300 hover:text-resona-light transition text-sm">
+                <Link to="/contacto" className="text-[14px] text-cream/70 transition-colors hover:text-cream">
                   Formulario de Contacto
                 </Link>
               </div>
             </div>
             
-            <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Métodos de Pago</h4>
+            <h4 className="mb-3 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Métodos de Pago</h4>
             <div className="flex gap-2 items-center">
-              <div className="bg-white p-2 rounded">
-                <CreditCard className="w-6 h-6 text-gray-700" />
+              <div className="rounded-sm bg-white/5 p-2">
+                <CreditCard className="h-5 w-5 text-cream/55" />
               </div>
-              <div className="text-xs text-gray-400">
+              <div className="text-[12px] text-cream/45">
                 Tarjeta - PayPal - Transferencia
               </div>
             </div>
             
-            <h4 className="text-sm font-semibold mt-6 mb-3 text-gray-400">Síguenos</h4>
+            <h4 className="mb-3 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Síguenos</h4>
             <div className="flex gap-3">
               <a
                 href="https://www.facebook.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5 text-resona-light group-hover:text-white" />
+                <Facebook className="h-4 w-4 text-cream/55 group-hover:text-white" />
               </a>
               <a
                 href="https://www.twitter.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Twitter"
               >
-                <Twitter className="w-5 h-5 text-resona-light group-hover:text-white" />
+                <Twitter className="h-4 w-4 text-cream/55 group-hover:text-white" />
               </a>
               <a
                 href="https://www.instagram.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Instagram"
               >
-                <Instagram className="w-5 h-5 text-resona-light group-hover:text-white" />
+                <Instagram className="h-4 w-4 text-cream/55 group-hover:text-white" />
               </a>
               <a
                 href="https://www.linkedin.com/company/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
+                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-5 h-5 text-resona-light group-hover:text-white" />
+                <Linkedin className="h-4 w-4 text-cream/55 group-hover:text-white" />
               </a>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-700/50 mt-12 pt-8">
+        <div className="mt-16 border-t border-cream/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-resona rounded-full animate-pulse"></div>
-              <p className="text-gray-400 text-sm">
-                © 2024 <span className="text-resona-light font-semibold">ReSona Rent</span>. Todos los derechos reservados.
+              
+              <p className="text-[13px] text-cream/45">
+                © 2024 <span className="font-medium text-cream/70">ReSona Rent</span>. Todos los derechos reservados.
               </p>
             </div>
             <div className="flex flex-wrap gap-6 justify-center">
-              <Link to="/politica-privacidad" className="text-gray-400 hover:text-resona-light text-sm transition">
+              <Link to="/politica-privacidad" className="text-[13px] text-cream/45 transition-colors hover:text-cream">
                 Política de Privacidad
               </Link>
-              <Link to="/aviso-legal" className="text-gray-400 hover:text-resona-light text-sm transition">
+              <Link to="/aviso-legal" className="text-[13px] text-cream/45 transition-colors hover:text-cream">
                 Aviso Legal
               </Link>
-              <Link to="/terminos-condiciones" className="text-gray-400 hover:text-resona-light text-sm transition">
+              <Link to="/terminos-condiciones" className="text-[13px] text-cream/45 transition-colors hover:text-cream">
                 Condiciones
               </Link>
-              <Link to="/politica-cookies" className="text-gray-400 hover:text-resona-light text-sm transition">
+              <Link to="/politica-cookies" className="text-[13px] text-cream/45 transition-colors hover:text-cream">
                 Cookies
               </Link>
-              <Link to="/mis-datos" className="text-gray-400 hover:text-resona-light text-sm transition">
+              <Link to="/mis-datos" className="text-[13px] text-cream/45 transition-colors hover:text-cream">
                 🔒 Mis Datos
               </Link>
             </div>
           </div>
-          
-          {/* Decorative Bottom Line */}
-          <div className="mt-6 h-1 bg-resona/30 rounded-full mx-auto max-w-md"></div>
         </div>
       </div>
     </footer>
