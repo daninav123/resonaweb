@@ -81,7 +81,7 @@ const AlquilerPantallasLED = () => {
           "Pantalla LED 3×2 m — 6 m² de superficie",
           "Pantalla LED 3×4 m — 12 m² de superficie",
           "Dos unidades de 3×2 m disponibles a la vez",
-          "Entrega y montaje incluidos en la provincia de Valencia",
+          "Entrega y montaje opcionales en la provincia de Valencia",
         ],
       },
       {

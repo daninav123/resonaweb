@@ -36,7 +36,7 @@ const AlquilerIluminacionValenciaPage = () => {
     },
     {
       question: '¿Incluye el alquiler de iluminación el montaje y desmontaje?',
-      answer: 'El transporte está siempre incluido en Valencia capital. El montaje e instalación técnica es opcional con coste adicional según la complejidad. Para eventos grandes (bodas, conciertos, eventos corporativos) recomendamos nuestro servicio completo que incluye diseño lumínico, montaje, programación, operación y desmontaje. Presupuesto sin compromiso en 24 horas.',
+      answer: 'La recogida se hace en nuestro almacén de Valencia. La entrega, el montaje y la instalación técnica son opcionales con coste adicional según la complejidad. Para eventos grandes (bodas, conciertos, eventos corporativos) recomendamos nuestro servicio completo que incluye diseño lumínico, montaje, programación, operación y desmontaje. Presupuesto sin compromiso en 24 horas.',
     },
   ];
 
@@ -44,7 +44,7 @@ const AlquilerIluminacionValenciaPage = () => {
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title="Alquiler Iluminación Valencia desde 25€ · Focos LED"
-        description="Alquiler de iluminación profesional en Valencia desde 25€/día. Focos LED RGB, cabezas móviles, láseres, control DMX. Técnico incluido. Presupuesto 24h ☎ 613 88 14 14"
+        description="Alquiler de iluminación profesional en Valencia desde 25€/día. Focos LED RGB, cabezas móviles, láseres, control DMX. Técnico opcional. Presupuesto 24h ☎ 613 88 14 14"
         keywords="alquiler iluminacion valencia, alquiler luces led valencia, alquiler focos valencia, alquiler iluminacion de obra exterior, iluminacion profesional valencia"
         canonicalUrl="https://resonarent.com/alquiler-iluminacion-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
@@ -93,7 +93,7 @@ const AlquilerIluminacionValenciaPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
               >
                 <Phone className="w-5 h-5" />
                 613 88 14 14
@@ -318,7 +318,7 @@ const AlquilerIluminacionValenciaPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
               >
                 <Phone className="w-5 h-5" />
                 Llamar: 613 88 14 14

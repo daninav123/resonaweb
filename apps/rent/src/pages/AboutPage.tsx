@@ -6,7 +6,7 @@ const AboutPage = () => {
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title="Sobre ReSona Rent | Alquiler Audiovisual en Valencia"
-        description="ReSona Rent, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de 10 años de experiencia."
+        description="ReSona Rent, empresa líder en Valencia especializada en alquiler de equipos profesionales para eventos: sonido, iluminación y audiovisuales. Más de experiencia desde 2011."
         keywords="resona rent valencia, empresa alquiler equipos valencia, alquiler sonido valencia, producción eventos valencia, alquiler iluminación valencia"
         canonicalUrl="https://resonarent.com/sobre-nosotros"
       />
@@ -20,7 +20,7 @@ const AboutPage = () => {
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Sobre Resona Rent</h1>
             <p className="text-xl text-white/90">
-              Transformando eventos en experiencias inolvidables desde hace más de 10 años
+              Transformando eventos en experiencias inolvidables desde hace experiencia desde 2011
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@ const AboutPage = () => {
                 en uno de los proveedores de referencia en el sector.
               </p>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                Nuestro fundador, con más de 20 años de experiencia en el sector audiovisual, identificó la necesidad de ofrecer un 
+                Nuestro fundador, con experiencia desde 2011 en el sector audiovisual, identificó la necesidad de ofrecer un 
                 servicio de alquiler que combinara <strong>calidad profesional, precios competitivos y atención personalizada</strong>. 
                 Desde entonces, hemos equipado más de <strong>5,000 eventos exitosos</strong>, desde bodas íntimas hasta grandes festivales.
               </p>

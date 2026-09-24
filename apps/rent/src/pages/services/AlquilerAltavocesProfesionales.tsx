@@ -31,7 +31,7 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
       {
         icon: "🚚",
         title: "Servicio Completo",
-        description: "Transporte, montaje y desmontaje incluidos"
+        description: "Recogida en almacén · entrega y montaje opcionales"
       },
       {
         icon: "🔒",
@@ -57,7 +57,7 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
         price: "desde 160€",
         features: [
           "Equipos básicos profesionales",
-          "Transporte incluido",
+          "Recogida en almacén",
           "Montaje y desmontaje",
           "Asistencia telefónica"
         ]
@@ -68,7 +68,7 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
         price: "desde 600€",
         features: [
           "Equipos profesionales completos",
-          "Técnico especializado incluido",
+          "Técnico opcional",
           "Transporte y montaje",
           "Equipos de backup",
           "Soporte completo"
@@ -146,7 +146,7 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
         answer: "Por supuesto. Somos especialistas en sonido para bodas en Valencia. Ofrecemos altavoces discretos y elegantes para ceremonia (batería recargable), altavoces potentes para banquete y cocktail, y sistemas completos para fiesta. Incluimos micrófonos inalámbricos para oficiante y novios. Consulta nuestro pack especial bodas."
       },
       {
-        question: "¿El técnico de sonido está incluido?",
+        question: "¿Puedo contratar un técnico de sonido?",
         answer: "En los packs Profesional y Premium sí está incluido un técnico especializado durante todo el evento. En el pack Básico, los altavoces son autoamplificados fáciles de usar, pero puedes añadir técnico por 150€ adicionales. El técnico gestiona volúmenes, ecualización y soluciona cualquier incidencia."
       },
       {
@@ -155,7 +155,7 @@ Trabajamos con estudios de sonido certificados para garantizar la mejor calidad 
       },
       {
         question: "¿El transporte de altavoces tiene coste extra?",
-        answer: "No, el transporte está incluido en Valencia capital y hasta 30km. Para distancias superiores: 30-50km +30€, 50-80km +60€. Incluye transporte de ida, montaje completo, calibración, desmontaje y recogida. Todo en el precio final sin sorpresas."
+        answer: "Lo habitual es que recojas el material en nuestro almacén de Valencia, así te ahorras el transporte. Si prefieres que te lo llevemos, la entrega es opcional y se calcula según la distancia y el volumen del pedido."
       },
       {
         question: "¿Qué marca de altavoces es mejor: JBL, QSC o Electro-Voice?",

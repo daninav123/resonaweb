@@ -4,18 +4,18 @@ import ServicePageTemplate from '../../components/services/ServicePageTemplate';
 const AlquilerIluminacionBodas = () => {
   const pageData = {
     title: "Iluminación Bodas Valencia | LED Ambiental | ReSona",
-    metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico incluido. Desde 150€. ☎️ 613 88 14 14",
+    metaDescription: "Iluminación para bodas en Valencia. Ambiental, arquitectónica, pista de baile. Técnico opcional. Desde 150€. ☎️ 613 88 14 14",
     keywords: "iluminación bodas valencia, luces boda, iluminación ambiental boda, bodas valencia, luces bodas valencia",
     canonicalUrl: "https://resonarent.com/servicios/alquiler-iluminacion-bodas",
     heroTitle: "Iluminación Profesional para Bodas en Valencia",
     heroSubtitle: "Focos LED RGB, Moving Heads, Efectos - Iluminación mágica para tu boda",
-    introduction: `La <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con más de 15 años de experiencia proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
+    introduction: `La <strong>iluminación para bodas en Valencia</strong> es fundamental para garantizar el éxito de cualquier evento en la Comunidad Valenciana. En ReSona Rent contamos con experiencia desde 2011 proporcionando servicios audiovisuales profesionales de máxima calidad en Valencia, Castellón y Alicante.
 
 Nuestro servicio de <strong>iluminación para bodas en Valencia</strong> está diseñado para cubrir desde eventos íntimos de 20 personas hasta grandes producciones de más de 5.000 asistentes. Trabajamos exclusivamente con equipamiento profesional de las marcas líderes del mercado: uplights LED, PAR LED RGBW, moving heads, proyectores gobo, garantizando rendimiento y fiabilidad máximos.
 
-Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos nuestros sistemas se entregan con técnico especializado incluido, quien se encarga de la instalación, configuración, operación durante el evento y desmontaje completo.
+Disponemos de equipos de última generación, perfectamente mantenidos y calibrados profesionalmente antes de cada evento. Todos los equipos salen revisados y probados, con el cableado y los soportes necesarios para que puedas montarlo tú mismo sin complicaciones. Si prefieres que nos encarguemos nosotros, la entrega, el montaje y el técnico son servicios opcionales que se presupuestan aparte.
 
-El servicio completo incluye transporte sin coste adicional en Valencia capital y hasta 30 kilómetros, montaje y desmontaje profesional, calibración técnica, asistencia técnica durante todo el evento, equipos de respaldo en los packs premium, y soporte telefónico 24/7.
+El alquiler incluye el material revisado, el cableado y los soportes necesarios, asesoramiento previo para elegir el equipo según tu aforo y tu espacio, y soporte telefónico durante el evento. La recogida y la devolución se hacen en nuestro almacén de Valencia; la entrega, el montaje y el técnico son opcionales y se presupuestan aparte.
 
 Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacienda</strong>, <strong>Mas de San Antonio</strong>, <strong>El Bohío</strong>, <strong>Viveros Municipales</strong>, <strong>Torre del Pi</strong>, <strong>Hotel Las Arenas</strong>, <strong>Casa Granero</strong>, fincas en Godella, Bétera, L'Eliana, Alboraya, y espacios únicos en toda la provincia. Si buscas un <a href="/bodas-valencia" class="text-primary-600 hover:underline font-semibold">servicio completo para bodas en Valencia</a>, también ofrecemos <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a> y <a href="/servicios/sonido-iluminacion-bodas-valencia" class="text-primary-600 hover:underline font-semibold">packs completos sonido + iluminación</a>.`,
    
@@ -33,7 +33,7 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
       {
         icon: "🚚",
         title: "Servicio Completo",
-        description: "Transporte, montaje y desmontaje incluidos"
+        description: "Recogida en almacén · entrega y montaje opcionales"
       },
       {
         icon: "🔒",
@@ -114,7 +114,7 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
         price: "desde 600€",
         features: [
           "Equipos profesionales completos",
-          "Técnico especializado incluido",
+          "Técnico opcional",
           "Transporte y montaje",
           "Equipos de backup",
           "Soporte completo"
@@ -138,23 +138,23 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
     faqs: [
       {
             question: "¿Qué incluye exactamente el servicio de iluminación para bodas en Valencia?",
-            answer: "Nuestro servicio completo de iluminación para bodas en Valencia incluye: equipamiento profesional de última generación perfectamente calibrado, técnico especializado con más de 10 años de experiencia (en packs Profesional y Premium), transporte sin coste adicional en Valencia capital y hasta 30km, montaje completo siguiendo plano del espacio y especificaciones del evento, configuración y calibración técnica personalizada, pruebas de sonido previas al evento, asistencia técnica durante todo el desarrollo del evento, equipos de respaldo incluidos en packs premium, desmontaje completo al finalizar, soporte telefónico 24/7 para emergencias, y seguro de responsabilidad civil de todos los equipos. Todo está incluido en el precio final sin sorpresas ni costes ocultos adicionales."
+            answer: "Nuestro servicio completo de iluminación para bodas en Valencia incluye: equipamiento profesional de última generación perfectamente calibrado, técnico especializado con experiencia desde 2011 (en packs Profesional y Premium), recogida en nuestro almacén de Valencia, y entrega, montaje y técnico como servicios opcionales que se presupuestan según la distancia y el volumen del material. "
       },
       {
             question: "¿Con cuánta antelación debo reservar el iluminación para bodas en Valencia?",
             answer: "El plazo de reserva depende de la temporada y disponibilidad. Para fechas entre semana, generalmente con 1-2 semanas de antelación es suficiente, aunque recomendamos consultar disponibilidad lo antes posible. Para fines de semana, especialmente en temporada alta (mayo a octubre), recomendamos reservar con 1-2 meses de antelación mínimo. Para eventos grandes como ceremonia o banquete que requieren producción compleja, lo ideal es contactar con 2-3 meses de antelación. Para fechas muy demandadas (Navidad, San Juan, Fallas, puentes festivos) recomendamos 3-4 meses. Puedes consultar disponibilidad en tiempo real llamando al 613 88 14 14 o vía WhatsApp, te respondemos en menos de 2 horas."
       },
       {
-            question: "¿El técnico especializado está incluido en el precio?",
-            answer: "Sí, en los packs Profesional y Premium el técnico especializado está totalmente incluido durante todo el evento. El técnico llega 2-3 horas antes para montaje y configuración, permanece durante todo el desarrollo del evento gestionando niveles, ecualizaciones y solucionando cualquier incidencia técnica, y se encarga del desmontaje completo al finalizar. En el pack Básico, los equipos son autoamplificados fáciles de operar con controles intuitivos, pero puedes añadir técnico especializado por 150€ adicionales si lo prefieres. Nuestros técnicos tienen formación específica en iluminacion profesional y más de 10 años de experiencia en eventos en Valencia, garantizando resultados profesionales impecables."
+            question: "¿Puedo contratar un técnico para el evento?",
+            answer: "El técnico no va incluido en el alquiler: el material se entrega listo para que lo montes tú, con su cableado y sus soportes. Si prefieres que se encargue alguien, podemos asignarte un técnico como servicio opcional. Cuéntanos el tipo de evento y el espacio y te lo presupuestamos aparte."
       },
       {
-            question: "¿El transporte y montaje tiene coste adicional?",
-            answer: "No, el transporte está completamente incluido en Valencia capital y hasta 30 kilómetros de radio sin ningún coste adicional. Para distancias superiores aplicamos suplemento: 30-50km +30€, 50-80km +60€, 80-120km +100€, más de 120km consultar presupuesto personalizado. El precio incluye: transporte de ida con furgoneta equipada, descarga y traslado de equipos al espacio del evento, montaje completo siguiendo especificaciones técnicas y plano del espacio, calibración y pruebas, desmontaje al finalizar el evento, recogida y transporte de vuelta. Todo en un precio cerrado final sin sorpresas. También ofrecemos opción de recogida en nuestro almacén en Valencia con 20% descuento si prefieres transportar tú mismo."
+            question: "¿Tengo que recoger el material o me lo lleváis?",
+            answer: "Lo habitual es que recojas el material en nuestro almacén de Valencia y lo devuelvas al terminar: así te ahorras el coste del transporte. Si prefieres que te lo llevemos, la entrega es un servicio opcional que se calcula según la distancia y el volumen del pedido. Dinos la dirección y la fecha y te cerramos el precio antes de reservar."
       },
       {
             question: "¿Qué pasa si hay algún fallo técnico durante el evento?",
-            answer: "La fiabilidad es nuestra máxima prioridad. Todos nuestros equipos pasan revisión técnica completa antes de cada evento y utilizamos exclusivamente marcas profesionales de máxima confianza. En los packs Profesional y Premium incluimos siempre equipos de respaldo (backup completo de elementos críticos) sin coste adicional. En el improbable caso de fallo técnico, el técnico presente soluciona el 95% de incidencias en menos de 5 minutos. Para el 5% restante, disponemos de técnicos de guardia 24/7 con furgoneta equipada para reemplazo urgente, llegando en menos de 60 minutos en Valencia capital. En 15 años de trayectoria y más de 2.000 eventos realizados, nunca hemos tenido que cancelar o suspender un evento por fallo técnico gracias a nuestros sistemas redundantes y protocolos de contingencia."
+            answer: "La fiabilidad es nuestra máxima prioridad. Todos nuestros equipos pasan revisión técnica completa antes de cada evento y utilizamos exclusivamente marcas profesionales de máxima confianza. En los packs Profesional y Premium puedes añadir equipo de respaldo al alquiler. Si surge cualquier problema durante el evento, tienes soporte telefónico directo con nosotros para resolverlo, y si hace falta sustituir material te lo cambiamos en el almacén. En 15 años de trayectoria y multitud de eventos realizados, nunca hemos tenido que cancelar o suspender un evento por fallo técnico gracias a nuestros sistemas redundantes y protocolos de contingencia."
       },
       {
             question: "¿Trabajáis con todos los tipos de eventos en Valencia?",
@@ -202,7 +202,7 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
       },
       {
             question: "¿Podéis proyectar nuestros nombres o iniciales en la boda?",
-            answer: "Sí, ofrecemos proyección de nombres/iniciales personalizada con proyector gobo. Proyectamos en paredes, suelo, techo o cualquier superficie lisa. Diseñamos el gobo (plantilla metálica) con vuestros nombres, iniciales, fecha de boda, o logo personalizado. El proyector puede cambiar de color y rotar. Muy popular proyectar en: pared detrás de la mesa presidencial, suelo de la pista de baile, entrada al banquete, o fachada exterior. El diseño del gobo está incluido, solo pagas la fabricación del gobo físico (80-120€ según complejidad). Puedes conservar el gobo de recuerdo. El proyector y técnico para programarlo están incluidos en nuestros packs. Envíanos vuestros nombres/diseño y preparamos una preview antes de la boda."
+            answer: "Sí, ofrecemos proyección de nombres/iniciales personalizada con proyector gobo. Proyectamos en paredes, suelo, techo o cualquier superficie lisa. Diseñamos el gobo (plantilla metálica) con vuestros nombres, iniciales, fecha de boda, o logo personalizado. El proyector puede cambiar de color y rotar. Muy popular proyectar en: pared detrás de la mesa presidencial, suelo de la pista de baile, entrada al banquete, o fachada exterior. El diseño del gobo está incluido, solo pagas la fabricación del gobo físico (80-120€ según complejidad). Puedes conservar el gobo de recuerdo. El proyector se alquila aparte y podemos programarlo nosotros como servicio opcional. Envíanos vuestros nombres/diseño y preparamos una preview antes de la boda."
       },
       {
             question: "¿Qué diferencia hay entre iluminación LED y iluminación tradicional?",

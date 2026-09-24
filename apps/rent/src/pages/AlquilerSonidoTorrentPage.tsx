@@ -8,11 +8,11 @@ const AlquilerSonidoTorrentPage = () => {
   const faqData = [
     {
       question: '¿Cuánto cuesta alquilar sonido en Torrent?',
-      answer: 'Los precios son los mismos que en Valencia capital: altavoces desde 35€/día, paquetes completos desde 150€/día. El transporte a Torrent está incluido sin coste adicional. Ofrecemos presupuestos personalizados según el tipo de evento y necesidades específicas.',
+      answer: 'Los precios son los mismos que en Valencia capital: altavoces desde 35€/día, paquetes completos desde 150€/día. La recogida se hace en nuestro almacén de Valencia; la entrega en Torrent es opcional y se presupuesta aparte. Ofrecemos presupuestos personalizados según el tipo de evento y necesidades específicas.',
     },
     {
       question: '¿Hacéis entregas en todos los barrios de Torrent?',
-      answer: 'Sí, realizamos entregas en todo Torrent: El Vedat, Sector Albuixarres, L\'Alter, Monte Vedat, Parc Central, y todas las zonas residenciales. También cubrimos pedanías cercanas. El servicio de transporte e instalación está incluido en nuestras tarifas.',
+      answer: 'Sí, realizamos entregas en todo Torrent: El Vedat, Sector Albuixarres, L\'Alter, Monte Vedat, Parc Central, y todas las zonas residenciales. También cubrimos pedanías cercanas. El transporte y la instalación son servicios opcionales que se presupuestan aparte.',
     },
     {
       question: '¿Trabajáis en salones de eventos de Torrent?',
@@ -72,7 +72,7 @@ const AlquilerSonidoTorrentPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
               >
                 <Phone className="w-5 h-5" />
                 613 88 14 14
@@ -93,7 +93,7 @@ const AlquilerSonidoTorrentPage = () => {
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-4">
                 <strong>ReSona Rent</strong> ofrece servicio de <strong>alquiler de equipos de sonido profesional en Torrent</strong>, 
-                uno de los municipios más importantes del área metropolitana de Valencia. Con más de 10 años de experiencia en el sector 
+                uno de los municipios más importantes del área metropolitana de Valencia. Con experiencia desde 2011 en el sector 
                 audiovisual, ponemos a tu disposición altavoces, subwoofers, mesas de mezclas, microfonía inalámbrica y equipos completos 
                 para todo tipo de eventos en Torrent y sus barrios: El Vedat, Sector Albuixarres, L'Alter, Monte Vedat y Parc Central.
               </p>
@@ -212,7 +212,7 @@ const AlquilerSonidoTorrentPage = () => {
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
                   <span className="text-gray-700">
-                    <strong>Conocimiento Local:</strong> Hemos trabajado en más de 100 eventos en Torrent. 
+                    <strong>Conocimiento Local:</strong> Hemos trabajado en eventos de todo tipo en Torrent. 
                     Conocemos las mejores ubicaciones para equipos en cada espacio.
                   </span>
                 </li>
@@ -316,7 +316,7 @@ const AlquilerSonidoTorrentPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
               >
                 <Phone className="w-5 h-5" />
                 613 88 14 14

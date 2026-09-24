@@ -8,7 +8,7 @@ const AlquilerAltavocesValenciaPage = () => {
   const faqData = [
     {
       question: '¿Cuánto cuesta alquilar altavoces en Valencia?',
-      answer: 'El alquiler de altavoces en Valencia desde 35€/día por pareja de altavoces activos de 400W. Para eventos medianos (100-200 personas) desde 120€/día, y para eventos grandes (300-500 personas) desde 250€/día. Todos los precios incluyen transporte en Valencia capital y área metropolitana. Ofrecemos descuentos para alquileres de fin de semana completo y eventos de varios días.',
+      answer: 'El alquiler de altavoces en Valencia desde 35€/día por pareja de altavoces activos de 400W. Para eventos medianos (100-200 personas) desde 120€/día, y para eventos grandes (300-500 personas) desde 250€/día. Los precios son de recogida en nuestro almacén de Valencia; la entrega es opcional y se presupuesta aparte. Ofrecemos descuentos para alquileres de fin de semana completo y eventos de varios días.',
     },
     {
       question: '¿Qué tipos de altavoces tienen disponibles para alquilar?',
@@ -16,7 +16,7 @@ const AlquilerAltavocesValenciaPage = () => {
     },
     {
       question: '¿Los altavoces incluyen cables y soportes?',
-      answer: 'Sí, todos nuestros alquileres de altavoces incluyen: cables XLR profesionales de la longitud necesaria, soportes/trípodes regulables en altura (hasta 2.5m), protección de cables si es necesario, y manual de conexión rápida. También incluimos el transporte, montaje y desmontaje en Valencia capital sin coste adicional.',
+      answer: 'Sí, todos nuestros alquileres de altavoces incluyen: cables XLR profesionales de la longitud necesaria, soportes/trípodes regulables en altura (hasta 2.5m), protección de cables si es necesario, y manual de conexión rápida. La recogida se hace en nuestro almacén; si necesitas entrega o montaje, te lo presupuestamos aparte.',
     },
     {
       question: '¿Entregan los altavoces a domicilio en Valencia?',
@@ -32,7 +32,7 @@ const AlquilerAltavocesValenciaPage = () => {
     },
     {
       question: '¿Alquiláis altavoces para bodas en Valencia?',
-      answer: 'Sí, somos especialistas en alquiler de altavoces para bodas en Valencia. Ofrecemos sistemas completos que incluyen altavoces para ceremonia (discretos y potentes), equipos para cocktail/aperitivo, y sistema profesional para el banquete y fiesta. Trabajamos con más de 150 bodas al año en Valencia. Incluimos asesoramiento, montaje, técnico durante el evento si lo necesitas, y recogida. Paquetes desde 250€.',
+      answer: 'Sí, somos especialistas en alquiler de altavoces para bodas en Valencia. Ofrecemos sistemas completos que incluyen altavoces para ceremonia (discretos y potentes), equipos para cocktail/aperitivo, y sistema profesional para el banquete y fiesta. Trabajamos con bodas por toda la provincia en Valencia. Incluimos asesoramiento, montaje, técnico durante el evento si lo necesitas, y recogida. Paquetes desde 250€.',
     },
     {
       question: '¿Los altavoces están asegurados?',
@@ -77,7 +77,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </div>
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Truck className="w-5 h-5" />
-                <span>Montaje incluido</span>
+                <span>Recogida en almacén</span>
               </div>
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Shield className="w-5 h-5" />
@@ -99,7 +99,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
               >
                 <Phone className="w-5 h-5" />
                 Llamar: 613 88 14 14
@@ -119,7 +119,7 @@ const AlquilerAltavocesValenciaPage = () => {
             
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 leading-relaxed mb-4">
-                En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de altavoces profesionales en Valencia</strong> desde hace más de 10 años. Contamos con el equipamiento más avanzado del mercado: <strong>altavoces activos JBL</strong> (serie EON, PRX, SRX), <strong>QSC K-Series y CP-Series</strong>, <strong>Yamaha DXR y DBR</strong>, y <strong>Mackie Thump</strong>, todos con potencias desde 400W hasta 2000W por unidad.
+                En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de altavoces profesionales en Valencia</strong> desde hace experiencia desde 2011. Contamos con el equipamiento más avanzado del mercado: <strong>altavoces activos JBL</strong> (serie EON, PRX, SRX), <strong>QSC K-Series y CP-Series</strong>, <strong>Yamaha DXR y DBR</strong>, y <strong>Mackie Thump</strong>, todos con potencias desde 400W hasta 2000W por unidad.
               </p>
 
               <p className="text-gray-700 leading-relaxed mb-6">
@@ -159,7 +159,7 @@ const AlquilerAltavocesValenciaPage = () => {
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Todo Incluido</h4>
+                      <h4 className="font-semibold text-gray-900 mb-2">Recogida en Almacén</h4>
                       <p className="text-gray-700 text-sm">
                         Cables XLR profesionales, soportes regulables, protección de cables, y manual de uso. También ofrecemos servicio de instalación profesional.
                       </p>
@@ -329,7 +329,7 @@ const AlquilerAltavocesValenciaPage = () => {
               </a>
               <Link
                 to="/contacto"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
               >
                 Pedir Presupuesto
                 <ArrowRight className="w-5 h-5" />

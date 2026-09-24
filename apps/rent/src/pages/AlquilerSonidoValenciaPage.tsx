@@ -12,7 +12,7 @@ const AlquilerSonidoValenciaPage = () => {
     },
     {
       question: '¿Entregan el equipo de sonido a domicilio en Valencia?',
-      answer: 'Sí, realizamos entregas en toda Valencia capital y municipios cercanos como Mislata, Paterna, Torrent, Burjassot, Manises y Xirivella. El transporte está incluido en nuestras tarifas. También ofrecemos servicio técnico de instalación y montaje profesional.',
+      answer: 'Sí, realizamos entregas en toda Valencia capital y municipios cercanos como Mislata, Paterna, Torrent, Burjassot, Manises y Xirivella. La recogida se hace en nuestro almacén; la entrega es opcional. También ofrecemos servicio técnico de instalación y montaje profesional.',
     },
     {
       question: '¿Qué equipos de sonido tienen disponibles?',
@@ -20,7 +20,7 @@ const AlquilerSonidoValenciaPage = () => {
     },
     {
       question: '¿Necesito técnico de sonido para mi evento?',
-      answer: 'Depende de la complejidad del evento. Para eventos simples (presentaciones, pequeñas fiestas), el equipo es plug-and-play. Para bodas, conciertos o eventos corporativos, recomendamos nuestro servicio técnico profesional. Nuestros técnicos tienen más de 10 años de experiencia en eventos en Valencia.',
+      answer: 'Depende de la complejidad del evento. Para eventos simples (presentaciones, pequeñas fiestas), el equipo es plug-and-play. Para bodas, conciertos o eventos corporativos, recomendamos nuestro servicio técnico profesional. Nuestros técnicos tienen experiencia desde 2011 en eventos en Valencia.',
     },
     {
       question: '¿Cuál es el plazo mínimo de reserva?',
@@ -44,7 +44,7 @@ const AlquilerSonidoValenciaPage = () => {
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title="Alquiler Sonido Valencia desde 35€ | Bodas y Eventos"
-        description="✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación incluida. 15 años de experiencia. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414"
+        description="✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación incluida. experiencia desde 2011. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414"
         keywords="alquiler sonido valencia, alquiler altavoces valencia, alquiler equipos sonido valencia, sonido profesional valencia, alquiler PA valencia, sistema sonido eventos valencia, alquiler subwoofer valencia"
         canonicalUrl="https://resonarent.com/alquiler-sonido-valencia"
         schema={[getLocalBusinessSchema(), getFAQSchema(faqData)]}
@@ -93,7 +93,7 @@ const AlquilerSonidoValenciaPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2"
               >
                 <Phone className="w-5 h-5" />
                 Llamar: 613 88 14 14
@@ -114,7 +114,7 @@ const AlquilerSonidoValenciaPage = () => {
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-4">
                 <strong>ReSona Rent</strong> es tu empresa de confianza para el <strong>alquiler de equipos de sonido profesional en Valencia</strong>. 
-                Con más de 10 años de experiencia en el sector audiovisual, ofrecemos soluciones completas de audio para todo tipo de eventos: 
+                Con experiencia desde 2011 en el sector audiovisual, ofrecemos soluciones completas de audio para todo tipo de eventos: 
                 bodas, conciertos, eventos corporativos, fiestas privadas, conferencias y presentaciones.
               </p>
 
@@ -202,7 +202,7 @@ const AlquilerSonidoValenciaPage = () => {
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
                   <span className="text-gray-700">
                     <strong>Técnicos Especializados:</strong> Ofrecemos servicio de instalación, montaje y operación. 
-                    Formados en más de 500 eventos.
+                    Formados en multitud de eventos.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -288,7 +288,7 @@ const AlquilerSonidoValenciaPage = () => {
               </Link>
               <a
                 href="tel:+34613881414"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
+                className="bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors inline-flex items-center gap-2 border-2 border-white"
               >
                 <Phone className="w-5 h-5" />
                 Llamar Ahora
