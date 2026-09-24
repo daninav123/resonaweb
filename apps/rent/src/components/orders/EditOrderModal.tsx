@@ -115,7 +115,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-ink-800 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between p-6 border-b">
           <h2 className="text-2xl font-bold">Editar Pedido</h2>
           <button onClick={onClose}><X className="w-6 h-6" /></button>
@@ -124,12 +124,12 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
         <div className="p-6 space-y-4">
           {/* Botones de acciones */}
           <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => setShow(!show)} className="p-3 border-2 border-dashed border-green-300 rounded-lg text-green-600 hover:bg-green-50 flex items-center justify-center gap-2">
+            <button onClick={() => setShow(!show)} className="p-3 border-2 border-dashed border-green-300 rounded-lg text-emerald-400 hover:bg-green-50 flex items-center justify-center gap-2">
               <Plus className="w-5 h-5" /> Añadir Productos
             </button>
             
             {cartItems.length > 0 && (
-              <button onClick={() => setShowCart(!showCart)} className="p-3 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-2">
+              <button onClick={() => setShowCart(!showCart)} className="p-3 border-2 border-dashed border-blue-300 rounded-lg text-resona-light hover:bg-blue-50 flex items-center justify-center gap-2">
                 <ShoppingCart className="w-5 h-5" /> Desde Carrito ({cartItems.length})
               </button>
             )}
@@ -137,20 +137,20 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
 
           {/* Items del Carrito */}
           {showCart && cartItems.length > 0 && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="font-semibold mb-3 text-blue-900">Productos en tu carrito:</h3>
+            <div className="p-4 bg-resona/10 border border-blue-200 rounded-lg">
+              <h3 className="font-semibold mb-3 text-cream">Productos en tu carrito:</h3>
               <div className="space-y-2">
                 {cartItems.map((item: any) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3 p-3 bg-white border border-blue-200 rounded-lg">
+                  <div key={item.id} className="flex items-center justify-between gap-3 p-3 bg-ink-800 border border-blue-200 rounded-lg">
                     <div className="flex-1">
                       <p className="font-medium">{item.product.name}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-cream/65">
                         Cantidad: {item.quantity} | {formatPrice(Number(item.product.pricePerDay || item.product.basePrice || 0))}/día
                       </p>
                     </div>
                     <button
                       onClick={() => handleAddFromCart(item)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                      className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark flex items-center gap-2"
                     >
                       <Plus className="w-4 h-4" />
                       Añadir
@@ -162,19 +162,19 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
           )}
 
           {show && (
-            <div className="p-4 bg-gray-50 border rounded-lg">
+            <div className="p-4 bg-ink-800 border rounded-lg">
               <div className="relative mb-3">
-                <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-3 w-5 h-5 text-cream/45" />
                 <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar..." className="w-full pl-10 pr-4 py-2 border rounded-lg" />
               </div>
               <div className="max-h-60 overflow-y-auto space-y-2">
                 {products.map((p: any) => (
-                  <div key={p.id} onClick={() => handleAdd(p)} className="flex items-center justify-between gap-2 p-3 bg-white border rounded-lg hover:border-green-500 cursor-pointer">
+                  <div key={p.id} onClick={() => handleAdd(p)} className="flex items-center justify-between gap-2 p-3 bg-ink-800 border rounded-lg hover:border-green-500 cursor-pointer">
                     <div className="flex-1">
                       <p className="font-medium">{p.name}</p>
-                      <p className="text-sm text-gray-600">{formatPrice(Number(p.pricePerDay || p.basePrice || 0))}/día</p>
+                      <p className="text-sm text-cream/65">{formatPrice(Number(p.pricePerDay || p.basePrice || 0))}/día</p>
                     </div>
-                    <Plus className="w-5 h-5 text-green-600" />
+                    <Plus className="w-5 h-5 text-emerald-400" />
                   </div>
                 ))}
               </div>
@@ -183,15 +183,15 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
 
           {add.length > 0 && (
             <div>
-              <h3 className="font-semibold mb-2 text-green-600">A añadir:</h3>
+              <h3 className="font-semibold mb-2 text-emerald-400">A añadir:</h3>
               {add.map((i, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-green-50 border border-green-300 rounded-lg mb-2">
+                <div key={idx} className="flex items-center gap-3 p-3 bg-emerald-500/10 border border-green-300 rounded-lg mb-2">
                   <div className="flex-1">
                     <p className="font-medium">{i.product.name}</p>
                   </div>
                   <input type="number" min="1" value={i.quantity} onChange={(e) => updateQty(idx, +e.target.value)} className="w-20 px-2 py-1 border rounded text-center" />
                   <p className="font-semibold w-24 text-right">+{formatPrice(i.totalPrice)}</p>
-                  <button onClick={() => setAdd(add.filter((_, i) => i !== idx))} className="p-2 bg-red-100 text-red-600 rounded-lg"><X className="w-4 h-4" /></button>
+                  <button onClick={() => setAdd(add.filter((_, i) => i !== idx))} className="p-2 bg-red-500/15 text-red-600 rounded-lg"><X className="w-4 h-4" /></button>
                 </div>
               ))}
             </div>
@@ -199,19 +199,19 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
 
           <h3 className="font-semibold">Productos actuales:</h3>
           {currentItems.map((i) => (
-            <div key={i.id} className={`flex justify-between p-4 border rounded-lg ${remove.includes(i.id) ? 'bg-red-50 border-red-300' : 'bg-white'}`}>
+            <div key={i.id} className={`flex justify-between p-4 border rounded-lg ${remove.includes(i.id) ? 'bg-red-500/10 border-red-300' : 'bg-ink-800'}`}>
               <div>
                 <p className="font-medium">{i.product?.name}</p>
-                <p className="text-sm text-gray-600">Cant: {i.quantity} | {formatPrice(Number(i.totalPrice))}</p>
+                <p className="text-sm text-cream/65">Cant: {i.quantity} | {formatPrice(Number(i.totalPrice))}</p>
               </div>
-              <button onClick={() => setRemove(remove.includes(i.id) ? remove.filter(x => x !== i.id) : [...remove, i.id])} className={`p-2 rounded-lg ${remove.includes(i.id) ? 'bg-red-600 text-white' : 'bg-gray-100 hover:bg-red-100'}`}>
+              <button onClick={() => setRemove(remove.includes(i.id) ? remove.filter(x => x !== i.id) : [...remove, i.id])} className={`p-2 rounded-lg ${remove.includes(i.id) ? 'bg-red-600 text-white' : 'bg-ink-700 hover:bg-red-100'}`}>
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
           ))}
 
           {(add.length > 0 || remove.length > 0) && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="p-4 bg-resona/10 border border-blue-200 rounded-lg">
               <p className="font-semibold">Resumen:</p>
               {add.length > 0 && <p className="text-sm">✅ {add.length} producto(s) a añadir</p>}
               {remove.length > 0 && <p className="text-sm">❌ {remove.length} producto(s) a eliminar</p>}
@@ -224,7 +224,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
 
         <div className="flex justify-end gap-3 p-6 border-t">
           <button onClick={onClose} className="px-4 py-2 border rounded-lg" disabled={loading}>Cancelar</button>
-          <button onClick={submit} disabled={loading || (!add.length && !remove.length)} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+          <button onClick={submit} disabled={loading || (!add.length && !remove.length)} className="px-6 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark disabled:opacity-50">
             {loading ? 'Procesando...' : 'Confirmar'}
           </button>
         </div>

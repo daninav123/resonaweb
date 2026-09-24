@@ -215,7 +215,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
             {/* Alerta VIP */}
             {user && user.userLevel && user.userLevel !== 'STANDARD' && (
               <div className="bg-amber-500/10 border-l-4 border-yellow-500 p-2 rounded-r">
-                <p className="text-xs font-bold text-yellow-900 flex items-center gap-1">
+                <p className="text-xs font-bold text-amber-300 flex items-center gap-1">
                   {user.userLevel === 'VIP' ? (
                     <><Star className="w-3 h-3" /> ⭐ VIP</>  
                   ) : (

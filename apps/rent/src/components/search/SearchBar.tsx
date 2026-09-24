@@ -84,7 +84,7 @@ export const SearchBar = ({
     <div ref={searchRef} className={`relative ${className}`}>
       <form onSubmit={handleSearch} className="relative">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cream/45 w-5 h-5" />
           <input
             type="text"
             value={query}
@@ -94,13 +94,13 @@ export const SearchBar = ({
             }}
             onFocus={() => query.length >= 2 && setShowResults(true)}
             placeholder={placeholder}
-            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+            className="w-full pl-10 pr-10 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
           />
           {query && (
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-cream/45 hover:text-gray-600"
             >
               <X className="w-5 h-5" />
             </button>
@@ -110,11 +110,11 @@ export const SearchBar = ({
 
       {/* Results Dropdown */}
       {showResults && query.length >= 2 && (
-        <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-ink-800 rounded-lg shadow-lg border border-cream/10 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 text-center">
               <Loader2 className="w-6 h-6 animate-spin mx-auto text-resona-light" />
-              <p className="text-sm text-gray-500 mt-2">Buscando...</p>
+              <p className="text-sm text-cream/50 mt-2">Buscando...</p>
             </div>
           ) : results && results.length > 0 ? (
             <>
@@ -122,7 +122,7 @@ export const SearchBar = ({
                 <button
                   key={product.id}
                   onClick={() => handleResultClick(product.slug)}
-                  className="w-full p-3 hover:bg-gray-50 flex items-center gap-3 text-left border-b last:border-b-0 transition-colors"
+                  className="w-full p-3 hover:bg-white/5 flex items-center gap-3 text-left border-b last:border-b-0 transition-colors"
                 >
                   <img
                     src={product.imageUrl || '/placeholder-product.jpg'}
@@ -130,18 +130,18 @@ export const SearchBar = ({
                     className="w-12 h-12 object-cover rounded"
                   />
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm">{product.name}</p>
-                    <p className="text-xs text-gray-500">{product.category?.name}</p>
+                    <p className="font-medium text-cream text-sm">{product.name}</p>
+                    <p className="text-xs text-cream/50">{product.category?.name}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-resona-light">
                       {formatPrice(Number(product.price))}
-                      <span className="text-xs text-gray-500">/día</span>
+                      <span className="text-xs text-cream/50">/día</span>
                     </p>
                   </div>
                 </button>
               ))}
-              <div className="p-2 bg-gray-50 border-t">
+              <div className="p-2 bg-ink-800 border-t">
                 <button
                   onClick={handleSearch}
                   className="w-full py-2 text-sm text-resona-light hover:text-resona-dark font-medium text-center"
@@ -153,8 +153,8 @@ export const SearchBar = ({
           ) : (
             <div className="p-4 text-center">
               <Search className="w-8 h-8 mx-auto text-gray-300 mb-2" />
-              <p className="text-sm text-gray-500">No se encontraron resultados</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-sm text-cream/50">No se encontraron resultados</p>
+              <p className="text-xs text-cream/45 mt-1">
                 Prueba con otros términos de búsqueda
               </p>
             </div>

@@ -83,7 +83,7 @@ const queryClient = new QueryClient({
 
 function PageFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center text-gray-400">
+    <div className="flex min-h-screen items-center justify-center text-cream/45">
       Cargando…
     </div>
   );

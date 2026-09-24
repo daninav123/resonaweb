@@ -48,7 +48,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   const imageUrl = post.featuredImage ? getImageUrl(post.featuredImage) : null;
 
   return (
-    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <article className="bg-ink-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Imagen destacada */}
       {imageUrl ? (
         <div className="aspect-video overflow-hidden">
@@ -85,18 +85,18 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         {/* Título */}
         <Link to={`/blog/${post.slug}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-resona-light transition-colors line-clamp-2">
+          <h2 className="text-2xl font-bold text-cream mb-3 hover:text-resona-light transition-colors line-clamp-2">
             {post.title}
           </h2>
         </Link>
 
         {/* Extracto */}
-        <p className="text-gray-600 mb-4 line-clamp-3">
+        <p className="text-cream/65 mb-4 line-clamp-3">
           {post.excerpt}
         </p>
 
         {/* Metadatos */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-cream/50">
           {post.publishedAt && (
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />

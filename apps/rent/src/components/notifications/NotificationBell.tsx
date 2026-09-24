@@ -75,7 +75,7 @@ const NotificationBell = () => {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
+        className="relative p-2 text-cream/65 hover:text-gray-900 transition-colors"
       >
         <Bell className="w-6 h-6" />
         {unreadCount > 0 && (
@@ -94,7 +94,7 @@ const NotificationBell = () => {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+          <div className="absolute right-0 mt-2 w-96 bg-ink-800 rounded-lg shadow-xl border border-cream/10 z-50">
             <NotificationList
               notifications={notifications}
               loading={loading}

@@ -171,7 +171,7 @@ const ManualPaymentInstructionsPage = () => {
 
           {/* Important Notes */}
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
-            <h4 className="font-semibold text-yellow-900 mb-2">⚠️ Importante</h4>
+            <h4 className="font-semibold text-amber-300 mb-2">⚠️ Importante</h4>
             <ul className="text-sm text-amber-300 space-y-1">
               <li>• Realiza el pago en las próximas <strong>24 horas</strong></li>
               <li>• Incluye siempre la referencia: <strong>PEDIDO-{order?.orderNumber}</strong></li>

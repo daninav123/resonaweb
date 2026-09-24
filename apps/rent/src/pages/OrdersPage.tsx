@@ -23,10 +23,10 @@ const OrdersPage = () => {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
-      PENDING: { bg: 'bg-yellow-100', text: 'text-amber-300', label: 'Pendiente' },
+      PENDING: { bg: 'bg-amber-500/15', text: 'text-amber-300', label: 'Pendiente' },
       IN_PROGRESS: { bg: 'bg-resona/15', text: 'text-resona-light', label: 'En Proceso' },
       COMPLETED: { bg: 'bg-emerald-500/15', text: 'text-emerald-300', label: 'Completado' },
-      CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
+      CANCELLED: { bg: 'bg-red-500/15', text: 'text-red-300', label: 'Cancelado' },
     };
     return badges[status] || { bg: 'bg-ink-800', text: 'text-cream/90', label: status };
   };
@@ -192,7 +192,7 @@ const OrdersPage = () => {
                         <FileText className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                         <div className="text-sm">
                           <p className="font-semibold text-orange-900 mb-1">Recogida en tienda</p>
-                          <p className="text-orange-800">
+                          <p className="text-amber-300">
                             Recuerda traer tu DNI y la factura descargada. En tienda se cobrará el resto del importe y la fianza.
                           </p>
                         </div>

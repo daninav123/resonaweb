@@ -181,7 +181,7 @@ const AlquilerSonidoTorrentPage = () => {
                   </p>
                 </div>
 
-                <div className="rounded-sm bg-white/5 p-4">
+                <div className="rounded-sm bg-ink-800/5 p-4">
                   <h4 className="mb-2 font-bold text-cream">Conciertos y festivales</h4>
                   <p className="text-sm text-cream/75">
                     Fiestas patronales de Torrent, conciertos en Parc Central, eventos culturales 

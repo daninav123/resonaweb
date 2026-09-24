@@ -172,7 +172,7 @@ const AccountPage = () => {
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                       />
                     </div>
                     
@@ -185,7 +185,7 @@ const AccountPage = () => {
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                       />
                     </div>
                     
@@ -198,7 +198,7 @@ const AccountPage = () => {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                       />
                     </div>
                     
@@ -211,7 +211,7 @@ const AccountPage = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                         placeholder="+34 600 000 000"
                       />
                     </div>
@@ -225,7 +225,7 @@ const AccountPage = () => {
                         value={formData.birthDate}
                         onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                       />
                     </div>
                     
@@ -237,7 +237,7 @@ const AccountPage = () => {
                         value={formData.country}
                         onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                        className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                       >
                         <option>España</option>
                         <option>Portugal</option>
@@ -259,7 +259,7 @@ const AccountPage = () => {
                           value={formData.address}
                           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                           disabled={!isEditing}
-                          className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                          className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                           placeholder="Calle, número, piso..."
                         />
                       </div>
@@ -273,7 +273,7 @@ const AccountPage = () => {
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                           disabled={!isEditing}
-                          className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                          className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                         />
                       </div>
                       
@@ -286,7 +286,7 @@ const AccountPage = () => {
                           value={formData.zipCode}
                           onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
                           disabled={!isEditing}
-                          className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-50"
+                          className="w-full px-4 py-2 border rounded-lg disabled:bg-white/5"
                         />
                       </div>
                     </div>

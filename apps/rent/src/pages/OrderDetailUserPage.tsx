@@ -136,7 +136,7 @@ const OrderDetailUserPage = () => {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-red-500/10 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">No se encontró el pedido</p>
+          <p className="text-red-300">No se encontró el pedido</p>
         </div>
       </div>
     );
@@ -144,10 +144,10 @@ const OrderDetailUserPage = () => {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
-      PENDING: { bg: 'bg-yellow-100', text: 'text-amber-300', label: 'Pendiente' },
+      PENDING: { bg: 'bg-amber-500/15', text: 'text-amber-300', label: 'Pendiente' },
       IN_PROGRESS: { bg: 'bg-resona/15', text: 'text-resona-light', label: 'En Proceso' },
       COMPLETED: { bg: 'bg-emerald-500/15', text: 'text-emerald-300', label: 'Completado' },
-      CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
+      CANCELLED: { bg: 'bg-red-500/15', text: 'text-red-300', label: 'Cancelado' },
     };
     return badges[status] || { bg: 'bg-ink-800', text: 'text-cream/90', label: status };
   };
@@ -381,7 +381,7 @@ const OrderDetailUserPage = () => {
                       </div>
                     )}
                     {order.depositStatus === 'PARTIALLY_RETAINED' && (
-                      <div className="text-sm text-orange-800">
+                      <div className="text-sm text-amber-300">
                         <p className="font-medium mb-1">⚠️ Fianza Parcialmente Retenida</p>
                         {order.depositRetainedAmount > 0 && (
                           <>

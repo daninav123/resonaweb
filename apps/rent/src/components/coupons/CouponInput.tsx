@@ -73,7 +73,7 @@ export const CouponInput = ({
         <div className="flex items-center gap-2">
           <CheckCircle className="w-5 h-5 text-emerald-400" />
           <div>
-            <p className="text-sm font-medium text-green-900">Cupón aplicado</p>
+            <p className="text-sm font-medium text-emerald-300">Cupón aplicado</p>
             <p className="text-xs text-emerald-400">{appliedCoupon}</p>
           </div>
         </div>

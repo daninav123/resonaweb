@@ -86,11 +86,11 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-ink-800 rounded-lg shadow p-6">
       <div className="flex items-center gap-2 mb-4">
         <MessageSquare className="w-5 h-5 text-resona-light" />
         <h3 className="text-lg font-semibold">Notas y Comentarios</h3>
-        <span className="text-sm text-gray-500">({notes.length})</span>
+        <span className="text-sm text-cream/50">({notes.length})</span>
       </div>
 
       {/* Form para nueva nota */}
@@ -99,13 +99,13 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
           placeholder="Escribe una nota o comentario..."
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-resona focus:border-transparent"
+          className="w-full border border-cream/15 rounded-lg p-3 focus:ring-2 focus:ring-resona focus:border-transparent"
           rows={3}
         />
         
         <div className="flex items-center justify-between mt-2">
           {isAdmin && (
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-sm text-cream/65">
               <input
                 type="checkbox"
                 checked={isInternal}
@@ -131,20 +131,20 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
       {/* Lista de notas */}
       <div className="space-y-4">
         {loading ? (
-          <p className="text-center text-gray-500">Cargando notas...</p>
+          <p className="text-center text-cream/50">Cargando notas...</p>
         ) : notes.length === 0 ? (
-          <p className="text-center text-gray-500">No hay notas todavía</p>
+          <p className="text-center text-cream/50">No hay notas todavía</p>
         ) : (
           notes.map((note) => (
             <div
               key={note.id}
               className={`border rounded-lg p-4 ${
-                note.isInternal ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'
+                note.isInternal ? 'bg-amber-500/10 border-yellow-200' : 'bg-ink-800 border-cream/10'
               }`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-gray-400" />
+                  <User className="w-4 h-4 text-cream/45" />
                   <span className="font-medium">
                     {note.user.firstName} {note.user.lastName}
                   </span>
@@ -160,7 +160,7 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-cream/50">
                     {moment(note.createdAt).fromNow()}
                   </span>
                   {isAdmin && (
@@ -170,13 +170,13 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                           setEditingId(note.id);
                           setEditContent(note.content);
                         }}
-                        className="text-gray-400 hover:text-resona-light"
+                        className="text-cream/45 hover:text-resona-light"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(note.id)}
-                        className="text-gray-400 hover:text-red-600"
+                        className="text-cream/45 hover:text-red-600"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -190,7 +190,7 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                   <textarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full border border-gray-300 rounded p-2 mb-2"
+                    className="w-full border border-cream/15 rounded p-2 mb-2"
                     rows={3}
                   />
                   <div className="flex gap-2">
@@ -205,14 +205,14 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                         setEditingId(null);
                         setEditContent('');
                       }}
-                      className="bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm"
+                      className="bg-gray-300 text-cream/75 px-3 py-1 rounded text-sm"
                     >
                       Cancelar
                     </button>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-700 whitespace-pre-wrap">{note.content}</p>
+                <p className="text-cream/75 whitespace-pre-wrap">{note.content}</p>
               )}
             </div>
           ))

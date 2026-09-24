@@ -148,7 +148,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
         );
       case 'PENDING':
         return (
-          <span className="flex items-center gap-1 px-3 py-1 bg-yellow-100 text-amber-400 rounded-full text-sm font-medium">
+          <span className="flex items-center gap-1 px-3 py-1 bg-amber-500/15 text-amber-400 rounded-full text-sm font-medium">
             <Clock className="w-4 h-4" />
             Pendiente
           </span>

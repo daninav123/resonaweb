@@ -126,7 +126,7 @@ const PaymentTokenPage = () => {
             <div className="ml-4 border-l-2 border-dashed border-cream/10 h-4"></div>
 
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-cream/75 text-sm font-bold">3</span>
               </div>
               <div className="flex-1">

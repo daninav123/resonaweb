@@ -80,12 +80,12 @@ export const FilterPanel = ({
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
+    <div className={`bg-ink-800 rounded-lg shadow p-4 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-resona-light" />
-          <h3 className="font-semibold text-gray-900">Filtros</h3>
+          <h3 className="font-semibold text-cream">Filtros</h3>
         </div>
         {hasActiveFilters() && (
           <button
@@ -100,13 +100,13 @@ export const FilterPanel = ({
 
       {/* Sort */}
       <div className="mb-4 pb-4 border-b">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-cream/75 mb-2">
           Ordenar por
         </label>
         <select
           value={filters.sortBy || 'POPULAR'}
           onChange={(e) => handleSortChange(e.target.value as ProductFilters['sortBy'])}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-resona focus:border-transparent"
+          className="w-full border border-cream/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-resona focus:border-transparent"
         >
           <option value="POPULAR">Más Popular</option>
           <option value="NAME_ASC">Nombre (A-Z)</option>
@@ -120,7 +120,7 @@ export const FilterPanel = ({
       <div className="mb-4 pb-4 border-b">
         <button
           onClick={() => setShowCategories(!showCategories)}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2"
+          className="flex items-center justify-between w-full text-sm font-medium text-cream/75 mb-2"
         >
           <span>Categorías</span>
           {showCategories ? (
@@ -140,7 +140,7 @@ export const FilterPanel = ({
                   onChange={() => handleCategoryToggle(category.id)}
                   className="rounded text-resona-light focus:ring-resona"
                 />
-                <span className="text-sm text-gray-700">{category.name}</span>
+                <span className="text-sm text-cream/75">{category.name}</span>
               </label>
             ))}
           </div>
@@ -151,7 +151,7 @@ export const FilterPanel = ({
       <div className="mb-4 pb-4 border-b">
         <button
           onClick={() => setShowPrice(!showPrice)}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2"
+          className="flex items-center justify-between w-full text-sm font-medium text-cream/75 mb-2"
         >
           <span>Precio por día</span>
           {showPrice ? (
@@ -165,7 +165,7 @@ export const FilterPanel = ({
           <div className="space-y-2 mt-2">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-xs text-gray-600">Mínimo (€)</label>
+                <label className="text-xs text-cream/65">Mínimo (€)</label>
                 <input
                   type="number"
                   min="0"
@@ -173,11 +173,11 @@ export const FilterPanel = ({
                   value={filters.minPrice || ''}
                   onChange={(e) => handlePriceChange('min', e.target.value)}
                   placeholder="0"
-                  className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                  className="w-full border border-cream/15 rounded px-2 py-1 text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Máximo (€)</label>
+                <label className="text-xs text-cream/65">Máximo (€)</label>
                 <input
                   type="number"
                   min="0"
@@ -185,7 +185,7 @@ export const FilterPanel = ({
                   value={filters.maxPrice || ''}
                   onChange={(e) => handlePriceChange('max', e.target.value)}
                   placeholder="1000"
-                  className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                  className="w-full border border-cream/15 rounded px-2 py-1 text-sm"
                 />
               </div>
             </div>
@@ -197,7 +197,7 @@ export const FilterPanel = ({
       <div className="mb-4">
         <button
           onClick={() => setShowAvailability(!showAvailability)}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2"
+          className="flex items-center justify-between w-full text-sm font-medium text-cream/75 mb-2"
         >
           <span>Disponibilidad</span>
           {showAvailability ? (
@@ -218,7 +218,7 @@ export const FilterPanel = ({
                 onChange={() => handleAvailabilityChange('ALL')}
                 className="text-resona-light focus:ring-resona"
               />
-              <span className="text-sm text-gray-700">Todos</span>
+              <span className="text-sm text-cream/75">Todos</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -229,7 +229,7 @@ export const FilterPanel = ({
                 onChange={() => handleAvailabilityChange('IN_STOCK')}
                 className="text-resona-light focus:ring-resona"
               />
-              <span className="text-sm text-gray-700">Disponible ahora</span>
+              <span className="text-sm text-cream/75">Disponible ahora</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -240,7 +240,7 @@ export const FilterPanel = ({
                 onChange={() => handleAvailabilityChange('ON_DEMAND')}
                 className="text-resona-light focus:ring-resona"
               />
-              <span className="text-sm text-gray-700">Bajo pedido</span>
+              <span className="text-sm text-cream/75">Bajo pedido</span>
             </label>
           </div>
         )}
@@ -249,7 +249,7 @@ export const FilterPanel = ({
       {/* Active Filters Summary */}
       {hasActiveFilters() && (
         <div className="mt-4 pt-4 border-t">
-          <p className="text-xs text-gray-600 mb-2">Filtros activos:</p>
+          <p className="text-xs text-cream/65 mb-2">Filtros activos:</p>
           <div className="flex flex-wrap gap-2">
             {filters.categories && filters.categories.length > 0 && (
               <span className="text-xs bg-resona/10 text-resona-light px-2 py-1 rounded">

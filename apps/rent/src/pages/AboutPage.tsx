@@ -95,7 +95,7 @@ const AboutPage = () => {
             </div>
 
             <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-amber-500/15 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-orange-600" />
               </div>
               <h3 className="text-xl font-bold text-cream mb-2">Innovación</h3>

@@ -167,7 +167,7 @@ export default function CookiesPolicy() {
 
                 <div className="border rounded-lg p-4">
                   <div className="flex items-start">
-                    <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded mr-3">
+                    <span className="bg-white/10 text-cream/80 text-xs font-semibold px-2 py-1 rounded mr-3">
                       PREFERENCIAS
                     </span>
                     <div className="flex-1">

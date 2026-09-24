@@ -265,7 +265,7 @@ export default function MyDataPage() {
 
             {/* Zona peligrosa */}
             <div className="bg-red-500/10 border-2 border-red-200 rounded-lg p-6">
-              <h2 className="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-red-300 mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-6 h-6 text-red-400" />
                 Zona de Peligro
               </h2>
@@ -355,7 +355,7 @@ export default function MyDataPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-ink-800 rounded-lg max-w-md w-full p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-red-100 rounded-full">
+                <div className="p-3 bg-red-500/15 rounded-full">
                   <AlertTriangle className="w-6 h-6 text-red-400" />
                 </div>
                 <h3 className="text-xl font-bold text-cream">
@@ -404,7 +404,7 @@ export default function MyDataPage() {
                 </div>
 
                 <div className="bg-red-500/10 border border-red-200 rounded-lg p-3">
-                  <p className="text-sm text-red-800">
+                  <p className="text-sm text-red-300">
                     ⚠️ No podrás eliminar tu cuenta si tienes pedidos activos. Contacta con soporte.
                   </p>
                 </div>

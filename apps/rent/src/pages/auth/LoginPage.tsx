@@ -68,7 +68,7 @@ const LoginPage = () => {
               <div className="flex">
                 <AlertCircle className="h-5 w-5 text-red-400" />
                 <div className="ml-3">
-                  <p className="text-sm text-red-800">{error}</p>
+                  <p className="text-sm text-red-300">{error}</p>
                 </div>
               </div>
             </div>

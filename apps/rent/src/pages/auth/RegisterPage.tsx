@@ -101,9 +101,9 @@ const RegisterPage = () => {
               <div className="flex">
                 <AlertCircle className="h-5 w-5 text-red-400" />
                 <div className="ml-3">
-                  {error && <p className="text-sm text-red-800">{error}</p>}
+                  {error && <p className="text-sm text-red-300">{error}</p>}
                   {validationErrors.map((err, idx) => (
-                    <p key={idx} className="text-sm text-red-800">{err}</p>
+                    <p key={idx} className="text-sm text-red-300">{err}</p>
                   ))}
                 </div>
               </div>

@@ -67,7 +67,7 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4 p-4 bg-resona/10 border border-resona/30 rounded-lg">
-        <p className="text-sm text-blue-900">
+        <p className="text-sm text-cream">
           💳 Método de pago: Tarjeta de crédito/débito
         </p>
       </div>

@@ -218,7 +218,7 @@ export default function CookieBanner() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold text-cream">Cookies de Marketing</h4>
-                      <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded">
+                      <span className="bg-white/10 text-cream/80 text-xs font-semibold px-2 py-0.5 rounded">
                         Opcionales
                       </span>
                     </div>

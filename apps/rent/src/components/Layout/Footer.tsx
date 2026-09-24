@@ -88,13 +88,13 @@ const Footer = () => {
             <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Contacto</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3 group">
-                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                <div className="rounded-sm bg-ink-800/5 p-2 transition-colors group-hover:bg-white/10">
                   <MapPin className="h-4 w-4 text-cream/55" />
                 </div>
                 <span className="pt-2 text-[14px] text-cream/70">C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</span>
               </div>
               <div className="flex items-center gap-3 group">
-                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                <div className="rounded-sm bg-ink-800/5 p-2 transition-colors group-hover:bg-white/10">
                   <Phone className="h-4 w-4 text-cream/55" />
                 </div>
                 <a href="tel:+34613881414" className="text-[14px] text-cream/70 transition-colors hover:text-cream">
@@ -102,7 +102,7 @@ const Footer = () => {
                 </a>
               </div>
               <div className="flex items-center gap-3 group">
-                <div className="rounded-sm bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                <div className="rounded-sm bg-ink-800/5 p-2 transition-colors group-hover:bg-white/10">
                   <Mail className="h-4 w-4 text-cream/55" />
                 </div>
                 <Link to="/contacto" className="text-[14px] text-cream/70 transition-colors hover:text-cream">
@@ -113,7 +113,7 @@ const Footer = () => {
             
             <h4 className="mb-3 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/45">Métodos de Pago</h4>
             <div className="flex gap-2 items-center">
-              <div className="rounded-sm bg-white/5 p-2">
+              <div className="rounded-sm bg-ink-800/5 p-2">
                 <CreditCard className="h-5 w-5 text-cream/55" />
               </div>
               <div className="text-[12px] text-cream/45">
@@ -127,7 +127,7 @@ const Footer = () => {
                 href="https://www.facebook.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
+                className="rounded-sm bg-ink-800/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Facebook"
               >
                 <Facebook className="h-4 w-4 text-cream/55 group-hover:text-white" />
@@ -136,7 +136,7 @@ const Footer = () => {
                 href="https://www.twitter.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
+                className="rounded-sm bg-ink-800/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Twitter"
               >
                 <Twitter className="h-4 w-4 text-cream/55 group-hover:text-white" />
@@ -145,7 +145,7 @@ const Footer = () => {
                 href="https://www.instagram.com/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
+                className="rounded-sm bg-ink-800/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4 text-cream/55 group-hover:text-white" />
@@ -154,7 +154,7 @@ const Footer = () => {
                 href="https://www.linkedin.com/company/resonarent"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm bg-white/5 p-2.5 transition-colors hover:bg-resona group"
+                className="rounded-sm bg-ink-800/5 p-2.5 transition-colors hover:bg-resona group"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-4 w-4 text-cream/55 group-hover:text-white" />

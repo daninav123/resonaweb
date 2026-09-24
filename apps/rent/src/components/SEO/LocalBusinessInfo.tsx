@@ -40,7 +40,7 @@ const LocalBusinessInfo = ({
   if (variant === 'compact') {
     return (
       <div className={`bg-gradient-to-br from-resona/5 to-resona/10 border border-resona/20 rounded-lg p-6 ${className}`}>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-cream mb-4 flex items-center gap-2">
           <MapPin className="w-5 h-5 text-resona-light" />
           Encuéntranos en Valencia
         </h3>
@@ -49,9 +49,9 @@ const LocalBusinessInfo = ({
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-resona-light flex-shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-gray-900">{businessInfo.address.street}</p>
-              <p className="text-gray-600">{businessInfo.address.neighborhood}</p>
-              <p className="text-gray-600">
+              <p className="font-medium text-cream">{businessInfo.address.street}</p>
+              <p className="text-cream/65">{businessInfo.address.neighborhood}</p>
+              <p className="text-cream/65">
                 {businessInfo.address.postal} {businessInfo.address.city}, {businessInfo.address.province}
               </p>
             </div>
@@ -71,7 +71,7 @@ const LocalBusinessInfo = ({
             <Mail className="w-5 h-5 text-resona-light flex-shrink-0" />
             <a 
               href={`mailto:${businessInfo.email}`}
-              className="text-sm text-gray-600 hover:text-resona-light transition"
+              className="text-sm text-cream/65 hover:text-resona-light transition"
             >
               {businessInfo.email}
             </a>
@@ -92,7 +92,7 @@ const LocalBusinessInfo = ({
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-lg overflow-hidden ${className}`}>
+    <div className={`bg-ink-800 rounded-lg shadow-lg overflow-hidden ${className}`}>
       <div className="bg-gradient-to-r from-resona to-resona-dark p-6 text-white">
         <h3 className="text-2xl font-bold mb-2">Visítanos en Valencia</h3>
         <p className="text-resona-light">Servicio profesional en Valencia y provincia</p>
@@ -105,13 +105,13 @@ const LocalBusinessInfo = ({
             <MapPin className="w-6 h-6 text-resona-light" />
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Dirección</h4>
-            <p className="text-gray-700">{businessInfo.address.street}</p>
-            <p className="text-gray-600">{businessInfo.address.neighborhood}</p>
-            <p className="text-gray-600">
+            <h4 className="font-semibold text-cream mb-1">Dirección</h4>
+            <p className="text-cream/75">{businessInfo.address.street}</p>
+            <p className="text-cream/65">{businessInfo.address.neighborhood}</p>
+            <p className="text-cream/65">
               {businessInfo.address.postal} {businessInfo.address.city}, {businessInfo.address.province}
             </p>
-            <p className="text-gray-600">{businessInfo.address.country}</p>
+            <p className="text-cream/65">{businessInfo.address.country}</p>
           </div>
         </div>
 
@@ -121,14 +121,14 @@ const LocalBusinessInfo = ({
             <Phone className="w-6 h-6 text-resona-light" />
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Teléfono</h4>
+            <h4 className="font-semibold text-cream mb-1">Teléfono</h4>
             <a 
               href={`tel:${businessInfo.phone.replace(/\s/g, '')}`}
               className="text-lg font-medium text-resona-light hover:text-resona-dark transition"
             >
               {businessInfo.phoneDisplay}
             </a>
-            <p className="text-sm text-gray-600 mt-1">Llamadas y WhatsApp</p>
+            <p className="text-sm text-cream/65 mt-1">Llamadas y WhatsApp</p>
           </div>
         </div>
 
@@ -138,14 +138,14 @@ const LocalBusinessInfo = ({
             <Mail className="w-6 h-6 text-resona-light" />
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
+            <h4 className="font-semibold text-cream mb-1">Email</h4>
             <a 
               href={`mailto:${businessInfo.email}`}
               className="text-resona-light hover:text-resona-dark transition"
             >
               {businessInfo.email}
             </a>
-            <p className="text-sm text-gray-600 mt-1">Respuesta en menos de 24h</p>
+            <p className="text-sm text-cream/65 mt-1">Respuesta en menos de 24h</p>
           </div>
         </div>
 
@@ -155,10 +155,10 @@ const LocalBusinessInfo = ({
             <Clock className="w-6 h-6 text-resona-light" />
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Horario</h4>
-            <p className="text-gray-700">{businessInfo.hours.weekday}</p>
-            <p className="text-gray-700">{businessInfo.hours.saturday}</p>
-            <p className="text-gray-600">{businessInfo.hours.sunday}</p>
+            <h4 className="font-semibold text-cream mb-1">Horario</h4>
+            <p className="text-cream/75">{businessInfo.hours.weekday}</p>
+            <p className="text-cream/75">{businessInfo.hours.saturday}</p>
+            <p className="text-cream/65">{businessInfo.hours.sunday}</p>
           </div>
         </div>
 
@@ -175,7 +175,7 @@ const LocalBusinessInfo = ({
 
         {/* Mapa embebido */}
         {showMap && (
-          <div className="aspect-video rounded-lg overflow-hidden border border-gray-200">
+          <div className="aspect-video rounded-lg overflow-hidden border border-cream/10">
             <iframe
               src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3080.0!2d${businessInfo.coordinates.lng}!3d${businessInfo.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM!5e0!3m2!1ses!2ses!4v1234567890123!5m2!1ses!2ses`}
               width="100%"
@@ -191,8 +191,8 @@ const LocalBusinessInfo = ({
 
         {/* Área de servicio */}
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4">
-          <h4 className="font-semibold text-gray-900 mb-2 text-sm">Servimos en:</h4>
-          <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+          <h4 className="font-semibold text-cream mb-2 text-sm">Servimos en:</h4>
+          <div className="grid grid-cols-2 gap-2 text-sm text-cream/75">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-resona rounded-full"></div>
               Valencia capital
