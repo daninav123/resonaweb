@@ -16,7 +16,7 @@ otro PNG de `ReSona` que circule por el proyecto está obsoleto.
 | `resona-simbolo.svg` | El símbolo solo: avatar, marca de agua, badge, formatos estrechos |
 | `resona-simbolo-negativo.svg` · `-mono-*.svg` | Las mismas variantes del símbolo |
 | `favicon.svg` | Favicon y app icon |
-| `favicon-mini.svg` | Solo para 16 y 32 px: mismo dibujo con el hueco más abierto para que no se empaste |
+| `favicon-mini.svg` | **El que va en `public/favicon.svg` de cada app**: encuadre ajustado y azul compensado para la pestaña |
 | `favicon.ico` | Windows y navegadores antiguos (16/32/48 en un solo archivo) |
 | `png/avatar-1000-*.png` | Avatar cuadrado para Instagram, Google Business y WhatsApp. Con fondo, no transparente: esas plataformas recortan |
 | `png/og-image-*.png` | 1200×630, la imagen que se ve al compartir un enlace en WhatsApp o LinkedIn |
@@ -71,7 +71,7 @@ de la pieza.
 hueco de la «a» se empastan y la palabra deja de leerse.
 
 - Logotipo completo: **110 px de ancho** en pantalla · 25 mm impreso
-- Símbolo solo: **16 px** (usa `favicon-mini.svg`, que lleva el hueco más abierto)
+- Símbolo solo: **16 px** (usa `favicon-mini.svg`, con el encuadre ajustado)
 
 **Qué no hacer.** No estirarlo ni deformarlo, no rotarlo, no cambiar la separación entre el símbolo y la
 palabra, no recolorear la pata azul salvo en las versiones monocromas ya preparadas, y no volver a poner
@@ -235,3 +235,29 @@ cuando se rediseñe la web, la fuente pasa al `index.html` y esto se quita.
 - **Revisar los JSON-LD**: `schemas.ts` de cada app referencia el logo por URL; hay que comprobar que
   apunten al archivo nuevo, porque eso es lo que Google lee.
 - **`apps/admin` no tiene favicon** ninguno.
+
+### Por qué el favicon lleva un azul distinto
+
+La pata azul del símbolo es una diagonal fina. Por debajo de ~64 px casi todos sus
+píxeles son borde antialiaseado mezclado con el fondo, así que el color que **percibe
+el ojo** sale más claro que el relleno real: con `#3D5AFE` nominal, un favicon de 16 px
+se lee como `#657DFE`, visiblemente más claro que el azul de la web.
+
+Por eso los archivos pequeños van con el relleno oscurecido a propósito, calculado para
+que la media percibida caiga en `#3D5AFE`:
+
+| Archivo | Relleno | Azul percibido |
+|---|---|---|
+| `favicon-mini.svg` (pestaña, 16–32 px) | `#2A4AFE` | `#3D5AFE` ±5 |
+| `png/favicon-16.png` | `#2545FE` | `#3D5AFE` |
+| `png/favicon-32.png` | `#2D4DFE` | `#3D5AFE` |
+| `png/favicon-48.png` | `#3150FE` | `#3D5AFE` |
+| `png/favicon-64.png` | `#3855FE` | `#3D5AFE` |
+| 180 px en adelante | `#3D5AFE` | `#3D5AFE` |
+
+`favicon.ico` lleva los tres frames (16/32/48) embebidos por separado, cada uno con su
+relleno. **No lo regeneres reescalando un solo PNG**: se pierde la compensación.
+
+Esto aplica **solo a los favicons**. En cualquier otro sitio el azul es `#3D5AFE`.
+
+
