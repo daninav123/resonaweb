@@ -30,13 +30,13 @@ const ManualPaymentInstructionsPage = () => {
 
   if (!orderId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <p className="text-gray-600">No se encontró el pedido</p>
+          <p className="text-cream/65">No se encontró el pedido</p>
           <button
             onClick={() => navigate('/mis-pedidos')}
-            className="mt-4 text-blue-600 hover:underline"
+            className="mt-4 text-resona-light hover:underline"
           >
             Volver a mis pedidos
           </button>
@@ -47,35 +47,35 @@ const ManualPaymentInstructionsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="max-w-3xl mx-auto px-4">
         {/* Success Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle className="w-10 h-10 text-green-600" />
+        <div className="bg-ink-800 rounded-lg shadow-md p-6 mb-6 text-center">
+          <div className="mx-auto w-16 h-16 bg-emerald-500/15 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle className="w-10 h-10 text-emerald-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">¡Pedido Creado!</h1>
-          <p className="text-gray-600">Pedido #{order?.orderNumber}</p>
-          <p className="text-lg font-semibold text-blue-600 mt-2">
+          <h1 className="text-2xl font-bold text-cream mb-2">¡Pedido Creado!</h1>
+          <p className="text-cream/65">Pedido #{order?.orderNumber}</p>
+          <p className="text-lg font-semibold text-resona-light mt-2">
             Total a pagar: {formatPrice(Number(order?.total || 0))}
           </p>
         </div>
 
         {/* Payment Instructions */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-xl font-semibold text-cream mb-4">
             Instrucciones de Pago
           </h2>
 
-          <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-            <p className="text-sm text-blue-900">
+          <div className="mb-6 p-4 bg-resona/10 border-l-4 border-blue-500 rounded-r-lg">
+            <p className="text-sm text-cream">
               <strong>⏰ Importante:</strong> Debes realizar el pago en las próximas <strong>24 horas</strong>. 
               Incluye la referencia del pedido para que podamos identificar tu pago.
             </p>
@@ -83,37 +83,37 @@ const ManualPaymentInstructionsPage = () => {
 
           {/* Bizum Option */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Phone className="w-5 h-5 text-blue-600" />
+            <h3 className="text-lg font-semibold text-cream mb-3 flex items-center gap-2">
+              <Phone className="w-5 h-5 text-resona-light" />
               Opción 1: Bizum
             </h3>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-ink rounded-lg p-4">
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Teléfono:</p>
+                  <p className="text-sm text-cream/65 mb-1">Teléfono:</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-mono font-semibold text-gray-900">+34 613 881 414</p>
+                    <p className="text-lg font-mono font-semibold text-cream">+34 613 881 414</p>
                     <button
                       onClick={() => handleCopy('+34 613 881 414')}
                       className="p-1 hover:bg-gray-200 rounded"
                     >
-                      <Copy className="w-4 h-4 text-gray-600" />
+                      <Copy className="w-4 h-4 text-cream/65" />
                     </button>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Importe:</p>
-                  <p className="text-lg font-semibold text-green-600">{formatPrice(Number(order?.total || 0))}</p>
+                  <p className="text-sm text-cream/65 mb-1">Importe:</p>
+                  <p className="text-lg font-semibold text-emerald-400">{formatPrice(Number(order?.total || 0))}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Concepto:</p>
+                  <p className="text-sm text-cream/65 mb-1">Concepto:</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-mono font-semibold text-gray-900">PEDIDO-{order?.orderNumber}</p>
+                    <p className="text-lg font-mono font-semibold text-cream">PEDIDO-{order?.orderNumber}</p>
                     <button
                       onClick={() => handleCopy(`PEDIDO-${order?.orderNumber}`)}
                       className="p-1 hover:bg-gray-200 rounded"
                     >
-                      <Copy className="w-4 h-4 text-gray-600" />
+                      <Copy className="w-4 h-4 text-cream/65" />
                     </button>
                   </div>
                 </div>
@@ -123,45 +123,45 @@ const ManualPaymentInstructionsPage = () => {
 
           {/* Bank Transfer Option */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-600" />
+            <h3 className="text-lg font-semibold text-cream mb-3 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-resona-light" />
               Opción 2: Transferencia Bancaria
             </h3>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-ink rounded-lg p-4">
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Titular:</p>
-                  <p className="font-semibold text-gray-900">ReSona Rent S.L.</p>
+                  <p className="text-sm text-cream/65 mb-1">Titular:</p>
+                  <p className="font-semibold text-cream">ReSona Rent S.L.</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">IBAN:</p>
+                  <p className="text-sm text-cream/65 mb-1">IBAN:</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-mono font-semibold text-gray-900">ES00 0000 0000 0000 0000 0000</p>
+                    <p className="text-lg font-mono font-semibold text-cream">ES00 0000 0000 0000 0000 0000</p>
                     <button
                       onClick={() => handleCopy('ES00 0000 0000 0000 0000 0000')}
                       className="p-1 hover:bg-gray-200 rounded"
                     >
-                      <Copy className="w-4 h-4 text-gray-600" />
+                      <Copy className="w-4 h-4 text-cream/65" />
                     </button>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">BIC/SWIFT:</p>
-                  <p className="font-mono font-semibold text-gray-900">CAIXESBBXXX</p>
+                  <p className="text-sm text-cream/65 mb-1">BIC/SWIFT:</p>
+                  <p className="font-mono font-semibold text-cream">CAIXESBBXXX</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Importe:</p>
-                  <p className="text-lg font-semibold text-green-600">{formatPrice(Number(order?.total || 0))}</p>
+                  <p className="text-sm text-cream/65 mb-1">Importe:</p>
+                  <p className="text-lg font-semibold text-emerald-400">{formatPrice(Number(order?.total || 0))}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Concepto:</p>
+                  <p className="text-sm text-cream/65 mb-1">Concepto:</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-mono font-semibold text-gray-900">PEDIDO-{order?.orderNumber}</p>
+                    <p className="text-lg font-mono font-semibold text-cream">PEDIDO-{order?.orderNumber}</p>
                     <button
                       onClick={() => handleCopy(`PEDIDO-${order?.orderNumber}`)}
                       className="p-1 hover:bg-gray-200 rounded"
                     >
-                      <Copy className="w-4 h-4 text-gray-600" />
+                      <Copy className="w-4 h-4 text-cream/65" />
                     </button>
                   </div>
                 </div>
@@ -170,9 +170,9 @@ const ManualPaymentInstructionsPage = () => {
           </div>
 
           {/* Important Notes */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
             <h4 className="font-semibold text-yellow-900 mb-2">⚠️ Importante</h4>
-            <ul className="text-sm text-yellow-800 space-y-1">
+            <ul className="text-sm text-amber-300 space-y-1">
               <li>• Realiza el pago en las próximas <strong>24 horas</strong></li>
               <li>• Incluye siempre la referencia: <strong>PEDIDO-{order?.orderNumber}</strong></li>
               <li>• Confirmaremos tu pedido cuando recibamos el pago</li>
@@ -182,14 +182,14 @@ const ManualPaymentInstructionsPage = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Resumen del Pedido</h3>
+        <div className="bg-ink-800 rounded-lg shadow-md p-6 mb-6">
+          <h3 className="text-lg font-semibold text-cream mb-4">Resumen del Pedido</h3>
           
           {order?.items && order.items.length > 0 && (
             <div className="space-y-2 mb-4">
               {order.items.map((item: any) => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-cream/65">
                     {item.product?.name || 'Producto'} x{item.quantity}
                   </span>
                   <span className="font-medium">
@@ -203,7 +203,7 @@ const ManualPaymentInstructionsPage = () => {
           <div className="border-t pt-3">
             <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span className="text-blue-600">{formatPrice(Number(order?.total || 0))}</span>
+              <span className="text-resona-light">{formatPrice(Number(order?.total || 0))}</span>
             </div>
           </div>
         </div>
@@ -212,13 +212,13 @@ const ManualPaymentInstructionsPage = () => {
         <div className="flex gap-4">
           <button
             onClick={() => navigate('/mis-pedidos')}
-            className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
+            className="flex-1 bg-ink-700 text-cream/75 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
           >
             Ver Mis Pedidos
           </button>
           <button
             onClick={() => navigate('/')}
-            className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+            className="flex-1 bg-resona text-white px-6 py-3 rounded-lg font-semibold hover:bg-resona-dark transition flex items-center justify-center gap-2"
           >
             Volver al Inicio
             <ArrowRight className="w-5 h-5" />
@@ -227,13 +227,13 @@ const ManualPaymentInstructionsPage = () => {
 
         {/* Contact Info */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-cream/65">
             ¿Tienes dudas? Contáctanos en{' '}
-            <a href="mailto:info@resonarent.com" className="text-blue-600 hover:underline">
+            <a href="mailto:info@resonarent.com" className="text-resona-light hover:underline">
               info@resonarent.com
             </a>
             {' '}o llámanos al{' '}
-            <a href="tel:+34613881414" className="text-blue-600 hover:underline">
+            <a href="tel:+34613881414" className="text-resona-light hover:underline">
               +34 613 881 414
             </a>
           </p>

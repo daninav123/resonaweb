@@ -47,19 +47,19 @@ const PaymentErrorPage = () => {
             </h2>
             <ul className="space-y-2 text-gray-700 text-sm">
               <li className="flex items-start">
-                <span className="text-resona mr-2">•</span>
+                <span className="text-resona-light mr-2">•</span>
                 <span>Fondos insuficientes en la tarjeta</span>
               </li>
               <li className="flex items-start">
-                <span className="text-resona mr-2">•</span>
+                <span className="text-resona-light mr-2">•</span>
                 <span>Datos de la tarjeta incorrectos</span>
               </li>
               <li className="flex items-start">
-                <span className="text-resona mr-2">•</span>
+                <span className="text-resona-light mr-2">•</span>
                 <span>La tarjeta ha sido rechazada por el banco</span>
               </li>
               <li className="flex items-start">
-                <span className="text-resona mr-2">•</span>
+                <span className="text-resona-light mr-2">•</span>
                 <span>Problemas de conexión durante el proceso</span>
               </li>
             </ul>
@@ -91,13 +91,13 @@ const PaymentErrorPage = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
               <a
                 href="mailto:info@resonarent.com"
-                className="text-resona hover:underline"
+                className="text-resona-light hover:underline"
               >
                 📧 info@resonarent.com
               </a>
               <a
                 href="tel:+34613881414"
-                className="text-resona hover:underline"
+                className="text-resona-light hover:underline"
               >
                 📞 +34 613 881 414
               </a>

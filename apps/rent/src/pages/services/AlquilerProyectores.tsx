@@ -17,7 +17,7 @@ Disponemos de equipos de última generación, perfectamente mantenidos y calibra
 
 El alquiler incluye el material revisado, el cableado y los soportes necesarios, asesoramiento previo para elegir el equipo según tu aforo y tu espacio, y soporte telefónico durante el evento. La recogida y la devolución se hacen en nuestro almacén de Valencia; la entrega, el montaje y el técnico son opcionales y se presupuestan aparte.
 
-Hemos trabajado en eventos de todo tipo en Valencia: conferencias, presentaciones, formaciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-pantallas-led" class="text-primary-600 hover:underline font-semibold">pantallas LED</a> y <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">sonido corporativo</a>.`,
+Hemos trabajado en eventos de todo tipo en Valencia: conferencias, presentaciones, formaciones en espacios emblemáticos de la ciudad. Combinamos con <a href="/servicios/alquiler-pantallas-led" class="text-resona-light hover:underline font-semibold">pantallas LED</a> y <a href="/servicios/sonido-eventos-corporativos" class="text-resona-light hover:underline font-semibold">sonido corporativo</a>.`,
    
     whyChooseUs: [
       {

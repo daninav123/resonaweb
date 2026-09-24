@@ -141,28 +141,28 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
     switch (status) {
       case 'COMPLETED':
         return (
-          <span className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+          <span className="flex items-center gap-1 px-3 py-1 bg-emerald-500/15 text-emerald-400 rounded-full text-sm font-medium">
             <CheckCircle className="w-4 h-4" />
             Pagado
           </span>
         );
       case 'PENDING':
         return (
-          <span className="flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
+          <span className="flex items-center gap-1 px-3 py-1 bg-yellow-100 text-amber-400 rounded-full text-sm font-medium">
             <Clock className="w-4 h-4" />
             Pendiente
           </span>
         );
       case 'PROCESSING':
         return (
-          <span className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+          <span className="flex items-center gap-1 px-3 py-1 bg-resona/15 text-resona-light rounded-full text-sm font-medium">
             <Clock className="w-4 h-4" />
             Procesando
           </span>
         );
       default:
         return (
-          <span className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+          <span className="flex items-center gap-1 px-3 py-1 bg-ink-800 text-cream/75 rounded-full text-sm font-medium">
             <AlertCircle className="w-4 h-4" />
             {status}
           </span>
@@ -201,19 +201,19 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
     <div className="space-y-6">
       {/* Resumen de plazos */}
       {summary && (
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Resumen de Pagos en Plazos</h3>
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 border border-resona/30">
+          <h3 className="text-lg font-bold text-cream mb-4">Resumen de Pagos en Plazos</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{formatPrice(Number(summary.total))}</p>
+              <p className="text-sm text-cream/65">Total</p>
+              <p className="text-2xl font-bold text-cream">{formatPrice(Number(summary.total))}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Pagado</p>
-              <p className="text-2xl font-bold text-green-600">{formatPrice(Number(summary.paid))}</p>
+              <p className="text-sm text-cream/65">Pagado</p>
+              <p className="text-2xl font-bold text-emerald-400">{formatPrice(Number(summary.paid))}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Pendiente</p>
+              <p className="text-sm text-cream/65">Pendiente</p>
               <p className="text-2xl font-bold text-orange-600">{formatPrice(Number(summary.pending))}</p>
             </div>
           </div>
@@ -223,7 +223,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
       {/* Lista de plazos */}
       <div className="space-y-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-gray-900">Calendario de Pagos</h3>
+          <h3 className="text-lg font-bold text-cream">Calendario de Pagos</h3>
           
           {/* Botón Pagar Todo - Solo si hay plazos pendientes */}
           {summary && summary.pending > 0 && (
@@ -232,7 +232,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
                 // TODO: Implementar pago de todos los plazos pendientes de una vez
                 alert('Función en desarrollo: Pagar todos los plazos pendientes de una vez (€' + Number(summary.pending).toFixed(2) + ')');
               }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm flex items-center gap-2 transition-all"
+              className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark font-semibold text-sm flex items-center gap-2 transition-all"
             >
               <CreditCard className="w-4 h-4" />
               Pagar Todo de Una Vez ({formatPrice(Number(summary.pending))})
@@ -250,22 +250,22 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
               key={installment.id}
               className={`rounded-lg border-2 p-5 ${
                 isPaid
-                  ? 'bg-green-50 border-green-300'
+                  ? 'bg-emerald-500/10 border-green-300'
                   : dueSoon
                   ? 'bg-orange-50 border-orange-300'
-                  : 'bg-white border-gray-200'
+                  : 'bg-ink-800 border-cream/10'
               }`}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h4 className="text-lg font-bold text-gray-900">
+                    <h4 className="text-lg font-bold text-cream">
                       Plazo {installment.installmentNumber}/3 ({installment.percentage}%)
                     </h4>
                     {getStatusBadge(installment.status)}
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                  <div className="flex items-center gap-2 text-sm text-cream/65 mb-1">
                     <Calendar className="w-4 h-4" />
                     <span>
                       Vence: <span className="font-semibold">{formatDate(installment.dueDate)}</span>
@@ -273,7 +273,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
                   </div>
                   
                   {isPaid && installment.paidDate && (
-                    <div className="flex items-center gap-2 text-sm text-green-700">
+                    <div className="flex items-center gap-2 text-sm text-emerald-400">
                       <CheckCircle className="w-4 h-4" />
                       <span>Pagado el {formatDate(installment.paidDate)}</span>
                     </div>
@@ -288,14 +288,14 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
                 </div>
                 
                 <div className="text-right">
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-3xl font-bold text-cream">
                     {formatPrice(Number(installment.amount))}
                   </p>
                 </div>
               </div>
 
               {isPending && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-cream/10">
                   <button
                     onClick={() => handlePayInstallment(installment)}
                     className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center gap-2"
@@ -313,12 +313,12 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
       {/* Modal de pago */}
       {selectedInstallment && clientSecret && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-ink-800 rounded-lg max-w-md w-full p-6">
             <h3 className="text-xl font-bold mb-2">
               Pagar Plazo {selectedInstallment.installmentNumber}/3
             </h3>
-            <p className="text-gray-600 mb-6">
-              Monto a pagar: <span className="font-bold text-2xl text-gray-900">{formatPrice(Number(selectedInstallment.amount))}</span>
+            <p className="text-cream/65 mb-6">
+              Monto a pagar: <span className="font-bold text-2xl text-cream">{formatPrice(Number(selectedInstallment.amount))}</span>
             </p>
 
             <Elements
@@ -345,7 +345,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
                 setSelectedInstallment(null);
                 setClientSecret(null);
               }}
-              className="w-full mt-4 py-2 text-gray-600 hover:text-gray-900"
+              className="w-full mt-4 py-2 text-cream/65 hover:text-gray-900"
             >
               Cancelar
             </button>

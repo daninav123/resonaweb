@@ -252,7 +252,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
               <div className="flex justify-between text-lg font-bold pt-2 border-t">
                 <span>Total:</span>
-                <span className="text-resona">
+                <span className="text-resona-light">
                   {formatPrice(total)}
                 </span>
               </div>

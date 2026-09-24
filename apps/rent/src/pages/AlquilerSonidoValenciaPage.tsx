@@ -41,7 +41,7 @@ const AlquilerSonidoValenciaPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink">
       <SEOHead
         title="Alquiler Sonido Valencia desde 35€ | Bodas y Eventos"
         description="✅ Alquiler de sonido profesional en Valencia y área metropolitana. Equipos JBL, QSC, Yamaha. Instalación incluida. experiencia desde 2011. Presupuesto en 24h. ⭐ 4.9/5 estrellas. ☎️ 613881414"
@@ -69,15 +69,15 @@ const AlquilerSonidoValenciaPage = () => {
             </p>
             
             <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Entrega incluida</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Técnicos certificados</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Desde 35€/día</span>
               </div>
@@ -86,7 +86,7 @@ const AlquilerSonidoValenciaPage = () => {
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/productos"
-                className="bg-white text-resona px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-resona-light px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 Ver Equipos Disponibles
                 <ArrowRight className="w-5 h-5" />
@@ -106,65 +106,65 @@ const AlquilerSonidoValenciaPage = () => {
       {/* Contenido Principal */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 className="text-3xl font-bold text-cream mb-6">
               Tu Partner en Sonido Profesional para Eventos en Valencia
             </h2>
             
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 mb-4">
+            <div className="prose prose-invert prose-lg max-w-none">
+              <p className="text-cream/75 mb-4">
                 <strong>ReSona Rent</strong> es tu empresa de confianza para el <strong>alquiler de equipos de sonido profesional en Valencia</strong>. 
                 Con experiencia desde 2011 en el sector audiovisual, ofrecemos soluciones completas de audio para todo tipo de eventos: 
                 bodas, conciertos, eventos corporativos, fiestas privadas, conferencias y presentaciones.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Nuestro catálogo incluye <strong>altavoces activos y pasivos de alta gama</strong> (JBL EON, Mackie Thump, QSC K Series), 
                 <strong>subwoofers de 15" y 18"</strong> para graves profundos, <strong>mesas de mezclas digitales y analógicas</strong> 
                 (Behringer X32, Yamaha MG Series), y <strong>microfonía inalámbrica profesional</strong> de marcas como Shure y Sennheiser. 
                 Todo nuestro material está certificado, se revisa antes de cada alquiler y cumple con las normativas de seguridad vigentes.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Cobertura en Valencia y Área Metropolitana
               </h3>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Realizamos entregas en <strong>Valencia capital</strong> y todos los barrios: Ciutat Vella, L'Eixample, Extramurs, 
                 Campanar, La Saïdia, El Pla del Real, Olivereta, Patraix, Jesús, Quatre Carreres, Poblats Marítims, Camins al Grau, 
                 Algirós, Benimaclet, Rascanya y Benicalap.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 También damos servicio en el <strong>área metropolitana de Valencia</strong>: Mislata, Paterna, Burjassot, Torrent, 
                 Xirivella, Aldaia, Quart de Poblet, Manises, Alaquàs, Picanya, Paiporta, Alfafar, Massanassa, Sedaví, Benetússer, 
                 y otros municipios cercanos. Consulta disponibilidad para tu zona.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Tipos de Eventos que Cubrimos en Valencia
               </h3>
 
               <div className="grid md:grid-cols-2 gap-4 my-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-bold text-resona mb-2">🎵 Bodas y Celebraciones</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="bg-resona/10 p-4 rounded-lg">
+                  <h4 className="font-bold text-resona-light mb-2">🎵 Bodas y Celebraciones</h4>
+                  <p className="text-sm text-cream/75">
                     Sonido cristalino para ceremonia, cóctel y banquete. Microfonía inalámbrica para discursos. 
                     Equipos probados en más de 200 bodas en Valencia.
                   </p>
                 </div>
                 
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="font-bold text-purple-600 mb-2">🎸 Conciertos y Festivales</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="bg-ink-800/5 p-4 rounded-lg">
+                  <h4 className="font-bold text-cream/65 mb-2">🎸 Conciertos y Festivales</h4>
+                  <p className="text-sm text-cream/75">
                     Sistemas line array, backline completo, monitores de escenario. 
                     Experiencia en salas como 16 Toneladas, Loco Club y eventos al aire libre.
                   </p>
                 </div>
 
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-bold text-green-600 mb-2">💼 Eventos Corporativos</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="bg-emerald-500/10 p-4 rounded-lg">
+                  <h4 className="font-bold text-emerald-400 mb-2">💼 Eventos Corporativos</h4>
+                  <p className="text-sm text-cream/75">
                     Presentaciones empresariales, conferencias, ferias. Sonido discreto y profesional. 
                     Micrófonos de solapa, atril y de mano. Compatibilidad con presentaciones multimedia.
                   </p>
@@ -172,78 +172,78 @@ const AlquilerSonidoValenciaPage = () => {
 
                 <div className="bg-orange-50 p-4 rounded-lg">
                   <h4 className="font-bold text-orange-600 mb-2">🎉 Fiestas Privadas</h4>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-cream/75">
                     Cumpleaños, aniversarios, fiestas de empresa. Equipos compactos y potentes. 
                     Conexión Bluetooth, USB y auxiliar para tu música favorita.
                   </p>
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 ¿Por Qué Elegir ReSona Rent para tu Alquiler de Sonido?
               </h3>
 
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Equipos de Última Generación:</strong> Renovamos nuestro catálogo constantemente. 
                     Todo el material tiene menos de 3 años de antigüedad.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Entrega y Recogida Incluidas:</strong> Nos encargamos del transporte en Valencia y alrededores. 
                     Sin costes ocultos.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Técnicos Especializados:</strong> Ofrecemos servicio de instalación, montaje y operación. 
                     Formados en multitud de eventos.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Presupuestos Personalizados:</strong> Cada evento es único. Te asesoramos sin compromiso 
                     y ajustamos el equipo a tu presupuesto.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Disponibilidad 24/7:</strong> Emergencias y eventos de última hora. 
                     Teléfono de contacto directo: 613 88 14 14.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Mejor Precio Garantizado:</strong> Tarifas competitivas. Descuentos para alquileres de fin de semana 
                     y semana completa. Presupuesto online en nuestra calculadora.
                   </span>
                 </li>
               </ul>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Equipos de Sonido Más Solicitados en Valencia
               </h3>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Nuestros <strong>altavoces JBL EON 615</strong> son perfectos para eventos medianos (100-150 personas). 
                 Potencia de 1000W, peso ligero y sonido cristalino. Ideales para bodas en fincas de Valencia como 
                 La Hacienda El Puente, Mas de San Pablo o Alquería de Morayma.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Para eventos grandes, nuestros <strong>sistemas line array</strong> ofrecen cobertura uniforme para 300-500 personas. 
                 Perfectos para conciertos en Plaza del Ayuntamiento, Jardines de Viveros o eventos corporativos en La Marina de Valencia.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 La <strong>mesa de mezclas Behringer X32</strong> es la favorita de DJ profesionales en Valencia. 
                 32 canales, efectos integrados, grabación USB y control desde iPad. Compatible con todos nuestros sistemas de altavoces.
               </p>
@@ -251,18 +251,18 @@ const AlquilerSonidoValenciaPage = () => {
           </div>
 
           {/* FAQ Section */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-cream mb-8">
               Preguntas Frecuentes sobre Alquiler de Sonido en Valencia
             </h2>
             
             <div className="space-y-6">
               {faqData.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <div key={index} className="border-b border-cream/10 pb-6 last:border-0">
+                  <h3 className="text-xl font-semibold text-cream mb-3">
                     {faq.question}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-cream/75">
                     {faq.answer}
                   </p>
                 </div>
@@ -281,7 +281,7 @@ const AlquilerSonidoValenciaPage = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 to="/contacto"
-                className="bg-white text-resona px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-resona-light px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 <Music className="w-5 h-5" />
                 Calcular Presupuesto Online

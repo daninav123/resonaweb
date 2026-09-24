@@ -85,7 +85,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         {/* Título */}
         <Link to={`/blog/${post.slug}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-resona transition-colors line-clamp-2">
+          <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-resona-light transition-colors line-clamp-2">
             {post.title}
           </h2>
         </Link>
@@ -122,7 +122,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
         {/* Botón Leer más */}
         <Link
           to={`/blog/${post.slug}`}
-          className="inline-block mt-4 text-resona font-semibold hover:text-resona-dark transition-colors"
+          className="inline-block mt-4 text-resona-light font-semibold hover:text-resona-dark transition-colors"
         >
           Leer más →
         </Link>

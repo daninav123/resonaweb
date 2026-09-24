@@ -17,7 +17,7 @@ Todos nuestros equipos LED son de última generación, bajo consumo, y perfectam
 
 El servicio completo incluye: transporte en Valencia capital (30km), montaje completo con estructuras truss si es necesario, controlador DMX 512 profesional, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
 
-Hemos iluminado multitud de eventos en espacios emblemáticos: Palau de la Música, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas y espacios únicos en Valencia. Ofrecemos también <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">alquiler de sonido profesional</a> y <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">sonido para bodas</a>.`,
+Hemos iluminado multitud de eventos en espacios emblemáticos: Palau de la Música, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas y espacios únicos en Valencia. Ofrecemos también <a href="/servicios/alquiler-sonido-valencia" class="text-resona-light hover:underline font-semibold">alquiler de sonido profesional</a> y <a href="/servicios/sonido-bodas-valencia" class="text-resona-light hover:underline font-semibold">sonido para bodas</a>.`,
    
     whyChooseUs: [
       {

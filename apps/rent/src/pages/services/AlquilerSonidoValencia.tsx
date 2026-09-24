@@ -17,7 +17,7 @@ Disponemos de equipos de última generación, perfectamente mantenidos y calibra
 
 El alquiler incluye el material revisado, el cableado y los soportes necesarios, asesoramiento previo para elegir el equipo según tu aforo y tu espacio, y soporte telefónico durante el evento. La recogida y la devolución se hacen en nuestro almacén de Valencia; la entrega, el montaje y el técnico son opcionales y se presupuestan aparte.
 
-Hemos trabajado en eventos de todo tipo en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">eventos corporativos</a>, conciertos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
+Hemos trabajado en eventos de todo tipo en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-resona-light hover:underline font-semibold">bodas</a>, <a href="/servicios/sonido-eventos-corporativos" class="text-resona-light hover:underline font-semibold">eventos corporativos</a>, conciertos, y todo tipo de celebraciones en espacios emblemáticos de la ciudad como el Palau de la Música, Ciudad de las Artes y las Ciencias, La Hacienda, Masía de San Antonio, Hotel Las Arenas, y centenares de fincas, hoteles y espacios únicos en toda la provincia de Valencia y alrededores.`,
    
     whyChooseUs: [
       {

@@ -115,7 +115,7 @@ const PaymentSuccessPage = () => {
                     <p className="text-sm text-gray-600">
                       {order.hasInstallments ? 'Pago de Reserva (25%)' : 'Total Pagado'}
                     </p>
-                    <p className="font-semibold text-lg text-resona">
+                    <p className="font-semibold text-lg text-resona-light">
                       {formatPrice(Number(order.amountPaid))}
                     </p>
                     {order.hasInstallments && (
@@ -196,7 +196,7 @@ const PaymentSuccessPage = () => {
           <div className="mt-8 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               ¿Tienes alguna pregunta? Contáctanos en{' '}
-              <a href="mailto:info@resonarent.com" className="text-resona hover:underline">
+              <a href="mailto:info@resonarent.com" className="text-resona-light hover:underline">
                 info@resonarent.com
               </a>
             </p>

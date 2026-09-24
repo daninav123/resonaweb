@@ -50,7 +50,7 @@ const FAQsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-ink py-12">
       <SEOHead
         title="Preguntas Frecuentes (FAQs) | ReSona Rent"
         description="Resolvemos dudas frecuentes sobre alquiler de equipos para eventos: reservas, transporte, montaje, depósito y presupuesto."
@@ -60,23 +60,23 @@ const FAQsPage = () => {
       />
 
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Preguntas Frecuentes sobre Alquiler de Equipos</h1>
+        <h1 className="text-4xl font-bold text-cream mb-4">Preguntas Frecuentes sobre Alquiler de Equipos</h1>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-          <p className="text-gray-700 leading-relaxed mb-4">
+        <div className="bg-ink-800 rounded-xl shadow-sm border border-cream/10 p-6 mb-8">
+          <p className="text-cream/75 leading-relaxed mb-4">
             En <strong>ReSona Rent</strong> proporcionamos equipos de sonido, iluminación y audiovisuales
             profesionales para eventos en Valencia y toda la Comunidad Valenciana: desde bodas íntimas hasta conciertos,
             eventos corporativos, festivales municipales y celebraciones privadas.
           </p>
           
-          <p className="text-gray-700 leading-relaxed mb-4">
+          <p className="text-cream/75 leading-relaxed mb-4">
             Sabemos que planificar un evento puede generar muchas dudas, especialmente si es la primera vez que alquilas equipos 
             audiovisuales. Por eso, hemos recopilado las preguntas más frecuentes que nos hacen nuestros clientes sobre <strong>reservas, 
             transporte, instalación, precios, garantías y logística</strong>. Nuestro objetivo es que tengas toda la información clara 
             desde el primer momento.
           </p>
           
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-cream/75 leading-relaxed">
             Si no encuentras tu respuesta aquí, puedes <strong>contactarnos directamente por teléfono (613 88 14 14)</strong>, 
             usar nuestro <strong>formulario de contacto</strong>, o probar la <strong>calculadora de eventos</strong> para obtener 
             un presupuesto personalizado en menos de 2 minutos. Respondemos todas las consultas en menos de 24 horas.
@@ -92,7 +92,7 @@ const FAQsPage = () => {
           </Link>
           <Link
             to="/contacto"
-            className="bg-white border border-gray-200 px-5 py-3 rounded-lg font-semibold text-gray-900 hover:bg-gray-50 transition"
+            className="bg-ink-800 border border-cream/10 px-5 py-3 rounded-lg font-semibold text-cream hover:bg-white/5 transition"
           >
             Pedir presupuesto
           </Link>
@@ -106,20 +106,20 @@ const FAQsPage = () => {
 
         <div className="space-y-4 mb-12">
           {faqs.map((faq) => (
-            <details key={faq.question} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <summary className="cursor-pointer select-none font-semibold text-gray-900">
+            <details key={faq.question} className="bg-ink-800 rounded-xl shadow-sm border border-cream/10 p-5">
+              <summary className="cursor-pointer select-none font-semibold text-cream">
                 {faq.question}
               </summary>
-              <div className="mt-3 text-gray-700 leading-relaxed">{faq.answer}</div>
+              <div className="mt-3 text-cream/75 leading-relaxed">{faq.answer}</div>
             </details>
           ))}
         </div>
 
         {/* Información adicional */}
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 border border-blue-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sobre ReSona Rent Valencia</h2>
+          <h2 className="text-2xl font-bold text-cream mb-4">Sobre ReSona Rent Valencia</h2>
           
-          <div className="space-y-4 text-gray-700">
+          <div className="space-y-4 text-cream/75">
             <p className="leading-relaxed">
               <strong>ReSona Rent</strong> es una empresa especializada en el <strong>alquiler profesional de equipos de sonido, 
               iluminación, audiovisuales y escenarios</strong> para todo tipo de eventos en la provincia de Valencia. Con sede en 

@@ -41,13 +41,13 @@ const LocalBusinessInfo = ({
     return (
       <div className={`bg-gradient-to-br from-resona/5 to-resona/10 border border-resona/20 rounded-lg p-6 ${className}`}>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-resona" />
+          <MapPin className="w-5 h-5 text-resona-light" />
           Encuéntranos en Valencia
         </h3>
         
         <div className="space-y-3">
           <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-resona flex-shrink-0 mt-0.5" />
+            <MapPin className="w-5 h-5 text-resona-light flex-shrink-0 mt-0.5" />
             <div className="text-sm">
               <p className="font-medium text-gray-900">{businessInfo.address.street}</p>
               <p className="text-gray-600">{businessInfo.address.neighborhood}</p>
@@ -58,20 +58,20 @@ const LocalBusinessInfo = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-resona flex-shrink-0" />
+            <Phone className="w-5 h-5 text-resona-light flex-shrink-0" />
             <a 
               href={`tel:${businessInfo.phone.replace(/\s/g, '')}`}
-              className="text-sm font-medium text-resona hover:text-resona-dark transition"
+              className="text-sm font-medium text-resona-light hover:text-resona-dark transition"
             >
               {businessInfo.phoneDisplay}
             </a>
           </div>
 
           <div className="flex items-center gap-3">
-            <Mail className="w-5 h-5 text-resona flex-shrink-0" />
+            <Mail className="w-5 h-5 text-resona-light flex-shrink-0" />
             <a 
               href={`mailto:${businessInfo.email}`}
-              className="text-sm text-gray-600 hover:text-resona transition"
+              className="text-sm text-gray-600 hover:text-resona-light transition"
             >
               {businessInfo.email}
             </a>
@@ -102,7 +102,7 @@ const LocalBusinessInfo = ({
         {/* Dirección */}
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-6 h-6 text-resona" />
+            <MapPin className="w-6 h-6 text-resona-light" />
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-1">Dirección</h4>
@@ -118,13 +118,13 @@ const LocalBusinessInfo = ({
         {/* Teléfono */}
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Phone className="w-6 h-6 text-resona" />
+            <Phone className="w-6 h-6 text-resona-light" />
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-1">Teléfono</h4>
             <a 
               href={`tel:${businessInfo.phone.replace(/\s/g, '')}`}
-              className="text-lg font-medium text-resona hover:text-resona-dark transition"
+              className="text-lg font-medium text-resona-light hover:text-resona-dark transition"
             >
               {businessInfo.phoneDisplay}
             </a>
@@ -135,13 +135,13 @@ const LocalBusinessInfo = ({
         {/* Email */}
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Mail className="w-6 h-6 text-resona" />
+            <Mail className="w-6 h-6 text-resona-light" />
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
             <a 
               href={`mailto:${businessInfo.email}`}
-              className="text-resona hover:text-resona-dark transition"
+              className="text-resona-light hover:text-resona-dark transition"
             >
               {businessInfo.email}
             </a>
@@ -152,7 +152,7 @@ const LocalBusinessInfo = ({
         {/* Horario */}
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Clock className="w-6 h-6 text-resona" />
+            <Clock className="w-6 h-6 text-resona-light" />
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-1">Horario</h4>

@@ -45,7 +45,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <SEOHead
         title="Contacto | Alquiler y Eventos en Valencia · ReSona Rent"
         description="Contáctanos en Valencia para presupuesto personalizado de alquiler de sonido, iluminación y equipos audiovisuales. Respuesta en 24h. Teléfono: +34 613881414"
@@ -53,54 +53,54 @@ const ContactPage = () => {
         canonicalUrl="https://resonarent.com/contacto"
       />
       <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>
+        <h1 className="text-3xl font-bold text-cream mb-8">Contacto</h1>
         
         <div className="grid md:grid-cols-2 gap-8">
           {/* Información de contacto */}
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-ink-800 rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold mb-6">Información de Contacto</h2>
               
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-resona" />
+                    <Phone className="w-5 h-5 text-resona-light" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Teléfono</h3>
-                    <p className="text-gray-600">+34 613 881 414</p>
-                    <p className="text-sm text-gray-500">Lun - Vie: 9:00 - 18:00</p>
+                    <h3 className="font-medium text-cream">Teléfono</h3>
+                    <p className="text-cream/65">+34 613 881 414</p>
+                    <p className="text-sm text-cream/50">Lun - Vie: 9:00 - 18:00</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-resona" />
+                    <Mail className="w-5 h-5 text-resona-light" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Email</h3>
-                    <p className="text-gray-600">Usa el formulario abajo</p>
-                    <p className="text-sm text-gray-500">Respuesta en 24h</p>
+                    <h3 className="font-medium text-cream">Email</h3>
+                    <p className="text-cream/65">Usa el formulario abajo</p>
+                    <p className="text-sm text-cream/50">Respuesta en 24h</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-resona/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-resona" />
+                    <MapPin className="w-5 h-5 text-resona-light" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Dirección</h3>
-                    <p className="text-gray-600">C/ de l'Illa Cabrera, 13</p>
-                    <p className="text-gray-600">Quatre Carreres</p>
-                    <p className="text-gray-600">46026 València, Valencia, España</p>
+                    <h3 className="font-medium text-cream">Dirección</h3>
+                    <p className="text-cream/65">C/ de l'Illa Cabrera, 13</p>
+                    <p className="text-cream/65">Quatre Carreres</p>
+                    <p className="text-cream/65">46026 València, Valencia, España</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-resona/10 border border-resona/30 rounded-lg p-6">
-              <h3 className="font-semibold text-resona mb-2">¿Necesitas un presupuesto?</h3>
-              <p className="text-sm text-gray-700 mb-4">
+              <h3 className="font-semibold text-resona-light mb-2">¿Necesitas un presupuesto?</h3>
+              <p className="text-sm text-cream/75 mb-4">
                 Usa nuestra calculadora de eventos para obtener un presupuesto estimado al instante.
               </p>
               <a
@@ -113,12 +113,12 @@ const ContactPage = () => {
           </div>
 
           {/* Formulario de contacto */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-ink-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-6">Envíanos un Mensaje</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-cream/75 mb-1">
                   Nombre *
                 </label>
                 <input
@@ -126,13 +126,13 @@ const ContactPage = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Tu nombre"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-cream/75 mb-1">
                   Email *
                 </label>
                 <input
@@ -140,26 +140,26 @@ const ContactPage = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="tu@email.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-cream/75 mb-1">
                   Teléfono
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="+34 123 456 789"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-cream/75 mb-1">
                   Asunto *
                 </label>
                 <input
@@ -167,13 +167,13 @@ const ContactPage = () => {
                   required
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="¿En qué podemos ayudarte?"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-cream/75 mb-1">
                   Mensaje *
                 </label>
                 <textarea
@@ -181,7 +181,7 @@ const ContactPage = () => {
                   rows={5}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent resize-none"
+                  className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent resize-none"
                   placeholder="Cuéntanos sobre tu evento..."
                 />
               </div>

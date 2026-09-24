@@ -355,10 +355,10 @@ const CheckoutPageStripe = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-ink">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-resona mx-auto mb-4" />
-          <p className="text-gray-600">Cargando checkout...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-resona-light mx-auto mb-4" />
+          <p className="text-cream/65">Cargando checkout...</p>
         </div>
       </div>
     );
@@ -366,12 +366,12 @@ const CheckoutPageStripe = () => {
 
   if (!order || !clientSecret || !stripePromise) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-ink">
         <div className="text-center">
-          <p className="text-red-600">Error al cargar el checkout</p>
+          <p className="text-red-400">Error al cargar el checkout</p>
           <button
             onClick={() => navigate('/mis-pedidos')}
-            className="mt-4 text-resona hover:underline"
+            className="mt-4 text-resona-light hover:underline"
           >
             Volver a pedidos
           </button>
@@ -401,25 +401,25 @@ const CheckoutPageStripe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Finalizar Pago</h1>
-          <p className="text-gray-600 mt-2">Pedido #{order.orderNumber}</p>
+          <h1 className="text-3xl font-bold text-cream">Finalizar Pago</h1>
+          <p className="text-cream/65 mt-2">Pedido #{order.orderNumber}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Resumen del pedido */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-4">
+            <div className="bg-ink-800 rounded-lg shadow-sm border border-cream/10 p-6 sticky top-4">
               <h2 className="text-xl font-semibold mb-4">Resumen del Pedido</h2>
 
               {/* Información del evento */}
               <div className="space-y-4 mb-6">
                 <div className="flex items-start">
-                  <Calendar className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <Calendar className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Fecha del evento</p>
+                    <p className="text-sm text-cream/65">Fecha del evento</p>
                     <p className="font-medium">
                       {new Date(order.startDate).toLocaleDateString('es-ES')} - 
                       {new Date(order.endDate).toLocaleDateString('es-ES')}
@@ -428,17 +428,17 @@ const CheckoutPageStripe = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <MapPin className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Entrega</p>
+                    <p className="text-sm text-cream/65">Entrega</p>
                     <p className="font-medium">{order.deliveryType}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <Package className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <Package className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Productos</p>
+                    <p className="text-sm text-cream/65">Productos</p>
                     <p className="font-medium">{order.items?.length || 0} items</p>
                   </div>
                 </div>
@@ -451,7 +451,7 @@ const CheckoutPageStripe = () => {
                   <div className="space-y-2">
                     {order.items.map((item: any, index: number) => (
                       <div key={item.id || `item-${index}`} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
+                        <span className="text-cream/65">
                           {item.product?.name || 'Producto'} x{item.quantity}
                         </span>
                         <span className="font-medium">
@@ -466,37 +466,37 @@ const CheckoutPageStripe = () => {
               {/* Totales */}
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-cream/65">Subtotal</span>
                   <span>{formatPrice(Number(order.subtotal))}</span>
                 </div>
 
                 {order.shippingCost > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Envío</span>
+                    <span className="text-cream/65">Envío</span>
                     <span>{formatPrice(Number(order.shippingCost))}</span>
                   </div>
                 )}
 
                 {order.taxAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">IVA</span>
+                    <span className="text-cream/65">IVA</span>
                     <span>{formatPrice(Number(order.taxAmount))}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span>Total del Pedido</span>
-                  <span className="text-resona">{formatPrice(Number(order.total))}</span>
+                  <span className="text-resona-light">{formatPrice(Number(order.total))}</span>
                 </div>
                 
                 {/* Mostrar monto de reserva si es diferente del total */}
                 {order.amountToPay && order.amountToPay < order.total && (
-                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-300">
+                  <div className="mt-2 p-3 bg-resona/10 rounded-lg border border-blue-300">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-blue-900 font-semibold">💳 Pago de Reserva (25%)</span>
-                      <span className="text-blue-600 font-bold">{formatPrice(Number(order.amountToPay))}</span>
+                      <span className="text-cream font-semibold">💳 Pago de Reserva (25%)</span>
+                      <span className="text-resona-light font-bold">{formatPrice(Number(order.amountToPay))}</span>
                     </div>
-                    <p className="text-xs text-blue-700">Resto: {formatPrice((order.total - order.amountToPay))} en "Mis Pedidos"</p>
+                    <p className="text-xs text-resona-light">Resto: {formatPrice((order.total - order.amountToPay))} en "Mis Pedidos"</p>
                   </div>
                 )}
               </div>
@@ -505,15 +505,15 @@ const CheckoutPageStripe = () => {
 
           {/* Formulario de pago */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-ink-800 rounded-lg shadow-sm border border-cream/10 p-6">
               <div className="flex items-center mb-6">
-                <CreditCard className="w-6 h-6 text-resona mr-2" />
+                <CreditCard className="w-6 h-6 text-resona-light mr-2" />
                 <h2 className="text-xl font-semibold">Método de Pago</h2>
               </div>
 
               {/* Mensaje sobre métodos de pago */}
-              <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                <p className="text-sm text-blue-900">
+              <div className="mb-4 p-4 bg-resona/10 border-l-4 border-blue-500 rounded-r-lg">
+                <p className="text-sm text-cream">
                   💳 <strong>Método de pago:</strong> Tarjeta de crédito/débito
                 </p>
               </div>

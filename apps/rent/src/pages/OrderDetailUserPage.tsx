@@ -127,7 +127,7 @@ const OrderDetailUserPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-resona-light" />
       </div>
     );
   }
@@ -135,7 +135,7 @@ const OrderDetailUserPage = () => {
   if (!order) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-500/10 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">No se encontró el pedido</p>
         </div>
       </div>
@@ -144,12 +144,12 @@ const OrderDetailUserPage = () => {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
-      PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
-      IN_PROGRESS: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En Proceso' },
-      COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completado' },
+      PENDING: { bg: 'bg-yellow-100', text: 'text-amber-300', label: 'Pendiente' },
+      IN_PROGRESS: { bg: 'bg-resona/15', text: 'text-resona-light', label: 'En Proceso' },
+      COMPLETED: { bg: 'bg-emerald-500/15', text: 'text-emerald-300', label: 'Completado' },
       CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
     };
-    return badges[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
+    return badges[status] || { bg: 'bg-ink-800', text: 'text-cream/90', label: status };
   };
 
   const statusBadge = getStatusBadge(order.status);
@@ -160,7 +160,7 @@ const OrderDetailUserPage = () => {
       <div className="mb-6">
         <button
           onClick={() => navigate('/mis-pedidos')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+          className="flex items-center gap-2 text-cream/65 hover:text-gray-800 mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a Mis Pedidos
@@ -168,8 +168,8 @@ const OrderDetailUserPage = () => {
         
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Pedido #{order.orderNumber}</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-cream">Pedido #{order.orderNumber}</h1>
+            <p className="text-cream/65 mt-1">
               Realizado el {new Date(order.createdAt).toLocaleDateString('es-ES', { 
                 day: 'numeric', 
                 month: 'long', 
@@ -189,7 +189,7 @@ const OrderDetailUserPage = () => {
         <button
           onClick={handleDownloadInvoice}
           disabled={loadingInvoice}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-resona hover:bg-resona-dark text-white rounded-lg transition disabled:opacity-50"
         >
           {loadingInvoice ? (
             <>
@@ -209,7 +209,7 @@ const OrderDetailUserPage = () => {
           <>
             <button
               onClick={() => setShowEditModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-ink-800 border-2 border-green-600 text-emerald-400 rounded-lg hover:bg-green-50 transition"
             >
               <Edit className="w-4 h-4" />
               Editar Pedido
@@ -217,7 +217,7 @@ const OrderDetailUserPage = () => {
             
             <button
               onClick={handleCancelOrder}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-ink-800 border-2 border-red-600 text-red-400 rounded-lg hover:bg-red-50 transition"
             >
               <XCircle className="w-4 h-4" />
               Cancelar Pedido
@@ -226,7 +226,7 @@ const OrderDetailUserPage = () => {
         )}
         
         {!modificationCheck?.canModify && modificationCheck?.reason && order.status !== 'CANCELLED' && (
-          <div className="text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-lg border">
+          <div className="text-sm text-cream/65 bg-ink px-4 py-2 rounded-lg border">
             ⏰ {modificationCheck.reason}
           </div>
         )}
@@ -250,17 +250,17 @@ const OrderDetailUserPage = () => {
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Información del Pedido */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <Package className="w-5 h-5" />
             Información del Pedido
           </h2>
           
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-gray-700">
-              <Calendar className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center gap-3 text-cream/75">
+              <Calendar className="w-5 h-5 text-cream/45" />
               <div>
-                <p className="text-sm text-gray-500">Fecha del Evento</p>
+                <p className="text-sm text-cream/50">Fecha del Evento</p>
                 <p className="font-medium">
                   {new Date(order.startDate).toLocaleDateString('es-ES')} - {new Date(order.endDate).toLocaleDateString('es-ES')}
                 </p>
@@ -269,10 +269,10 @@ const OrderDetailUserPage = () => {
 
             {/* Para eventos personalizados, mostrar el lugar. Para alquileres, el método de entrega */}
             {order.items?.some((item: any) => item.eventMetadata) ? (
-              <div className="flex items-center gap-3 text-gray-700">
-                <MapPin className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-3 text-cream/75">
+                <MapPin className="w-5 h-5 text-cream/45" />
                 <div>
-                  <p className="text-sm text-gray-500">Lugar del Evento</p>
+                  <p className="text-sm text-cream/50">Lugar del Evento</p>
                   <p className="font-medium">
                     {(() => {
                       // eventLocation puede ser string o objeto
@@ -291,10 +291,10 @@ const OrderDetailUserPage = () => {
               </div>
             ) : (
               <>
-                <div className="flex items-center gap-3 text-gray-700">
-                  <MapPin className="w-5 h-5 text-gray-400" />
+                <div className="flex items-center gap-3 text-cream/75">
+                  <MapPin className="w-5 h-5 text-cream/45" />
                   <div>
-                    <p className="text-sm text-gray-500">Método de Entrega</p>
+                    <p className="text-sm text-cream/50">Método de Entrega</p>
                     <p className="font-medium">
                       {order.deliveryType === 'PICKUP' ? 'Recogida en tienda' : 'Envío a domicilio'}
                     </p>
@@ -303,51 +303,51 @@ const OrderDetailUserPage = () => {
 
                 {order.deliveryType === 'DELIVERY' && order.deliveryAddress && (
                   <div className="pl-8">
-                    <p className="text-sm text-gray-600">{order.deliveryAddress.address}</p>
+                    <p className="text-sm text-cream/65">{order.deliveryAddress.address}</p>
                   </div>
                 )}
               </>
             )}
 
-            <div className="flex items-center gap-3 text-gray-700">
-              <CreditCard className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center gap-3 text-cream/75">
+              <CreditCard className="w-5 h-5 text-cream/45" />
               <div>
-                <p className="text-sm text-gray-500">Total</p>
-                <p className="font-bold text-lg text-blue-600">{formatPrice(Number(order.total || 0))}</p>
+                <p className="text-sm text-cream/50">Total</p>
+                <p className="font-bold text-lg text-resona-light">{formatPrice(Number(order.total || 0))}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Resumen de Pago y Fianza */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Resumen de Pago</h2>
           
           <div className="space-y-3">
             {/* Subtotal */}
-            <div className="flex justify-between text-gray-700">
+            <div className="flex justify-between text-cream/75">
               <span>Subtotal:</span>
               <span>{formatPrice(Number(order.subtotal || 0))}</span>
             </div>
 
             {/* Envío */}
             {order.shippingCost > 0 && (
-              <div className="flex justify-between text-gray-700">
+              <div className="flex justify-between text-cream/75">
                 <span>Envío/Montaje:</span>
                 <span>{formatPrice(Number(order.shippingCost || 0))}</span>
               </div>
             )}
 
             {/* IVA */}
-            <div className="flex justify-between text-gray-700">
+            <div className="flex justify-between text-cream/75">
               <span>IVA (21%):</span>
               <span>{formatPrice(Number(order.taxAmount || 0))}</span>
             </div>
 
             {/* Total */}
-            <div className="flex justify-between text-lg font-bold text-gray-900 pt-3 border-t">
+            <div className="flex justify-between text-lg font-bold text-cream pt-3 border-t">
               <span>Total:</span>
-              <span className="text-blue-600">{formatPrice(Number(order.total || 0))}</span>
+              <span className="text-resona-light">{formatPrice(Number(order.total || 0))}</span>
             </div>
 
             {/* Fianza - Solo para alquileres, NO para eventos personalizados */}
@@ -355,27 +355,27 @@ const OrderDetailUserPage = () => {
               <>
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-semibold text-yellow-700">💰 Fianza (reembolsable):</span>
-                    <span className="font-bold text-yellow-700">{formatPrice(Number(order.depositAmount))}</span>
+                    <span className="font-semibold text-amber-400">💰 Fianza (reembolsable):</span>
+                    <span className="font-bold text-amber-400">{formatPrice(Number(order.depositAmount))}</span>
                   </div>
                   
                   {/* Estado de la fianza */}
-                  <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                  <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
                     {order.depositStatus === 'PENDING' && (
-                      <div className="text-sm text-yellow-800">
+                      <div className="text-sm text-amber-300">
                         <p className="font-medium mb-1">⏳ Fianza Pendiente</p>
                         <p>La fianza se cobrará antes de la entrega del material.</p>
                       </div>
                     )}
                     {order.depositStatus === 'CAPTURED' && (
-                      <div className="text-sm text-blue-800">
+                      <div className="text-sm text-resona-light">
                         <p className="font-medium mb-1">✓ Fianza Cobrada</p>
                         <p>Cobrada el {order.depositPaidAt ? new Date(order.depositPaidAt).toLocaleDateString('es-ES') : '-'}</p>
                         <p className="mt-1 text-xs">Se devolverá en 7 días tras la devolución satisfactoria del material.</p>
                       </div>
                     )}
                     {order.depositStatus === 'RELEASED' && (
-                      <div className="text-sm text-green-800">
+                      <div className="text-sm text-emerald-300">
                         <p className="font-medium mb-1">✓ Fianza Devuelta</p>
                         <p>Devuelta el {order.depositReleasedAt ? new Date(order.depositReleasedAt).toLocaleDateString('es-ES') : '-'}</p>
                       </div>
@@ -398,7 +398,7 @@ const OrderDetailUserPage = () => {
 
                   {/* Información adicional sobre la fianza */}
                   {(order.depositStatus === 'PENDING' || order.depositStatus === 'CAPTURED') && (
-                    <div className="mt-3 text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                    <div className="mt-3 text-xs text-cream/65 bg-ink p-2 rounded">
                       <p className="font-medium">ℹ️ Sobre la fianza:</p>
                       <ul className="list-disc list-inside mt-1 space-y-1">
                         <li>Cubre posibles daños o pérdidas del material</li>
@@ -435,7 +435,7 @@ const OrderDetailUserPage = () => {
         })()}
 
         {/* Productos */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Productos</h2>
           <div className="space-y-4">
             {order.items?.map((item: any) => (
@@ -443,61 +443,61 @@ const OrderDetailUserPage = () => {
                 {/* Información básica del item */}
                 <div className="flex gap-4 mb-3">
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{item.product?.name || 'Producto'}</h3>
-                    <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-medium text-cream">{item.product?.name || 'Producto'}</h3>
+                    <p className="text-sm text-cream/50">Cantidad: {item.quantity}</p>
+                    <p className="text-sm text-cream/50">
                       {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">{formatPrice(Number(item.subtotal || item.totalPrice || 0))}</p>
-                    <p className="text-xs text-gray-500">{formatPrice(Number(item.pricePerDay || item.pricePerUnit || 0))}/día</p>
+                    <p className="font-medium text-cream">{formatPrice(Number(item.subtotal || item.totalPrice || 0))}</p>
+                    <p className="text-xs text-cream/50">{formatPrice(Number(item.pricePerDay || item.pricePerUnit || 0))}/día</p>
                   </div>
                 </div>
 
                 {/* Detalles del evento si existe eventMetadata */}
                 {item.eventMetadata && (
-                  <div className="mt-3 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg space-y-3">
+                  <div className="mt-3 p-4 bg-resona/10 border-l-4 border-blue-500 rounded-r-lg space-y-3">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">🎉</span>
-                      <h4 className="font-semibold text-blue-900">Detalles de tu Evento</h4>
+                      <h4 className="font-semibold text-cream">Detalles de tu Evento</h4>
                     </div>
                     
                     {/* Información básica del evento */}
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       {item.eventMetadata.eventType && (
                         <div>
-                          <span className="text-blue-700 font-medium">Tipo:</span>
+                          <span className="text-resona-light font-medium">Tipo:</span>
                           <span className="ml-2">{item.eventMetadata.eventType}</span>
                         </div>
                       )}
                       {item.eventMetadata.attendees && (
                         <div>
-                          <span className="text-blue-700 font-medium">Asistentes:</span>
+                          <span className="text-resona-light font-medium">Asistentes:</span>
                           <span className="ml-2">{item.eventMetadata.attendees}</span>
                         </div>
                       )}
                       {item.eventMetadata.duration && (
                         <div>
-                          <span className="text-blue-700 font-medium">Duración:</span>
+                          <span className="text-resona-light font-medium">Duración:</span>
                           <span className="ml-2">{item.eventMetadata.duration} {item.eventMetadata.durationType === 'hours' ? 'horas' : 'días'}</span>
                         </div>
                       )}
                       {item.eventMetadata.startTime && (
                         <div>
-                          <span className="text-blue-700 font-medium">Hora inicio:</span>
+                          <span className="text-resona-light font-medium">Hora inicio:</span>
                           <span className="ml-2">{item.eventMetadata.startTime}</span>
                         </div>
                       )}
                       {item.eventMetadata.eventDate && (
                         <div>
-                          <span className="text-blue-700 font-medium">Fecha:</span>
+                          <span className="text-resona-light font-medium">Fecha:</span>
                           <span className="ml-2">{new Date(item.eventMetadata.eventDate).toLocaleDateString('es-ES')}</span>
                         </div>
                       )}
                       {item.eventMetadata.eventLocation && (
                         <div className="col-span-2">
-                          <span className="text-blue-700 font-medium">📍 Ubicación:</span>
+                          <span className="text-resona-light font-medium">📍 Ubicación:</span>
                           <span className="ml-2">{item.eventMetadata.eventLocation}</span>
                         </div>
                       )}
@@ -506,7 +506,7 @@ const OrderDetailUserPage = () => {
                     {/* Partes del evento */}
                     {item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
                       <div>
-                        <h5 className="font-medium text-blue-900 mb-2">📦 Partes del Evento:</h5>
+                        <h5 className="font-medium text-cream mb-2">📦 Partes del Evento:</h5>
                         <ul className="space-y-1 text-sm ml-4">
                           {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
                             <li key={idx} className="flex justify-between">
@@ -516,7 +516,7 @@ const OrderDetailUserPage = () => {
                           ))}
                         </ul>
                         {item.eventMetadata.partsTotal > 0 && (
-                          <p className="text-sm font-semibold mt-2 text-blue-900">
+                          <p className="text-sm font-semibold mt-2 text-cream">
                             Subtotal Partes: {formatPrice(Number(item.eventMetadata.partsTotal))}
                           </p>
                         )}
@@ -526,7 +526,7 @@ const OrderDetailUserPage = () => {
                     {/* Extras del evento */}
                     {item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
                       <div>
-                        <h5 className="font-medium text-blue-900 mb-2">✨ Extras:</h5>
+                        <h5 className="font-medium text-cream mb-2">✨ Extras:</h5>
                         <ul className="space-y-1 text-sm ml-4">
                           {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
                             <li key={idx} className="flex justify-between">
@@ -536,7 +536,7 @@ const OrderDetailUserPage = () => {
                           ))}
                         </ul>
                         {item.eventMetadata.extrasTotal > 0 && (
-                          <p className="text-sm font-semibold mt-2 text-blue-900">
+                          <p className="text-sm font-semibold mt-2 text-cream">
                             Subtotal Extras: {formatPrice(Number(item.eventMetadata.extrasTotal))}
                           </p>
                         )}
@@ -545,8 +545,8 @@ const OrderDetailUserPage = () => {
 
                     {/* Total del evento */}
                     {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
-                      <div className="pt-2 border-t border-blue-200">
-                        <p className="text-sm font-bold text-blue-900">
+                      <div className="pt-2 border-t border-resona/30">
+                        <p className="text-sm font-bold text-cream">
                           💰 Total Evento: {formatPrice((
                             (Number(item.eventMetadata.partsTotal) || 0) + 
                             (Number(item.eventMetadata.extrasTotal) || 0)
@@ -563,10 +563,10 @@ const OrderDetailUserPage = () => {
 
         {/* Detalles del Evento / Notas */}
         {order.notes && (
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-ink-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4">📋 Detalles del Evento</h2>
-            <div className="prose max-w-none">
-              <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="prose prose-invert max-w-none">
+              <pre className="whitespace-pre-wrap text-sm text-cream/75 font-sans bg-ink p-4 rounded-lg border border-cream/10">
                 {/* Decodificar HTML entities como &#x2F; */}
                 {order.notes.replace(/&#x2F;/g, '/').replace(/&#x([0-9A-Fa-f]+);/g, (match: string, hex: string) => String.fromCharCode(parseInt(hex, 16)))}
               </pre>

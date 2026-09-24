@@ -109,12 +109,12 @@ const PackDetailPage = () => {
           description="El pack que buscas no está disponible. Explora nuestro catálogo completo."
           noindex={true}
         />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-ink flex items-center justify-center">
           <div className="text-center">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Pack no encontrado</h1>
-            <p className="text-gray-600 mb-4">El pack que buscas no existe o ha sido eliminado.</p>
-            <p className="text-sm text-gray-500">Serás redirigido al catálogo en 3 segundos...</p>
+            <Package className="w-16 h-16 text-cream/45 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-cream mb-2">Pack no encontrado</h1>
+            <p className="text-cream/65 mb-4">El pack que buscas no existe o ha sido eliminado.</p>
+            <p className="text-sm text-cream/50">Serás redirigido al catálogo en 3 segundos...</p>
           </div>
         </div>
       </>
@@ -175,13 +175,13 @@ const PackDetailPage = () => {
         }}
       />
 
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-ink py-8">
         <div className="container mx-auto px-4">
           <Breadcrumbs items={breadcrumbItems} className="mb-6" />
 
           <div className="grid lg:grid-cols-2 gap-8">
             <div>
-              <div className="bg-white rounded-lg shadow-md overflow-hidden relative">
+              <div className="bg-ink-800 rounded-lg shadow-md overflow-hidden relative">
                 <div className="absolute top-2 left-2 z-10">
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
                     <Package className="w-3 h-3" />
@@ -193,14 +193,14 @@ const PackDetailPage = () => {
                   <img
                     src={getImageUrl(pack.mainImageUrl || pack.imageUrl || pack.images[0])}
                     alt={pack.name}
-                    className="w-full h-96 object-contain bg-white"
+                    className="w-full h-96 object-contain bg-ink-800"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = placeholderImage;
                     }}
                   />
                 ) : (
-                  <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
-                    <Package className="w-24 h-24 text-gray-400" />
+                  <div className="w-full h-96 bg-ink-700 flex items-center justify-center">
+                    <Package className="w-24 h-24 text-cream/45" />
                   </div>
                 )}
               </div>
@@ -212,7 +212,7 @@ const PackDetailPage = () => {
                       key={idx}
                       src={getImageUrl(img)}
                       alt={`${pack.name} ${idx + 1}`}
-                      className="w-full h-24 object-contain bg-white rounded-lg cursor-pointer hover:opacity-75"
+                      className="w-full h-24 object-contain bg-ink-800 rounded-lg cursor-pointer hover:opacity-75"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = placeholderImage;
                       }}
@@ -223,7 +223,7 @@ const PackDetailPage = () => {
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{pack.name}</h1>
+              <h1 className="text-3xl font-bold text-cream mb-4">{pack.name}</h1>
 
               <div className="mb-6">
                 {(() => {
@@ -231,12 +231,12 @@ const PackDetailPage = () => {
                   return (
                     <>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-blue-600">{priceDisplay.main}</span>
+                        <span className="text-3xl font-bold text-resona-light">{priceDisplay.main}</span>
                       </div>
-                      <div className="mt-2 text-sm text-gray-600">
+                      <div className="mt-2 text-sm text-cream/65">
                         <p>Precio incluye todos los componentes del pack</p>
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">{priceDisplay.sub}</p>
+                      <p className="mt-2 text-sm text-cream/50">{priceDisplay.sub}</p>
                     </>
                   );
                 })()}
@@ -247,7 +247,7 @@ const PackDetailPage = () => {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                    className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
+                    className="w-10 h-10 rounded-lg border border-cream/15 flex items-center justify-center hover:bg-white/10 transition font-semibold text-lg"
                     aria-label="Disminuir cantidad"
                   >
                     −
@@ -264,17 +264,17 @@ const PackDetailPage = () => {
                       const value = parseInt(e.target.value);
                       if (!e.target.value || isNaN(value) || value < 1) setQuantity(1);
                     }}
-                    className="w-20 text-xl font-medium text-center border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-20 text-xl font-medium text-center border border-cream/15 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <button
                     onClick={() => setQuantity(prev => prev + 1)}
-                    className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition font-semibold text-lg"
+                    className="w-10 h-10 rounded-lg border border-cream/15 flex items-center justify-center hover:bg-white/10 transition font-semibold text-lg"
                     aria-label="Aumentar cantidad"
                   >
                     +
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-cream/50">
                   La disponibilidad se verificará al seleccionar fechas en el carrito
                 </p>
               </div>
@@ -283,7 +283,7 @@ const PackDetailPage = () => {
                 <button
                   data-testid="add-to-cart"
                   onClick={handleAddToCart}
-                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                  className="flex-1 bg-resona text-white py-3 px-6 rounded-lg font-semibold hover:bg-resona-dark transition flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Añadir al carrito
@@ -295,8 +295,8 @@ const PackDetailPage = () => {
                   aria-label="Guardar en favoritos"
                   className={`p-3 border rounded-lg transition ${
                     isFavorite
-                      ? 'border-red-500 bg-red-50 text-red-600'
-                      : 'border-gray-300 hover:bg-gray-50'
+                      ? 'border-red-500 bg-red-500/10 text-red-400'
+                      : 'border-cream/15 hover:bg-white/5'
                   }`}
                 >
                   <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
@@ -307,7 +307,7 @@ const PackDetailPage = () => {
                     toast.success('Enlace copiado');
                   }}
                   aria-label="Compartir"
-                  className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="p-3 border border-cream/15 rounded-lg hover:bg-white/5 transition"
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
@@ -316,7 +316,7 @@ const PackDetailPage = () => {
               {pack.description && (
                 <div className="border-t pt-6">
                   <h2 className="text-lg font-semibold mb-3">Descripción</h2>
-                  <p className="text-gray-600 whitespace-pre-line">{pack.description}</p>
+                  <p className="text-cream/65 whitespace-pre-line">{pack.description}</p>
                 </div>
               )}
 
@@ -325,7 +325,7 @@ const PackDetailPage = () => {
                   <h2 className="text-lg font-semibold mb-3">Incluye</h2>
                   <ul className="space-y-3">
                     {packItems.map((item: any, index: number) => (
-                      <li key={index} className="pb-2 border-b border-gray-100 last:border-b-0 font-medium text-gray-700">
+                      <li key={index} className="pb-2 border-b border-cream/10 last:border-b-0 font-medium text-cream/75">
                         {item.quantity || 1}x {item.product?.name || item.name}
                       </li>
                     ))}

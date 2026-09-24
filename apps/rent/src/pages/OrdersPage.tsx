@@ -23,12 +23,12 @@ const OrdersPage = () => {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string; label: string }> = {
-      PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendiente' },
-      IN_PROGRESS: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En Proceso' },
-      COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completado' },
+      PENDING: { bg: 'bg-yellow-100', text: 'text-amber-300', label: 'Pendiente' },
+      IN_PROGRESS: { bg: 'bg-resona/15', text: 'text-resona-light', label: 'En Proceso' },
+      COMPLETED: { bg: 'bg-emerald-500/15', text: 'text-emerald-300', label: 'Completado' },
       CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelado' },
     };
-    return badges[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
+    return badges[status] || { bg: 'bg-ink-800', text: 'text-cream/90', label: status };
   };
 
   const handleDownloadInvoice = async (order: any) => {
@@ -90,10 +90,10 @@ const OrdersPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-ink py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 animate-spin text-resona" />
+            <Loader2 className="w-12 h-12 animate-spin text-resona-light" />
           </div>
         </div>
       </div>
@@ -101,31 +101,31 @@ const OrdersPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8">
-          <Package className="w-8 h-8 text-resona" />
-          <h1 className="text-3xl font-bold text-gray-900">Mis Pedidos</h1>
+          <Package className="w-8 h-8 text-resona-light" />
+          <h1 className="text-3xl font-bold text-cream">Mis Pedidos</h1>
         </div>
 
         {orders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <Package className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No tienes pedidos aún</h2>
-            <p className="text-gray-600">Los pedidos que realices aparecerán aquí</p>
+          <div className="bg-ink-800 rounded-lg shadow-md p-12 text-center">
+            <Package className="w-24 h-24 text-cream/70 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-cream mb-2">No tienes pedidos aún</h2>
+            <p className="text-cream/65">Los pedidos que realices aparecerán aquí</p>
           </div>
         ) : (
           <div className="space-y-4">
             {orders.map((order: any) => {
               const badge = getStatusBadge(order.status);
               return (
-                <div key={order.id} data-testid="order-card" className="bg-white rounded-lg shadow-md p-6">
+                <div key={order.id} data-testid="order-card" className="bg-ink-800 rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 data-testid="order-number" className="text-lg font-bold text-gray-900">
+                      <h3 data-testid="order-number" className="text-lg font-bold text-cream">
                         Pedido #{order.orderNumber}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-cream/65">
                         {new Date(order.createdAt).toLocaleDateString('es-ES', {
                           day: 'numeric',
                           month: 'long',
@@ -138,17 +138,17 @@ const OrdersPage = () => {
                     </span>
                   </div>
 
-                  <div className="border-t border-gray-200 pt-4 mb-4">
+                  <div className="border-t border-cream/10 pt-4 mb-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600">Total:</p>
-                        <p data-testid="order-total" className="text-xl font-bold text-gray-900">
+                        <p className="text-sm text-cream/65">Total:</p>
+                        <p data-testid="order-total" className="text-xl font-bold text-cream">
                           {formatPrice(Number(order.total))}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Método de entrega:</p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-sm text-cream/65">Método de entrega:</p>
+                        <p className="text-lg font-semibold text-cream">
                           {order.deliveryMethod === 'pickup' ? '🏪 Recogida en tienda' : '🚚 Envío a domicilio'}
                         </p>
                       </div>
@@ -178,7 +178,7 @@ const OrdersPage = () => {
 
                     <button
                       onClick={() => navigate(`/mis-pedidos/${order.id}`)}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                      className="flex items-center gap-2 px-4 py-2 bg-ink-800 text-cream/75 rounded-lg hover:bg-gray-200 transition"
                     >
                       <Eye className="w-4 h-4" />
                       Ver Detalles

@@ -117,11 +117,11 @@ export default function MyDataPage() {
 
   if (loadingSummary || loadingHistory) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-ink py-12">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-resona mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando tus datos...</p>
+            <p className="mt-4 text-cream/65">Cargando tus datos...</p>
           </div>
         </div>
       </div>
@@ -129,14 +129,14 @@ export default function MyDataPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-ink py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-cream mb-2">
             🔒 Mis Datos y Privacidad
           </h1>
-          <p className="text-gray-600">
+          <p className="text-cream/65">
             Gestiona tus datos personales y preferencias de privacidad según el RGPD
           </p>
         </div>
@@ -145,28 +145,28 @@ export default function MyDataPage() {
           {/* Columna principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Resumen de datos personales */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Shield className="w-6 h-6 text-resona" />
+            <div className="bg-ink-800 rounded-lg shadow p-6">
+              <h2 className="text-xl font-bold text-cream mb-4 flex items-center gap-2">
+                <Shield className="w-6 h-6 text-resona-light" />
                 Datos Personales
               </h2>
               
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Nombre</p>
+                    <p className="text-sm text-cream/50">Nombre</p>
                     <p className="font-medium">{dataSummary?.personalData.firstName} {dataSummary?.personalData.lastName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="text-sm text-cream/50">Email</p>
                     <p className="font-medium">{dataSummary?.personalData.email}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Teléfono</p>
+                    <p className="text-sm text-cream/50">Teléfono</p>
                     <p className="font-medium">{dataSummary?.personalData.phone || 'No especificado'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Miembro desde</p>
+                    <p className="text-sm text-cream/50">Miembro desde</p>
                     <p className="font-medium">
                       {new Date(dataSummary?.personalData.memberSince).toLocaleDateString('es-ES')}
                     </p>
@@ -174,19 +174,19 @@ export default function MyDataPage() {
                 </div>
 
                 <div className="border-t pt-4">
-                  <p className="text-sm text-gray-500 mb-2">Estadísticas</p>
+                  <p className="text-sm text-cream/50 mb-2">Estadísticas</p>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <p className="text-2xl font-bold text-resona">{dataSummary?.statistics.totalOrders}</p>
-                      <p className="text-xs text-gray-600">Pedidos</p>
+                      <p className="text-2xl font-bold text-resona-light">{dataSummary?.statistics.totalOrders}</p>
+                      <p className="text-xs text-cream/65">Pedidos</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-resona">{dataSummary?.statistics.totalReviews}</p>
-                      <p className="text-xs text-gray-600">Reseñas</p>
+                      <p className="text-2xl font-bold text-resona-light">{dataSummary?.statistics.totalReviews}</p>
+                      <p className="text-xs text-cream/65">Reseñas</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-resona">{dataSummary?.statistics.totalFavorites}</p>
-                      <p className="text-xs text-gray-600">Favoritos</p>
+                      <p className="text-2xl font-bold text-resona-light">{dataSummary?.statistics.totalFavorites}</p>
+                      <p className="text-xs text-cream/65">Favoritos</p>
                     </div>
                   </div>
                 </div>
@@ -194,27 +194,27 @@ export default function MyDataPage() {
             </div>
 
             {/* Gestión de consentimientos */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="bg-ink-800 rounded-lg shadow p-6">
+              <h2 className="text-xl font-bold text-cream mb-4 flex items-center gap-2">
+                <CheckCircle className="w-6 h-6 text-emerald-400" />
                 Preferencias de Privacidad
               </h2>
 
               <div className="space-y-4">
                 {/* Consentimiento de tratamiento de datos (obligatorio) */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between p-4 bg-ink rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900">Tratamiento de Datos</h3>
-                      <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">
+                      <h3 className="font-semibold text-cream">Tratamiento de Datos</h3>
+                      <span className="bg-emerald-500/15 text-emerald-300 text-xs font-semibold px-2 py-0.5 rounded">
                         Obligatorio
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-cream/65">
                       Necesario para gestionar tu cuenta y pedidos
                     </p>
                     {dataSummary?.consents.acceptedPrivacyAt && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-cream/50 mt-1">
                         Aceptado el {new Date(dataSummary.consents.acceptedPrivacyAt).toLocaleDateString('es-ES')}
                       </p>
                     )}
@@ -227,19 +227,19 @@ export default function MyDataPage() {
                 </div>
 
                 {/* Consentimiento de marketing (opcional) */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between p-4 bg-ink rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900">Comunicaciones Comerciales</h3>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
+                      <h3 className="font-semibold text-cream">Comunicaciones Comerciales</h3>
+                      <span className="bg-resona/15 text-resona-light text-xs font-semibold px-2 py-0.5 rounded">
                         Opcional
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-cream/65">
                       Recibir ofertas, promociones y novedades por email
                     </p>
                     {dataSummary?.consents.acceptedMarketingAt && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-cream/50 mt-1">
                         Aceptado el {new Date(dataSummary.consents.acceptedMarketingAt).toLocaleDateString('es-ES')}
                       </p>
                     )}
@@ -253,7 +253,7 @@ export default function MyDataPage() {
                       } ${updateConsentsMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-ink-800 transition-transform ${
                           dataSummary?.consents.marketingConsent ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
@@ -264,16 +264,16 @@ export default function MyDataPage() {
             </div>
 
             {/* Zona peligrosa */}
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6">
+            <div className="bg-red-500/10 border-2 border-red-200 rounded-lg p-6">
               <h2 className="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+                <AlertTriangle className="w-6 h-6 text-red-400" />
                 Zona de Peligro
               </h2>
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Eliminar mi cuenta</h3>
-                  <p className="text-sm text-gray-700 mb-4">
+                  <h3 className="font-semibold text-cream mb-2">Eliminar mi cuenta</h3>
+                  <p className="text-sm text-cream/75 mb-4">
                     Al eliminar tu cuenta, todos tus datos personales serán borrados permanentemente. 
                     Esta acción <strong>no se puede deshacer</strong>.
                   </p>
@@ -292,8 +292,8 @@ export default function MyDataPage() {
           {/* Columna lateral */}
           <div className="space-y-6">
             {/* Acciones RGPD */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">
+            <div className="bg-ink-800 rounded-lg shadow p-6">
+              <h2 className="text-lg font-bold text-cream mb-4">
                 Tus Derechos RGPD
               </h2>
 
@@ -307,25 +307,25 @@ export default function MyDataPage() {
                   {downloadMutation.isPending ? 'Descargando...' : 'Descargar mis datos'}
                 </button>
 
-                <p className="text-xs text-gray-500 text-center">
+                <p className="text-xs text-cream/50 text-center">
                   Descarga todos tus datos en formato JSON (Derecho de Portabilidad)
                 </p>
               </div>
             </div>
 
             {/* Historial de consentimientos */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gray-600" />
+            <div className="bg-ink-800 rounded-lg shadow p-6">
+              <h2 className="text-lg font-bold text-cream mb-4 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-cream/65" />
                 Historial
               </h2>
 
               <div className="space-y-3">
                 {consentHistory?.history?.map((item: any, index: number) => (
-                  <div key={index} className="border-l-2 border-gray-200 pl-3 py-2">
-                    <p className="text-sm font-medium text-gray-900">{item.action}</p>
-                    <p className="text-xs text-gray-600">{item.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                  <div key={index} className="border-l-2 border-cream/10 pl-3 py-2">
+                    <p className="text-sm font-medium text-cream">{item.action}</p>
+                    <p className="text-xs text-cream/65">{item.description}</p>
+                    <p className="text-xs text-cream/50 mt-1">
                       {new Date(item.date).toLocaleDateString('es-ES', {
                         year: 'numeric',
                         month: 'long',
@@ -338,12 +338,12 @@ export default function MyDataPage() {
             </div>
 
             {/* Info RGPD */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+            <div className="bg-resona/10 border border-resona/30 rounded-lg p-4">
+              <h3 className="font-semibold text-cream mb-2 flex items-center gap-2">
                 <Shield className="w-4 h-4" />
                 Protección de Datos
               </h3>
-              <p className="text-xs text-blue-800">
+              <p className="text-xs text-resona-light">
                 Cumplimos con el RGPD y LOPDGDD. Tus datos están protegidos y nunca serán compartidos con terceros sin tu consentimiento.
               </p>
             </div>
@@ -353,23 +353,23 @@ export default function MyDataPage() {
         {/* Modal de confirmación de eliminación */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="bg-ink-800 rounded-lg max-w-md w-full p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 bg-red-100 rounded-full">
-                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                  <AlertTriangle className="w-6 h-6 text-red-400" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold text-cream">
                   ¿Eliminar tu cuenta?
                 </h3>
               </div>
 
               <div className="space-y-4">
-                <p className="text-gray-700">
+                <p className="text-cream/75">
                   Esta acción es <strong>permanente e irreversible</strong>. Todos tus datos personales serán eliminados.
                 </p>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-cream/75 mb-1">
                     Confirma tu contraseña *
                   </label>
                   <div className="relative">
@@ -377,13 +377,13 @@ export default function MyDataPage() {
                       type={showPassword ? 'text' : 'password'}
                       value={deletePassword}
                       onChange={(e) => setDeletePassword(e.target.value)}
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                      className="w-full px-3 py-2 pr-10 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
                       placeholder="Tu contraseña"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-2.5 text-cream/45 hover:text-gray-600"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -391,19 +391,19 @@ export default function MyDataPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-cream/75 mb-1">
                     ¿Por qué nos dejas? (opcional)
                   </label>
                   <textarea
                     value={deleteReason}
                     onChange={(e) => setDeleteReason(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
+                    className="w-full px-3 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
                     rows={3}
                     placeholder="Tu feedback nos ayuda a mejorar..."
                   />
                 </div>
 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div className="bg-red-500/10 border border-red-200 rounded-lg p-3">
                   <p className="text-sm text-red-800">
                     ⚠️ No podrás eliminar tu cuenta si tienes pedidos activos. Contacta con soporte.
                   </p>
@@ -416,7 +416,7 @@ export default function MyDataPage() {
                       setDeletePassword('');
                       setDeleteReason('');
                     }}
-                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                    className="flex-1 px-4 py-2 bg-ink-700 text-cream/90 rounded-lg hover:bg-gray-300 transition-colors"
                   >
                     Cancelar
                   </button>

@@ -88,7 +88,7 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center gap-2 mb-4">
-        <MessageSquare className="w-5 h-5 text-resona" />
+        <MessageSquare className="w-5 h-5 text-resona-light" />
         <h3 className="text-lg font-semibold">Notas y Comentarios</h3>
         <span className="text-sm text-gray-500">({notes.length})</span>
       </div>
@@ -110,7 +110,7 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                 type="checkbox"
                 checked={isInternal}
                 onChange={(e) => setIsInternal(e.target.checked)}
-                className="rounded text-resona focus:ring-resona"
+                className="rounded text-resona-light focus:ring-resona"
               />
               <Lock className="w-4 h-4" />
               Nota interna (solo admin)
@@ -170,7 +170,7 @@ export const OrderNotes = ({ orderId, userRole }: OrderNotesProps) => {
                           setEditingId(note.id);
                           setEditContent(note.content);
                         }}
-                        className="text-gray-400 hover:text-resona"
+                        className="text-gray-400 hover:text-resona-light"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>

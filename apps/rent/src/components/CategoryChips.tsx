@@ -19,7 +19,7 @@ export const CategoryChips = ({
   });
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-md p-3 mb-6">
+    <div className="w-full bg-ink-800 rounded-lg shadow-md p-3 mb-6">
       {/* Scroll horizontal container */}
       <div className="overflow-x-auto scrollbar-hide">
         <div className="flex gap-2 min-w-max">
@@ -30,7 +30,7 @@ export const CategoryChips = ({
               flex items-center gap-2 px-4 py-2 rounded-full font-medium whitespace-nowrap transition-all
               ${!selectedCategory
                 ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md scale-105'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-ink-800 text-cream/75 hover:bg-gray-200'
               }
             `}
           >
@@ -50,7 +50,7 @@ export const CategoryChips = ({
                   flex items-center gap-2 px-4 py-2 rounded-full font-medium whitespace-nowrap transition-all
                   ${isSelected
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-ink-800 text-cream/75 hover:bg-gray-200'
                   }
                 `}
               >

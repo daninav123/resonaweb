@@ -17,7 +17,7 @@ Perfectos para bodas (entrada de novios, primera baile), eventos corporativos (p
 
 El servicio completo incluye: transporte en Valencia capital (30km), montaje con estructuras truss profesionales, controlador DMX 512, programación de escenas personalizadas, operación durante todo el evento, desmontaje, y soporte 24/7.
 
-Hemos iluminado multitud de eventos con moving heads en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, conciertos, eventos corporativos en Palau de la Música y espacios únicos. Combinamos con <a href="/servicios/iluminacion-led-profesional" class="text-primary-600 hover:underline font-semibold">iluminación LED</a>.`,
+Hemos iluminado multitud de eventos con moving heads en Valencia: <a href="/servicios/sonido-bodas-valencia" class="text-resona-light hover:underline font-semibold">bodas</a>, conciertos, eventos corporativos en Palau de la Música y espacios únicos. Combinamos con <a href="/servicios/iluminacion-led-profesional" class="text-resona-light hover:underline font-semibold">iluminación LED</a>.`,
    
     whyChooseUs: [
       {

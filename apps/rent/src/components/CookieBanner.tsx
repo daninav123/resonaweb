@@ -90,24 +90,24 @@ export default function CookieBanner() {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
       <div className="max-w-6xl w-full pointer-events-auto">
-        <div className="bg-white rounded-lg shadow-2xl border border-gray-200">
+        <div className="bg-ink-800 rounded-lg shadow-2xl border border-cream/10">
           {!showPreferences ? (
             // Banner principal
             <div className="p-6">
               <div className="flex items-start gap-4">
                 <div className="text-4xl">🍪</div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-cream mb-2">
                     Este sitio utiliza cookies
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-cream/65 mb-4">
                     Utilizamos cookies propias y de terceros para mejorar tu experiencia, 
                     analizar el tráfico y mostrarte contenido relevante. Al hacer clic en 
                     "Aceptar todo", aceptas el uso de todas las cookies. Para más información, 
                     consulta nuestra{' '}
                     <Link 
                       to="/politica-cookies" 
-                      className="text-blue-600 hover:underline font-medium"
+                      className="text-resona-light hover:underline font-medium"
                     >
                       Política de Cookies
                     </Link>.
@@ -123,14 +123,14 @@ export default function CookieBanner() {
                     
                     <button
                       onClick={handleRejectOptional}
-                      className="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                      className="bg-ink-800 text-cream/75 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                     >
                       ✗ Rechazar opcionales
                     </button>
                     
                     <button
                       onClick={() => setShowPreferences(true)}
-                      className="text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-50 border border-gray-300 transition-colors"
+                      className="text-cream/75 px-6 py-2.5 rounded-lg font-medium hover:bg-white/5 border border-cream/15 transition-colors"
                     >
                       ⚙️ Configurar
                     </button>
@@ -142,12 +142,12 @@ export default function CookieBanner() {
             // Panel de preferencias
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="text-xl font-semibold text-cream">
                   Configuración de Cookies
                 </h3>
                 <button
                   onClick={() => setShowPreferences(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-cream/45 hover:text-gray-600 transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -157,19 +157,19 @@ export default function CookieBanner() {
 
               <div className="space-y-4">
                 {/* Cookies necesarias */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between p-4 bg-ink rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-900">Cookies Necesarias</h4>
-                      <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">
+                      <h4 className="font-semibold text-cream">Cookies Necesarias</h4>
+                      <span className="bg-emerald-500/15 text-emerald-300 text-xs font-semibold px-2 py-0.5 rounded">
                         Obligatorias
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-cream/65">
                       Estas cookies son esenciales para el funcionamiento del sitio web. 
                       No se pueden desactivar.
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-cream/50 mt-1">
                       Ejemplo: Sesión de usuario, carrito de compra
                     </p>
                   </div>
@@ -181,19 +181,19 @@ export default function CookieBanner() {
                 </div>
 
                 {/* Cookies analíticas */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between p-4 bg-ink rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-900">Cookies Analíticas</h4>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
+                      <h4 className="font-semibold text-cream">Cookies Analíticas</h4>
+                      <span className="bg-resona/15 text-resona-light text-xs font-semibold px-2 py-0.5 rounded">
                         Opcionales
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-cream/65">
                       Nos ayudan a entender cómo interactúas con el sitio web, recopilando 
                       información de forma anónima.
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-cream/50 mt-1">
                       Proveedor: Google Analytics
                     </p>
                   </div>
@@ -201,11 +201,11 @@ export default function CookieBanner() {
                     <button
                       onClick={() => handleTogglePreference('analytics')}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        preferences.analytics ? 'bg-blue-600' : 'bg-gray-300'
+                        preferences.analytics ? 'bg-resona' : 'bg-gray-300'
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-ink-800 transition-transform ${
                           preferences.analytics ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
@@ -214,19 +214,19 @@ export default function CookieBanner() {
                 </div>
 
                 {/* Cookies de marketing */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between p-4 bg-ink rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-900">Cookies de Marketing</h4>
+                      <h4 className="font-semibold text-cream">Cookies de Marketing</h4>
                       <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded">
                         Opcionales
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-cream/65">
                       Se utilizan para mostrarte anuncios relevantes y medir la efectividad 
                       de nuestras campañas.
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-cream/50 mt-1">
                       Actualmente no utilizamos cookies de marketing
                     </p>
                   </div>
@@ -236,7 +236,7 @@ export default function CookieBanner() {
                       disabled
                       className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 opacity-50 cursor-not-allowed"
                     >
-                      <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+                      <span className="inline-block h-4 w-4 transform rounded-full bg-ink-800 translate-x-1" />
                     </button>
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function CookieBanner() {
               <div className="mt-6 flex gap-3 justify-end">
                 <button
                   onClick={() => setShowPreferences(false)}
-                  className="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-50 rounded-lg border border-gray-300 transition-colors"
+                  className="px-6 py-2.5 text-cream/75 font-medium hover:bg-white/5 rounded-lg border border-cream/15 transition-colors"
                 >
                   Cancelar
                 </button>
@@ -257,9 +257,9 @@ export default function CookieBanner() {
                 </button>
               </div>
 
-              <p className="text-xs text-gray-500 mt-4 text-center">
+              <p className="text-xs text-cream/50 mt-4 text-center">
                 Puedes cambiar tus preferencias en cualquier momento desde nuestra{' '}
-                <Link to="/politica-cookies" className="text-blue-600 hover:underline">
+                <Link to="/politica-cookies" className="text-resona-light hover:underline">
                   Política de Cookies
                 </Link>
               </p>

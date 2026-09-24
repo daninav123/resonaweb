@@ -191,7 +191,7 @@ const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' 
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-900 flex items-center gap-2">
+      <label className="block text-sm font-medium text-cream flex items-center gap-2">
         <MapPin className="h-4 w-4" />
         Dirección de entrega
       </label>
@@ -201,19 +201,19 @@ const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' 
           ref={inputRef}
           type="text"
           placeholder="Escribe tu dirección..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={loading}
         />
         
         {loading && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+            <Loader2 className="h-5 w-5 animate-spin text-resona-light" />
           </div>
         )}
       </div>
 
       {selectedAddress && (
-        <div className="text-xs text-green-600 bg-green-50 p-2 rounded">
+        <div className="text-xs text-emerald-400 bg-emerald-500/10 p-2 rounded">
           ✅ {selectedAddress}
         </div>
       )}
@@ -224,7 +224,7 @@ const AddressAutocomplete = ({ onAddressSelect, baseAddress = 'Madrid, España' 
         </div>
       )}
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-cream/50">
         Empieza a escribir y selecciona de la lista para calcular distancia automáticamente
       </p>
     </div>

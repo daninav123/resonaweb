@@ -9,9 +9,9 @@ interface CategorySidebarProps {
 
 export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange }: CategorySidebarProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+    <div className="bg-ink-800 rounded-lg shadow-md p-6 sticky top-4">
       <div className="mb-4">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+        <h2 className="text-sm font-semibold text-cream/50 uppercase tracking-wider mb-4">
           Por Categoría ({categories?.length || 0})
         </h2>
       </div>
@@ -23,7 +23,7 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             !selectedCategory
               ? 'bg-resona text-white font-medium'
-              : 'text-gray-700 hover:bg-gray-100'
+              : 'text-cream/75 hover:bg-white/10'
           }`}
         >
           <span className="flex items-center gap-2.5">
@@ -59,7 +59,7 @@ export const CategorySidebar = ({ categories, selectedCategory, onCategoryChange
             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
               selectedCategory === category.slug
                 ? 'bg-resona text-white font-medium'
-                : 'text-gray-700 hover:bg-gray-100'
+                : 'text-cream/75 hover:bg-white/10'
             }`}
           >
             <span className="flex items-center gap-2.5">

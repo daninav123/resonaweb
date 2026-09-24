@@ -15,7 +15,7 @@ Nuestros <strong>altavoces profesionales</strong> cubren desde eventos de 50 per
 
 El servicio de <strong>alquiler de altavoces en Valencia</strong> incluye transporte, montaje, calibración acústica y asistencia técnica durante todo el evento.
 
-Trabajamos con estudios de sonido certificados para garantizar la mejor calidad en <a href="/servicios/sonido-bodas-valencia" class="text-primary-600 hover:underline font-semibold">bodas</a>, conciertos, <a href="/servicios/sonido-eventos-corporativos" class="text-primary-600 hover:underline font-semibold">eventos corporativos</a> y festivales en Valencia y provincia. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-primary-600 hover:underline font-semibold">sistemas de sonido completos</a>.`,
+Trabajamos con estudios de sonido certificados para garantizar la mejor calidad en <a href="/servicios/sonido-bodas-valencia" class="text-resona-light hover:underline font-semibold">bodas</a>, conciertos, <a href="/servicios/sonido-eventos-corporativos" class="text-resona-light hover:underline font-semibold">eventos corporativos</a> y festivales en Valencia y provincia. Combinamos con <a href="/servicios/alquiler-sonido-valencia" class="text-resona-light hover:underline font-semibold">sistemas de sonido completos</a>.`,
    
     whyChooseUs: [
       {

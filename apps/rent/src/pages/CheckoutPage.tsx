@@ -761,7 +761,7 @@ const CheckoutPage = () => {
               { n: 3, label: 'Pago' },
             ].map((s, i, arr) => (
               <div key={s.n} className="flex items-center flex-1 last:flex-none">
-                <div className={`flex-1 text-center ${step >= s.n ? 'text-resona' : 'text-cream/40'}`}>
+                <div className={`flex-1 text-center ${step >= s.n ? 'text-resona-light' : 'text-cream/40'}`}>
                   <div
                     className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center font-semibold transition-colors ${
                       step > s.n
@@ -845,7 +845,7 @@ const CheckoutPage = () => {
                         <button
                           type="button"
                           onClick={() => navigate('/login?redirect=/checkout')}
-                          className="underline text-resona hover:text-resona-dark"
+                          className="underline text-resona-light hover:text-resona-dark"
                         >
                           ¿Ya tienes cuenta? Inicia sesión
                         </button>

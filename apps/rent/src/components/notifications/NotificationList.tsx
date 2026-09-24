@@ -57,7 +57,7 @@ const NotificationList = ({
           {unreadCount > 0 && (
             <button
               onClick={onMarkAllAsRead}
-              className="text-sm text-resona hover:text-resona-dark"
+              className="text-sm text-resona-light hover:text-resona-dark"
             >
               Marcar todas como leídas
             </button>

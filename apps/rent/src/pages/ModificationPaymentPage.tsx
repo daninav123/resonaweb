@@ -55,7 +55,7 @@ const ModificationPaymentPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-resona-light" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ const ModificationPaymentPage = () => {
   if (!order || !amount) {
     return (
       <div className="max-w-2xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-500/10 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">Error: No se encontró la información del pago</p>
         </div>
       </div>
@@ -84,39 +84,39 @@ const ModificationPaymentPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <button
           onClick={() => navigate(`/mis-pedidos/${orderId}`)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
+          className="flex items-center gap-2 text-cream/65 hover:text-gray-800 mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al Pedido
         </button>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <CreditCard className="w-8 h-8 text-blue-600" />
+            <CreditCard className="w-8 h-8 text-resona-light" />
             <div>
               <h1 className="text-2xl font-bold">Pago por Modificación</h1>
-              <p className="text-gray-600">Pedido #{order.orderNumber}</p>
+              <p className="text-cream/65">Pedido #{order.orderNumber}</p>
             </div>
           </div>
 
           <div className="border-t pt-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-600">Cargo adicional:</span>
-              <span className="text-2xl font-bold text-blue-600">{formatPrice(Number(amount))}</span>
+              <span className="text-cream/65">Cargo adicional:</span>
+              <span className="text-2xl font-bold text-resona-light">{formatPrice(Number(amount))}</span>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-cream/50">
               Este cargo corresponde a los productos adicionales que has añadido al pedido
             </p>
           </div>
         </div>
 
         {/* Stripe Payment Form */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-ink-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Información de Pago</h2>
           
           {clientSecret ? (
@@ -135,7 +135,7 @@ const ModificationPaymentPage = () => {
             </Elements>
           ) : (
             <div className="flex justify-center items-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-resona-light" />
             </div>
           )}
         </div>

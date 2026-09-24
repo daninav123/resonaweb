@@ -40,26 +40,26 @@ const CommercialLayout = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-ink">
       {/* Sidebar */}
       <aside
         className={`${
           isSidebarOpen ? 'w-64' : 'w-20'
-        } bg-white border-r border-gray-200 transition-all duration-300 flex flex-col`}
+        } bg-ink-800 border-r border-cream/10 transition-all duration-300 flex flex-col`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 border-b border-cream/10 flex items-center justify-between">
           {isSidebarOpen && (
             <Link to="/comercial/dashboard" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">R</span>
               </div>
-              <span className="font-bold text-lg text-gray-900">ReSona</span>
+              <span className="font-bold text-lg text-cream">ReSona</span>
             </Link>
           )}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+            className="p-2 rounded-lg hover:bg-white/10 text-cream/65"
           >
             {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -76,8 +76,8 @@ const CommercialLayout = () => {
                 to={item.path}
                 className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
                   active
-                    ? 'bg-green-50 text-green-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-emerald-500/10 text-emerald-400 font-medium'
+                    : 'text-cream/75 hover:bg-white/5'
                 }`}
               >
                 <Icon size={20} />
@@ -88,11 +88,11 @@ const CommercialLayout = () => {
         </nav>
 
         {/* User Menu */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-cream/10">
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
+              className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/5 text-cream/75"
             >
               <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center text-white font-medium">
                 {user?.firstName?.[0]}{user?.lastName?.[0]}
@@ -101,7 +101,7 @@ const CommercialLayout = () => {
                 <>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-xs text-gray-500">Comercial</p>
+                    <p className="text-xs text-cream/50">Comercial</p>
                   </div>
                   <ChevronDown size={16} />
                 </>
@@ -109,10 +109,10 @@ const CommercialLayout = () => {
             </button>
 
             {showUserMenu && (
-              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-ink-800 border border-cream/10 rounded-lg shadow-lg py-1">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-400 hover:bg-red-50"
                 >
                   <LogOut size={16} />
                   <span>Cerrar Sesión</span>

@@ -403,7 +403,7 @@ const ProductDetailPage = () => {
                   aria-pressed={isFavorite}
                   className="flex h-12 w-12 items-center justify-center rounded-sm border border-cream/15 text-cream/60 transition-colors hover:text-cream"
                 >
-                  <Heart className={`h-[18px] w-[18px] ${isFavorite ? 'fill-resona text-resona' : ''}`} />
+                  <Heart className={`h-[18px] w-[18px] ${isFavorite ? 'fill-resona text-resona-light' : ''}`} />
                 </button>
               </div>
 

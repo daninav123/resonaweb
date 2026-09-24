@@ -41,7 +41,7 @@ const AlquilerIluminacionValenciaPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink">
       <SEOHead
         title="Alquiler Iluminación Valencia desde 25€ · Focos LED"
         description="Alquiler de iluminación profesional en Valencia desde 25€/día. Focos LED RGB, cabezas móviles, láseres, control DMX. Técnico opcional. Presupuesto 24h ☎ 613 88 14 14"
@@ -69,15 +69,15 @@ const AlquilerIluminacionValenciaPage = () => {
             </p>
             
             <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Tecnología LED</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Control DMX</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Desde 25€/día</span>
               </div>
@@ -86,7 +86,7 @@ const AlquilerIluminacionValenciaPage = () => {
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/productos?category=iluminacion"
-                className="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-cream/65 px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 Ver Catálogo Iluminación
                 <ArrowRight className="w-5 h-5" />
@@ -106,68 +106,68 @@ const AlquilerIluminacionValenciaPage = () => {
       {/* Contenido Principal */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 className="text-3xl font-bold text-cream mb-6">
               Iluminación LED Profesional para tu Evento en Valencia
             </h2>
             
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 mb-4">
+            <div className="prose prose-invert prose-lg max-w-none">
+              <p className="text-cream/75 mb-4">
                 En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de iluminación profesional en Valencia</strong>. 
                 Transformamos cualquier espacio con nuestros equipos de iluminación LED de última generación. Ya sea para una boda elegante 
                 en una finca valenciana, un concierto en vivo, o un evento corporativo en el centro de Valencia, tenemos la solución perfecta 
                 de iluminación para crear el ambiente que buscas.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Nuestro catálogo incluye <strong>cabezas móviles LED</strong> con efectos de gobos y prismas, <strong>focos PAR LED RGBW</strong> 
                 de 200W con millones de colores, <strong>barras LED</strong> para iluminación arquitectural, <strong>efectos especiales</strong> 
                 como estroboscopios y máquinas de niebla con LED, y <strong>mesas controladoras DMX</strong> profesionales. Todos nuestros equipos 
                 utilizan tecnología LED, lo que garantiza bajo consumo eléctrico, cero emisión de calor y colores vibrantes.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Servicios de Iluminación en Valencia y Provincia
               </h3>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Realizamos instalaciones de iluminación en toda la ciudad de <strong>Valencia</strong> (Ciutat Vella, Ruzafa, Campanar, 
                 Benimaclet, Poblats Marítims) y en toda el <strong>área metropolitana</strong>: Mislata, Paterna, Torrent, Burjassot, 
                 Manises, Quart de Poblet, Xirivella, Aldaia y Picanya.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 También cubrimos eventos en la <strong>provincia de Valencia</strong>: Cullera, Gandía, Sagunto, Requena, Cheste, Buñol, 
                 Sueca, Alzira, Xàtiva, Ontinyent y L'Horta Nord. Para eventos en ubicaciones especiales, ofrecemos servicio de análisis 
                 técnico previo sin coste.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Soluciones de Iluminación por Tipo de Evento
               </h3>
 
               <div className="grid md:grid-cols-2 gap-4 my-6">
                 <div className="bg-pink-50 p-4 rounded-lg border-2 border-pink-200">
                   <h4 className="font-bold text-pink-600 mb-2">💒 Bodas y Celebraciones</h4>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-cream/75">
                     Iluminación cálida para ceremonias, uplighting en colores personalizados, efectos de cielo estrellado, 
                     monogramas proyectados, y pista de baile con efectos LED. Perfecto para fincas como Mas de San Pablo, 
                     La Hacienda El Puente, o salones como Palacio de Congresos Valencia.
                   </p>
                 </div>
                 
-                <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
-                  <h4 className="font-bold text-purple-600 mb-2">🎸 Conciertos y Festivales</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="bg-ink-800/5 p-4 rounded-lg border-2 border-purple-200">
+                  <h4 className="font-bold text-cream/65 mb-2">🎸 Conciertos y Festivales</h4>
+                  <p className="text-sm text-cream/75">
                     Cabezas móviles sincronizadas, efectos beam, wash y spot, strobo profesional, barras LED pixel mapping, 
                     y control DMX/ArtNet. Experiencia en salas como 16 Toneladas, Loco Club, Moon Club, y eventos al aire 
                     libre en Jardines de Viveros.
                   </p>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-                  <h4 className="font-bold text-blue-600 mb-2">💼 Eventos Corporativos</h4>
-                  <p className="text-sm text-gray-700">
+                <div className="bg-resona/10 p-4 rounded-lg border-2 border-resona/30">
+                  <h4 className="font-bold text-resona-light mb-2">💼 Eventos Corporativos</h4>
+                  <p className="text-sm text-cream/75">
                     Iluminación arquitectural con colores corporativos, retroproyección, focos elipsoidales para logos, 
                     iluminación de stands en ferias, y sistemas modulares para salas de conferencias. Ideal para eventos 
                     en Feria Valencia, La Marina de Valencia, o hoteles como Las Arenas y Westin.
@@ -176,7 +176,7 @@ const AlquilerIluminacionValenciaPage = () => {
 
                 <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
                   <h4 className="font-bold text-orange-600 mb-2">🎭 Teatro y Espectáculos</h4>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-cream/75">
                     Focos fresnel, recortes, cicloramas, cañones seguidor, dimmer analógicos y digitales. Control 
                     profesional mediante mesas ETC, Avolites o GrandMA. Colaboramos con teatros municipales y 
                     producciones privadas en Valencia.
@@ -184,95 +184,95 @@ const AlquilerIluminacionValenciaPage = () => {
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Ventajas de Nuestro Servicio de Iluminación
               </h3>
 
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Tecnología LED de Bajo Consumo:</strong> Todos nuestros focos son LED, reduciendo el consumo 
                     eléctrico hasta un 80% vs. iluminación halógena tradicional. Sin calor, ideales para espacios cerrados.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Control Profesional DMX-512:</strong> Todas nuestras luces son controlables vía DMX. 
                     Incluimos mesa controladora y programación de escenas personalizadas para tu evento.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Estructuras y Truss Certificados:</strong> Ofrecemos estructuras de aluminio ligero con 
                     certificación TÜV. Portales autoportantes, truss triangular y cuadrado, y sistemas de elevación manual y motorizada.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Diseño de Iluminación Personalizado:</strong> Nuestros técnicos diseñan el lighting plot específico 
                     para tu espacio. Planos 2D/3D previos y simulación de efectos antes del evento.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Instalación y Operación Técnica:</strong> Montaje profesional con personal certificado en trabajos 
                     en altura. Operador de iluminación durante todo el evento si lo necesitas.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700">
+                  <span className="text-cream/75">
                     <strong>Seguro de Responsabilidad Civil:</strong> Todo nuestro material está asegurado. 
                     Cumplimos normativas de seguridad eléctrica y prevención de riesgos laborales.
                   </span>
                 </li>
               </ul>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Equipos de Iluminación Destacados
               </h3>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Nuestras <strong>cabezas móviles LED</strong> (Chauvet Intimidator, ADJ Focus, Betopper LM70) ofrecen efectos 
                 beam, spot y wash en un solo equipo. Potencia de 230W LED, 8 gobos rotatorios, prisma de 3 facetas, y colores 
                 ilimitados mediante mezcla RGBW. Perfectas para crear efectos dinámicos en bodas y conciertos.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Los <strong>focos PAR LED RGBW de 200W</strong> son ideales para iluminación de fachadas, uplighting en eventos, 
                 y wash general. Ángulo de apertura 25°, control DMX de 4 a 8 canales, y función stand-alone con programas automáticos. 
                 Utilizados en más de 300 bodas en Valencia.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Las <strong>barras LED de 1 metro con pixel control</strong> permiten crear efectos de persiana, fade, y animaciones. 
                 144 LEDs RGB individuales, compatibles con software Madrix y control ArtNet. Muy solicitadas para eventos corporativos 
                 con identidad visual corporativa.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 Casos de Éxito: Iluminación en Eventos en Valencia
               </h3>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Hemos iluminado más de <strong>500 bodas en fincas de Valencia</strong>. En Mas de San Pablo, creamos ambientes 
                 románticos con uplighting en tonos durazno y ámbar. En La Hacienda El Puente, instalamos 40 focos PAR LED para 
                 iluminar los jardines y árboles centenarios. En Alquería de Morayma, diseñamos iluminación arquitectural que 
                 resaltó la belleza del edificio histórico.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 Para <strong>conciertos en vivo</strong>, hemos trabajado en salas emblemáticas de Valencia: 16 Toneladas (rock/indie), 
                 Loco Club (electrónica), Radio City (pop/rock), y eventos al aire libre en Jardines de Viveros y Plaza del Ayuntamiento. 
                 Nuestros sistemas de cabezas móviles sincronizadas crean atmósferas únicas que complementan la música.
               </p>
 
-              <p className="text-gray-700 mb-4">
+              <p className="text-cream/75 mb-4">
                 En <strong>eventos corporativos</strong>, destacamos la iluminación del stand de Telefónica en Feria Valencia 
                 (200m² iluminados con barras LED pixel), la presentación de producto de Ford en La Marina de Valencia (mapping de logo 
                 en fachada), y el congreso anual de Mercadona en Palacio de Congresos (500 focos LED sincronizados).
@@ -281,18 +281,18 @@ const AlquilerIluminacionValenciaPage = () => {
           </div>
 
           {/* FAQ Section */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-cream mb-8">
               Preguntas Frecuentes sobre Iluminación Profesional
             </h2>
             
             <div className="space-y-6">
               {faqData.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <div key={index} className="border-b border-cream/10 pb-6 last:border-0">
+                  <h3 className="text-xl font-semibold text-cream mb-3">
                     {faq.question}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-cream/75">
                     {faq.answer}
                   </p>
                 </div>
@@ -311,7 +311,7 @@ const AlquilerIluminacionValenciaPage = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 to="/contacto"
-                className="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-cream/65 px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 <Lightbulb className="w-5 h-5" />
                 Calcular Presupuesto

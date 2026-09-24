@@ -113,7 +113,7 @@ export const SearchBar = ({
         <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 text-center">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto text-resona" />
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-resona-light" />
               <p className="text-sm text-gray-500 mt-2">Buscando...</p>
             </div>
           ) : results && results.length > 0 ? (
@@ -134,7 +134,7 @@ export const SearchBar = ({
                     <p className="text-xs text-gray-500">{product.category?.name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-resona">
+                    <p className="font-semibold text-resona-light">
                       {formatPrice(Number(product.price))}
                       <span className="text-xs text-gray-500">/día</span>
                     </p>
@@ -144,7 +144,7 @@ export const SearchBar = ({
               <div className="p-2 bg-gray-50 border-t">
                 <button
                   onClick={handleSearch}
-                  className="w-full py-2 text-sm text-resona hover:text-resona-dark font-medium text-center"
+                  className="w-full py-2 text-sm text-resona-light hover:text-resona-dark font-medium text-center"
                 >
                   Ver todos los resultados ({results.length}+)
                 </button>

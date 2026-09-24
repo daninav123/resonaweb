@@ -41,7 +41,7 @@ const AlquilerAltavocesValenciaPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink">
       <SEOHead
         title="Alquiler Altavoces Valencia desde 35€ · Entrega 24h"
         description="Alquiler de altavoces profesionales en Valencia desde 35€/día. JBL, QSC, Yamaha, DAS Audio 400-2000W. Trípodes y cables incluidos. Entrega en Valencia ☎ 613 88 14 14"
@@ -71,19 +71,19 @@ const AlquilerAltavocesValenciaPage = () => {
             </p>
             
             <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <CheckCircle className="w-5 h-5" />
                 <span>Desde 35€/día</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Truck className="w-5 h-5" />
                 <span>Recogida en almacén</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Shield className="w-5 h-5" />
                 <span>Equipo certificado</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 bg-ink-800/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Clock className="w-5 h-5" />
                 <span>Disponible 24/7</span>
               </div>
@@ -92,7 +92,7 @@ const AlquilerAltavocesValenciaPage = () => {
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/productos?category=sonido"
-                className="bg-white text-resona px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-resona-light px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 <Volume2 className="w-5 h-5" />
                 Ver Altavoces Disponibles
@@ -112,67 +112,67 @@ const AlquilerAltavocesValenciaPage = () => {
       {/* Contenido Principal */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 className="text-3xl font-bold text-cream mb-6">
               Alquiler de Altavoces en Valencia: Calidad Profesional al Mejor Precio
             </h2>
             
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 leading-relaxed mb-4">
+            <div className="prose prose-invert prose-lg max-w-none">
+              <p className="text-cream/75 leading-relaxed mb-4">
                 En <strong>ReSona Rent</strong> somos especialistas en <strong>alquiler de altavoces profesionales en Valencia</strong> desde hace experiencia desde 2011. Contamos con el equipamiento más avanzado del mercado: <strong>altavoces activos JBL</strong> (serie EON, PRX, SRX), <strong>QSC K-Series y CP-Series</strong>, <strong>Yamaha DXR y DBR</strong>, y <strong>Mackie Thump</strong>, todos con potencias desde 400W hasta 2000W por unidad.
               </p>
 
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-cream/75 leading-relaxed mb-6">
                 Ya sea para una <strong>boda en Valencia</strong>, un <strong>concierto</strong>, <strong>evento corporativo</strong>, <strong>fiesta privada</strong> o <strong>presentación</strong>, tenemos el <strong>sistema de altavoces perfecto</strong> para tu evento. Nuestro servicio incluye <strong>entrega e instalación</strong> en Valencia capital y área metropolitana.
               </p>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+              <h3 className="text-2xl font-bold text-cream mt-8 mb-4">
                 ¿Por Qué Alquilar Altavoces con ReSona Rent?
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg">
+                <div className="bg-resona/10 p-6 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Volume2 className="w-6 h-6 text-resona flex-shrink-0 mt-1" />
+                    <Volume2 className="w-6 h-6 text-resona-light flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Equipo Profesional Certificado</h4>
-                      <p className="text-gray-700 text-sm">
+                      <h4 className="font-semibold text-cream mb-2">Equipo Profesional Certificado</h4>
+                      <p className="text-cream/75 text-sm">
                         Todos nuestros altavoces son de marcas líderes (JBL, QSC, Yamaha, Mackie) y pasan revisión técnica antes de cada alquiler. Garantía de funcionamiento 100%.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-green-50 p-6 rounded-lg">
+                <div className="bg-emerald-500/10 p-6 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Truck className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                    <Truck className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Servicio en Valencia y alrededores</h4>
-                      <p className="text-gray-700 text-sm">
+                      <h4 className="font-semibold text-cream mb-2">Servicio en Valencia y alrededores</h4>
+                      <p className="text-cream/75 text-sm">
                         Llevamos, montamos y recogemos los altavoces en tu ubicación en Valencia ciudad y área metropolitana (Mislata, Paterna, Torrent, Burjassot...).
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-purple-50 p-6 rounded-lg">
+                <div className="bg-ink-800/5 p-6 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                    <CheckCircle className="w-6 h-6 text-cream/65 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Recogida en Almacén</h4>
-                      <p className="text-gray-700 text-sm">
+                      <h4 className="font-semibold text-cream mb-2">Recogida en Almacén</h4>
+                      <p className="text-cream/75 text-sm">
                         Cables XLR profesionales, soportes regulables, protección de cables, y manual de uso. También ofrecemos servicio de instalación profesional.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-yellow-50 p-6 rounded-lg">
+                <div className="bg-amber-500/10 p-6 rounded-lg">
                   <div className="flex items-start gap-3">
                     <Star className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Asesoramiento Experto</h4>
-                      <p className="text-gray-700 text-sm">
+                      <h4 className="font-semibold text-cream mb-2">Asesoramiento Experto</h4>
+                      <p className="text-cream/75 text-sm">
                         Te ayudamos a elegir el sistema perfecto según tu evento, número de asistentes, y tipo de música. Más de 500 eventos exitosos en Valencia.
                       </p>
                     </div>
@@ -180,81 +180,81 @@ const AlquilerAltavocesValenciaPage = () => {
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 mt-12 mb-6">
+              <h3 className="text-2xl font-bold text-cream mt-12 mb-6">
                 Catálogo de Altavoces Profesionales en Alquiler
               </h3>
 
               <div className="space-y-6">
                 <div className="border-l-4 border-resona pl-6">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h4 className="text-xl font-semibold text-cream mb-2">
                     Altavoces Activos 400W-600W
                   </h4>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Ideal para:</strong> Presentaciones, fiestas pequeñas (hasta 50 personas), background music.
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Modelos:</strong> JBL EON 615, Mackie Thump 15A, Yamaha DBR12.
                   </p>
-                  <p className="text-resona font-semibold">
+                  <p className="text-resona-light font-semibold">
                     Desde 35€/día • Pareja desde 60€/día
                   </p>
                 </div>
 
                 <div className="border-l-4 border-blue-600 pl-6">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h4 className="text-xl font-semibold text-cream mb-2">
                     Altavoces Activos 800W-1200W
                   </h4>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Ideal para:</strong> Bodas (50-150 personas), eventos corporativos, fiestas medianas.
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Modelos:</strong> JBL PRX 815, QSC K12.2, Yamaha DXR15.
                   </p>
-                  <p className="text-blue-600 font-semibold">
+                  <p className="text-resona-light font-semibold">
                     Desde 60€/día • Pareja desde 110€/día
                   </p>
                 </div>
 
                 <div className="border-l-4 border-purple-600 pl-6">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h4 className="text-xl font-semibold text-cream mb-2">
                     Altavoces Activos 1500W-2000W + Subwoofer
                   </h4>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Ideal para:</strong> Eventos grandes (150-300 personas), conciertos, discotecas móviles.
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Modelos:</strong> JBL SRX 815P, QSC KW153, + Subwoofer 18" 2000W.
                   </p>
-                  <p className="text-purple-600 font-semibold">
+                  <p className="text-cream/65 font-semibold">
                     Desde 140€/día • Sistema completo desde 250€/día
                   </p>
                 </div>
 
                 <div className="border-l-4 border-green-600 pl-6">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h4 className="text-xl font-semibold text-cream mb-2">
                     Sistemas Line Array (300+ personas)
                   </h4>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Ideal para:</strong> Conciertos, festivales, eventos corporativos grandes, bodas premium.
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-cream/75 mb-2">
                     <strong>Incluye:</strong> Torres line array, subwoofers dobles, procesador digital, técnico especializado.
                   </p>
-                  <p className="text-green-600 font-semibold">
+                  <p className="text-emerald-400 font-semibold">
                     Presupuesto personalizado • Desde 450€/evento
                   </p>
                 </div>
               </div>
 
               <div className="bg-gradient-to-r from-resona/10 to-blue-100 p-8 rounded-xl mt-12 mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <MapPin className="w-6 h-6 text-resona" />
+                <h3 className="text-2xl font-bold text-cream mb-4 flex items-center gap-2">
+                  <MapPin className="w-6 h-6 text-resona-light" />
                   Zonas de Entrega en Valencia
                 </h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Valencia Ciudad</h4>
-                    <ul className="text-sm text-gray-700 space-y-1">
+                    <h4 className="font-semibold text-cream mb-2">Valencia Ciudad</h4>
+                    <ul className="text-sm text-cream/75 space-y-1">
                       <li>• Ciutat Vella</li>
                       <li>• Eixample</li>
                       <li>• Extramurs</li>
@@ -266,8 +266,8 @@ const AlquilerAltavocesValenciaPage = () => {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Área Metropolitana</h4>
-                    <ul className="text-sm text-gray-700 space-y-1">
+                    <h4 className="font-semibold text-cream mb-2">Área Metropolitana</h4>
+                    <ul className="text-sm text-cream/75 space-y-1">
                       <li>• Mislata</li>
                       <li>• Paterna</li>
                       <li>• Torrent</li>
@@ -279,8 +279,8 @@ const AlquilerAltavocesValenciaPage = () => {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Zona Ampliada</h4>
-                    <ul className="text-sm text-gray-700 space-y-1">
+                    <h4 className="font-semibold text-cream mb-2">Zona Ampliada</h4>
+                    <ul className="text-sm text-cream/75 space-y-1">
                       <li>• Sedaví</li>
                       <li>• Quart de Poblet</li>
                       <li>• Aldaia</li>
@@ -297,15 +297,15 @@ const AlquilerAltavocesValenciaPage = () => {
           </div>
 
           {/* FAQs */}
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="bg-ink-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 className="text-3xl font-bold text-cream mb-8">
               Preguntas Frecuentes sobre Alquiler de Altavoces en Valencia
             </h2>
             <div className="space-y-6">
               {faqData.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                  <p className="text-gray-700">{faq.answer}</p>
+                <div key={index} className="border-b border-cream/10 last:border-b-0 pb-6 last:pb-0">
+                  <h3 className="text-lg font-semibold text-cream mb-2">{faq.question}</h3>
+                  <p className="text-cream/75">{faq.answer}</p>
                 </div>
               ))}
             </div>
@@ -322,7 +322,7 @@ const AlquilerAltavocesValenciaPage = () => {
             <div className="flex flex-wrap gap-4 justify-center">
               <a
                 href="tel:+34613881414"
-                className="bg-white text-resona px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+                className="bg-ink-800 text-resona-light px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-2"
               >
                 <Phone className="w-5 h-5" />
                 Llamar: 613 88 14 14

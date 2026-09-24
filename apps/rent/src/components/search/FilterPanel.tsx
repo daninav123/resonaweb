@@ -84,13 +84,13 @@ export const FilterPanel = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-resona" />
+          <Filter className="w-5 h-5 text-resona-light" />
           <h3 className="font-semibold text-gray-900">Filtros</h3>
         </div>
         {hasActiveFilters() && (
           <button
             onClick={clearAllFilters}
-            className="text-sm text-resona hover:text-resona-dark flex items-center gap-1"
+            className="text-sm text-resona-light hover:text-resona-dark flex items-center gap-1"
           >
             <X className="w-4 h-4" />
             Limpiar
@@ -138,7 +138,7 @@ export const FilterPanel = ({
                   type="checkbox"
                   checked={filters.categories?.includes(category.id) || false}
                   onChange={() => handleCategoryToggle(category.id)}
-                  className="rounded text-resona focus:ring-resona"
+                  className="rounded text-resona-light focus:ring-resona"
                 />
                 <span className="text-sm text-gray-700">{category.name}</span>
               </label>
@@ -216,7 +216,7 @@ export const FilterPanel = ({
                 value="ALL"
                 checked={!filters.availability || filters.availability === 'ALL'}
                 onChange={() => handleAvailabilityChange('ALL')}
-                className="text-resona focus:ring-resona"
+                className="text-resona-light focus:ring-resona"
               />
               <span className="text-sm text-gray-700">Todos</span>
             </label>
@@ -227,7 +227,7 @@ export const FilterPanel = ({
                 value="IN_STOCK"
                 checked={filters.availability === 'IN_STOCK'}
                 onChange={() => handleAvailabilityChange('IN_STOCK')}
-                className="text-resona focus:ring-resona"
+                className="text-resona-light focus:ring-resona"
               />
               <span className="text-sm text-gray-700">Disponible ahora</span>
             </label>
@@ -238,7 +238,7 @@ export const FilterPanel = ({
                 value="ON_DEMAND"
                 checked={filters.availability === 'ON_DEMAND'}
                 onChange={() => handleAvailabilityChange('ON_DEMAND')}
-                className="text-resona focus:ring-resona"
+                className="text-resona-light focus:ring-resona"
               />
               <span className="text-sm text-gray-700">Bajo pedido</span>
             </label>
@@ -252,22 +252,22 @@ export const FilterPanel = ({
           <p className="text-xs text-gray-600 mb-2">Filtros activos:</p>
           <div className="flex flex-wrap gap-2">
             {filters.categories && filters.categories.length > 0 && (
-              <span className="text-xs bg-resona/10 text-resona px-2 py-1 rounded">
+              <span className="text-xs bg-resona/10 text-resona-light px-2 py-1 rounded">
                 {filters.categories.length} categorías
               </span>
             )}
             {filters.minPrice && (
-              <span className="text-xs bg-resona/10 text-resona px-2 py-1 rounded">
+              <span className="text-xs bg-resona/10 text-resona-light px-2 py-1 rounded">
                 Desde €{filters.minPrice}
               </span>
             )}
             {filters.maxPrice && (
-              <span className="text-xs bg-resona/10 text-resona px-2 py-1 rounded">
+              <span className="text-xs bg-resona/10 text-resona-light px-2 py-1 rounded">
                 Hasta €{filters.maxPrice}
               </span>
             )}
             {filters.availability && filters.availability !== 'ALL' && (
-              <span className="text-xs bg-resona/10 text-resona px-2 py-1 rounded">
+              <span className="text-xs bg-resona/10 text-resona-light px-2 py-1 rounded">
                 {filters.availability === 'IN_STOCK' ? 'Disponible' : 'Bajo pedido'}
               </span>
             )}

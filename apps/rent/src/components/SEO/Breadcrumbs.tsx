@@ -26,14 +26,14 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
       </Helmet>
 
       {/* UI Visual */}
-      <nav aria-label="Breadcrumb" className={`flex items-center space-x-2 text-sm text-gray-600 ${className}`}>
+      <nav aria-label="Breadcrumb" className={`flex items-center space-x-2 text-sm text-cream/60 ${className}`}>
         {items.map((item, index) => (
           <React.Fragment key={index}>
             {index > 0 && (
-              <span className="text-gray-400">/</span>
+              <span className="text-cream/40">/</span>
             )}
             {index === items.length - 1 ? (
-              <span className="text-gray-900 font-medium" aria-current="page">
+              <span className="text-cream font-medium" aria-current="page">
                 {item.name}
               </span>
             ) : (

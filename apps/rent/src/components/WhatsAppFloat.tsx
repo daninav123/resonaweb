@@ -44,22 +44,22 @@ const WhatsAppFloat = () => {
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
       {/* Tooltip */}
       {isTooltipVisible && (
-        <div className="bg-white rounded-xl shadow-2xl p-4 max-w-[260px] animate-fade-in border border-gray-100 relative">
+        <div className="bg-ink-800 rounded-xl shadow-2xl p-4 max-w-[260px] animate-fade-in border border-cream/10 relative">
           <button
             onClick={handleDismissTooltip}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            className="absolute top-2 right-2 text-cream/45 hover:text-gray-600"
             aria-label="Cerrar"
           >
             <X className="w-4 h-4" />
           </button>
-          <p className="text-sm text-gray-800 font-medium pr-4">
+          <p className="text-sm text-cream/90 font-medium pr-4">
             ¿Necesitas ayuda con tu evento?
           </p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-cream/50 mt-1">
             Escríbenos por WhatsApp y te asesoramos gratis
           </p>
           {/* Triangle */}
-          <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45"></div>
+          <div className="absolute -bottom-2 right-6 w-4 h-4 bg-ink-800 border-r border-b border-cream/10 transform rotate-45"></div>
         </div>
       )}
 

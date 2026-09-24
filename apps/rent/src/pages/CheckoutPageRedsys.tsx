@@ -57,36 +57,36 @@ const CheckoutPageRedsys = () => {
 
   if (loading || !paymentData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-ink">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600 mb-2">Preparando pago seguro...</p>
-          <p className="text-sm text-gray-500">Serás redirigido a Redsys</p>
+          <Loader2 className="w-12 h-12 animate-spin text-resona-light mx-auto mb-4" />
+          <p className="text-cream/65 mb-2">Preparando pago seguro...</p>
+          <p className="text-sm text-cream/50">Serás redirigido a Redsys</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Finalizar Pago</h1>
-          <p className="text-gray-600 mt-2">Pedido #{order?.orderNumber}</p>
+          <h1 className="text-3xl font-bold text-cream">Finalizar Pago</h1>
+          <p className="text-cream/65 mt-2">Pedido #{order?.orderNumber}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Resumen del pedido */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-4">
+            <div className="bg-ink-800 rounded-lg shadow-sm border border-cream/10 p-6 sticky top-4">
               <h2 className="text-xl font-semibold mb-4">Resumen del Pedido</h2>
 
               {/* Información del evento */}
               <div className="space-y-4 mb-6">
                 <div className="flex items-start">
-                  <Calendar className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <Calendar className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Fecha del evento</p>
+                    <p className="text-sm text-cream/65">Fecha del evento</p>
                     <p className="font-medium">
                       {new Date(order.startDate).toLocaleDateString('es-ES')} - 
                       {new Date(order.endDate).toLocaleDateString('es-ES')}
@@ -95,17 +95,17 @@ const CheckoutPageRedsys = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <MapPin className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Entrega</p>
+                    <p className="text-sm text-cream/65">Entrega</p>
                     <p className="font-medium">{order.deliveryType}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <Package className="w-5 h-5 text-gray-400 mt-1 mr-3" />
+                  <Package className="w-5 h-5 text-cream/45 mt-1 mr-3" />
                   <div>
-                    <p className="text-sm text-gray-600">Productos</p>
+                    <p className="text-sm text-cream/65">Productos</p>
                     <p className="font-medium">{order.items?.length || 0} items</p>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ const CheckoutPageRedsys = () => {
                   <div className="space-y-2">
                     {order.items.map((item: any) => (
                       <div key={item.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
+                        <span className="text-cream/65">
                           {item.product?.name || 'Producto'} x{item.quantity}
                         </span>
                         <span className="font-medium">
@@ -134,7 +134,7 @@ const CheckoutPageRedsys = () => {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span>Total</span>
-                  <span className="text-blue-600">{formatPrice(Number(order.total))}</span>
+                  <span className="text-resona-light">{formatPrice(Number(order.total))}</span>
                 </div>
               </div>
             </div>
@@ -142,20 +142,20 @@ const CheckoutPageRedsys = () => {
 
           {/* Formulario de redirección a Redsys */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-ink-800 rounded-lg shadow-sm border border-cream/10 p-6">
               <div className="flex items-center mb-6">
-                <CreditCard className="w-6 h-6 text-blue-600 mr-2" />
+                <CreditCard className="w-6 h-6 text-resona-light mr-2" />
                 <h2 className="text-xl font-semibold">Pago Seguro</h2>
               </div>
 
-              <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                <p className="text-sm text-blue-900">
+              <div className="mb-6 p-4 bg-resona/10 border-l-4 border-blue-500 rounded-r-lg">
+                <p className="text-sm text-cream">
                   <strong>🔒 Pago 100% Seguro:</strong> Serás redirigido a la pasarela de pago segura de Redsys.
                 </p>
-                <p className="text-sm text-blue-800 mt-2">
+                <p className="text-sm text-resona-light mt-2">
                   Puedes pagar con:
                 </p>
-                <ul className="text-sm text-blue-800 mt-1 ml-4 list-disc">
+                <ul className="text-sm text-resona-light mt-1 ml-4 list-disc">
                   <li>📱 <strong>Bizum</strong></li>
                   <li>💳 <strong>Tarjeta de crédito/débito</strong></li>
                   <li>🏦 <strong>Otros métodos</strong></li>
@@ -175,8 +175,8 @@ const CheckoutPageRedsys = () => {
               </form>
 
               <div className="text-center py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                <p className="text-gray-600">Redirigiendo a Redsys...</p>
+                <Loader2 className="w-8 h-8 animate-spin text-resona-light mx-auto mb-4" />
+                <p className="text-cream/65">Redirigiendo a Redsys...</p>
               </div>
             </div>
           </div>

@@ -191,7 +191,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         canonicalUrl={canonicalHref}
       />
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-ink">
         {/* Hero Section */}
         <section className="relative bg-resona text-white py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
@@ -210,7 +210,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                 </a>
                 <a
                   href="/contacto"
-                  className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
+                  className="inline-flex items-center justify-center bg-ink-800 hover:bg-white/10 text-resona-light font-bold py-4 px-8 rounded-lg transition-all"
                 >
                   <Calculator className="w-5 h-5 mr-2" />
                   Pedir presupuesto
@@ -221,25 +221,25 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         </section>
 
         {/* Introduction */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-ink-800">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">Sobre Nuestro Servicio</h2>
-              <div className="text-lg text-gray-700 leading-relaxed prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: introduction }} />
+              <h2 className="text-2xl font-bold mb-6 text-cream/90">Sobre Nuestro Servicio</h2>
+              <div className="text-lg text-cream/75 leading-relaxed prose prose-invert prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: introduction }} />
             </div>
           </div>
         </section>
 
         {/* Why Choose Us */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-ink">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Por qué elegirnos</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {whyChooseUs.map((item, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                <div key={index} className="bg-ink-800 p-6 rounded-lg shadow-md">
                   <div className="text-4xl mb-4">{item.icon}</div>
                   <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
+                  <p className="text-cream/65">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -247,16 +247,16 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         </section>
 
         {/* Packages */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-ink-800">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4">Paquetes y Precios</h2>
-            <p className="text-center text-gray-600 mb-8">Precios orientativos - Calcula tu presupuesto exacto</p>
+            <p className="text-center text-cream/65 mb-8">Precios orientativos - Calcula tu presupuesto exacto</p>
             
             {/* CTA presupuesto personalizado */}
             <div className="max-w-3xl mx-auto mb-12 bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-500 rounded-lg p-6 text-center">
-              <Calculator className="w-12 h-12 text-primary-600 mx-auto mb-3" />
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">¿Dudas sobre cantidades o combinaciones?</h3>
-              <p className="text-gray-600 mb-4">
+              <Calculator className="w-12 h-12 text-resona-light mx-auto mb-3" />
+              <h3 className="text-2xl font-bold text-cream/90 mb-2">¿Dudas sobre cantidades o combinaciones?</h3>
+              <p className="text-cream/65 mb-4">
                 Cuéntanos tu caso y te preparamos un presupuesto personalizado a medida en menos de 24 h.
               </p>
               <a
@@ -272,8 +272,8 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               {packages.map((pkg, index) => (
                 <div
                   key={index}
-                  className={`relative bg-white rounded-lg shadow-lg overflow-hidden ${
-                    pkg.highlighted ? 'ring-4 ring-primary-500 transform scale-105' : 'border border-gray-200'
+                  className={`relative bg-ink-800 rounded-lg shadow-lg overflow-hidden ${
+                    pkg.highlighted ? 'ring-4 ring-primary-500 transform scale-105' : 'border border-cream/10'
                   }`}
                 >
                   {pkg.highlighted && (
@@ -284,16 +284,16 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                   
                   <div className="p-6">
                     <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                    <p className="text-gray-600 mb-4">{pkg.subtitle}</p>
+                    <p className="text-cream/65 mb-4">{pkg.subtitle}</p>
                     <div className="mb-6">
-                      <span className="text-4xl font-bold text-primary-600">{pkg.price}</span>
+                      <span className="text-4xl font-bold text-resona-light">{pkg.price}</span>
                     </div>
                     
                     <ul className="space-y-3 mb-6">
                       {pkg.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start">
                           <CheckCircle className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-700">{feature}</span>
+                          <span className="text-cream/75">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -303,7 +303,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                       className={`block text-center font-bold py-3 px-6 rounded-lg transition-all ${
                         pkg.highlighted
                           ? 'bg-primary-500 hover:bg-primary-600 text-white'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                          : 'bg-ink-800 hover:bg-gray-200 text-cream/90'
                       }`}
                     >
                       Pedir presupuesto
@@ -317,18 +317,18 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
 
         {/* Technical Specs */}
         {technicalSpecs && technicalSpecs.length > 0 && (
-          <section className="py-16 bg-gray-50">
+          <section className="py-16 bg-ink">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-12">Especificaciones Técnicas</h2>
               <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 {technicalSpecs.map((spec, index) => (
-                  <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-bold mb-4 text-primary-600">{spec.title}</h3>
+                  <div key={index} className="bg-ink-800 p-6 rounded-lg shadow-md">
+                    <h3 className="text-xl font-bold mb-4 text-resona-light">{spec.title}</h3>
                     <ul className="space-y-2">
                       {spec.items.map((item, idx) => (
                         <li key={idx} className="flex items-start">
-                          <span className="text-primary-500 mr-2">▪</span>
-                          <span className="text-gray-700">{item}</span>
+                          <span className="text-resona-light mr-2">▪</span>
+                          <span className="text-cream/75">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -340,14 +340,14 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
         )}
 
         {/* FAQs */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-ink-800">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Preguntas Frecuentes</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-bold mb-3 text-gray-800">{faq.question}</h3>
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                <div key={index} className="bg-ink p-6 rounded-lg">
+                  <h3 className="text-xl font-bold mb-3 text-cream/90">{faq.question}</h3>
+                  <p className="text-cream/65 leading-relaxed">{faq.answer}</p>
                 </div>
               ))}
             </div>
@@ -356,7 +356,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
 
         {/* Related Services */}
         {relatedServices && relatedServices.length > 0 && (
-          <section className="py-16 bg-gray-50">
+          <section className="py-16 bg-ink">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-12">Servicios Relacionados</h2>
               <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
@@ -364,7 +364,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
                   <a
                     key={index}
                     href={service.url}
-                    className="bg-white hover:bg-primary-50 border-2 border-primary-200 hover:border-primary-400 px-6 py-3 rounded-lg font-semibold text-primary-600 transition-all"
+                    className="bg-ink-800 hover:bg-primary-50 border-2 border-primary-200 hover:border-primary-400 px-6 py-3 rounded-lg font-semibold text-resona-light transition-all"
                   >
                     {service.title}
                   </a>
@@ -391,7 +391,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               </a>
               <a
                 {...emailCta}
-                className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-primary-600 font-bold py-4 px-8 rounded-lg transition-all"
+                className="inline-flex items-center justify-center bg-ink-800 hover:bg-white/10 text-resona-light font-bold py-4 px-8 rounded-lg transition-all"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 Email

@@ -80,23 +80,23 @@ const AccountPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mi Cuenta</h1>
+        <h1 className="text-3xl font-bold text-cream mb-8">Mi Cuenta</h1>
         
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-ink-800 rounded-lg shadow-md p-6">
               {/* User Info */}
               <div className="text-center mb-6">
-                <div className="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <User className="w-12 h-12 text-blue-600" />
+                <div className="w-24 h-24 bg-resona/15 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <User className="w-12 h-12 text-resona-light" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-cream">
                   {user?.firstName} {user?.lastName}
                 </h2>
-                <p className="text-gray-600">{user?.email}</p>
+                <p className="text-cream/65">{user?.email}</p>
               </div>
 
               {/* Navigation */}
@@ -109,8 +109,8 @@ const AccountPage = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition ${
                         activeTab === tab.id
-                          ? 'bg-blue-50 text-blue-600'
-                          : 'hover:bg-gray-100 text-gray-700'
+                          ? 'bg-resona/10 text-resona-light'
+                          : 'hover:bg-white/10 text-cream/75'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -123,7 +123,7 @@ const AccountPage = () => {
                 
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-50 text-red-600 transition"
+                  className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-50 text-red-400 transition"
                 >
                   <LogOut className="w-5 h-5" />
                   Cerrar Sesión
@@ -134,13 +134,13 @@ const AccountPage = () => {
 
           {/* Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-ink-800 rounded-lg shadow-md p-8">
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div>
                   <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-gray-900">Información Personal</h2>
+                      <h2 className="text-2xl font-semibold text-cream">Información Personal</h2>
                       {user?.userLevel === 'VIP' && (
                         <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm rounded-full font-semibold flex items-center gap-1">
                           <Star className="w-4 h-4" />
@@ -156,7 +156,7 @@ const AccountPage = () => {
                     </div>
                     <button
                       onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                     >
                       {isEditing ? 'Guardar' : 'Editar'}
                     </button>
@@ -164,7 +164,7 @@ const AccountPage = () => {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         Nombre
                       </label>
                       <input
@@ -177,7 +177,7 @@ const AccountPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         Apellidos
                       </label>
                       <input
@@ -190,7 +190,7 @@ const AccountPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         Email
                       </label>
                       <input
@@ -203,7 +203,7 @@ const AccountPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         Teléfono
                       </label>
                       <input
@@ -217,7 +217,7 @@ const AccountPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         Fecha de Nacimiento
                       </label>
                       <input
@@ -230,7 +230,7 @@ const AccountPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-cream/75 mb-2">
                         País
                       </label>
                       <select
@@ -248,10 +248,10 @@ const AccountPage = () => {
                   </div>
 
                   <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Dirección Principal</h3>
+                    <h3 className="text-lg font-semibold text-cream mb-4">Dirección Principal</h3>
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-cream/75 mb-2">
                           Dirección
                         </label>
                         <input
@@ -265,7 +265,7 @@ const AccountPage = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-cream/75 mb-2">
                           Ciudad
                         </label>
                         <input
@@ -278,7 +278,7 @@ const AccountPage = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-cream/75 mb-2">
                           Código Postal
                         </label>
                         <input
@@ -297,26 +297,26 @@ const AccountPage = () => {
               {/* Orders Tab */}
               {activeTab === 'orders' && (
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Mis Pedidos</h2>
+                  <h2 className="text-2xl font-semibold text-cream mb-6">Mis Pedidos</h2>
                   <div className="space-y-4">
                     {[1, 2, 3].map((order) => (
-                      <div key={order} className="border rounded-lg p-4 hover:bg-gray-50">
+                      <div key={order} className="border rounded-lg p-4 hover:bg-white/5">
                         <div className="flex justify-between items-start">
                           <div>
                             <p className="font-semibold">Pedido #2024{order}234</p>
-                            <p className="text-sm text-gray-600">10 de Noviembre, 2024</p>
+                            <p className="text-sm text-cream/65">10 de Noviembre, 2024</p>
                             <p className="text-sm mt-2">3 productos</p>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold text-lg">€234.50</p>
-                            <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full mt-2">
+                            <span className="inline-block px-3 py-1 bg-emerald-500/15 text-emerald-300 text-sm rounded-full mt-2">
                               Entregado
                             </span>
                           </div>
                         </div>
                         <button
                           onClick={() => navigate('/mis-pedidos')}
-                          className="mt-4 text-blue-600 hover:underline text-sm"
+                          className="mt-4 text-resona-light hover:underline text-sm"
                         >
                           Ver detalles →
                         </button>
@@ -325,7 +325,7 @@ const AccountPage = () => {
                   </div>
                   <button
                     onClick={() => navigate('/mis-pedidos')}
-                    className="mt-6 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    className="mt-6 w-full py-2 border border-cream/15 rounded-lg hover:bg-white/5"
                   >
                     Ver todos los pedidos
                   </button>
@@ -335,11 +335,11 @@ const AccountPage = () => {
               {/* Favorites Tab */}
               {activeTab === 'favorites' && (
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Mis Favoritos</h2>
-                  <p className="text-gray-600">Aún no has añadido productos a favoritos.</p>
+                  <h2 className="text-2xl font-semibold text-cream mb-6">Mis Favoritos</h2>
+                  <p className="text-cream/65">Aún no has añadido productos a favoritos.</p>
                   <button
                     onClick={() => navigate('/productos')}
-                    className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="mt-4 px-6 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                   >
                     Explorar Productos
                   </button>
@@ -357,7 +357,7 @@ const AccountPage = () => {
               {/* Security Tab */}
               {activeTab === 'security' && (
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Seguridad</h2>
+                  <h2 className="text-2xl font-semibold text-cream mb-6">Seguridad</h2>
                   <div className="space-y-6">
                     <div>
                       <h3 className="font-semibold mb-3">Cambiar Contraseña</h3>
@@ -377,7 +377,7 @@ const AccountPage = () => {
                           placeholder="Confirmar nueva contraseña"
                           className="w-full px-4 py-2 border rounded-lg"
                         />
-                        <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <button className="px-6 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark">
                           Actualizar Contraseña
                         </button>
                       </div>
@@ -385,10 +385,10 @@ const AccountPage = () => {
                     
                     <div>
                       <h3 className="font-semibold mb-3">Autenticación de Dos Factores</h3>
-                      <p className="text-gray-600 mb-4">
+                      <p className="text-cream/65 mb-4">
                         Añade una capa extra de seguridad a tu cuenta.
                       </p>
-                      <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                      <button className="px-6 py-2 border border-cream/15 rounded-lg hover:bg-white/5">
                         Configurar 2FA
                       </button>
                     </div>
@@ -400,7 +400,7 @@ const AccountPage = () => {
               {activeTab === 'addresses' && (
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-900">Mis Direcciones</h2>
+                    <h2 className="text-2xl font-semibold text-cream">Mis Direcciones</h2>
                     {!showAddressForm && (
                       <button
                         onClick={() => {
@@ -415,7 +415,7 @@ const AccountPage = () => {
                             isDefault: false,
                           });
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                       >
                         <Plus className="w-4 h-4" />
                         Nueva Dirección
@@ -424,13 +424,13 @@ const AccountPage = () => {
                   </div>
 
                   {showAddressForm ? (
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                    <div className="bg-ink border border-cream/10 rounded-lg p-6 mb-6">
                       <h3 className="text-lg font-semibold mb-4">
                         {editingAddress ? 'Editar Dirección' : 'Nueva Dirección'}
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-cream/75 mb-1">
                             Nombre de la dirección *
                           </label>
                           <input
@@ -443,7 +443,7 @@ const AccountPage = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-cream/75 mb-1">
                             Dirección completa *
                           </label>
                           <input
@@ -457,7 +457,7 @@ const AccountPage = () => {
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-cream/75 mb-1">
                               Ciudad *
                             </label>
                             <input
@@ -469,7 +469,7 @@ const AccountPage = () => {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-cream/75 mb-1">
                               Código Postal *
                             </label>
                             <input
@@ -482,7 +482,7 @@ const AccountPage = () => {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-cream/75 mb-1">
                             País *
                           </label>
                           <select
@@ -502,9 +502,9 @@ const AccountPage = () => {
                             id="isDefault"
                             checked={addressForm.isDefault}
                             onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
-                            className="w-4 h-4 text-blue-600 rounded"
+                            className="w-4 h-4 text-resona-light rounded"
                           />
-                          <label htmlFor="isDefault" className="text-sm text-gray-700">
+                          <label htmlFor="isDefault" className="text-sm text-cream/75">
                             Establecer como dirección predeterminada
                           </label>
                         </div>
@@ -547,7 +547,7 @@ const AccountPage = () => {
                             setShowAddressForm(false);
                             setEditingAddress(null);
                           }}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          className="px-6 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                         >
                           {editingAddress ? 'Actualizar' : 'Guardar'}
                         </button>
@@ -556,7 +556,7 @@ const AccountPage = () => {
                             setShowAddressForm(false);
                             setEditingAddress(null);
                           }}
-                          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                          className="px-6 py-2 border border-cream/15 rounded-lg hover:bg-white/5"
                         >
                           Cancelar
                         </button>
@@ -567,11 +567,11 @@ const AccountPage = () => {
                   <div className="space-y-4">
                     {addresses.length === 0 ? (
                       <div className="text-center py-12">
-                        <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-4">No tienes direcciones guardadas</p>
+                        <MapPin className="w-16 h-16 text-cream/70 mx-auto mb-4" />
+                        <p className="text-cream/65 mb-4">No tienes direcciones guardadas</p>
                         <button
                           onClick={() => setShowAddressForm(true)}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          className="px-6 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                         >
                           Añadir primera dirección
                         </button>
@@ -581,28 +581,28 @@ const AccountPage = () => {
                         <div
                           key={address.id}
                           className={`border rounded-lg p-4 ${
-                            address.isDefault ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                            address.isDefault ? 'border-blue-500 bg-resona/10' : 'border-cream/10'
                           }`}
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-3">
-                              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Home className="w-5 h-5 text-blue-600" />
+                              <div className="w-10 h-10 bg-resona/15 rounded-full flex items-center justify-center flex-shrink-0">
+                                <Home className="w-5 h-5 text-resona-light" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h3 className="font-semibold text-gray-900">{address.name}</h3>
+                                  <h3 className="font-semibold text-cream">{address.name}</h3>
                                   {address.isDefault && (
-                                    <span className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
+                                    <span className="px-2 py-0.5 bg-resona text-white text-xs rounded-full">
                                       Predeterminada
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-gray-700 mt-1">{address.address}</p>
-                                <p className="text-gray-600 text-sm">
+                                <p className="text-cream/75 mt-1">{address.address}</p>
+                                <p className="text-cream/65 text-sm">
                                   {address.city}, {address.zipCode}
                                 </p>
-                                <p className="text-gray-600 text-sm">{address.country}</p>
+                                <p className="text-cream/65 text-sm">{address.country}</p>
                               </div>
                             </div>
                             <div className="flex gap-2">
@@ -612,7 +612,7 @@ const AccountPage = () => {
                                   setAddressForm(address);
                                   setShowAddressForm(true);
                                 }}
-                                className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+                                className="p-2 text-resona-light hover:bg-blue-100 rounded-lg transition"
                                 title="Editar"
                               >
                                 <Edit2 className="w-4 h-4" />
@@ -625,7 +625,7 @@ const AccountPage = () => {
                                       toast.success('Dirección eliminada correctamente');
                                     }
                                   }}
-                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+                                  className="p-2 text-red-400 hover:bg-red-100 rounded-lg transition"
                                   title="Eliminar"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -642,7 +642,7 @@ const AccountPage = () => {
                                 })));
                                 toast.success('Dirección predeterminada actualizada');
                               }}
-                              className="mt-3 text-sm text-blue-600 hover:underline"
+                              className="mt-3 text-sm text-resona-light hover:underline"
                             >
                               Establecer como predeterminada
                             </button>

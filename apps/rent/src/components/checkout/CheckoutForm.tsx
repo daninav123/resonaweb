@@ -113,7 +113,7 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
       <div className="bg-ink-800 p-4 rounded-lg border border-cream/10">
         <div className="flex justify-between items-center mb-4">
           <span className="text-cream/65">Total a pagar:</span>
-          <span className="text-2xl font-bold text-resona">{formatPrice(amount)}</span>
+          <span className="text-2xl font-bold text-resona-light">{formatPrice(amount)}</span>
         </div>
 
         <button
