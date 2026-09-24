@@ -94,7 +94,7 @@ const CommercialLayout = () => {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
             >
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-medium">
+              <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center text-white font-medium">
                 {user?.firstName?.[0]}{user?.lastName?.[0]}
               </div>
               {isSidebarOpen && (

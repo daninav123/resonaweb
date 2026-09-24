@@ -34,21 +34,21 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Enlaces Rápidos</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona-light">Enlaces Rápidos</h4>
             <ul className="space-y-2">
-              <li><Link to="/productos" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/productos" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Catálogo
               </Link></li>
-              <li><Link to="/sobre-nosotros" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/sobre-nosotros" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Sobre Nosotros
               </Link></li>
-              <li><Link to="/contacto" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/contacto" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Contacto
               </Link></li>
-              <li><Link to="/faqs" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/faqs" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 FAQs
               </Link></li>
@@ -57,7 +57,7 @@ const Footer = () => {
                   href="https://resonaevents.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-resona transition flex items-center group text-sm italic"
+                  className="text-gray-400 hover:text-resona-light transition flex items-center group text-sm italic"
                 >
                   <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                   ¿Evento completo? ReSona Events ↗
@@ -68,33 +68,33 @@ const Footer = () => {
 
           {/* Servicios Locales SEO */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Servicios en Valencia</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona-light">Servicios en Valencia</h4>
             <ul className="space-y-2">
-              <li><Link to="/servicios/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/alquiler-sonido-valencia" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Sonido Valencia
               </Link></li>
-              <li><Link to="/servicios/alquiler-altavoces-profesionales" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/alquiler-altavoces-profesionales" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Altavoces Valencia
               </Link></li>
-              <li><Link to="/servicios/iluminacion-led-profesional" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/iluminacion-led-profesional" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Iluminación Valencia
               </Link></li>
-              <li><Link to="/servicios/alquiler-dj-valencia" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/servicios/alquiler-dj-valencia" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler DJ Valencia
               </Link></li>
-              <li><Link to="/alquiler-sonido-torrent" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/alquiler-sonido-torrent" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Alquiler Sonido Torrent
               </Link></li>
-              <li><Link to="/productos?category=sonido" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/productos?category=sonido" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Ver Equipos de Sonido
               </Link></li>
-              <li><Link to="/productos?category=iluminacion" className="text-gray-300 hover:text-resona transition flex items-center group">
+              <li><Link to="/productos?category=iluminacion" className="text-gray-300 hover:text-resona-light transition flex items-center group">
                 <span className="w-1 h-1 bg-resona rounded-full mr-2 group-hover:w-2 transition-all"></span>
                 Ver Iluminación
               </Link></li>
@@ -103,27 +103,27 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-resona">Contacto</h4>
+            <h4 className="text-lg font-semibold mb-4 text-resona-light">Contacto</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3 group">
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <MapPin className="w-5 h-5 text-resona" />
+                  <MapPin className="w-5 h-5 text-resona-light" />
                 </div>
                 <span className="text-gray-300 text-sm pt-2">C/ de l'Illa Cabrera, 13, Quatre Carreres, 46026 València, Valencia</span>
               </div>
               <div className="flex items-center gap-3 group">
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <Phone className="w-5 h-5 text-resona" />
+                  <Phone className="w-5 h-5 text-resona-light" />
                 </div>
-                <a href="tel:+34613881414" className="text-gray-300 hover:text-resona transition text-sm">
+                <a href="tel:+34613881414" className="text-gray-300 hover:text-resona-light transition text-sm">
                   +34 613 881 414
                 </a>
               </div>
               <div className="flex items-center gap-3 group">
                 <div className="bg-resona/10 p-2 rounded-lg group-hover:bg-resona/20 transition">
-                  <Mail className="w-5 h-5 text-resona" />
+                  <Mail className="w-5 h-5 text-resona-light" />
                 </div>
-                <Link to="/contacto" className="text-gray-300 hover:text-resona transition text-sm">
+                <Link to="/contacto" className="text-gray-300 hover:text-resona-light transition text-sm">
                   Formulario de Contacto
                 </Link>
               </div>
@@ -148,7 +148,7 @@ const Footer = () => {
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5 text-resona group-hover:text-white" />
+                <Facebook className="w-5 h-5 text-resona-light group-hover:text-white" />
               </a>
               <a
                 href="https://www.twitter.com/resonarent"
@@ -157,7 +157,7 @@ const Footer = () => {
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
                 aria-label="Twitter"
               >
-                <Twitter className="w-5 h-5 text-resona group-hover:text-white" />
+                <Twitter className="w-5 h-5 text-resona-light group-hover:text-white" />
               </a>
               <a
                 href="https://www.instagram.com/resonarent"
@@ -166,7 +166,7 @@ const Footer = () => {
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
                 aria-label="Instagram"
               >
-                <Instagram className="w-5 h-5 text-resona group-hover:text-white" />
+                <Instagram className="w-5 h-5 text-resona-light group-hover:text-white" />
               </a>
               <a
                 href="https://www.linkedin.com/company/resonarent"
@@ -175,7 +175,7 @@ const Footer = () => {
                 className="bg-resona/10 p-2 rounded-lg hover:bg-resona hover:text-white transition group"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-5 h-5 text-resona group-hover:text-white" />
+                <Linkedin className="w-5 h-5 text-resona-light group-hover:text-white" />
               </a>
             </div>
           </div>
@@ -187,23 +187,23 @@ const Footer = () => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-resona rounded-full animate-pulse"></div>
               <p className="text-gray-400 text-sm">
-                © 2024 <span className="text-resona font-semibold">ReSona Rent</span>. Todos los derechos reservados.
+                © 2024 <span className="text-resona-light font-semibold">ReSona Rent</span>. Todos los derechos reservados.
               </p>
             </div>
             <div className="flex flex-wrap gap-6 justify-center">
-              <Link to="/politica-privacidad" className="text-gray-400 hover:text-resona text-sm transition">
+              <Link to="/politica-privacidad" className="text-gray-400 hover:text-resona-light text-sm transition">
                 Política de Privacidad
               </Link>
-              <Link to="/aviso-legal" className="text-gray-400 hover:text-resona text-sm transition">
+              <Link to="/aviso-legal" className="text-gray-400 hover:text-resona-light text-sm transition">
                 Aviso Legal
               </Link>
-              <Link to="/terminos-condiciones" className="text-gray-400 hover:text-resona text-sm transition">
+              <Link to="/terminos-condiciones" className="text-gray-400 hover:text-resona-light text-sm transition">
                 Condiciones
               </Link>
-              <Link to="/politica-cookies" className="text-gray-400 hover:text-resona text-sm transition">
+              <Link to="/politica-cookies" className="text-gray-400 hover:text-resona-light text-sm transition">
                 Cookies
               </Link>
-              <Link to="/mis-datos" className="text-gray-400 hover:text-resona text-sm transition">
+              <Link to="/mis-datos" className="text-gray-400 hover:text-resona-light text-sm transition">
                 🔒 Mis Datos
               </Link>
             </div>

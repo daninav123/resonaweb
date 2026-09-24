@@ -98,7 +98,7 @@ const FAQsPage = () => {
           </Link>
           <a
             {...whatsapp}
-            className="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-lg font-semibold transition"
+            className="bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-lg font-semibold transition"
           >
             WhatsApp
           </a>

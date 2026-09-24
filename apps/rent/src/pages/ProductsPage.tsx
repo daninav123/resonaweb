@@ -270,7 +270,7 @@ const ProductsPage = () => {
                     <button
                       onClick={() => setViewMode('grid')}
                       className={`p-1.5 rounded ${
-                        viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-600'
+                        viewMode === 'grid' ? 'bg-resona text-white' : 'text-gray-600'
                       }`}
                     >
                       <Grid className="w-4 h-4" />
@@ -278,7 +278,7 @@ const ProductsPage = () => {
                     <button
                       onClick={() => setViewMode('list')}
                       className={`p-1.5 rounded ${
-                        viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-600'
+                        viewMode === 'list' ? 'bg-resona text-white' : 'text-gray-600'
                       }`}
                     >
                       <List className="w-4 h-4" />
@@ -312,7 +312,7 @@ const ProductsPage = () => {
                     });
                     setSearchParams({});
                   }}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark"
                 >
                   Limpiar filtros
                 </button>

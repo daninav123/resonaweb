@@ -18,18 +18,17 @@ export default {
     },
     extend: {
       colors: {
-        // Color corporativo Resona #5ebbff
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f3ff',
-          200: '#bae6ff',
-          300: '#7dd3ff',
-          400: '#38bfff',
-          500: '#5ebbff', // Color corporativo principal
-          600: '#0ea5e9',
-          700: '#0284c7',
-          800: '#0369a1',
-          900: '#075985',
+          50:  '#EBEEFF',
+          100: '#D1D8FF',
+          200: '#A9B6FF',
+          300: '#7B8FFE',
+          400: '#5D75FE',
+          500: '#3D5AFE',
+          600: '#1134FE',
+          700: '#0123DF',
+          800: '#011BB2',
+          900: '#01147F',
         },
         secondary: {
           50: '#f8fafc',

@@ -88,17 +88,17 @@ export class ContactController {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #5ebbff 0%, #4a9fd6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header { background: linear-gradient(135deg, #3D5AFE 0%, #1134FE 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .header h1 { color: white; margin: 0; font-size: 24px; }
             .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #5ebbff; }
-            .section h2 { color: #5ebbff; margin-top: 0; font-size: 18px; }
+            .section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #3D5AFE; }
+            .section h2 { color: #3D5AFE; margin-top: 0; font-size: 18px; }
             .info-row { margin: 10px 0; }
             .info-label { font-weight: bold; color: #555; }
             .info-value { color: #333; }
             .message-box { background: #fff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin: 15px 0; white-space: pre-wrap; }
             .footer { text-align: center; padding: 20px; color: #888; font-size: 12px; }
-            .badge { display: inline-block; padding: 5px 12px; background: #5ebbff; color: white; border-radius: 12px; font-size: 12px; }
+            .badge { display: inline-block; padding: 5px 12px; background: #3D5AFE; color: white; border-radius: 12px; font-size: 12px; }
           </style>
         </head>
         <body>
@@ -164,7 +164,7 @@ export class ContactController {
 
               <div style="text-align: center; margin-top: 30px;">
                 <a href="mailto:${email}?subject=${encodeURIComponent('Re: ' + subject + ' - Resona Events')}"
-                   style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                   style="background-color: #3D5AFE; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
                   ✉️ Responder a ${name}
                 </a>
               </div>
@@ -198,10 +198,10 @@ export class ContactController {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #5ebbff 0%, #4a9fd6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header { background: linear-gradient(135deg, #3D5AFE 0%, #1134FE 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .header h1 { color: white; margin: 0; font-size: 24px; }
             .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .message-box { background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #5ebbff; }
+            .message-box { background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #3D5AFE; }
             .footer { text-align: center; padding: 20px; color: #888; font-size: 12px; }
           </style>
         </head>

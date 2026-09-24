@@ -203,7 +203,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   {...whatsappHero}
-                  className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
+                  className="inline-flex items-center justify-center bg-green-700 hover:bg-green-800 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
                 >
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp: 613 88 14 14
@@ -384,7 +384,7 @@ const ServicePageTemplate: React.FC<ServicePageProps> = ({
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 {...whatsappCta}
-                className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
+                className="inline-flex items-center justify-center bg-green-700 hover:bg-green-800 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 WhatsApp Directo

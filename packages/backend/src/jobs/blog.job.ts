@@ -220,7 +220,7 @@ async function generateDailyArticle(authorId: string) {
         name: aiArticle.category,
         slug: generateSlug(aiArticle.category),
         description: `Artículos sobre ${aiArticle.category.toLowerCase()}`,
-        color: '#5ebbff',
+        color: '#3D5AFE',
       }) as any;
     }
 
@@ -335,7 +335,7 @@ export async function generateArticleNow(authorId: string) {
         name: aiArticle.category,
         slug: generateSlug(aiArticle.category),
         description: `Artículos sobre ${aiArticle.category.toLowerCase()}`,
-        color: '#5ebbff',
+        color: '#3D5AFE',
       }) as any;
     }
 

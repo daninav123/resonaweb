@@ -220,7 +220,7 @@ export default function MyDataPage() {
                     )}
                   </div>
                   <div className="ml-4">
-                    <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="bg-green-700 text-white px-3 py-1 rounded-full text-sm font-medium">
                       Activo
                     </div>
                   </div>

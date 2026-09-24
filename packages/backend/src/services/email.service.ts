@@ -474,7 +474,7 @@ export class EmailService {
       
       const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #5ebbff;">Recordatorio de Pago a Plazos</h2>
+          <h2 style="color: #3D5AFE;">Recordatorio de Pago a Plazos</h2>
           
           <p>Hola ${userName},</p>
           
@@ -500,7 +500,7 @@ export class EmailService {
 
           <div style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL || 'https://resona.com'}/mis-pedidos/${order.id}" 
-               style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+               style="background-color: #3D5AFE; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
               💳 Pagar Ahora
             </a>
           </div>
@@ -633,7 +633,7 @@ export class EmailService {
 
           <div style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL || 'https://resona.com'}/mis-pedidos/${order.id}" 
-               style="background-color: #5ebbff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+               style="background-color: #3D5AFE; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
               📋 Ver Detalles del Pedido
             </a>
           </div>

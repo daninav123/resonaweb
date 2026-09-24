@@ -174,7 +174,7 @@ export default function CookieBanner() {
                     </p>
                   </div>
                   <div className="flex items-center ml-4">
-                    <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="bg-green-700 text-white px-3 py-1 rounded-full text-sm font-medium">
                       Activadas
                     </div>
                   </div>

@@ -854,7 +854,7 @@ export class InvoiceService {
           
           // ==================== HEADER ====================
           // Banda superior con color Resona
-          doc.rect(0, 0, 612, 120).fill('#5ebbff');
+          doc.rect(0, 0, 612, 120).fill('#3D5AFE');
           
           // Nombre comercial en blanco
           doc.fontSize(24).fillColor('#ffffff')
@@ -904,10 +904,10 @@ export class InvoiceService {
           
           // ==================== TABLA DE CONCEPTOS ====================
           doc.y = 280;
-          doc.moveTo(50, doc.y).lineTo(562, doc.y).stroke('#5ebbff');
+          doc.moveTo(50, doc.y).lineTo(562, doc.y).stroke('#3D5AFE');
           
           const tableTop = doc.y + 10;
-          doc.fontSize(10).font('Helvetica-Bold').fillColor('#5ebbff');
+          doc.fontSize(10).font('Helvetica-Bold').fillColor('#3D5AFE');
           doc.text('DESCRIPCIÓN', 50, tableTop);
           doc.text('CANT.', 350, tableTop, { width: 50, align: 'center' });
           doc.text('PRECIO', 410, tableTop, { width: 60, align: 'right' });
@@ -943,7 +943,7 @@ export class InvoiceService {
           doc.text(`${invoiceData.tax.toFixed(2)}€`, 480, totalsY + 20, { width: 72, align: 'right' });
           
           // Total en grande y con color
-          doc.fontSize(14).font('Helvetica-Bold').fillColor('#5ebbff');
+          doc.fontSize(14).font('Helvetica-Bold').fillColor('#3D5AFE');
           doc.text('TOTAL:', 360, totalsY + 45);
           doc.text(`${invoiceData.total.toFixed(2)}€`, 480, totalsY + 45, { width: 72, align: 'right' });
           
@@ -962,7 +962,7 @@ export class InvoiceService {
           doc.text('Gracias por confiar en ReSona Events', 50, footerY, { align: 'center', width: 512 });
           
           // Línea decorativa inferior
-          doc.moveTo(50, 770).lineTo(562, 770).stroke('#5ebbff');
+          doc.moveTo(50, 770).lineTo(562, 770).stroke('#3D5AFE');
           
           doc.end();
           logger.info('✅ Professional PDF generated with PDFKit');
