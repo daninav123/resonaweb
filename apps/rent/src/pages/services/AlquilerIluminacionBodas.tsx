@@ -21,32 +21,32 @@ Hemos iluminado más de 500 <strong>bodas en Valencia</strong>: <strong>La Hacie
    
     whyChooseUs: [
       {
-        icon: "🎵",
+        icon: "",
         title: "Equipos Profesionales",
         description: "Solo marcas líderes de máxima calidad"
       },
       {
-        icon: "👨‍🔧",
+        icon: "‍",
         title: "Técnicos Especializados",
         description: "Expertos con años de experiencia"
       },
       {
-        icon: "🚚",
+        icon: "",
         title: "Servicio Completo",
         description: "Recogida en almacén · entrega y montaje opcionales"
       },
       {
-        icon: "🔒",
+        icon: "",
         title: "Equipos de Backup",
         description: "Respaldo siempre disponible"
       },
       {
-        icon: "💰",
+        icon: "",
         title: "Precios Claros",
         description: "Sin costes ocultos"
       },
       {
-        icon: "⚡",
+        icon: "",
         title: "Respuesta Rápida",
         description: "Presupuesto en 24h"
       }

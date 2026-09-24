@@ -147,7 +147,7 @@ const AlquilerSonidoValenciaPage = () => {
 
               <div className="grid md:grid-cols-2 gap-4 my-6">
                 <div className="bg-resona/10 p-4 rounded-lg">
-                  <h4 className="font-bold text-resona-light mb-2">🎵 Bodas y Celebraciones</h4>
+                  <h4 className="font-bold text-resona-light mb-2">Bodas y Celebraciones</h4>
                   <p className="text-sm text-cream/75">
                     Sonido cristalino para ceremonia, cóctel y banquete. Microfonía inalámbrica para discursos. 
                     Equipos probados en más de 200 bodas en Valencia.
@@ -155,7 +155,7 @@ const AlquilerSonidoValenciaPage = () => {
                 </div>
                 
                 <div className="bg-ink-800/5 p-4 rounded-lg">
-                  <h4 className="font-bold text-cream/65 mb-2">🎸 Conciertos y Festivales</h4>
+                  <h4 className="font-bold text-cream/65 mb-2">Conciertos y Festivales</h4>
                   <p className="text-sm text-cream/75">
                     Sistemas line array, backline completo, monitores de escenario. 
                     Experiencia en salas como 16 Toneladas, Loco Club y eventos al aire libre.
@@ -163,7 +163,7 @@ const AlquilerSonidoValenciaPage = () => {
                 </div>
 
                 <div className="bg-emerald-500/10 p-4 rounded-lg">
-                  <h4 className="font-bold text-emerald-400 mb-2">💼 Eventos Corporativos</h4>
+                  <h4 className="font-bold text-emerald-400 mb-2">Eventos Corporativos</h4>
                   <p className="text-sm text-cream/75">
                     Presentaciones empresariales, conferencias, ferias. Sonido discreto y profesional. 
                     Micrófonos de solapa, atril y de mano. Compatibilidad con presentaciones multimedia.
@@ -171,7 +171,7 @@ const AlquilerSonidoValenciaPage = () => {
                 </div>
 
                 <div className="bg-orange-50 p-4 rounded-lg">
-                  <h4 className="font-bold text-orange-600 mb-2">🎉 Fiestas Privadas</h4>
+                  <h4 className="font-bold text-orange-600 mb-2">Fiestas Privadas</h4>
                   <p className="text-sm text-cream/75">
                     Cumpleaños, aniversarios, fiestas de empresa. Equipos compactos y potentes. 
                     Conexión Bluetooth, USB y auxiliar para tu música favorita.

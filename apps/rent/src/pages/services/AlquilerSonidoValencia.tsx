@@ -21,32 +21,32 @@ Hemos trabajado en eventos de todo tipo en Valencia: <a href="/servicios/sonido-
    
     whyChooseUs: [
       {
-        icon: "🎵",
+        icon: "",
         title: "Equipos de Última Generación",
         description: "DAS Audio, ICOA, Behringer, Pioneer, Shure - Marcas profesionales de confianza"
       },
       {
-        icon: "👨‍🔧",
+        icon: "‍",
         title: "Técnico Especializado Incluido",
         description: "Ajuste perfecto, mezcla profesional y soporte durante todo el evento"
       },
       {
-        icon: "🚚",
+        icon: "",
         title: "Recogida en Almacén",
         description: "Transporte, montaje, desmontaje y cables - Sin cargos ocultos"
       },
       {
-        icon: "🔒",
+        icon: "",
         title: "Equipos de Backup",
         description: "Siempre llevamos respaldo - Cero riesgo de fallo"
       },
       {
-        icon: "💰",
+        icon: "",
         title: "Precios Transparentes",
         description: "Presupuesto claro desde el principio - Sin sorpresas"
       },
       {
-        icon: "⚡",
+        icon: "",
         title: "Respuesta Rápida",
         description: "Presupuesto en menos de 24h - Servicio ágil y profesional"
       }

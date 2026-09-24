@@ -1438,7 +1438,7 @@ const CartPage = () => {
                   }`}
                 >
                   {hasInvalidDates()
-                    ? '🚫 Productos no disponibles'
+                    ? 'Productos no disponibles'
                     : (loading ? 'Un momento...' : 'Continuar con la reserva')
                   }
                 </button>

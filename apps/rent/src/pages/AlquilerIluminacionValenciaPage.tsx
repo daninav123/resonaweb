@@ -148,7 +148,7 @@ const AlquilerIluminacionValenciaPage = () => {
 
               <div className="grid md:grid-cols-2 gap-4 my-6">
                 <div className="bg-pink-50 p-4 rounded-lg border-2 border-pink-200">
-                  <h4 className="font-bold text-pink-600 mb-2">💒 Bodas y Celebraciones</h4>
+                  <h4 className="font-bold text-pink-600 mb-2">Bodas y Celebraciones</h4>
                   <p className="text-sm text-cream/75">
                     Iluminación cálida para ceremonias, uplighting en colores personalizados, efectos de cielo estrellado, 
                     monogramas proyectados, y pista de baile con efectos LED. Perfecto para fincas como Mas de San Pablo, 
@@ -157,7 +157,7 @@ const AlquilerIluminacionValenciaPage = () => {
                 </div>
                 
                 <div className="bg-ink-800/5 p-4 rounded-lg border-2 border-purple-200">
-                  <h4 className="font-bold text-cream/65 mb-2">🎸 Conciertos y Festivales</h4>
+                  <h4 className="font-bold text-cream/65 mb-2">Conciertos y Festivales</h4>
                   <p className="text-sm text-cream/75">
                     Cabezas móviles sincronizadas, efectos beam, wash y spot, strobo profesional, barras LED pixel mapping, 
                     y control DMX/ArtNet. Experiencia en salas como 16 Toneladas, Loco Club, Moon Club, y eventos al aire 
@@ -166,7 +166,7 @@ const AlquilerIluminacionValenciaPage = () => {
                 </div>
 
                 <div className="bg-resona/10 p-4 rounded-lg border-2 border-resona/30">
-                  <h4 className="font-bold text-resona-light mb-2">💼 Eventos Corporativos</h4>
+                  <h4 className="font-bold text-resona-light mb-2">Eventos Corporativos</h4>
                   <p className="text-sm text-cream/75">
                     Iluminación arquitectural con colores corporativos, retroproyección, focos elipsoidales para logos, 
                     iluminación de stands en ferias, y sistemas modulares para salas de conferencias. Ideal para eventos 
@@ -175,7 +175,7 @@ const AlquilerIluminacionValenciaPage = () => {
                 </div>
 
                 <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
-                  <h4 className="font-bold text-orange-600 mb-2">🎭 Teatro y Espectáculos</h4>
+                  <h4 className="font-bold text-orange-600 mb-2">Teatro y Espectáculos</h4>
                   <p className="text-sm text-cream/75">
                     Focos fresnel, recortes, cicloramas, cañones seguidor, dimmer analógicos y digitales. Control 
                     profesional mediante mesas ETC, Avolites o GrandMA. Colaboramos con teatros municipales y 

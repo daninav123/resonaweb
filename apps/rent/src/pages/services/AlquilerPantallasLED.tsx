@@ -34,32 +34,32 @@ const AlquilerPantallasLED = () => {
 
     whyChooseUs: [
       {
-        icon: "🎬",
+        icon: "",
         title: "Cine de verano y eventos",
         description: "Cine al aire libre, conciertos, ferias, bodas y deporte en directo",
       },
       {
-        icon: "📺",
+        icon: "",
         title: "LED P3.9 de verdad",
         description: "Imagen brillante y nítida, muy superior a un proyector",
       },
       {
-        icon: "☀️",
+        icon: "",
         title: "Interior y exterior",
         description: "Apta para terrazas, plazas y salones, de día o de noche",
       },
       {
-        icon: "📐",
+        icon: "",
         title: "Dos tamaños",
         description: "3×2 m (6 m²) y 3×4 m (12 m²) según tu espacio y aforo",
       },
       {
-        icon: "🚚",
+        icon: "",
         title: "Entrega y montaje",
         description: "La llevamos, montamos y desmontamos en toda la provincia",
       },
       {
-        icon: "🗓️",
+        icon: "",
         title: "Reserva por fecha",
         description: "Disponibilidad real: eliges tu día y la bloqueamos",
       },

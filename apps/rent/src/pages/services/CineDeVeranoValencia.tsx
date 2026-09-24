@@ -31,12 +31,12 @@ const CineDeVeranoValencia = () => {
 <p><strong>El verano es temporada alta.</strong> Reserva tu fecha con antelación llamando al <strong>613 88 14 14</strong> o por WhatsApp y te confirmamos disponibilidad al momento.</p>`,
 
     whyChooseUs: [
-      { icon: "🎬", title: "Cine al aire libre", description: "Proyecciones para urbanizaciones, plazas, piscinas y terrazas" },
-      { icon: "🖥️", title: "Proyector o LED", description: "Elige según tu espacio y aforo; te asesoramos sin compromiso" },
-      { icon: "🔊", title: "Sonido incluido", description: "La peli se escucha con claridad en todo el recinto" },
-      { icon: "🚚", title: "Entrega y montaje", description: "Lo llevamos, montamos y desmontamos en la provincia de Valencia" },
-      { icon: "☀️", title: "Pensado para verano", description: "Equipo apto para exterior, de noche y con luz ambiente" },
-      { icon: "🗓️", title: "Reserva por fecha", description: "Temporada alta: reserva tu día con antelación" },
+      { icon: "", title: "Cine al aire libre", description: "Proyecciones para urbanizaciones, plazas, piscinas y terrazas" },
+      { icon: "", title: "Proyector o LED", description: "Elige según tu espacio y aforo; te asesoramos sin compromiso" },
+      { icon: "", title: "Sonido incluido", description: "La peli se escucha con claridad en todo el recinto" },
+      { icon: "", title: "Entrega y montaje", description: "Lo llevamos, montamos y desmontamos en la provincia de Valencia" },
+      { icon: "", title: "Pensado para verano", description: "Equipo apto para exterior, de noche y con luz ambiente" },
+      { icon: "", title: "Reserva por fecha", description: "Temporada alta: reserva tu día con antelación" },
     ],
 
     technicalSpecs: [

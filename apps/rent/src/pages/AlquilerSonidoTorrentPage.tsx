@@ -158,7 +158,7 @@ const AlquilerSonidoTorrentPage = () => {
 
               <div className="grid md:grid-cols-2 gap-4 my-6">
                 <div className="bg-resona/10 p-4 rounded-lg">
-                  <h4 className="font-bold text-resona-light mb-2">🎉 Fiestas y Celebraciones</h4>
+                  <h4 className="font-bold text-resona-light mb-2">Fiestas y Celebraciones</h4>
                   <p className="text-sm text-cream/75">
                     Cumpleaños, comuniones, bautizos, aniversarios. Equipos compactos para viviendas unifamiliares 
                     y chalets en El Vedat. Sonido potente sin molestar a vecinos.
@@ -166,7 +166,7 @@ const AlquilerSonidoTorrentPage = () => {
                 </div>
                 
                 <div className="bg-ink-800/5 p-4 rounded-lg">
-                  <h4 className="font-bold text-cream/65 mb-2">💒 Bodas</h4>
+                  <h4 className="font-bold text-cream/65 mb-2">Bodas</h4>
                   <p className="text-sm text-cream/75">
                     Ceremonias civiles en jardines de El Vedat, banquetes en salones de Torrent. 
                     Microfonía inalámbrica para votos y lecturas. Música ambiental personalizada.
@@ -174,7 +174,7 @@ const AlquilerSonidoTorrentPage = () => {
                 </div>
 
                 <div className="bg-emerald-500/10 p-4 rounded-lg">
-                  <h4 className="font-bold text-emerald-400 mb-2">🏢 Eventos Corporativos</h4>
+                  <h4 className="font-bold text-emerald-400 mb-2">Eventos Corporativos</h4>
                   <p className="text-sm text-cream/75">
                     Presentaciones empresariales, ferias comerciales, inauguraciones. Sonido profesional 
                     para polígono industrial de Torrent. Compatible con videoconferencias.
