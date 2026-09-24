@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '@resona/api-client';
 import { orderModificationService } from '../../services/orderModification.service';
 import { guestCart } from '../../utils/guestCart';
+import { formatPrice } from '../../utils/cartCalculations';
 
 interface Props {
   orderId: string;
@@ -144,7 +145,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
                     <div className="flex-1">
                       <p className="font-medium">{item.product.name}</p>
                       <p className="text-sm text-gray-600">
-                        Cantidad: {item.quantity} | €{Number(item.product.pricePerDay || item.product.basePrice || 0).toFixed(2)}/día
+                        Cantidad: {item.quantity} | {formatPrice(Number(item.product.pricePerDay || item.product.basePrice || 0))}/día
                       </p>
                     </div>
                     <button
@@ -171,7 +172,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
                   <div key={p.id} onClick={() => handleAdd(p)} className="flex items-center justify-between gap-2 p-3 bg-white border rounded-lg hover:border-green-500 cursor-pointer">
                     <div className="flex-1">
                       <p className="font-medium">{p.name}</p>
-                      <p className="text-sm text-gray-600">€{Number(p.pricePerDay || p.basePrice || 0).toFixed(2)}/día</p>
+                      <p className="text-sm text-gray-600">{formatPrice(Number(p.pricePerDay || p.basePrice || 0))}/día</p>
                     </div>
                     <Plus className="w-5 h-5 text-green-600" />
                   </div>
@@ -189,7 +190,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
                     <p className="font-medium">{i.product.name}</p>
                   </div>
                   <input type="number" min="1" value={i.quantity} onChange={(e) => updateQty(idx, +e.target.value)} className="w-20 px-2 py-1 border rounded text-center" />
-                  <p className="font-semibold w-24 text-right">+€{i.totalPrice.toFixed(2)}</p>
+                  <p className="font-semibold w-24 text-right">+{formatPrice(i.totalPrice)}</p>
                   <button onClick={() => setAdd(add.filter((_, i) => i !== idx))} className="p-2 bg-red-100 text-red-600 rounded-lg"><X className="w-4 h-4" /></button>
                 </div>
               ))}
@@ -201,7 +202,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
             <div key={i.id} className={`flex justify-between p-4 border rounded-lg ${remove.includes(i.id) ? 'bg-red-50 border-red-300' : 'bg-white'}`}>
               <div>
                 <p className="font-medium">{i.product?.name}</p>
-                <p className="text-sm text-gray-600">Cant: {i.quantity} | €{Number(i.totalPrice).toFixed(2)}</p>
+                <p className="text-sm text-gray-600">Cant: {i.quantity} | {formatPrice(Number(i.totalPrice))}</p>
               </div>
               <button onClick={() => setRemove(remove.includes(i.id) ? remove.filter(x => x !== i.id) : [...remove, i.id])} className={`p-2 rounded-lg ${remove.includes(i.id) ? 'bg-red-600 text-white' : 'bg-gray-100 hover:bg-red-100'}`}>
                 <Trash2 className="w-5 h-5" />
@@ -215,7 +216,7 @@ export const EditOrderModal: React.FC<Props> = ({ orderId, currentItems, orderDa
               {add.length > 0 && <p className="text-sm">✅ {add.length} producto(s) a añadir</p>}
               {remove.length > 0 && <p className="text-sm">❌ {remove.length} producto(s) a eliminar</p>}
               <p className="text-lg font-bold mt-2">
-                {diff > 0 ? `Cargo adicional: €${diff.toFixed(2)}` : diff < 0 ? `Reembolso: €${Math.abs(diff).toFixed(2)}` : 'Sin cambio de precio'}
+                {diff > 0 ? `Cargo adicional: ${formatPrice(diff)}` : diff < 0 ? `Reembolso: ${formatPrice(Math.abs(diff))}` : 'Sin cambio de precio'}
               </p>
             </div>
           )}

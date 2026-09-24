@@ -7,6 +7,7 @@ import { Loader2, Package, MapPin, Calendar, CreditCard } from 'lucide-react';
 import { api } from '@resona/api-client';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
+import { formatPrice } from '../utils/cartCalculations';
 
 const CheckoutPageStripe = () => {
   const navigate = useNavigate();
@@ -454,7 +455,7 @@ const CheckoutPageStripe = () => {
                           {item.product?.name || 'Producto'} x{item.quantity}
                         </span>
                         <span className="font-medium">
-                          €{Number(item.totalPrice).toFixed(2)}
+                          {formatPrice(Number(item.totalPrice))}
                         </span>
                       </div>
                     ))}
@@ -466,26 +467,26 @@ const CheckoutPageStripe = () => {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>€{Number(order.subtotal).toFixed(2)}</span>
+                  <span>{formatPrice(Number(order.subtotal))}</span>
                 </div>
 
                 {order.shippingCost > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Envío</span>
-                    <span>€{Number(order.shippingCost).toFixed(2)}</span>
+                    <span>{formatPrice(Number(order.shippingCost))}</span>
                   </div>
                 )}
 
                 {order.taxAmount > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">IVA</span>
-                    <span>€{Number(order.taxAmount).toFixed(2)}</span>
+                    <span>{formatPrice(Number(order.taxAmount))}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span>Total del Pedido</span>
-                  <span className="text-resona">€{Number(order.total).toFixed(2)}</span>
+                  <span className="text-resona">{formatPrice(Number(order.total))}</span>
                 </div>
                 
                 {/* Mostrar monto de reserva si es diferente del total */}
@@ -493,9 +494,9 @@ const CheckoutPageStripe = () => {
                   <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-300">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-blue-900 font-semibold">💳 Pago de Reserva (25%)</span>
-                      <span className="text-blue-600 font-bold">€{Number(order.amountToPay).toFixed(2)}</span>
+                      <span className="text-blue-600 font-bold">{formatPrice(Number(order.amountToPay))}</span>
                     </div>
-                    <p className="text-xs text-blue-700">Resto: €{(order.total - order.amountToPay).toFixed(2)} en "Mis Pedidos"</p>
+                    <p className="text-xs text-blue-700">Resto: {formatPrice((order.total - order.amountToPay))} en "Mis Pedidos"</p>
                   </div>
                 )}
               </div>

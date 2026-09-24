@@ -7,6 +7,7 @@ import { api } from '@resona/api-client';
 import { CreditCard, ArrowLeft, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ModificationCheckoutForm } from '../components/payment/ModificationCheckoutForm';
+import { formatPrice } from '../utils/cartCalculations';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -106,7 +107,7 @@ const ModificationPaymentPage = () => {
           <div className="border-t pt-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-600">Cargo adicional:</span>
-              <span className="text-2xl font-bold text-blue-600">€{Number(amount).toFixed(2)}</span>
+              <span className="text-2xl font-bold text-blue-600">{formatPrice(Number(amount))}</span>
             </div>
             <p className="text-sm text-gray-500">
               Este cargo corresponde a los productos adicionales que has añadido al pedido

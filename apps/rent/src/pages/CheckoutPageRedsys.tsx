@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '@resona/api-client';
 import { Loader2, Package, MapPin, Calendar, CreditCard } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/cartCalculations';
 
 const CheckoutPageRedsys = () => {
   const navigate = useNavigate();
@@ -121,7 +122,7 @@ const CheckoutPageRedsys = () => {
                           {item.product?.name || 'Producto'} x{item.quantity}
                         </span>
                         <span className="font-medium">
-                          €{Number(item.totalPrice).toFixed(2)}
+                          {formatPrice(Number(item.totalPrice))}
                         </span>
                       </div>
                     ))}
@@ -133,7 +134,7 @@ const CheckoutPageRedsys = () => {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span>Total</span>
-                  <span className="text-blue-600">€{Number(order.total).toFixed(2)}</span>
+                  <span className="text-blue-600">{formatPrice(Number(order.total))}</span>
                 </div>
               </div>
             </div>

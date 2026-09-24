@@ -172,8 +172,15 @@ export function calculateCartTotals(params: CartCalculationParams): CartTotals {
 /**
  * Helper: Formatear precio a string con símbolo de euro
  */
+const eur = new Intl.NumberFormat('es-ES', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 export function formatPrice(amount: number): string {
-  return `€${amount.toFixed(2)}`;
+  return eur.format(amount);
 }
 
 /**

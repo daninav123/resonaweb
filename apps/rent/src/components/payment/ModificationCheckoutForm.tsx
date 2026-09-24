@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@resona/api-client';
 import { useAuthStore } from '../../stores/authStore';
+import { formatPrice } from '../../utils/cartCalculations';
 
 interface ModificationCheckoutFormProps {
   orderId: string;
@@ -65,7 +66,7 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <div className="mb-4 p-4 bg-resona/10 border border-resona/30 rounded-lg">
         <p className="text-sm text-blue-900">
           💳 Método de pago: Tarjeta de crédito/débito
         </p>
@@ -86,7 +87,7 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
       <button
         type="submit"
         disabled={isLoading || !stripe || !elements}
-        className="w-full mt-6 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full mt-6 bg-resona text-white py-3 px-6 rounded-lg hover:bg-resona-dark disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isLoading ? (
           <>
@@ -94,11 +95,11 @@ export const ModificationCheckoutForm: React.FC<ModificationCheckoutFormProps> =
             Procesando...
           </>
         ) : (
-          `Pagar €${amount.toFixed(2)}`
+          `Pagar ${formatPrice(amount)}`
         )}
       </button>
 
-      <p className="text-xs text-gray-500 text-center mt-4">
+      <p className="text-xs text-cream/50 text-center mt-4">
         El pago se procesará de forma segura mediante Stripe
       </p>
     </form>

@@ -156,16 +156,16 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-ink-800 rounded-lg shadow-md p-6">
       <div className="flex items-center gap-3 mb-6">
-        <Building2 className="w-6 h-6 text-blue-600" />
+        <Building2 className="w-6 h-6 text-resona-light" />
         <h2 className="text-2xl font-bold">Datos de Facturación</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Tipo de cliente */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-cream/75 mb-2">
             Tipo de Cliente
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -182,7 +182,7 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
                       validateTaxId(formData.taxId, e.target.value);
                     }
                   }}
-                  className="text-blue-600 focus:ring-blue-500"
+                  className="text-resona-light focus:ring-resona"
                 />
                 <span className="text-sm">{type}</span>
               </label>
@@ -192,23 +192,23 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
 
         {/* Razón Social / Nombre */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-cream/75 mb-1">
             Razón Social / Empresa
-            <span className="text-gray-400 text-xs ml-2">(opcional para particulares)</span>
+            <span className="text-cream/40 text-xs ml-2">(opcional para particulares)</span>
           </label>
           <input
             type="text"
             value={formData.companyName || ''}
             onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
             placeholder="Nombre de la empresa (opcional)"
           />
         </div>
 
         {/* NIF/CIF */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {formData.taxIdType} <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-cream/75 mb-1">
+            {formData.taxIdType} <span className="text-red-400">*</span>
           </label>
           <div className="relative">
             <input
@@ -216,9 +216,9 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
               value={formData.taxId}
               onChange={(e) => handleTaxIdChange(e.target.value.toUpperCase())}
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10 ${
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent pr-10 ${
                 taxIdValid === true ? 'border-green-500' :
-                taxIdValid === false ? 'border-red-500' : 'border-gray-300'
+                taxIdValid === false ? 'border-red-500' : 'border-cream/15'
               }`}
               placeholder={`Ej: ${formData.taxIdType === 'NIF' ? '12345678A' : formData.taxIdType === 'CIF' ? 'A12345678' : 'X1234567A'}`}
             />
@@ -231,11 +231,11 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
               <CheckCircle className="absolute right-3 top-3 w-4 h-4 text-green-500" />
             )}
             {!validatingTaxId && taxIdValid === false && (
-              <AlertCircle className="absolute right-3 top-3 w-4 h-4 text-red-500" />
+              <AlertCircle className="absolute right-3 top-3 w-4 h-4 text-red-400" />
             )}
           </div>
           {taxIdValid === false && (
-            <p className="text-xs text-red-500 mt-1">
+            <p className="text-xs text-red-400 mt-1">
               {formData.taxIdType} no válido. Verifica el formato.
             </p>
           )}
@@ -244,56 +244,56 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
         {/* Dirección */}
         <div className="grid md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Dirección <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-cream/75 mb-1">
+              Dirección <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="Calle, número"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-cream/75 mb-1">
               Dirección Línea 2
-              <span className="text-gray-400 text-xs ml-2">(Piso, puerta, etc.)</span>
+              <span className="text-cream/40 text-xs ml-2">(Piso, puerta, etc.)</span>
             </label>
             <input
               type="text"
               value={formData.addressLine2 || ''}
               onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="Piso 3, Puerta B (opcional)"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ciudad <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-cream/75 mb-1">
+              Ciudad <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               value={formData.city}
               onChange={(e) => setFormData({ ...formData, city: e.target.value })}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="Valencia"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Provincia <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-cream/75 mb-1">
+              Provincia <span className="text-red-400">*</span>
             </label>
             <select
               value={formData.state}
               onChange={(e) => setFormData({ ...formData, state: e.target.value })}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
             >
               <option value="">Selecciona una provincia</option>
               {SPANISH_PROVINCES.map((province) => (
@@ -305,8 +305,8 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Código Postal <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-cream/75 mb-1">
+              Código Postal <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
@@ -315,20 +315,20 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
               required
               maxLength={5}
               pattern="[0-9]{5}"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="46000"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-cream/75 mb-1">
               País
             </label>
             <input
               type="text"
               value={formData.country}
               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent bg-ink-800"
               readOnly
             />
           </div>
@@ -337,27 +337,27 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
         {/* Contacto */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-cream/75 mb-1">
               Teléfono de facturación
             </label>
             <input
               type="tel"
               value={formData.phone || ''}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="+34 600 000 000"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-cream/75 mb-1">
               Email de facturación
             </label>
             <input
               type="email"
               value={formData.email || ''}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-cream/15 rounded-lg focus:ring-2 focus:ring-resona focus:border-transparent"
               placeholder="facturacion@empresa.com"
             />
           </div>
@@ -368,7 +368,7 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
           <button
             type="submit"
             disabled={loading || taxIdValid === false}
-            className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-resona text-white px-6 py-3 rounded-lg font-semibold hover:bg-resona-dark disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -388,7 +388,7 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
               type="button"
               onClick={handleDelete}
               disabled={loading}
-              className="px-6 py-3 border-2 border-red-500 text-red-500 rounded-lg font-semibold hover:bg-red-50 disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-3 border-2 border-red-500 text-red-400 rounded-lg font-semibold hover:bg-red-50 disabled:opacity-50 flex items-center gap-2"
             >
               <Trash2 className="w-5 h-5" />
               Eliminar
@@ -396,7 +396,7 @@ const BillingForm = ({ onSaved }: BillingFormProps) => {
           )}
         </div>
 
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-cream/50">
           * Campos obligatorios. Estos datos se usarán para la emisión de facturas.
         </p>
       </form>

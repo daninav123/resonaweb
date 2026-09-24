@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Calendar, CreditCard, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/cartCalculations';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -82,7 +83,7 @@ const PaymentForm = ({ installmentId, amount, onSuccess }: { installmentId: stri
         ) : (
           <>
             <CreditCard className="w-5 h-5" />
-            Pagar €{amount.toFixed(2)}
+            Pagar {formatPrice(amount)}
           </>
         )}
       </button>
@@ -205,15 +206,15 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">€{Number(summary.total).toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatPrice(Number(summary.total))}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Pagado</p>
-              <p className="text-2xl font-bold text-green-600">€{Number(summary.paid).toFixed(2)}</p>
+              <p className="text-2xl font-bold text-green-600">{formatPrice(Number(summary.paid))}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Pendiente</p>
-              <p className="text-2xl font-bold text-orange-600">€{Number(summary.pending).toFixed(2)}</p>
+              <p className="text-2xl font-bold text-orange-600">{formatPrice(Number(summary.pending))}</p>
             </div>
           </div>
         </div>
@@ -234,7 +235,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm flex items-center gap-2 transition-all"
             >
               <CreditCard className="w-4 h-4" />
-              Pagar Todo de Una Vez (€{Number(summary.pending).toFixed(2)})
+              Pagar Todo de Una Vez ({formatPrice(Number(summary.pending))})
             </button>
           )}
         </div>
@@ -288,7 +289,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
                 
                 <div className="text-right">
                   <p className="text-3xl font-bold text-gray-900">
-                    €{Number(installment.amount).toFixed(2)}
+                    {formatPrice(Number(installment.amount))}
                   </p>
                 </div>
               </div>
@@ -317,7 +318,7 @@ export const InstallmentPayment = ({ orderId, onPaymentComplete }: InstallmentPa
               Pagar Plazo {selectedInstallment.installmentNumber}/3
             </h3>
             <p className="text-gray-600 mb-6">
-              Monto a pagar: <span className="font-bold text-2xl text-gray-900">€{Number(selectedInstallment.amount).toFixed(2)}</span>
+              Monto a pagar: <span className="font-bold text-2xl text-gray-900">{formatPrice(Number(selectedInstallment.amount))}</span>
             </p>
 
             <Elements

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@resona/api-client';
-import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag, Star, Crown } from 'lucide-react';
+import { CreditCard, Lock, User, Mail, Phone, MapPin, ShoppingBag, AlertCircle, Info, Tag, Star, Crown, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { calculatePaymentBreakdown, type PaymentOption } from '../utils/depositCalculator';
 import { CouponInput } from '../components/coupons/CouponInput';
 import { useAuthStore } from '../stores/authStore';
 import { calculateCartTotals } from '../utils/cartCalculations';
+import { formatPrice } from '../utils/cartCalculations';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -599,7 +600,7 @@ const CheckoutPage = () => {
           notesWithDetails += '   📦 Partes del Evento:\n';
           item.eventMetadata.selectedParts.forEach((part: any) => {
             const price = part.price || part.pricePerDay || 0;
-            notesWithDetails += `      • ${part.name}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+            notesWithDetails += `      • ${part.name}${price > 0 ? ` - ${formatPrice(Number(price))}` : ''}\n`;
           });
           notesWithDetails += '\n';
         }
@@ -610,7 +611,7 @@ const CheckoutPage = () => {
           item.eventMetadata.selectedExtras.forEach((extra: any) => {
             const price = extra.total || extra.price || extra.pricePerDay || 0;
             const qty = extra.quantity || 1;
-            notesWithDetails += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+            notesWithDetails += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - ${formatPrice(Number(price))}` : ''}\n`;
           });
           notesWithDetails += '\n';
         }
@@ -622,14 +623,14 @@ const CheckoutPage = () => {
         if (hasPartsTotal || hasExtrasTotal) {
           notesWithDetails += '   💰 Subtotales:\n';
           if (hasPartsTotal) {
-            notesWithDetails += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
+            notesWithDetails += `      • Partes: ${formatPrice(Number(item.eventMetadata.partsTotal))}\n`;
           }
           if (hasExtrasTotal) {
-            notesWithDetails += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+            notesWithDetails += `      • Extras: ${formatPrice(Number(item.eventMetadata.extrasTotal))}\n`;
           }
           if (hasPartsTotal && hasExtrasTotal) {
             const total = Number(item.eventMetadata.partsTotal) + Number(item.eventMetadata.extrasTotal);
-            notesWithDetails += `      • TOTAL: €${total.toFixed(2)}\n`;
+            notesWithDetails += `      • TOTAL: ${formatPrice(total)}\n`;
           }
         }
       });
@@ -728,15 +729,15 @@ const CheckoutPage = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-ink-800 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto text-center">
-            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Tu carrito está vacío</h2>
-            <p className="text-gray-600 mb-6">Añade productos antes de continuar con el checkout</p>
+            <ShoppingBag className="w-24 h-24 text-cream/30 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-cream mb-2">Tu carrito está vacío</h2>
+            <p className="text-cream/65 mb-6">Añade productos antes de continuar con el checkout</p>
             <button
               onClick={() => navigate('/productos')}
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700"
+              className="bg-resona text-white px-8 py-3 rounded-lg font-semibold hover:bg-resona-dark"
             >
               Ver Productos
             </button>
@@ -747,9 +748,9 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink-800 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Checkout</h1>
+        <h1 className="text-3xl font-bold text-cream mb-6">Checkout</h1>
 
         {/* Progress Steps */}
         <div className="max-w-3xl mx-auto mb-6">
@@ -760,24 +761,24 @@ const CheckoutPage = () => {
               { n: 3, label: 'Pago' },
             ].map((s, i, arr) => (
               <div key={s.n} className="flex items-center flex-1 last:flex-none">
-                <div className={`flex-1 text-center ${step >= s.n ? 'text-resona' : 'text-gray-400'}`}>
+                <div className={`flex-1 text-center ${step >= s.n ? 'text-resona' : 'text-cream/40'}`}>
                   <div
                     className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center font-semibold transition-colors ${
                       step > s.n
                         ? 'bg-green-700 text-white'
                         : step === s.n
                         ? 'bg-resona text-white shadow-md'
-                        : 'bg-gray-200 text-gray-500'
+                        : 'bg-ink-700 text-cream/50'
                     }`}
                   >
                     {step > s.n ? '✓' : s.n}
                   </div>
-                  <p className={`text-sm mt-1 font-medium ${step === s.n ? 'text-gray-900' : ''}`}>
+                  <p className={`text-sm mt-1 font-medium ${step === s.n ? 'text-cream' : ''}`}>
                     {s.label}
                   </p>
                 </div>
                 {i < arr.length - 1 && (
-                  <div className={`flex-1 border-t-2 mx-2 transition-colors ${step > s.n ? 'border-green-500' : step === s.n ? 'border-resona/40' : 'border-gray-200'}`} />
+                  <div className={`flex-1 border-t-2 mx-2 transition-colors ${step > s.n ? 'border-emerald-500' : step === s.n ? 'border-resona/40' : 'border-cream/10'}`} />
                 )}
               </div>
             ))}
@@ -786,30 +787,30 @@ const CheckoutPage = () => {
 
         {/* Selector de forma de pago */}
         <div className="max-w-3xl mx-auto mb-8">
-          <p className="font-semibold text-gray-900 mb-3">¿Cómo prefieres pagar?</p>
+          <p className="font-semibold text-cream mb-3">¿Cómo prefieres pagar?</p>
           <div className="grid sm:grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => setPaymentOption('reserve')}
-              className={`text-left rounded-xl border-2 p-4 transition ${paymentOption === 'reserve' ? 'border-resona bg-resona/5 ring-2 ring-resona/20' : 'border-gray-200 hover:border-gray-300'}`}
+              className={`text-left rounded-xl border-2 p-4 transition ${paymentOption === 'reserve' ? 'border-resona bg-resona/5 ring-2 ring-resona/20' : 'border-cream/10 hover:border-gray-300'}`}
             >
-              <p className="font-semibold text-gray-900">Reserva ahora (25%)</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">€{breakdownReserve.payNow.toFixed(2)}</p>
-              <p className="text-sm text-gray-600 mt-1">
-                El 75% restante (€{breakdownReserve.payLater.toFixed(2)}) lo pagas al recoger.
+              <p className="font-semibold text-cream">Reserva ahora (25%)</p>
+              <p className="text-2xl font-bold text-cream mt-1">{formatPrice(breakdownReserve.payNow)}</p>
+              <p className="text-sm text-cream/65 mt-1">
+                El 75% restante ({formatPrice(breakdownReserve.payLater)}) lo pagas al recoger.
               </p>
             </button>
             <button
               type="button"
               onClick={() => setPaymentOption('full')}
-              className={`text-left rounded-xl border-2 p-4 transition relative ${paymentOption === 'full' ? 'border-green-500 bg-green-50 ring-2 ring-green-500/20' : 'border-gray-200 hover:border-gray-300'}`}
+              className={`text-left rounded-xl border-2 p-4 transition relative ${paymentOption === 'full' ? 'border-emerald-500 bg-emerald-500/10 ring-2 ring-green-500/20' : 'border-cream/10 hover:border-gray-300'}`}
             >
-              <span className="absolute top-3 right-3 text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">-10%</span>
-              <p className="font-semibold text-gray-900">Pago completo hoy</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">€{breakdownFull.payNow.toFixed(2)}</p>
-              <p className="text-sm text-green-700 mt-1">
+              <span className="absolute top-3 right-3 text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">-10%</span>
+              <p className="font-semibold text-cream">Pago completo hoy</p>
+              <p className="text-2xl font-bold text-cream mt-1">{formatPrice(breakdownFull.payNow)}</p>
+              <p className="text-sm text-emerald-400 mt-1">
                 {breakdownReserve.total > breakdownFull.total
-                  ? `Ahorras €${(breakdownReserve.total - breakdownFull.total).toFixed(2)} pagando todo ahora.`
+                  ? `Ahorras ${formatPrice((breakdownReserve.total - breakdownFull.total))} pagando todo ahora.`
                   : 'Pagas todo ahora y te olvidas.'}
               </p>
             </button>
@@ -822,7 +823,7 @@ const CheckoutPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Step 1: Datos Personales */}
               {step === 1 && (
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-ink-800 rounded-lg shadow-md p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <User className="w-5 h-5" />
                     Datos Personales
@@ -830,15 +831,15 @@ const CheckoutPage = () => {
                   
                   {/* Nota: datos del perfil si está logueado, invitado si no */}
                   {isAuthenticated ? (
-                    <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                      <p className="text-sm text-blue-700 flex items-center gap-2">
+                    <div className="mb-4 p-3 bg-resona/10 border-l-4 border-resona rounded-r-lg">
+                      <p className="text-sm text-resona-light flex items-center gap-2">
                         <Info className="w-4 h-4" />
                         Datos cargados de tu perfil. <button type="button" className="underline" onClick={() => navigate('/cuenta/datos')}>Editar en mi cuenta</button>
                       </p>
                     </div>
                   ) : (
-                    <div className="mb-4 p-3 bg-gray-50 border-l-4 border-gray-400 rounded-r-lg">
-                      <p className="text-sm text-gray-700 flex items-center gap-2 flex-wrap">
+                    <div className="mb-4 p-3 bg-ink-800 border-l-4 border-gray-400 rounded-r-lg">
+                      <p className="text-sm text-cream/75 flex items-center gap-2 flex-wrap">
                         <Info className="w-4 h-4 flex-shrink-0" />
                         <span>Estás reservando como invitado.</span>
                         <button
@@ -854,7 +855,7 @@ const CheckoutPage = () => {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                      <label className="block text-sm font-medium text-cream/75 mb-1">Nombre</label>
                       <input
                         type="text"
                         required
@@ -863,12 +864,12 @@ const CheckoutPage = () => {
                         readOnly={isAuthenticated}
                         placeholder={isAuthenticated ? undefined : 'Tu nombre'}
                         className={`w-full px-3 py-2 border rounded-lg ${
-                          isAuthenticated ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'bg-white focus:ring-2 focus:ring-resona'
+                          isAuthenticated ? 'bg-ink-800 text-cream/75 cursor-not-allowed' : 'bg-ink-800 focus:ring-2 focus:ring-resona'
                         }`}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+                      <label className="block text-sm font-medium text-cream/75 mb-1">Apellidos</label>
                       <input
                         type="text"
                         required
@@ -877,16 +878,16 @@ const CheckoutPage = () => {
                         readOnly={isAuthenticated}
                         placeholder={isAuthenticated ? undefined : 'Tus apellidos'}
                         className={`w-full px-3 py-2 border rounded-lg ${
-                          isAuthenticated ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'bg-white focus:ring-2 focus:ring-resona'
+                          isAuthenticated ? 'bg-ink-800 text-cream/75 cursor-not-allowed' : 'bg-ink-800 focus:ring-2 focus:ring-resona'
                         }`}
                       />
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-cream/75 mb-1">Email</label>
                     <div className="relative">
-                      <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
+                      <Mail className="w-5 h-5 text-cream/40 absolute left-3 top-2.5" />
                       <input
                         type="email"
                         required
@@ -895,18 +896,18 @@ const CheckoutPage = () => {
                         readOnly={isAuthenticated}
                         placeholder={isAuthenticated ? undefined : 'tu@email.com'}
                         className={`w-full pl-10 pr-3 py-2 border rounded-lg ${
-                          isAuthenticated ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'bg-white focus:ring-2 focus:ring-resona'
+                          isAuthenticated ? 'bg-ink-800 text-cream/75 cursor-not-allowed' : 'bg-ink-800 focus:ring-2 focus:ring-resona'
                         }`}
                       />
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-cream/75 mb-1">
                       Teléfono {!formData.phone && <span className="text-orange-600">(requerido - añádelo)</span>}
                     </label>
                     <div className="relative">
-                      <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
+                      <Phone className="w-5 h-5 text-cream/40 absolute left-3 top-2.5" />
                       <input
                         type="tel"
                         required
@@ -914,17 +915,17 @@ const CheckoutPage = () => {
                         onChange={(e) => updateFormData('phone', e.target.value)}
                         className={`w-full pl-10 pr-3 py-2 border rounded-lg ${
                           formData.phone 
-                            ? 'bg-gray-50 text-gray-700' 
-                            : 'bg-white focus:ring-2 focus:ring-blue-500'
+                            ? 'bg-ink-800 text-cream/75' 
+                            : 'bg-ink-800 focus:ring-2 focus:ring-blue-500'
                         }`}
                         placeholder="+34 600 000 000"
                       />
                     </div>
                   </div>
 
-                  <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                    <p className="text-xs text-gray-600">
-                      💡 Puedes editar el teléfono aquí. Para modificar nombre y email, ve a tu <button type="button" onClick={() => navigate('/cuenta')} className="text-blue-600 hover:underline">perfil de usuario</button>
+                  <div className="mt-4 p-3 bg-ink-800 border border-cream/10 rounded-lg">
+                    <p className="text-xs text-cream/65">
+                      Puedes editar el teléfono aquí. Para modificar nombre y email, ve a tu <button type="button" onClick={() => navigate('/cuenta')} className="text-resona-light hover:underline">perfil de usuario</button>
                     </p>
                   </div>
 
@@ -944,7 +945,7 @@ const CheckoutPage = () => {
                         // Siempre ir al paso 2 (confirmación de entrega)
                         setStep(2);
                       }}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
+                      className="bg-resona text-white px-6 py-2 rounded-lg font-medium hover:bg-resona-dark"
                     >
                       Siguiente
                     </button>
@@ -954,7 +955,7 @@ const CheckoutPage = () => {
 
               {/* Step 2: Confirmar Entrega */}
               {step === 2 && (
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-ink-800 rounded-lg shadow-md p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5" />
                     {isEventOrder ? 'Confirmación del Evento' : 'Confirmación de Entrega'}
@@ -963,27 +964,27 @@ const CheckoutPage = () => {
                   {/* Para eventos: mostrar info del evento */}
                   {isEventOrder ? (
                     <>
-                      <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
-                        <p className="text-sm text-green-700 flex items-center gap-2">
+                      <div className="mb-4 p-3 bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg">
+                        <p className="text-sm text-emerald-400 flex items-center gap-2">
                           <Info className="w-4 h-4" />
                           Evento configurado - Montaje incluido
                         </p>
                       </div>
 
-                      <div className="mb-6 p-5 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border-2 border-green-200">
+                      <div className="mb-6 p-5 bg-gradient-to-br from-green-50 to-resona/10 rounded-lg border-2 border-emerald-500/30">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <MapPin className="w-6 h-6 text-green-600" />
+                          <div className="w-12 h-12 bg-emerald-500/15 rounded-full flex items-center justify-center flex-shrink-0">
+                            <MapPin className="w-6 h-6 text-emerald-400" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                            <h3 className="font-semibold text-lg text-cream mb-1">
                               🎉 Montaje en el lugar del evento
                             </h3>
                             <div className="space-y-1">
-                              <p className="text-sm text-gray-700"><strong>📍 Ubicación:</strong> {eventLocation}</p>
-                              <p className="text-sm text-gray-700"><strong>📏 Distancia:</strong> {distance} km desde Valencia</p>
-                              <p className="text-sm text-green-700 flex items-center gap-1 mt-2">
-                                <span className="text-lg">✅</span>
+                              <p className="text-sm text-cream/75"><strong>Ubicación:</strong> {eventLocation}</p>
+                              <p className="text-sm text-cream/75"><strong>Distancia:</strong> {distance} km desde Valencia</p>
+                              <p className="text-sm text-emerald-400 flex items-center gap-1 mt-2">
+                                <Check className="h-4 w-4 text-emerald-400" />
                                 <strong>Transporte y montaje incluidos en el precio</strong>
                               </p>
                             </div>
@@ -991,8 +992,8 @@ const CheckoutPage = () => {
                         </div>
                       </div>
 
-                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-xs text-green-700">
+                      <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                        <p className="text-xs text-emerald-400">
                           💡 La ubicación del evento se estableció en la calculadora. Para cambiarla, debes volver a configurar el evento.
                         </p>
                       </div>
@@ -1000,35 +1001,35 @@ const CheckoutPage = () => {
                   ) : (
                     <>
                       {/* Nota de configuración del carrito (solo para no-eventos) */}
-                      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                        <p className="text-sm text-blue-700 flex items-center gap-2">
+                      <div className="mb-4 p-3 bg-resona/10 border-l-4 border-resona rounded-r-lg">
+                        <p className="text-sm text-resona-light flex items-center gap-2">
                           <Info className="w-4 h-4" />
                           Configuración seleccionada en el carrito
                         </p>
                       </div>
 
-                      <div className="mb-6 p-5 bg-gray-50 rounded-lg border-2 border-gray-200">
+                      <div className="mb-6 p-5 bg-ink-800 rounded-lg border-2 border-cream/10">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-12 h-12 bg-resona/15 rounded-full flex items-center justify-center flex-shrink-0">
                             {formData.deliveryOption === 'pickup' ? (
-                              <ShoppingBag className="w-6 h-6 text-blue-600" />
+                              <ShoppingBag className="w-6 h-6 text-resona-light" />
                             ) : (
-                              <MapPin className="w-6 h-6 text-blue-600" />
+                              <MapPin className="w-6 h-6 text-resona-light" />
                             )}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                            <h3 className="font-semibold text-lg text-cream mb-1">
                               {formData.deliveryOption === 'pickup' ? 'Recogida en tienda' : 'Envío a domicilio'}
                             </h3>
                             {formData.deliveryOption === 'pickup' ? (
-                              <p className="text-sm text-gray-600">Gratis - C/ de l'Illa Cabrera, 13, 46026 València</p>
+                              <p className="text-sm text-cream/65">Gratis - C/ de l'Illa Cabrera, 13, 46026 València</p>
                             ) : (
                               <div className="space-y-1">
-                                <p className="text-sm text-gray-700"><strong>Dirección:</strong> {deliveryAddress || formData.address}</p>
-                                <p className="text-sm text-gray-700"><strong>Distancia:</strong> {distance} km</p>
+                                <p className="text-sm text-cream/75"><strong>Dirección:</strong> {deliveryAddress || formData.address}</p>
+                                <p className="text-sm text-cream/75"><strong>Distancia:</strong> {distance} km</p>
                                 {calculatedShipping && (
-                                  <div className="mt-3 pt-3 border-t border-gray-300">
-                                    <p className="text-sm text-gray-700">
+                                  <div className="mt-3 pt-3 border-t border-cream/15">
+                                    <p className="text-sm text-cream/75">
                                       <strong>Coste de envío:</strong> €{calculatedShipping.shippingCost?.toFixed(2) || '0.00'}
                                     </p>
                                   </div>
@@ -1039,9 +1040,9 @@ const CheckoutPage = () => {
                         </div>
                       </div>
 
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                        <p className="text-xs text-gray-600">
-                          💡 Para modificar la entrega, vuelve al <button type="button" onClick={() => navigate('/carrito')} className="text-blue-600 hover:underline">carrito</button>
+                      <div className="p-3 bg-ink-800 border border-cream/10 rounded-lg">
+                        <p className="text-xs text-cream/65">
+                          Para modificar la entrega, vuelve al <button type="button" onClick={() => navigate('/carrito')} className="text-resona-light hover:underline">carrito</button>
                         </p>
                       </div>
                     </>
@@ -1056,10 +1057,10 @@ const CheckoutPage = () => {
                         data-testid="accept-terms"
                         checked={formData.acceptTerms}
                         onChange={(e) => updateFormData('acceptTerms', e.target.checked)}
-                        className="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-4 h-4 text-resona-light rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-700">
-                        Acepto los <button type="button" className="text-blue-600 hover:underline">términos y condiciones</button> y la <button type="button" className="text-blue-600 hover:underline">política de privacidad</button>
+                      <span className="text-sm text-cream/75">
+                        Acepto los <button type="button" className="text-resona-light hover:underline">términos y condiciones</button> y la <button type="button" className="text-resona-light hover:underline">política de privacidad</button>
                       </span>
                     </label>
                   </div>
@@ -1069,7 +1070,7 @@ const CheckoutPage = () => {
                       type="submit"
                       data-testid="submit-checkout"
                       disabled={isProcessing}
-                      className="w-full bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full bg-resona text-white px-8 py-3 rounded-lg font-medium hover:bg-resona-dark disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isProcessing ? (
                         <>
@@ -1092,20 +1093,20 @@ const CheckoutPage = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+            <div className="bg-ink-800 rounded-lg shadow-md p-6 sticky top-4">
               <h2 className="text-xl font-semibold mb-4">Resumen del Pedido</h2>
               
               {/* Alerta VIP */}
               {user && user.userLevel && user.userLevel !== 'STANDARD' && (
-                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-4">
-                  <h3 className="font-bold text-yellow-900 flex items-center gap-2 mb-2">
+                <div className="bg-amber-500/10 border-l-4 border-amber-500 p-4 rounded-r-lg mb-4">
+                  <h3 className="font-bold text-amber-300 flex items-center gap-2 mb-2">
                     {user.userLevel === 'VIP' ? (
                       <><Star className="w-5 h-5" /> ⭐ Beneficio VIP</>
                     ) : (
-                      <><Crown className="w-5 h-5" /> 👑 Beneficio VIP PLUS</>
+                      <><Crown className="w-5 h-5" /> Beneficio VIP PLUS</>
                     )}
                   </h3>
-                  <ul className="text-sm text-yellow-800 space-y-1">
+                  <ul className="text-sm text-amber-400 space-y-1">
                     <li>✓ {user.userLevel === 'VIP' ? '25%' : '50%'} de descuento aplicado</li>
                   </ul>
                 </div>
@@ -1121,22 +1122,22 @@ const CheckoutPage = () => {
                     const itemTotal = partsTotal + extrasTotal; // Solo partes + extras
                     
                     return (
-                      <div key={item.id} className="border-l-4 border-blue-500 pl-3 pb-2">
+                      <div key={item.id} className="border-l-4 border-resona pl-3 pb-2">
                         <div className="flex justify-between text-sm font-semibold mb-1">
-                          <span className="text-gray-900">{item.product.name}</span>
-                          <span className="text-blue-600">€{itemTotal.toFixed(2)}</span>
+                          <span className="text-cream">{item.product.name}</span>
+                          <span className="text-resona-light">{formatPrice(itemTotal)}</span>
                         </div>
-                        <div className="text-xs text-gray-600 space-y-1 ml-2">
+                        <div className="text-xs text-cream/65 space-y-1 ml-2">
                           {partsTotal > 0 && (
                             <div className="flex justify-between">
                               <span>• Partes del evento</span>
-                              <span>€{partsTotal.toFixed(2)}</span>
+                              <span>{formatPrice(partsTotal)}</span>
                             </div>
                           )}
                           {extrasTotal > 0 && (
                             <div className="flex justify-between">
                               <span>• Extras</span>
-                              <span>€{extrasTotal.toFixed(2)}</span>
+                              <span>{formatPrice(extrasTotal)}</span>
                             </div>
                           )}
                         </div>
@@ -1147,8 +1148,8 @@ const CheckoutPage = () => {
                   // Items normales
                   return (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-gray-600">{item.product.name} x{item.quantity}</span>
-                      <span className="font-medium">€{(item.product.pricePerDay * item.quantity).toFixed(2)}</span>
+                      <span className="text-cream/65">{item.product.name} x{item.quantity}</span>
+                      <span className="font-medium">{formatPrice((item.product.pricePerDay * item.quantity))}</span>
                     </div>
                   );
                 })}
@@ -1156,8 +1157,8 @@ const CheckoutPage = () => {
 
               <div className="border-t pt-4 my-4">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span>€{centralizedSubtotal.toFixed(2)}</span>
+                  <span className="text-cream/65">Subtotal</span>
+                  <span>{formatPrice(centralizedSubtotal)}</span>
                 </div>
                 
                 {/* Coupon Input */}
@@ -1171,26 +1172,26 @@ const CheckoutPage = () => {
                 </div>
                 
                 {appliedCoupon && (
-                  <div className="flex justify-between text-sm text-green-600 mb-2">
+                  <div className="flex justify-between text-sm text-emerald-400 mb-2">
                     <span className="font-medium flex items-center gap-1">
                       <Tag className="w-4 h-4" />
                       Descuento ({appliedCoupon.code})
                     </span>
-                    <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
+                    <span className="font-bold">-{formatPrice(appliedCoupon.discountAmount)}</span>
                   </div>
                 )}
                 
                 {/* Descuento VIP */}
                 {centralizedVipDiscount > 0 && (
                   <div className="flex justify-between text-sm font-semibold mb-2">
-                    <span className="text-yellow-700 flex items-center gap-1">
+                    <span className="text-amber-400 flex items-center gap-1">
                       {user?.userLevel === 'VIP' ? (
                         <><Star className="w-4 h-4" /> Descuento VIP (25%)</>
                       ) : (
                         <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
                       )}
                     </span>
-                    <span className="text-green-600 font-bold">-€{centralizedVipDiscount.toFixed(2)}</span>
+                    <span className="text-emerald-400 font-bold">-{formatPrice(centralizedVipDiscount)}</span>
                   </div>
                 )}
               </div>
@@ -1198,48 +1199,48 @@ const CheckoutPage = () => {
               <div className="border-t border-b py-4 my-4 space-y-2">
                 
                 {formData.deliveryOption === 'delivery' && calculatedShipping && (
-                  <div className="bg-blue-50 p-3 rounded-lg space-y-2 my-2">
-                    <div className="font-semibold text-xs text-blue-900">
+                  <div className="bg-resona/10 p-3 rounded-lg space-y-2 my-2">
+                    <div className="font-semibold text-xs text-cream">
                       {includeInstallation ? '🚚 + 🔧 Envío e Instalación:' : '🚚 Coste de Envío:'}
                     </div>
                     
-                    <div className="flex justify-between text-xs text-gray-600 pl-3">
+                    <div className="flex justify-between text-xs text-cream/65 pl-3">
                       <span>• Precio base (distancia)</span>
-                      <span>€{Number(calculatedShipping.baseWithMinimum || 0).toFixed(2)}</span>
+                      <span>{formatPrice(Number(calculatedShipping.baseWithMinimum || 0))}</span>
                     </div>
                     
                     {calculatedShipping.breakdown?.products > 0 && (
-                      <div className="flex justify-between text-xs text-gray-600 pl-3">
+                      <div className="flex justify-between text-xs text-cream/65 pl-3">
                         <span>• Costes por productos</span>
-                        <span>€{Number(calculatedShipping.breakdown.products || 0).toFixed(2)}</span>
+                        <span>{formatPrice(Number(calculatedShipping.breakdown.products || 0))}</span>
                       </div>
                     )}
                     
-                    <div className="flex justify-between font-bold text-xs text-blue-900 pt-2 border-t border-blue-200">
+                    <div className="flex justify-between font-bold text-xs text-cream pt-2 border-t border-resona/30">
                       <span>Total {includeInstallation ? 'envío + instalación' : 'envío'}</span>
-                      <span>€{centralizedShipping.toFixed(2)}</span>
+                      <span>{formatPrice(centralizedShipping)}</span>
                     </div>
                   </div>
                 )}
                 
                 {formData.deliveryOption === 'delivery' && !calculatedShipping && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">🚚 Envío</span>
-                    <span>€{centralizedShipping.toFixed(2)}</span>
+                    <span className="text-cream/65">Envío</span>
+                    <span>{formatPrice(centralizedShipping)}</span>
                   </div>
                 )}
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">IVA (21%)</span>
-                  <span>€{(total - (total / 1.21)).toFixed(2)}</span>
+                  <span className="text-cream/65">IVA (21%)</span>
+                  <span>{formatPrice((total - (total / 1.21)))}</span>
                 </div>
               </div>
 
               <div className="border-t pt-4 mt-4">
                 <div className="flex justify-between text-lg font-bold mb-2">
                   <span>Total Pedido</span>
-                  <span className="text-gray-900">
-                    €{paymentBreakdown.total.toFixed(2)}
+                  <span className="text-cream">
+                    {formatPrice(paymentBreakdown.total)}
                   </span>
                 </div>
               </div>
@@ -1247,53 +1248,53 @@ const CheckoutPage = () => {
               {/* Resumen de pago */}
               <div className={`mt-4 p-4 border-2 rounded-lg ${
                 paymentBreakdown.payLater > 0
-                  ? 'bg-green-50 border-green-300'
-                  : 'bg-gray-50 border-gray-300'
+                  ? 'bg-emerald-500/10 border-green-300'
+                  : 'bg-ink-800 border-cream/15'
               }`}>
-                <h3 className="font-bold text-gray-900 text-sm mb-3">
+                <h3 className="font-bold text-cream text-sm mb-3">
                   {paymentBreakdown.payLater > 0 ? 'Resumen de pago' : 'Pago único'}
                 </h3>
 
                 <div className="flex justify-between items-baseline mb-2">
-                  <span className="text-sm text-gray-700">A pagar ahora</span>
-                  <span className="text-2xl font-bold text-green-700">
-                    €{paymentBreakdown.payNow.toFixed(2)}
+                  <span className="text-sm text-cream/75">A pagar ahora</span>
+                  <span className="text-2xl font-bold text-emerald-400">
+                    {formatPrice(paymentBreakdown.payNow)}
                   </span>
                 </div>
 
                 {paymentBreakdown.payLater > 0 && (
                   <>
-                    <div className="flex justify-between items-baseline pt-2 border-t border-green-200">
-                      <span className="text-xs text-gray-600">Pendiente antes de entrega</span>
-                      <span className="text-sm font-semibold text-gray-800">
-                        €{paymentBreakdown.payLater.toFixed(2)}
+                    <div className="flex justify-between items-baseline pt-2 border-t border-emerald-500/30">
+                      <span className="text-xs text-cream/65">Pendiente antes de entrega</span>
+                      <span className="text-sm font-semibold text-cream/90">
+                        {formatPrice(paymentBreakdown.payLater)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 mt-2">
+                    <p className="text-xs text-cream/65 mt-2">
                       Reservas con el 25% y pagas el resto al recoger en tienda.
                     </p>
                   </>
                 )}
                 
                 {paymentBreakdown.requiresDeposit && (
-                  <div className="bg-blue-100 p-3 rounded border border-blue-200">
-                    <p className="text-xs text-blue-900 font-semibold mb-1">
+                  <div className="bg-resona/15 p-3 rounded border border-resona/30">
+                    <p className="text-xs text-cream font-semibold mb-1">
                       ℹ️ Fianza en tienda
                     </p>
-                    <p className="text-xs text-blue-800">
-                      Al recoger el material, se cobrará una fianza de <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span> (reembolsable al devolver el material en perfectas condiciones).
+                    <p className="text-xs text-resona-light">
+                      Al recoger el material, se cobrará una fianza de <span className="font-bold">{formatPrice(paymentBreakdown.deposit)}</span> (reembolsable al devolver el material en perfectas condiciones).
                     </p>
                   </div>
                 )}
                 
               </div>
 
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <div className="mt-6 p-4 bg-ink-800 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-cream/65 mb-2">
                   <Lock className="w-4 h-4" />
                   <span className="font-medium">Pago Seguro</span>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-cream/50">
                   Tus datos están protegidos con encriptación SSL.
                   Procesamos los pagos a través de Stripe.
                 </p>

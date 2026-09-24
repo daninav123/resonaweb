@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@resona/api-client';
 import { Phone, Building2, CreditCard, CheckCircle, Copy, ArrowRight, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/cartCalculations';
 
 const ManualPaymentInstructionsPage = () => {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ const ManualPaymentInstructionsPage = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">¡Pedido Creado!</h1>
           <p className="text-gray-600">Pedido #{order?.orderNumber}</p>
           <p className="text-lg font-semibold text-blue-600 mt-2">
-            Total a pagar: €{Number(order?.total || 0).toFixed(2)}
+            Total a pagar: {formatPrice(Number(order?.total || 0))}
           </p>
         </div>
 
@@ -102,7 +103,7 @@ const ManualPaymentInstructionsPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Importe:</p>
-                  <p className="text-lg font-semibold text-green-600">€{Number(order?.total || 0).toFixed(2)}</p>
+                  <p className="text-lg font-semibold text-green-600">{formatPrice(Number(order?.total || 0))}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Concepto:</p>
@@ -150,7 +151,7 @@ const ManualPaymentInstructionsPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Importe:</p>
-                  <p className="text-lg font-semibold text-green-600">€{Number(order?.total || 0).toFixed(2)}</p>
+                  <p className="text-lg font-semibold text-green-600">{formatPrice(Number(order?.total || 0))}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Concepto:</p>
@@ -192,7 +193,7 @@ const ManualPaymentInstructionsPage = () => {
                     {item.product?.name || 'Producto'} x{item.quantity}
                   </span>
                   <span className="font-medium">
-                    €{Number(item.totalPrice).toFixed(2)}
+                    {formatPrice(Number(item.totalPrice))}
                   </span>
                 </div>
               ))}
@@ -202,7 +203,7 @@ const ManualPaymentInstructionsPage = () => {
           <div className="border-t pt-3">
             <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span className="text-blue-600">€{Number(order?.total || 0).toFixed(2)}</span>
+              <span className="text-blue-600">{formatPrice(Number(order?.total || 0))}</span>
             </div>
           </div>
         </div>

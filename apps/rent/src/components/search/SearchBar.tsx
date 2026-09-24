@@ -3,6 +3,7 @@ import { Search, X, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@resona/api-client';
+import { formatPrice } from '../../utils/cartCalculations';
 
 interface SearchResult {
   id: string;
@@ -134,7 +135,7 @@ export const SearchBar = ({
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-resona">
-                      €{Number(product.price).toFixed(2)}
+                      {formatPrice(Number(product.price))}
                       <span className="text-xs text-gray-500">/día</span>
                     </p>
                   </div>

@@ -9,6 +9,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { EditOrderModal } from '../components/orders/EditOrderModal';
 import { InstallmentPayment } from '../components/InstallmentPayment';
+import { formatPrice } from '../utils/cartCalculations';
 
 const OrderDetailUserPage = () => {
   const { id } = useParams();
@@ -312,7 +313,7 @@ const OrderDetailUserPage = () => {
               <CreditCard className="w-5 h-5 text-gray-400" />
               <div>
                 <p className="text-sm text-gray-500">Total</p>
-                <p className="font-bold text-lg text-blue-600">€{Number(order.total || 0).toFixed(2)}</p>
+                <p className="font-bold text-lg text-blue-600">{formatPrice(Number(order.total || 0))}</p>
               </div>
             </div>
           </div>
@@ -326,27 +327,27 @@ const OrderDetailUserPage = () => {
             {/* Subtotal */}
             <div className="flex justify-between text-gray-700">
               <span>Subtotal:</span>
-              <span>€{Number(order.subtotal || 0).toFixed(2)}</span>
+              <span>{formatPrice(Number(order.subtotal || 0))}</span>
             </div>
 
             {/* Envío */}
             {order.shippingCost > 0 && (
               <div className="flex justify-between text-gray-700">
                 <span>Envío/Montaje:</span>
-                <span>€{Number(order.shippingCost || 0).toFixed(2)}</span>
+                <span>{formatPrice(Number(order.shippingCost || 0))}</span>
               </div>
             )}
 
             {/* IVA */}
             <div className="flex justify-between text-gray-700">
               <span>IVA (21%):</span>
-              <span>€{Number(order.taxAmount || 0).toFixed(2)}</span>
+              <span>{formatPrice(Number(order.taxAmount || 0))}</span>
             </div>
 
             {/* Total */}
             <div className="flex justify-between text-lg font-bold text-gray-900 pt-3 border-t">
               <span>Total:</span>
-              <span className="text-blue-600">€{Number(order.total || 0).toFixed(2)}</span>
+              <span className="text-blue-600">{formatPrice(Number(order.total || 0))}</span>
             </div>
 
             {/* Fianza - Solo para alquileres, NO para eventos personalizados */}
@@ -355,7 +356,7 @@ const OrderDetailUserPage = () => {
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold text-yellow-700">💰 Fianza (reembolsable):</span>
-                    <span className="font-bold text-yellow-700">€{Number(order.depositAmount).toFixed(2)}</span>
+                    <span className="font-bold text-yellow-700">{formatPrice(Number(order.depositAmount))}</span>
                   </div>
                   
                   {/* Estado de la fianza */}
@@ -384,8 +385,8 @@ const OrderDetailUserPage = () => {
                         <p className="font-medium mb-1">⚠️ Fianza Parcialmente Retenida</p>
                         {order.depositRetainedAmount > 0 && (
                           <>
-                            <p>Retenido: €{Number(order.depositRetainedAmount).toFixed(2)}</p>
-                            <p>Devuelto: €{(Number(order.depositAmount) - Number(order.depositRetainedAmount)).toFixed(2)}</p>
+                            <p>Retenido: {formatPrice(Number(order.depositRetainedAmount))}</p>
+                            <p>Devuelto: {formatPrice((Number(order.depositAmount) - Number(order.depositRetainedAmount)))}</p>
                           </>
                         )}
                         {order.depositNotes && (
@@ -449,8 +450,8 @@ const OrderDetailUserPage = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">€{Number(item.subtotal || item.totalPrice || 0).toFixed(2)}</p>
-                    <p className="text-xs text-gray-500">€{Number(item.pricePerDay || item.pricePerUnit || 0).toFixed(2)}/día</p>
+                    <p className="font-medium text-gray-900">{formatPrice(Number(item.subtotal || item.totalPrice || 0))}</p>
+                    <p className="text-xs text-gray-500">{formatPrice(Number(item.pricePerDay || item.pricePerUnit || 0))}/día</p>
                   </div>
                 </div>
 
@@ -510,13 +511,13 @@ const OrderDetailUserPage = () => {
                           {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
                             <li key={idx} className="flex justify-between">
                               <span>• {decodeHTMLEntities(part.name)}</span>
-                              {part.price > 0 && <span className="font-medium">€{Number(part.price).toFixed(2)}</span>}
+                              {part.price > 0 && <span className="font-medium">{formatPrice(Number(part.price))}</span>}
                             </li>
                           ))}
                         </ul>
                         {item.eventMetadata.partsTotal > 0 && (
                           <p className="text-sm font-semibold mt-2 text-blue-900">
-                            Subtotal Partes: €{Number(item.eventMetadata.partsTotal).toFixed(2)}
+                            Subtotal Partes: {formatPrice(Number(item.eventMetadata.partsTotal))}
                           </p>
                         )}
                       </div>
@@ -530,13 +531,13 @@ const OrderDetailUserPage = () => {
                           {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
                             <li key={idx} className="flex justify-between">
                               <span>• {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`}</span>
-                              {extra.total > 0 && <span className="font-medium">€{Number(extra.total).toFixed(2)}</span>}
+                              {extra.total > 0 && <span className="font-medium">{formatPrice(Number(extra.total))}</span>}
                             </li>
                           ))}
                         </ul>
                         {item.eventMetadata.extrasTotal > 0 && (
                           <p className="text-sm font-semibold mt-2 text-blue-900">
-                            Subtotal Extras: €{Number(item.eventMetadata.extrasTotal).toFixed(2)}
+                            Subtotal Extras: {formatPrice(Number(item.eventMetadata.extrasTotal))}
                           </p>
                         )}
                       </div>
@@ -546,10 +547,10 @@ const OrderDetailUserPage = () => {
                     {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
                       <div className="pt-2 border-t border-blue-200">
                         <p className="text-sm font-bold text-blue-900">
-                          💰 Total Evento: €{(
+                          💰 Total Evento: {formatPrice((
                             (Number(item.eventMetadata.partsTotal) || 0) + 
                             (Number(item.eventMetadata.extrasTotal) || 0)
-                          ).toFixed(2)}
+                          ))}
                         </p>
                       </div>
                     )}

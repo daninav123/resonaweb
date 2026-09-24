@@ -1,6 +1,7 @@
 import { X, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/cartCalculations';
 
 interface StatusModalProps {
   show: boolean;
@@ -252,7 +253,7 @@ export const DepositModal = ({ show, depositAction, depositAmount, depositRetain
         <div className="mb-6 space-y-4">
           <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
             <p className="text-sm text-blue-800">
-              <strong>Importe de la fianza:</strong> €{depositAmount.toFixed(2)}
+              <strong>Importe de la fianza:</strong> {formatPrice(depositAmount)}
             </p>
           </div>
           {depositAction === 'release' && (
@@ -282,8 +283,8 @@ export const DepositModal = ({ show, depositAction, depositAmount, depositRetain
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded">
               <p className="text-sm text-yellow-800">
                 <strong>⚠️ Retención parcial:</strong><br/>
-                Retenido: €{depositRetainedAmount.toFixed(2)}<br/>
-                A devolver: €{(depositAmount - depositRetainedAmount).toFixed(2)}
+                Retenido: {formatPrice(depositRetainedAmount)}<br/>
+                A devolver: {formatPrice((depositAmount - depositRetainedAmount))}
               </p>
             </div>
           )}

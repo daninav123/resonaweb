@@ -5,6 +5,7 @@ import { api } from '@resona/api-client';
 import { invoiceService } from '../services/invoice.service';
 import { Package, Download, Eye, FileText, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/cartCalculations';
 
 const OrdersPage = () => {
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ const OrdersPage = () => {
                       <div>
                         <p className="text-sm text-gray-600">Total:</p>
                         <p data-testid="order-total" className="text-xl font-bold text-gray-900">
-                          €{Number(order.total).toFixed(2)}
+                          {formatPrice(Number(order.total))}
                         </p>
                       </div>
                       <div>

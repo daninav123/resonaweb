@@ -4,6 +4,7 @@ import { CheckCircle, Package, Download, Mail } from 'lucide-react';
 import { api } from '@resona/api-client';
 import { trackPurchase } from '@resona/utils';
 import confetti from 'canvas-confetti';
+import { formatPrice } from '../../utils/cartCalculations';
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
@@ -115,11 +116,11 @@ const PaymentSuccessPage = () => {
                       {order.hasInstallments ? 'Pago de Reserva (25%)' : 'Total Pagado'}
                     </p>
                     <p className="font-semibold text-lg text-resona">
-                      €{Number(order.amountPaid).toFixed(2)}
+                      {formatPrice(Number(order.amountPaid))}
                     </p>
                     {order.hasInstallments && (
                       <p className="text-xs text-gray-500 mt-1">
-                        Total del pedido: €{Number(order.total).toFixed(2)}
+                        Total del pedido: {formatPrice(Number(order.total))}
                       </p>
                     )}
                   </div>
@@ -146,7 +147,7 @@ const PaymentSuccessPage = () => {
                     Has pagado la reserva (25%). El resto se puede pagar desde "Mis Pedidos":
                   </p>
                   <p className="text-lg font-bold text-blue-900">
-                    Pendiente: €{(Number(order.total) - Number(order.amountPaid)).toFixed(2)}
+                    Pendiente: {formatPrice((Number(order.total) - Number(order.amountPaid)))}
                   </p>
                   <p className="text-xs text-blue-700 mt-2">
                     Podrás pagar el resto en plazos o todo de una vez desde tu panel de pedidos

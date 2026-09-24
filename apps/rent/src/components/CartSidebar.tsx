@@ -6,7 +6,7 @@ import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@resona/api-client';
 import toast from 'react-hot-toast';
-import { calculateCartTotals } from '../utils/cartCalculations';
+import { calculateCartTotals, formatPrice } from '../utils/cartCalculations';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -85,7 +85,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-ink-800 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -97,7 +97,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition"
+            className="p-2 hover:bg-white/10 rounded-full transition"
           >
             <X className="w-6 h-6" />
           </button>
@@ -107,14 +107,14 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         <div className="flex-1 overflow-y-auto p-4">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <ShoppingCart className="w-16 h-16 mb-4 text-gray-400" />
-              <p className="text-lg font-semibold text-gray-700">Tu carrito está vacío</p>
-              <p className="text-sm mt-2 text-gray-600">¡Añade productos para empezar!</p>
+              <ShoppingCart className="w-16 h-16 mb-4 text-cream/40" />
+              <p className="text-lg font-semibold text-cream/75">Tu carrito está vacío</p>
+              <p className="text-sm mt-2 text-cream/65">¡Añade productos para empezar!</p>
             </div>
           ) : (
             <div className="space-y-3">
               {cartItems.map((item: any) => (
-                <div key={item.id} className="bg-gray-50 rounded-lg p-3">
+                <div key={item.id} className="bg-ink-800 rounded-lg p-3">
                   <div className="flex gap-3">
                     <img
                       src={item.product.mainImageUrl || '/placeholder.png'}
@@ -125,15 +125,15 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                       <h3 className="font-medium text-sm truncate">
                         {item.product.name}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-cream/50">
                         {item.product.category?.name}
                       </p>
-                      <p className="text-sm text-blue-600 font-semibold mt-1">
-                        €{item.product.pricePerDay}/día × {item.quantity}
+                      <p className="text-sm text-resona-light font-semibold mt-1">
+                        {formatPrice(Number(item.product.pricePerDay) || 0)}/día × {item.quantity}
                       </p>
                       
                       {item.startDate && item.endDate && (
-                        <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
+                        <div className="flex items-center gap-1 text-xs text-cream/65 mt-1">
                           <Calendar className="w-3 h-3" />
                           <span>
                             {new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}
@@ -143,7 +143,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
                       {/* Detalles del evento si existe eventMetadata */}
                       {item.eventMetadata && (
-                        <div className="mt-2 pt-2 border-t border-gray-200 text-xs space-y-1">
+                        <div className="mt-2 pt-2 border-t border-cream/10 text-xs space-y-1">
                           {item.eventMetadata.eventType && (
                             <p><span className="font-medium">Tipo:</span> {item.eventMetadata.eventType}</p>
                           )}
@@ -151,17 +151,17 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                             <p><span className="font-medium">Asistentes:</span> {item.eventMetadata.attendees}</p>
                           )}
                           {item.eventMetadata.eventLocation && (
-                            <p><span className="font-medium">📍 Ubicación:</span> {item.eventMetadata.eventLocation}</p>
+                            <p><span className="font-medium">Ubicación:</span> {item.eventMetadata.eventLocation}</p>
                           )}
                           
                           {/* Partes del evento */}
                           {item.eventMetadata.selectedParts && item.eventMetadata.selectedParts.length > 0 && (
                             <div className="mt-1">
-                              <p className="font-medium">📦 Partes:</p>
+                              <p className="font-medium">Partes:</p>
                               <ul className="ml-2 space-y-0.5">
                                 {item.eventMetadata.selectedParts.map((part: any, idx: number) => (
-                                  <li key={idx} className="text-gray-600">
-                                    • {part.name} {part.price > 0 && `€${Number(part.price).toFixed(2)}`}
+                                  <li key={idx} className="text-cream/65">
+                                    • {part.name} {part.price > 0 && formatPrice(Number(part.price))}
                                   </li>
                                 ))}
                               </ul>
@@ -171,11 +171,11 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                           {/* Extras del evento */}
                           {item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
                             <div className="mt-1">
-                              <p className="font-medium">✨ Extras:</p>
+                              <p className="font-medium">Extras:</p>
                               <ul className="ml-2 space-y-0.5">
                                 {item.eventMetadata.selectedExtras.map((extra: any, idx: number) => (
-                                  <li key={idx} className="text-gray-600">
-                                    • {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`} {extra.total > 0 && `€${Number(extra.total).toFixed(2)}`}
+                                  <li key={idx} className="text-cream/65">
+                                    • {extra.name} {extra.quantity > 1 && `(x${extra.quantity})`} {extra.total > 0 && formatPrice(Number(extra.total))}
                                   </li>
                                 ))}
                               </ul>
@@ -184,12 +184,12 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                           
                           {/* Totales del evento */}
                           {(item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) && (
-                            <div className="mt-1 pt-1 border-t border-gray-200">
-                              <p className="font-semibold text-blue-700">
-                                💰 Total: €{(
+                            <div className="mt-1 pt-1 border-t border-cream/10">
+                              <p className="font-semibold text-resona-light">
+                                💰 Total: {formatPrice((
                                   (Number(item.eventMetadata.partsTotal) || 0) + 
                                   (Number(item.eventMetadata.extrasTotal) || 0)
-                                ).toFixed(2)}
+                                ))}
                               </p>
                             </div>
                           )}
@@ -198,7 +198,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                     </div>
                     <button
                       onClick={() => handleGuestRemoveItem(item.id)}
-                      className="text-red-500 hover:text-red-700 h-fit"
+                      className="text-red-400 hover:text-red-700 h-fit"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -214,7 +214,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
           <div className="border-t p-4 space-y-3">
             {/* Alerta VIP */}
             {user && user.userLevel && user.userLevel !== 'STANDARD' && (
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 rounded-r">
+              <div className="bg-amber-500/10 border-l-4 border-yellow-500 p-2 rounded-r">
                 <p className="text-xs font-bold text-yellow-900 flex items-center gap-1">
                   {user.userLevel === 'VIP' ? (
                     <><Star className="w-3 h-3" /> ⭐ VIP</>  
@@ -230,15 +230,15 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-cream/65">Subtotal:</span>
                 <span className="font-semibold">
-                  {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
+                  {subtotal > 0 ? formatPrice(subtotal) : '-'}
                 </span>
               </div>
 
               {/* Descuento VIP */}
               {vipDiscount > 0 && (
-                <div className="flex justify-between text-sm font-semibold text-green-600">
+                <div className="flex justify-between text-sm font-semibold text-emerald-400">
                   <span className="flex items-center gap-1">
                     {user?.userLevel === 'VIP' ? (
                       <><Star className="w-3 h-3" /> Descuento VIP</>
@@ -246,14 +246,14 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                       <><Crown className="w-3 h-3" /> Descuento VIP+</>
                     )}
                   </span>
-                  <span>-€{vipDiscount.toFixed(2)}</span>
+                  <span>-{formatPrice(vipDiscount)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-lg font-bold pt-2 border-t">
                 <span>Total:</span>
                 <span className="text-resona">
-                  €{total.toFixed(2)}
+                  {formatPrice(total)}
                 </span>
               </div>
             </div>
@@ -267,7 +267,7 @@ const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
               <ArrowRight className="w-4 h-4" />
             </button>
 
-            <p className="text-center text-xs text-gray-500 mt-2">
+            <p className="text-center text-xs text-cream/50 mt-2">
               Pago seguro con Stripe · Solo pagas el 25% de reserva
             </p>
           </div>

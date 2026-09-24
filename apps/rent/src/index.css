@@ -19,6 +19,11 @@ body {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* El fondo del body asoma por el rebote del scroll y detras del contenido
+     corto; sin esto se ve una franja blanca bajo una web oscura. */
+  background-color: #0B0B0C;
+  color: #F7F3EB;
+  color-scheme: dark;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -81,4 +86,26 @@ img {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+
+/* Campos de formulario sobre fondo oscuro. Sin esto heredan el blanco del
+   navegador y aparecen como rectangulos claros en mitad de la pagina. */
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+textarea,
+select {
+  background-color: transparent;
+  color: #F7F3EB;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(247, 243, 235, 0.35);
+}
+
+/* El desplegable nativo se pinta con el fondo del sistema: sus opciones
+   necesitan fondo propio o salen texto claro sobre claro. */
+select option {
+  background-color: #17171A;
+  color: #F7F3EB;
 }

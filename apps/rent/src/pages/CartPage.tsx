@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { api } from '@resona/api-client';
-import { Trash2, Plus, Minus, ShoppingBag, Calendar, ShoppingCart, Package, AlertTriangle, Info, Star, Crown, Tag } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, Calendar, ShoppingCart, Package, AlertTriangle, Info, Star, Crown, Tag, Ban } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { guestCart, GuestCartItem } from '../utils/guestCart';
 import { useAuthStore } from '../stores/authStore';
@@ -10,7 +10,7 @@ import { companyService } from '../services/company.service';
 import { calculatePaymentBreakdown } from '../utils/depositCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import { CouponInput } from '../components/coupons/CouponInput';
-import { calculateCartTotals } from '../utils/cartCalculations';
+import { calculateCartTotals, formatPrice } from '../utils/cartCalculations';
 import SEOHead from '../components/SEO/SEOHead';
 
 const CartPage = () => {
@@ -242,18 +242,18 @@ const CartPage = () => {
         autoNotes += '   📦 Partes del Evento:\n';
         item.eventMetadata.selectedParts.forEach((part: any) => {
           const price = part.price || 0;
-          autoNotes += `      • ${part.name}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+          autoNotes += `      • ${part.name}${price > 0 ? ` - ${formatPrice(Number(price))}` : ''}\n`;
         });
         autoNotes += '\n';
       }
       
       // Extras
       if (item.eventMetadata.selectedExtras && item.eventMetadata.selectedExtras.length > 0) {
-        autoNotes += '   ✨ Extras:\n';
+        autoNotes += '   Extras:\n';
         item.eventMetadata.selectedExtras.forEach((extra: any) => {
           const price = extra.total || extra.price || 0;
           const qty = extra.quantity || 1;
-          autoNotes += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - €${Number(price).toFixed(2)}` : ''}\n`;
+          autoNotes += `      • ${extra.name}${qty > 1 ? ` (x${qty})` : ''}${price > 0 ? ` - ${formatPrice(Number(price))}` : ''}\n`;
         });
         autoNotes += '\n';
       }
@@ -262,10 +262,10 @@ const CartPage = () => {
       if (item.eventMetadata.partsTotal || item.eventMetadata.extrasTotal) {
         autoNotes += '   💰 Subtotales:\n';
         if (item.eventMetadata.partsTotal) {
-          autoNotes += `      • Partes: €${Number(item.eventMetadata.partsTotal).toFixed(2)}\n`;
+          autoNotes += `      • Partes: ${formatPrice(Number(item.eventMetadata.partsTotal))}\n`;
         }
         if (item.eventMetadata.extrasTotal) {
-          autoNotes += `      • Extras: €${Number(item.eventMetadata.extrasTotal).toFixed(2)}\n`;
+          autoNotes += `      • Extras: ${formatPrice(Number(item.eventMetadata.extrasTotal))}\n`;
         }
       }
       
@@ -919,7 +919,7 @@ const CartPage = () => {
   const cartItems = guestCartItems;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-ink-800 py-8">
       <SEOHead
         title="Tu carrito | ReSona Rent"
         description="Revisa los equipos de alquiler seleccionados antes de solicitar tu reserva en ReSona Rent."
@@ -927,16 +927,16 @@ const CartPage = () => {
         noindex
       />
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mi Carrito</h1>
+        <h1 className="text-3xl font-bold text-cream mb-8">Mi Carrito</h1>
 
         {cartItems.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Tu carrito está vacío</h2>
-            <p className="text-gray-600 mb-6">¡Añade algunos productos para empezar!</p>
+          <div className="bg-ink-800 rounded-lg shadow-md p-12 text-center">
+            <ShoppingBag className="w-24 h-24 text-cream/30 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-cream mb-2">Tu carrito está vacío</h2>
+            <p className="text-cream/65 mb-6">¡Añade algunos productos para empezar!</p>
             <Link
               to="/productos"
-              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="inline-block bg-resona text-white px-8 py-3 rounded-lg font-semibold hover:bg-resona-dark transition"
             >
               Explorar Productos
             </Link>
@@ -946,7 +946,7 @@ const CartPage = () => {
             {/* Columna izquierda: Productos + Notas */}
             <div className="lg:col-span-2 space-y-6">
               {/* Lista de Productos */}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-ink-800 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">Productos en el carrito</h2>
                 
                 <div className="space-y-6">
@@ -959,19 +959,19 @@ const CartPage = () => {
                           className="w-24 h-24 object-cover rounded-lg"
                         />
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{item.product.name}</h3>
-                          <p className="text-gray-600 text-sm">{item.product.category?.name}</p>
+                          <h3 className="font-semibold text-cream">{item.product.name}</h3>
+                          <p className="text-cream/65 text-sm">{item.product.category?.name}</p>
                           
                           {/* Badge de error de disponibilidad */}
                           {unavailableItems.has(item.id) && (
-                            <div className="mt-2 p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                            <div className="mt-2 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-r-lg">
                               <div className="flex items-start gap-2">
-                                <span className="text-red-600 text-lg">⚠️</span>
+                                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
                                 <div>
-                                  <p className="text-sm text-red-700 font-semibold">
+                                  <p className="text-sm text-red-400 font-semibold">
                                     No disponible
                                   </p>
-                                  <p className="text-xs text-red-600 mt-1">
+                                  <p className="text-xs text-red-400 mt-1">
                                     {unavailableItems.get(item.id)}
                                   </p>
                                 </div>
@@ -979,8 +979,8 @@ const CartPage = () => {
                             </div>
                           )}
                           
-                          <p className="text-blue-600 font-semibold mt-2">
-                            €{item.product.pricePerDay} / día
+                          <p className="mt-2 font-semibold text-cream/80">
+                            {formatPrice(Number(item.product.pricePerDay) || 0)} / día
                           </p>
                           
                           {/* Partes del evento si existen */}
@@ -990,8 +990,8 @@ const CartPage = () => {
                             
                             return (
                               <>
-                                <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                  <p className="text-xs font-semibold text-purple-700 mb-2">🎭 Partes del Evento</p>
+                                <div className="mt-3 p-3 bg-ink-800/5 rounded-lg border border-purple-200">
+                                  <p className="text-xs font-semibold text-cream/75 mb-2">Partes del evento</p>
                                   <div className="space-y-1">
                                     {item.eventMetadata.selectedParts.map((part: any) => {
                                       // Si es la parte de Disco/Fiesta, mostrar el precio del pack
@@ -1002,50 +1002,50 @@ const CartPage = () => {
                                       return (
                                         <div key={part.id}>
                                           <div className="flex justify-between items-center text-xs">
-                                            <span className="text-purple-600">{part.icon} {part.name}</span>
-                                            <span className="font-semibold text-purple-700">€{displayPrice.toFixed(2)}</span>
+                                            <span className="text-cream/65">{part.icon} {part.name}</span>
+                                            <span className="font-semibold text-cream/75">{formatPrice(displayPrice)}</span>
                                           </div>
                                           {/* Si es parte de fiesta, mostrar el nombre del pack debajo */}
                                           {isPartyPart && (
                                             <div className="ml-4 mt-1">
-                                              <span className="text-xs text-gray-600">📦 {item.product.name}</span>
+                                              <span className="text-xs text-cream/65">{item.product.name}</span>
                                             </div>
                                           )}
                                         </div>
                                       );
                                     })}
                                     <div className="border-t border-purple-300 mt-2 pt-2 flex justify-between items-center">
-                                      <span className="font-semibold text-purple-700">Total Partes:</span>
-                                      <span className="font-bold text-purple-800">€{totalPartsDisplay.toFixed(2)}</span>
+                                      <span className="font-semibold text-cream/75">Total Partes:</span>
+                                      <span className="font-bold text-cream/80">{formatPrice(totalPartsDisplay)}</span>
                                     </div>
                                   </div>
                                 </div>
                                 
                                 {/* Extras si existen */}
                                 {item.eventMetadata?.selectedExtras && item.eventMetadata.selectedExtras.length > 0 && (
-                                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                    <p className="text-xs font-semibold text-blue-700 mb-2">✨ Extras</p>
+                                  <div className="mt-3 p-3 bg-resona/10 rounded-lg border border-resona/30">
+                                    <p className="text-xs font-semibold text-resona-light mb-2">Extras</p>
                                     <div className="space-y-1">
                                       {item.eventMetadata.selectedExtras.map((extra: any) => (
                                         <div key={extra.id} className="flex justify-between items-center text-xs">
-                                          <span className="text-blue-600">{extra.quantity}x {extra.name}</span>
-                                          <span className="font-semibold text-blue-700">€{extra.total.toFixed(2)}</span>
+                                          <span className="text-resona-light">{extra.quantity}x {extra.name}</span>
+                                          <span className="font-semibold text-resona-light">{formatPrice(extra.total)}</span>
                                         </div>
                                       ))}
-                                      <div className="border-t border-blue-300 mt-2 pt-2 flex justify-between items-center">
-                                        <span className="font-semibold text-blue-700">Total Extras:</span>
-                                        <span className="font-bold text-blue-800">€{item.eventMetadata.extrasTotal?.toFixed(2) || '0.00'}</span>
+                                      <div className="border-t border-resona/40 mt-2 pt-2 flex justify-between items-center">
+                                        <span className="font-semibold text-resona-light">Total Extras:</span>
+                                        <span className="font-bold text-cream">{formatPrice(Number(item.eventMetadata.extrasTotal) || 0)}</span>
                                       </div>
                                     </div>
                                   </div>
                                 )}
                                 
                                 {/* Badge informativo para eventos */}
-                                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
-                                  <p className="text-xs text-green-700 flex items-center gap-1">
-                                    ✅ <span className="font-semibold">Transporte y montaje incluidos</span>
+                                <div className="mt-3 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                                  <p className="text-xs text-emerald-400 flex items-center gap-1">
+                                    <span className="font-semibold">Transporte y montaje incluidos</span>
                                   </p>
-                                  <p className="text-xs text-green-600 mt-1">
+                                  <p className="text-xs text-emerald-400 mt-1">
                                     📅 Duración: 1 día (fecha del evento: {item.eventMetadata.eventDate || 'Por confirmar'})
                                   </p>
                                 </div>
@@ -1057,7 +1057,7 @@ const CartPage = () => {
                           <button
                             data-testid="decrease-quantity"
                             onClick={() => handleGuestUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                            className="w-8 h-8 rounded border hover:bg-gray-100"
+                            className="w-8 h-8 rounded border hover:bg-white/10"
                           >
                             <Minus className="w-4 h-4 mx-auto" />
                           </button>
@@ -1065,7 +1065,7 @@ const CartPage = () => {
                           <button
                             data-testid="increase-quantity"
                             onClick={() => handleGuestUpdateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 rounded border hover:bg-gray-100"
+                            className="w-8 h-8 rounded border hover:bg-white/10"
                           >
                             <Plus className="w-4 h-4 mx-auto" />
                           </button>
@@ -1073,16 +1073,16 @@ const CartPage = () => {
                         <button
                           data-testid="remove-item"
                           onClick={() => handleGuestRemoveItem(item.id)}
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-400 hover:text-red-700"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                       
                       {/* Notas específicas del producto */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          📝 Notas para este producto
+                      <div className="mt-4 pt-4 border-t border-cream/10">
+                        <label className="block text-sm font-medium text-cream/75 mb-2">
+                          Notas para este producto
                         </label>
                         <textarea
                           value={item.notes || ''}
@@ -1093,13 +1093,13 @@ const CartPage = () => {
                           placeholder="Ej: Instrucciones especiales, preferencias, horarios específicos..."
                           rows={2}
                           maxLength={500}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-cream/15 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                         <div className="flex justify-between items-center mt-1">
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-cream/50">
                             Notas específicas para {item.product.name}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-cream/50">
                             {(item.notes || '').length}/500
                           </p>
                         </div>
@@ -1110,12 +1110,12 @@ const CartPage = () => {
               </div>
 
               {/* Notas del Pedido */}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-ink-800 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                   <Package className="w-5 h-5" />
                   Notas del Pedido
                 </h2>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-cream/65 mb-4">
                   Horarios de recogida/devolución preferidos, cómo contactarte el día del alquiler, accesos especiales, etc.
                 </p>
                 <textarea
@@ -1124,13 +1124,13 @@ const CartPage = () => {
                   placeholder="Ej: Puedo recoger el jueves a partir de las 17:00. Devolveré el domingo por la mañana. Contacto: 6XX XXX XXX."
                   rows={8}
                   maxLength={1000}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                  className="w-full px-4 py-3 border border-cream/15 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
                 />
                 <div className="flex justify-between items-center mt-2">
-                  <p className="text-sm text-gray-500">
-                    💡 Tip: Incluye detalles como horarios, accesos especiales, contactos adicionales, etc.
+                  <p className="text-sm text-cream/50">
+                    Consejo: Incluye detalles como horarios, accesos especiales, contactos adicionales, etc.
                   </p>
-                  <p className="text-sm font-medium text-gray-700">
+                  <p className="text-sm font-medium text-cream/75">
                     {orderNotes.length}/1000 caracteres
                   </p>
                 </div>
@@ -1139,13 +1139,13 @@ const CartPage = () => {
 
             {/* Columna derecha: Resumen (sticky) */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+              <div className="bg-ink-800 rounded-lg shadow-md p-6 sticky top-4">
                 <h2 className="text-xl font-semibold mb-4">Resumen del pedido</h2>
                 
                 {/* Fechas del Pedido */}
-                <div className="bg-white p-4 rounded-lg shadow mb-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-blue-600" />
+                <div className="bg-ink-800 p-4 rounded-lg shadow mb-4">
+                  <h3 className="text-sm font-semibold text-cream mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-resona-light" />
                     Fechas del Pedido
                   </h3>
                   
@@ -1166,13 +1166,13 @@ const CartPage = () => {
                       });
                       
                       return (
-                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="p-3 bg-resona/10 border border-resona/30 rounded-lg">
                           <div className="flex items-center gap-2 mb-2">
-                            <Calendar className="w-5 h-5 text-blue-600" />
-                            <span className="text-sm font-semibold text-blue-900">Fecha del Evento</span>
+                            <Calendar className="w-5 h-5 text-resona-light" />
+                            <span className="text-sm font-semibold text-cream">Fecha del Evento</span>
                           </div>
-                          <p className="text-blue-700 text-sm capitalize">{formattedDate}</p>
-                          <p className="text-xs text-blue-600 mt-2">📅 Duración: 1 día (incluye transporte y montaje)</p>
+                          <p className="text-resona-light text-sm capitalize">{formattedDate}</p>
+                          <p className="text-xs text-resona-light mt-2">Duración: 1 día (incluye transporte y montaje)</p>
                         </div>
                       );
                     }
@@ -1182,7 +1182,7 @@ const CartPage = () => {
                       <>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-cream/75 mb-1">
                               Inicio
                             </label>
                             <input
@@ -1195,7 +1195,7 @@ const CartPage = () => {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-cream/75 mb-1">
                               Fin
                             </label>
                             <input
@@ -1213,16 +1213,16 @@ const CartPage = () => {
                         {globalDates.start && globalDates.end && (
                           <div className="mt-3 text-center text-xs">
                             {isValidating ? (
-                              <span className="text-blue-600">
+                              <span className="text-resona-light">
                                 <span className="inline-block animate-spin mr-1">⏳</span>
                                 Validando disponibilidad...
                               </span>
                             ) : unavailableItems.size > 0 ? (
-                              <span className="text-red-600">
+                              <span className="text-red-400">
                                 ❌ {unavailableItems.size} producto(s) no disponibles
                               </span>
                             ) : guestCartItems.length > 0 ? (
-                              <span className="text-green-600">
+                              <span className="text-emerald-400">
                                 ✓ Todos los productos están disponibles
                               </span>
                             ) : null}
@@ -1234,10 +1234,9 @@ const CartPage = () => {
                 </div>
 
                 {!allItemsHaveDates() && (
-                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      ⚠️ Selecciona las fechas de inicio y fin
-                    </p>
+                  <div className="mb-4 flex items-center gap-2 rounded-sm border border-amber-500/30 bg-amber-500/10 p-3">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+                    <p className="text-sm text-amber-300">Selecciona las fechas de inicio y fin</p>
                   </div>
                 )}
 
@@ -1250,18 +1249,18 @@ const CartPage = () => {
                   if (hasEventItems) {
                     // Para eventos, mostrar que transporte está incluido
                     return (
-                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm font-semibold text-green-900">✅ Transporte y montaje incluidos</p>
-                        <p className="text-xs text-green-700 mt-1">El evento incluye el transporte y montaje completo</p>
+                      <div className="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                        <p className="text-sm font-semibold text-emerald-300">Transporte y montaje incluidos</p>
+                        <p className="text-xs text-emerald-400 mt-1">El evento incluye el transporte y montaje completo</p>
                       </div>
                     );
                   }
 
                   // Para productos/packs normales, mostrar recogida en tienda
                   return (
-                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm font-semibold text-blue-900">🏪 Recogida en tienda</p>
-                      <p className="text-xs text-blue-700 mt-1">
+                    <div className="mb-4 p-4 bg-resona/10 border border-resona/30 rounded-lg">
+                      <p className="text-sm font-semibold text-cream">Recogida en tienda</p>
+                      <p className="text-xs text-resona-light mt-1">
                         C/ de l'Illa Cabrera, 13, 46026 València
                         {' • Gratis'}
                       </p>
@@ -1271,15 +1270,15 @@ const CartPage = () => {
 
                 {/* Alerta VIP - Solo mostrar si hay descuento aplicado */}
                 {user && user.userLevel && user.userLevel !== 'STANDARD' && vipDiscount > 0 && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-lg mb-4">
-                    <h3 className="font-bold text-yellow-900 flex items-center gap-2 text-sm mb-1">
+                  <div className="bg-amber-500/10 border-l-4 border-amber-500 p-3 rounded-r-lg mb-4">
+                    <h3 className="font-bold text-amber-300 flex items-center gap-2 text-sm mb-1">
                       {user.userLevel === 'VIP' ? (
                         <><Star className="w-4 h-4" /> ⭐ Cliente VIP</>
                       ) : (
-                        <><Crown className="w-4 h-4" /> 👑 Cliente VIP PLUS</>
+                        <><Crown className="w-4 h-4" /> Cliente VIP PLUS</>
                       )}
                     </h3>
-                    <ul className="text-xs text-yellow-800 space-y-1">
+                    <ul className="text-xs text-amber-400 space-y-1">
                       <li>✓ {user.userLevel === 'VIP' ? '25%' : '50%'} de descuento aplicado</li>
                     </ul>
                   </div>
@@ -1297,75 +1296,75 @@ const CartPage = () => {
 
                 <div className="space-y-2 mb-4 pb-4 border-b">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal productos</span>
+                    <span className="text-cream/65">Subtotal productos</span>
                     <span className="font-semibold">
-                      {subtotal > 0 ? `€${subtotal.toFixed(2)}` : '-'}
+                      {subtotal > 0 ? formatPrice(subtotal) : '-'}
                     </span>
                   </div>
                   
                   
                   {/* Descuento VIP */}
                   {vipDiscount > 0 && (
-                    <div className="flex justify-between text-sm font-semibold bg-yellow-50 p-2 rounded">
-                      <span className="text-yellow-700 flex items-center gap-1">
+                    <div className="flex justify-between text-sm font-semibold bg-amber-500/10 p-2 rounded">
+                      <span className="text-amber-400 flex items-center gap-1">
                         {user?.userLevel === 'VIP' ? (
                           <><Star className="w-4 h-4" /> Descuento VIP (25%)</>
                         ) : (
                           <><Crown className="w-4 h-4" /> Descuento VIP PLUS (70%)</>
                         )}
                       </span>
-                      <span className="text-green-600 font-bold">-€{vipDiscount.toFixed(2)}</span>
+                      <span className="text-emerald-400 font-bold">-{formatPrice(vipDiscount)}</span>
                     </div>
                   )}
                   
                   {/* Descuento por Cupón */}
                   {appliedCoupon && (
-                    <div className="flex justify-between text-sm text-green-600 mb-2">
+                    <div className="flex justify-between text-sm text-emerald-400 mb-2">
                       <span className="font-medium flex items-center gap-1">
                         <Tag className="w-4 h-4" />
                         Descuento ({appliedCoupon.code})
                       </span>
-                      <span className="font-bold">-€{appliedCoupon.discountAmount.toFixed(2)}</span>
+                      <span className="font-bold">-{formatPrice(appliedCoupon.discountAmount)}</span>
                     </div>
                   )}
                   
                   <div className="flex justify-between pt-2 border-t">
-                    <span className="text-gray-600">IVA (21%)</span>
+                    <span className="text-cream/65">IVA (21%)</span>
                     <span className="font-semibold">
-                      €{tax.toFixed(2)}
+                      {formatPrice(tax)}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex justify-between text-xl font-bold mb-4">
                   <span>Total</span>
-                  <span data-testid="cart-total" className="text-blue-600">
-                    €{total.toFixed(2)}
+                  <span data-testid="cart-total" className="text-resona-light">
+                    {formatPrice(total)}
                   </span>
                 </div>
 
                 {/* Información de Pago */}
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-300 rounded-lg">
+                <div className="mb-4 p-3 bg-resona/10 border border-resona/40 rounded-lg">
                   <div className="flex items-start gap-2">
-                    <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Info className="w-4 h-4 text-resona-light flex-shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <p className="font-semibold text-blue-900 mb-1">💳 Pago de Reserva</p>
-                      <p className="text-blue-800 mb-2">
+                      <p className="font-semibold text-cream mb-1">Pago de reserva</p>
+                      <p className="text-resona-light mb-2">
                         {paymentBreakdown.payLater > 0 ? (
                           <>
-                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (25% de reserva) ahora.
+                            Pagas <span className="font-bold">{formatPrice(paymentBreakdown.payNow)}</span> (25% de reserva) ahora.
                             <br />
-                            <span className="text-blue-700">Resto: €{paymentBreakdown.payLater.toFixed(2)} en "Mis Pedidos"</span>
+                            <span className="text-resona-light">Resto: {formatPrice(paymentBreakdown.payLater)} en "Mis Pedidos"</span>
                           </>
                         ) : (
                           <>
-                            Pagas <span className="font-bold">€{paymentBreakdown.payNow.toFixed(2)}</span> (100%) ahora al reservar.
+                            Pagas <span className="font-bold">{formatPrice(paymentBreakdown.payNow)}</span> (100%) ahora al reservar.
                           </>
                         )}
                       </p>
                       {paymentBreakdown.requiresDeposit && (
-                        <p className="text-blue-800 text-xs bg-blue-100 p-2 rounded">
-                          ℹ️ Fianza de <span className="font-bold">€{paymentBreakdown.deposit.toFixed(2)}</span> se cobrará en tienda al recoger el material (reembolsable)
+                        <p className="text-resona-light text-xs bg-resona/15 p-2 rounded">
+                          Fianza de <span className="font-bold">{formatPrice(paymentBreakdown.deposit)}</span> se cobrará en tienda al recoger el material (reembolsable)
                         </p>
                       )}
                     </div>
@@ -1374,17 +1373,17 @@ const CartPage = () => {
 
                 {/* Alerta de productos no disponibles */}
                 {unavailableItems.size > 0 && (
-                  <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm">
+                  <div className="mb-4 p-4 bg-red-500/10 border-l-4 border-red-500 rounded-r-lg shadow-sm">
                     <div className="flex items-start gap-3">
-                      <span className="text-2xl">🚫</span>
+                      <Ban className="h-6 w-6 text-cream/40" />
                       <div className="flex-1">
-                        <p className="text-base text-red-700 font-bold">
+                        <p className="text-base text-red-400 font-bold">
                           No puedes continuar con el pedido
                         </p>
-                        <p className="text-sm text-red-600 mt-1">
+                        <p className="text-sm text-red-400 mt-1">
                           {unavailableItems.size} producto{unavailableItems.size > 1 ? 's' : ''} no {unavailableItems.size > 1 ? 'están' : 'está'} disponible{unavailableItems.size > 1 ? 's' : ''} para las fechas seleccionadas
                         </p>
-                        <p className="text-xs text-red-500 mt-2 font-medium">
+                        <p className="text-xs text-red-400 mt-2 font-medium">
                           → Cambia las fechas o elimina los productos marcados con rojo
                         </p>
                       </div>
@@ -1434,8 +1433,8 @@ const CartPage = () => {
                   disabled={!allItemsHaveDates() || hasInvalidDates() || loading}
                   className={`w-full py-3 rounded-lg font-semibold transition ${
                     hasInvalidDates() 
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                      : 'bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                      ? 'bg-cream/20 text-cream/50 cursor-not-allowed' 
+                      : 'bg-resona text-white hover:bg-resona-dark disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 >
                   {hasInvalidDates()
@@ -1446,7 +1445,7 @@ const CartPage = () => {
 
                 <Link
                   to="/productos"
-                  className="block text-center mt-4 text-blue-600 hover:underline"
+                  className="block text-center mt-4 text-resona-light hover:underline"
                 >
                   Continuar comprando
                 </Link>

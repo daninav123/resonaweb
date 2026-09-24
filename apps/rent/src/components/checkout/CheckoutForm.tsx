@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/cartCalculations';
 
 interface CheckoutFormProps {
   clientSecret: string;
@@ -89,7 +90,7 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-ink-800 p-6 rounded-lg shadow-sm border border-cream/10">
         <h3 className="text-lg font-semibold mb-4">Información de Pago</h3>
         
         <PaymentElement 
@@ -109,10 +110,10 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
         />
       </div>
 
-      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+      <div className="bg-ink-800 p-4 rounded-lg border border-cream/10">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-gray-600">Total a pagar:</span>
-          <span className="text-2xl font-bold text-resona">€{amount.toFixed(2)}</span>
+          <span className="text-cream/65">Total a pagar:</span>
+          <span className="text-2xl font-bold text-resona">{formatPrice(amount)}</span>
         </div>
 
         <button
@@ -126,12 +127,12 @@ export const CheckoutForm = ({ clientSecret, amount, onSuccess, onError, billing
               Procesando pago...
             </>
           ) : (
-            `Pagar €${amount.toFixed(2)}`
+            `Pagar ${formatPrice(amount)}`
           )}
         </button>
       </div>
 
-      <div className="text-center text-sm text-gray-500">
+      <div className="text-center text-sm text-cream/50">
         <p>🔒 Pago seguro procesado por Stripe</p>
         <p className="mt-1">Tus datos están protegidos con encriptación de nivel bancario</p>
       </div>
