@@ -13,7 +13,6 @@ import Layout from './components/Layout/Layout';
 // Páginas públicas de alquiler
 const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
 const ProductsPage = lazyWithRetry(() => import('./pages/ProductsPage'));
-const MaquetaCatalogoPage = lazyWithRetry(() => import('./pages/MaquetaCatalogoPage'));
 const ProductDetailPage = lazyWithRetry(() => import('./pages/ProductDetailPage'));
 const PackDetailPage = lazyWithRetry(() => import('./pages/PackDetailPage'));
 const CartPage = lazyWithRetry(() => import('./pages/CartPage'));
@@ -103,9 +102,6 @@ export default function App() {
         <BrowserRouter>
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              {/* Maqueta de trabajo, fuera del Layout y sin indexar. Borrar al decidir. */}
-              <Route path="/maqueta" element={<MaquetaCatalogoPage />} />
-
               <Route element={<Layout />}>
                 <Route index element={<HomePage />} />
 
