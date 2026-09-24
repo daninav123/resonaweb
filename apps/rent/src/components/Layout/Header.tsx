@@ -92,6 +92,7 @@ const Header = () => {
         <nav className="hidden items-center gap-9 md:flex">
           <div className="relative" ref={dropdownRef}>
             <button
+              type="button"
               onClick={() => setIsRentalDropdownOpen((v) => !v)}
               aria-expanded={isRentalDropdownOpen}
               className="flex items-center gap-1.5 text-[14px] text-cream/75 transition-colors hover:text-cream"
@@ -185,6 +186,7 @@ const Header = () => {
           </form>
 
           <button
+            type="button"
             onClick={() => setIsSearchOpen((v) => !v)}
             aria-label={isSearchOpen ? 'Cerrar el buscador' : 'Buscar'}
             className={`${iconBtn} lg:hidden`}
@@ -210,7 +212,7 @@ const Header = () => {
               <Link to="/cuenta" aria-label={`Mi cuenta, ${user?.firstName ?? ''}`} className={iconBtn}>
                 <User className="h-[18px] w-[18px]" />
               </Link>
-              <button onClick={handleLogout} aria-label="Cerrar sesión" className={iconBtn}>
+              <button type="button" onClick={handleLogout} aria-label="Cerrar sesión" className={iconBtn}>
                 <LogOut className="h-[18px] w-[18px]" />
               </button>
             </div>
@@ -224,6 +226,7 @@ const Header = () => {
           )}
 
           <button
+            type="button"
             onClick={() => setIsCartOpen(true)}
             className={`relative ${iconBtn}`}
             aria-label={`Carrito, ${cartCount} ${cartCount === 1 ? 'artículo' : 'artículos'}`}
@@ -237,6 +240,7 @@ const Header = () => {
           </button>
 
           <button
+            type="button"
             onClick={() => setIsMenuOpen((v) => !v)}
             aria-label={isMenuOpen ? 'Cerrar el menú' : 'Abrir el menú'}
             className={`${iconBtn} md:hidden`}
@@ -320,7 +324,7 @@ const Header = () => {
                   <Link to="/cuenta" onClick={cerrarTodo} className="text-cream/75">
                     Mi cuenta
                   </Link>
-                  <button onClick={handleLogout} className="flex items-center gap-2 text-left text-cream/75">
+                  <button type="button" onClick={handleLogout} className="flex items-center gap-2 text-left text-cream/75">
                     <LogOut className="h-4 w-4" />
                     Salir
                   </button>

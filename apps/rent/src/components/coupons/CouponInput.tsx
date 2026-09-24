@@ -111,7 +111,7 @@ export const CouponInput = ({
         <button
           onClick={handleApply}
           disabled={!code.trim() || validating}
-          className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-medium"
+          className="px-4 py-2 bg-resona text-white rounded-lg hover:bg-resona-dark disabled:bg-white/10 disabled:text-cream/40 disabled:cursor-not-allowed text-sm font-medium"
         >
           {validating ? 'Validando...' : 'Aplicar'}
         </button>

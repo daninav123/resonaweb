@@ -1279,7 +1279,7 @@ const CheckoutPage = () => {
                 {paymentBreakdown.requiresDeposit && (
                   <div className="bg-resona/15 p-3 rounded border border-resona/30">
                     <p className="text-xs text-cream font-semibold mb-1">
-                      ℹ️ Fianza en tienda
+                      Fianza en tienda
                     </p>
                     <p className="text-xs text-resona-light">
                       Al recoger el material, se cobrará una fianza de <span className="font-bold">{formatPrice(paymentBreakdown.deposit)}</span> (reembolsable al devolver el material en perfectas condiciones).
