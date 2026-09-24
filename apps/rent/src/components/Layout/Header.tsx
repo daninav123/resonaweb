@@ -158,7 +158,7 @@ const Header = () => {
             <button
               onClick={() => setIsCartOpen(true)}
               className="relative flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100"
-              aria-label={`Carrito, ${cartCount} ${cartCount === 1 ? 'articulo' : 'articulos'}`}
+              aria-label={`Carrito, ${cartCount} ${cartCount === 1 ? 'artículo' : 'artículos'}`}
             >
               <ShoppingCart className="w-6 h-6 text-gray-700" />
               {cartCount > 0 && (
@@ -171,7 +171,7 @@ const Header = () => {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label={isMenuOpen ? 'Cerrar el menu' : 'Abrir el menu'}
+              aria-label={isMenuOpen ? 'Cerrar el menú' : 'Abrir el menú'}
               className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 md:hidden"
             >
               {isMenuOpen ? (
