@@ -83,11 +83,11 @@ const RegisterPage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-paper flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen flex-col justify-center bg-paper px-5 pb-24 pt-36 sm:px-6 md:pt-44 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-center text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[42px]">
+          <h1 className="text-center text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink md:text-[42px]">
           Crea tu cuenta
-        </h2>
+        </h1>
         <p className="mt-2 text-center text-sm text-ink-600">
           ¿Ya tienes cuenta?{' '}
           <Link
@@ -308,7 +308,7 @@ const RegisterPage = () => {
               </div>
 
               <p className="text-xs text-ink-500 italic">
-                🔒 Tus datos están protegidos según el RGPD. Nunca compartiremos tu información con terceros.
+                Tus datos están protegidos según el RGPD. Nunca compartiremos tu información con terceros.
               </p>
             </div>
 
