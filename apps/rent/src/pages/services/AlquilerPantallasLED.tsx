@@ -5,7 +5,7 @@ const AlquilerPantallasLED = () => {
   const pageData = {
     title: "Alquiler Pantalla LED Gigante en Valencia | ReSona Rent",
     metaDescription:
-      "Alquiler de pantalla LED gigante en Valencia para cine de verano, conciertos, eventos y deporte en directo. P3.9, 3×2 m (800 € + IVA) y 3×4 m (1.500 € + IVA). Entrega y montaje. ☎️ 613 88 14 14",
+      "Alquiler de pantalla LED gigante en Valencia para cine de verano, conciertos, eventos y deporte en directo. P3.9 de 6, 12 y 18 m², desde 800 € + IVA. Montaje incluido. ☎️ 613 88 14 14",
     keywords:
       "alquiler pantalla led valencia, pantalla led gigante valencia, alquiler pantalla cine de verano, videowall eventos valencia, pantalla led exterior valencia, pantalla gigante conciertos valencia",
     canonicalUrl: "https://resonarent.com/servicios/alquiler-pantallas-led",
@@ -24,8 +24,8 @@ const AlquilerPantallasLED = () => {
 <ul>
 <li><strong>Mucho más brillo:</strong> una pantalla LED P3.9 se ve perfecta incluso con luz ambiente, de día y de noche.</li>
 <li><strong>Interior y exterior:</strong> vale igual para una terraza, una plaza o un salón.</li>
-<li><strong>Dos formatos:</strong> 3×2 m (6 m²) y 3×4 m (12 m²), para adaptarnos a tu espacio y aforo.</li>
-<li><strong>Doble pantalla:</strong> tenemos dos de 3×2 m, así que puedes cubrir varias zonas a la vez.</li>
+<li><strong>Tres tamaños:</strong> 3×2 m (6 m²), 3×4 m (12 m²) y 6×3 m (18 m²), para adaptarnos a tu espacio y aforo.</li>
+<li><strong>Montaje incluido:</strong> la pantalla siempre la montamos nosotros, no tienes que preocuparte de nada.</li>
 </ul>
 
 <p>Nos encargamos de la <strong>entrega, el montaje y el desmontaje en toda la provincia de Valencia</strong>: tú solo eliges la fecha y nosotros la dejamos lista y funcionando. Perfecta para montar un <strong>cine de verano</strong> en tu urbanización, proyectar un concierto, ambientar una feria o vivir el deporte en grande.</p>
@@ -50,12 +50,12 @@ const AlquilerPantallasLED = () => {
       },
       {
         icon: "",
-        title: "Dos tamaños",
-        description: "3×2 m (6 m²) y 3×4 m (12 m²) según tu espacio y aforo",
+        title: "Tres tamaños",
+        description: "6, 12 y 18 m² según tu espacio y aforo",
       },
       {
         icon: "",
-        title: "Entrega y montaje",
+        title: "Montaje incluido",
         description: "La llevamos, montamos y desmontamos en toda la provincia",
       },
       {
@@ -80,8 +80,8 @@ const AlquilerPantallasLED = () => {
         items: [
           "Pantalla LED 3×2 m — 6 m² de superficie",
           "Pantalla LED 3×4 m — 12 m² de superficie",
-          "Dos unidades de 3×2 m disponibles a la vez",
-          "Entrega y montaje opcionales en la provincia de Valencia",
+          "Pantalla LED 6×3 m — 18 m² de superficie",
+          "Entrega, montaje y desmontaje incluidos en la provincia de Valencia",
         ],
       },
       {
@@ -107,7 +107,7 @@ const AlquilerPantallasLED = () => {
           "Interior y exterior",
           "Entrega, montaje y desmontaje en la provincia de Valencia",
           "Perfecta para cine de verano y eventos medianos",
-          "968 € IVA incluido · 2 unidades disponibles",
+          "968 € IVA incluido",
         ],
       },
       {
@@ -124,14 +124,15 @@ const AlquilerPantallasLED = () => {
         highlighted: true,
       },
       {
-        name: "Dos pantallas 3×2 m",
-        subtitle: "Cubre dos zonas o más aforo",
-        price: "1.600 € + IVA",
+        name: "Pantalla LED 6×3 m",
+        subtitle: "18 m² · grandes aforos y escenarios",
+        price: "2.000 € + IVA",
         features: [
-          "Dos pantallas de 6 m² a la vez",
-          "Cubre dos salas, terrazas o ambientes",
-          "Más puntos de visión para tu público",
+          "Superficie de 18 m² (6×3 m) · P3.9",
+          "Interior y exterior · visible desde lejos",
           "Entrega, montaje y desmontaje en la provincia de Valencia",
+          "Ideal para conciertos, festivales y escenarios",
+          "2.420 € IVA incluido",
         ],
       },
     ],
@@ -145,7 +146,7 @@ const AlquilerPantallasLED = () => {
       {
         question: "¿Qué tamaños de pantalla LED tenéis y cuánto cuestan?",
         answer:
-          "Tenemos dos formatos, ambos con pixel pitch P3.9: la pantalla de 3×2 metros (6 m²) por 800 € + IVA (968 € IVA incluido), y la pantalla de 3×4 metros (12 m²) por 1.500 € + IVA (1.815 € IVA incluido). Disponemos de dos pantallas de 3×2 m, por lo que también puedes alquilar las dos a la vez (1.600 € + IVA) para cubrir varias zonas. Todas incluyen entrega y montaje en la provincia de Valencia.",
+          "Tenemos tres formatos, todos con pixel pitch P3.9: la pantalla de 3×2 metros (6 m²) por 800 € + IVA (968 € IVA incluido), la de 3×4 metros (12 m²) por 1.500 € + IVA (1.815 € IVA incluido) y la de 6×3 metros (18 m²) por 2.000 € + IVA (2.420 € IVA incluido) para grandes aforos. Todas incluyen entrega, montaje y desmontaje en la provincia de Valencia.",
       },
       {
         question: "¿Sirve para montar un cine de verano?",
