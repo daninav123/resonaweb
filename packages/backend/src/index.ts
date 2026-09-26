@@ -48,6 +48,7 @@ import diagnosticRouter from './routes/diagnostic.routes';
 import calculatorConfigRouter from './routes/calculatorConfig.routes';
 import contactRouter from './routes/contact.routes';
 import leadClickRouter from './routes/leadClick.routes';
+import { hideInternalProductFields } from './middleware/hideInternalProductFields.middleware';
 import budgetRouter from './routes/budget.routes';
 import gdprRouter from './routes/gdpr.routes'; // RGPD: Derechos de protección de datos
 import seoPageRouter from './routes/seoPage.routes'; // SEO Pages management
@@ -342,7 +343,7 @@ logger.info('📄 Sitemap y RSS disponibles en /sitemap.xml y /rss');
 // API Routes
 logger.info('🌐 Registrando rutas API...');
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/products', productsRouter);
+app.use('/api/v1/products', hideInternalProductFields, productsRouter);
 app.use('/api/v1/orders', ordersRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/cart', cartRouter);
@@ -359,8 +360,8 @@ app.use('/api/v1/role-definitions', roleDefinitionRouter); // Definiciones de ro
 app.use('/api/v1', orderNoteRouter);
 app.use('/api/v1/coupons', couponRouter);
 app.use('/api/v1/notifications', notificationRouter);
-app.use('/api/v1/search', searchRouter);
-app.use('/api/v1/products/search', searchRouter); // Alias para búsqueda de productos
+app.use('/api/v1/search', hideInternalProductFields, searchRouter);
+app.use('/api/v1/products/search', hideInternalProductFields, searchRouter); // Alias para búsqueda de productos
 app.use('/api/v1/upload', uploadRouter);
 app.use('/api/v1', stockAlertsRouter);
 app.use('/api/v1/billing', billingRouter);
