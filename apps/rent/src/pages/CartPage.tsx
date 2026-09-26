@@ -12,6 +12,7 @@ import AddressAutocomplete from '../components/AddressAutocomplete';
 import { CouponInput } from '../components/coupons/CouponInput';
 import { calculateCartTotals, formatPrice } from '../utils/cartCalculations';
 import SEOHead from '../components/SEO/SEOHead';
+import QuoteCta from '../components/QuoteCta';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -918,6 +919,16 @@ const CartPage = () => {
   // Usar guestCartItems como cartItems para mantener compatibilidad con el resto del código
   const cartItems = guestCartItems;
 
+  const fechaCorta = (iso: string) =>
+    new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  const quoteMessage = [
+    'Hola, quería presupuesto para alquilar:',
+    ...cartItems.map((item: any) => {
+      const fechas = item.startDate && item.endDate ? ` (${fechaCorta(item.startDate)} – ${fechaCorta(item.endDate)})` : '';
+      return `- ${item.quantity} × ${item.product.name}${fechas}`;
+    }),
+  ].join('\n');
+
   return (
     <div className="min-h-screen bg-ink-800 py-8">
       <SEOHead
@@ -942,6 +953,14 @@ const CartPage = () => {
             </Link>
           </div>
         ) : (
+          <>
+          <QuoteCta
+            section="carrito"
+            message={quoteMessage}
+            title="¿Prefieres que te lo preparemos? Pide tu presupuesto aquí"
+            subtitle="Nos llega tu carrito por WhatsApp y te respondemos con el presupuesto. Sin pagar nada online."
+            className="mb-8"
+          />
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Columna izquierda: Productos + Notas */}
             <div className="lg:col-span-2 space-y-6">
@@ -1434,7 +1453,7 @@ const CartPage = () => {
                   className={`w-full py-3 rounded-lg font-semibold transition ${
                     hasInvalidDates() 
                       ? 'bg-cream/20 text-cream/50 cursor-not-allowed' 
-                      : 'bg-resona text-white hover:bg-resona-dark disabled:opacity-50 disabled:cursor-not-allowed'
+                      : 'border border-solid border-cream/25 text-cream hover:border-cream/50 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 >
                   {hasInvalidDates()
@@ -1452,6 +1471,7 @@ const CartPage = () => {
               </div>
             </div>
           </div>
+          </>
         )}
       </div>
     </div>

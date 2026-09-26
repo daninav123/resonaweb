@@ -14,6 +14,7 @@ import OptimizedImage from '../components/common/OptimizedImage';
 import { generateProductSchema } from '../utils/seo/schemaGenerator';
 import { getPriceDisplay, formatEuro } from '../utils/priceWithVAT';
 import { ProductTile } from '../components/catalog/ProductTile';
+import QuoteCta, { QuoteButton } from '../components/QuoteCta';
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -225,6 +226,12 @@ const ProductDetailPage = () => {
     return Math.max(1, Math.ceil(ms / 86400000) + 1);
   })();
 
+  const fechaCorta = (iso: string) =>
+    new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  const quoteMessage =
+    `Hola, quería presupuesto para alquilar ${quantity > 1 ? `${quantity} × ` : ''}${product.name}` +
+    (datesValid ? ` del ${fechaCorta(startDate)} al ${fechaCorta(endDate)}` : '');
+
   const campoFecha =
     'h-11 w-full rounded-sm border border-cream/15 bg-transparent px-3 text-[14px] text-cream focus:border-resona-light focus:outline-none [color-scheme:dark]';
 
@@ -391,7 +398,7 @@ const ProductDetailPage = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={datesValid && availability && !availability.available}
-                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-sm bg-resona px-8 text-[15px] font-medium text-white transition-colors hover:bg-resona-dark disabled:cursor-not-allowed disabled:bg-cream/15 disabled:text-cream/40"
+                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-sm border border-solid border-cream/25 px-8 text-[15px] font-medium text-cream transition-colors hover:border-cream/50 disabled:cursor-not-allowed disabled:text-cream/40"
                 >
                   <ShoppingCart className="h-[18px] w-[18px]" />
                   Añadir al carrito
@@ -406,6 +413,8 @@ const ProductDetailPage = () => {
                   <Heart className={`h-[18px] w-[18px] ${isFavorite ? 'fill-resona text-resona-light' : ''}`} />
                 </button>
               </div>
+
+              <QuoteCta section="ficha" message={quoteMessage} className="mt-6" />
 
               <ul className="mt-10 space-y-3 border-t border-cream/10 pt-8 text-[14px] text-cream/65">
                 <li className="flex items-center gap-3">
@@ -484,22 +493,17 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* Barra fija en móvil: el precio y el botón no deben perderse al bajar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-cream/10 bg-ink/95 px-5 py-3 backdrop-blur lg:hidden">
-        <div>
-          <p className="text-[17px] font-semibold tabular-nums text-cream">
-            {consumible ? formatEuro(Number(product.pricePerUnit) || 0) : precio.main}
-          </p>
-          <p className="text-[12px] text-cream/45">{consumible ? 'por unidad' : 'por día'}</p>
-        </div>
+      {/* Barra fija en móvil: el pr-24 deja libre el botón flotante de WhatsApp, que va encima */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t border-cream/10 bg-ink/95 py-3 pl-5 pr-24 backdrop-blur lg:hidden">
         <button
           onClick={handleAddToCart}
           disabled={datesValid && availability && !availability.available}
-          className="flex h-11 items-center gap-2 rounded-sm bg-resona px-6 text-[14px] font-medium text-white disabled:bg-cream/15 disabled:text-cream/40"
+          aria-label="Añadir al carrito"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-solid border-cream/20 text-cream/80 disabled:text-cream/30"
         >
           <ShoppingCart className="h-4 w-4" />
-          Añadir
         </button>
+        <QuoteButton section="ficha" message={quoteMessage} className="flex-1" />
       </div>
     </>
   );

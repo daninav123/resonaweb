@@ -9,6 +9,7 @@ import { breadcrumbSchema } from '../utils/schemas';
 import { formatEuro } from '../utils/priceWithVAT';
 import { esAccesorio } from '../utils/productKind';
 import { ProductTile } from '../components/catalog/ProductTile';
+import QuoteCta from '../components/QuoteCta';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -184,6 +185,13 @@ const ProductsPage = () => {
             son opcionales.
           </p>
         </header>
+
+        <QuoteCta
+          section="catalogo"
+          message={`Hola, quería presupuesto de alquiler${categoryName ? ` de ${categoryName.toLowerCase()}` : ''} para un evento.`}
+          subtitle="Cuéntanos qué evento tienes y te decimos qué equipo necesitas y cuánto cuesta. Sin pagar nada online."
+          className="mb-14 max-w-3xl"
+        />
 
         {hasDates && (
           <div className="mb-10 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-resona-light/40 bg-resona/10 px-4 py-3">
