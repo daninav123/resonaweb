@@ -48,6 +48,12 @@ export const PHOTOS = {
     aspect: '16 / 9',
     alt: 'Cortina de guirnaldas de luz cálida encendidas de noche',
   },
+  'pantalla-led-plaza': {
+    widths: [640, 960],
+    fallback: 960,
+    aspect: '3 / 2',
+    alt: 'Pantalla LED colgada de truss con sonido de ReSona en el templete de una plaza de Valencia',
+  },
 } as const satisfies Record<string, Photo>;
 
 export type PhotoSlug = keyof typeof PHOTOS;

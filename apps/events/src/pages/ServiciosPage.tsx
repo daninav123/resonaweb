@@ -218,6 +218,19 @@ const ServiceChapter = ({ service, alt }: { service: Service; alt: boolean }) =>
                 </ul>
               </div>
             </Reveal>
+            {service.link && (
+              <Reveal delay={0.4}>
+                <Link
+                  to={service.link.to}
+                  className="mt-8 inline-flex items-center gap-2 text-ink hover:text-accent-500 transition-colors group"
+                >
+                  <span className="font-medium underline underline-offset-4 decoration-ink/30 group-hover:decoration-accent-500">
+                    {service.link.label}
+                  </span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Reveal>
+            )}
           </div>
         </div>
       </div>

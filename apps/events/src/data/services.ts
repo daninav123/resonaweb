@@ -6,6 +6,7 @@ export interface Service {
   description: string;
   includes: string[];
   image: string;
+  link?: { to: string; label: string };
 }
 
 export const SERVICES: Service[] = [
@@ -48,6 +49,7 @@ export const SERVICES: Service[] = [
       'Videoescenario LED, cámaras multiplataforma, streaming simultáneo a YouTube/Vimeo/RRSS y régie centralizada. Cerramos con un vídeo resumen editado el mismo fin de semana si lo necesitas.',
     includes: ['Pantallas LED modulares', 'Cámaras IP multicam', 'Streaming multiplataforma', 'Régie + vision mixer', 'Edición post-evento'],
     image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=2000&auto=format&fit=crop',
+    link: { to: '/pantalla-led-eventos-valencia', label: 'Ver pantalla LED para eventos' },
   },
   {
     slug: 'produccion-integral',

@@ -11,6 +11,7 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const BodasPage = lazy(() => import('./pages/BodasPage'));
 const EventosPage = lazy(() => import('./pages/EventosPage'));
 const EventosCorporativosPage = lazy(() => import('./pages/EventosCorporativosPage'));
+const PantallaLedPage = lazy(() => import('./pages/PantallaLedPage'));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const PortfolioCasePage = lazy(() => import('./pages/PortfolioCasePage'));
 const ServiciosPage = lazy(() => import('./pages/ServiciosPage'));
@@ -75,6 +76,7 @@ export default function App() {
                 <Route path="/bodas" element={<BodasPage />} />
                 <Route path="/eventos" element={<EventosPage />} />
                 <Route path="/eventos-corporativos-valencia" element={<EventosCorporativosPage />} />
+                <Route path="/pantalla-led-eventos-valencia" element={<PantallaLedPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/portfolio/:slug" element={<PortfolioCasePage />} />
                 <Route path="/servicios" element={<ServiciosPage />} />
@@ -98,7 +100,7 @@ export default function App() {
                 <Route path="/servicios/iluminacion-escenarios" element={<Navigate to="/servicios#iluminacion" replace />} />
                 <Route path="/servicios/produccion-eventos-valencia" element={<Navigate to="/servicios#produccion-integral" replace />} />
                 <Route path="/servicios/produccion-tecnica-eventos" element={<Navigate to="/servicios#produccion-integral" replace />} />
-                <Route path="/servicios/videoescenarios-streaming" element={<Navigate to="/servicios#video-streaming" replace />} />
+                <Route path="/servicios/videoescenarios-streaming" element={<Navigate to="/pantalla-led-eventos-valencia" replace />} />
 
                 {/* Blog */}
                 <Route path="/blog" element={<BlogListPage />} />

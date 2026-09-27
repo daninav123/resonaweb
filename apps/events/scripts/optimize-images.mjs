@@ -30,6 +30,7 @@ const MANIFEST = [
   ['iluminacion-disco-azul-resona-events-montesinos-valencia.jpg', 'iluminacion-truss-azul'],
   ['resona-events-cabina-dj-letras-luminosas.jpg', 'cabina-dj-letras'],
   ['resona-events-luces-guirnalda-noche.jpg', 'guirnaldas-noche'],
+  ['resona-events-pantalla-led-plaza.jpg', 'pantalla-led-plaza'],
 ];
 
 const kb = (bytes) => `${Math.round(bytes / 1024)} KB`;
